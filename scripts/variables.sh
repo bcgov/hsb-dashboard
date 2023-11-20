@@ -1,0 +1,148 @@
+#!/bin/bash
+
+. ./scripts/os.sh
+
+export dockerHost=host.docker.internal
+
+#######################################################
+# Database Variables
+#######################################################
+export dbName=hsb
+export dbUser=$("$GREP" -Po 'POSTGRES_USER=\K.*$' ./database/.env 2>/dev/null)
+if [[ ! -z "$1" && -z "$dbUser" ]]
+then
+    echo 'Enter a username for the database.'
+    read -p 'Username: ' dbUser
+    export dbUser
+fi
+
+export dbPassword=$("$GREP" -Po 'POSTGRES_PASSWORD=\K.*$' ./database/.env 2>/dev/null)
+if [[ ! -z "$1" &&-z "$dbPassword" ]]
+then
+    # Generate a random password that satisfies password requirements.
+    echo 'A password is randomly being generated.'
+    dbPassword=$(date +%s | sha256sum | base64 | head -c 29)A8!
+    echo "Your generated password is: $dbPassword"
+    export dbPassword
+fi
+
+export keycloakUser=$("$GREP" -Po 'KEYCLOAK_USER=\K.*$' ./keycloak/.env 2>/dev/null)
+if [[ ! -z "$1" && -z "$keycloakUser" ]]
+then
+    echo 'Enter a username for keycloak.'
+    read -p 'Username: ' keycloakUser
+    export keycloakUser
+fi
+
+export keycloakPassword=$("$GREP" -Po 'KEYCLOAK_PASSWORD=\K.*$' ./keycloak/.env 2>/dev/null)
+if [[ ! -z "$1" &&-z "$keycloakPassword" ]]
+then
+    echo 'Enter a password for the keycloak user $keycloakUser.'
+    read -p 'Password: ' keycloakPassword
+    export keycloakPassword
+fi
+
+export defaultPassword=$("$GREP" -Po 'DEFAULT_PASSWORD=\K.*$' ./src/libs/dal/.env 2>/dev/null)
+if [[ ! -z "$1" &&-z "$defaultPassword" ]]
+then
+    echo 'Enter a default password for initial users.'
+    read -p 'Password: ' defaultPassword
+    export defaultPassword
+fi
+
+export privateKey=$("$GREP" -Po 'Authentication__PrivateKey=\K.*$' ./src/api/.env 2>/dev/null)
+if [ -z "$privateKey" ]
+then
+    privateKey=$(date +%s | sha256sum | base64 | head -c 32)
+    export privateKey
+fi
+saltLength=50
+export saltLength
+
+#######################################################
+# Docker Environment Variables
+#######################################################
+export portDb=$("$GREP" -Po 'DB_PORT=\K.*$' ./.env 2>/dev/null)
+if [ -z "$portDb" ]
+then
+    portDb=30000
+    export portDb
+fi
+
+export portKeycloakHttp=$("$GREP" -Po 'KEYCLOAK_HTTP_PORT=\K.*$' ./.env 2>/dev/null)
+if [ -z "$portKeycloakHttp" ]
+then
+    portKeycloakHttp=30001
+    export portApiHttp
+fi
+export portKeycloakHttps=$("$GREP" -Po 'KEYCLOAK_HTTPS_PORT=\K.*$' ./.env 2>/dev/null)
+if [ -z "$portKeycloakHttps" ]
+then
+    portKeycloakHttps=30002
+    export portApiHttps
+fi
+
+export portCssApiHttp=$("$GREP" -Po 'CSS_API_HTTP_PORT=\K.*$' ./.env 2>/dev/null)
+if [ -z "$portCssApiHttp" ]
+then
+    portCssApiHttp=30003
+    export portCssApiHttp
+fi
+export portCssApiHttps=$("$GREP" -Po 'CSS_API_HTTPS_PORT=\K.*$' ./.env 2>/dev/null)
+if [ -z "$portCssApiHttps" ]
+then
+    portCssApiHttps=30004
+    export portCssApiHttps
+fi
+
+export portApiHttp=$("$GREP" -Po 'API_HTTP_PORT=\K.*$' ./.env 2>/dev/null)
+if [ -z "$portApiHttp" ]
+then
+    portApiHttp=30005
+    export portApiHttp
+fi
+export portApiHttps=$("$GREP" -Po 'API_HTTPS_PORT=\K.*$' ./.env 2>/dev/null)
+if [ -z "$portApiHttps" ]
+then
+    portApiHttps=30006
+    export portApiHttps
+fi
+
+export portAppHttp=$("$GREP" -Po 'APP_HTTP_PORT=\K.*$' ./.env 2>/dev/null)
+if [ -z "$portAppHttp" ]
+then
+    portAppHttp=30007
+    export portAppHttp
+fi
+export portAppHttps=$("$GREP" -Po 'APP_HTTPS_PORT=\K.*$' ./.env 2>/dev/null)
+if [ -z "$portAppHttps" ]
+then
+    portAppHttps=30008
+    export portAppHttps
+fi
+
+export portNginxHttp=$("$GREP" -Po 'NGINX_HTTP_PORT=\K.*$' ./.env 2>/dev/null)
+if [ -z "$portNginxHttp" ]
+then
+    portNginxHttp=30080
+    export portNginxHttp
+fi
+export portNginxHttps=$("$GREP" -Po 'NGINX_HTTPS_PORT=\K.*$' ./.env 2>/dev/null)
+if [ -z "$portNginxHttps" ]
+then
+    portNginxHttps=30443
+    export portNginxHttps
+fi
+
+export portPrometheus=$("$GREP" -Po 'PROMETHEUS_PORT=\K.*$' ./.env 2>/dev/null)
+if [ -z "$portPrometheus" ]
+then
+    portPrometheus=30107
+    export portPrometheus
+fi
+export portGrafana=$("$GREP" -Po 'GRAFANA_PORT=\K.*$' ./.env 2>/dev/null)
+if [ -z "$portGrafana" ]
+then
+    portGrafana=30108
+    export portGrafana
+fi

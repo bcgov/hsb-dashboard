@@ -1,0 +1,15 @@
+d:\SourceCode\fosol\ocio-hsb-dashboard\PoC\libs\entities\bin\Debug\net7.0\HSB.Entities.deps.json
+D:\SourceCode\fosol\ocio-hsb-dashboard\PoC\libs\entities\bin\Debug\net7.0\HSB.Entities.dll
+D:\SourceCode\fosol\ocio-hsb-dashboard\PoC\libs\entities\bin\Debug\net7.0\HSB.Entities.pdb
+D:\SourceCode\fosol\ocio-hsb-dashboard\PoC\libs\entities\bin\Debug\net7.0\HSB.Core.dll
+D:\SourceCode\fosol\ocio-hsb-dashboard\PoC\libs\entities\bin\Debug\net7.0\HSB.Core.pdb
+D:\SourceCode\fosol\ocio-hsb-dashboard\PoC\libs\entities\obj\Debug\net7.0\HSB.Entities.csproj.AssemblyReference.cache
+D:\SourceCode\fosol\ocio-hsb-dashboard\PoC\libs\entities\obj\Debug\net7.0\HSB.Entities.GeneratedMSBuildEditorConfig.editorconfig
+D:\SourceCode\fosol\ocio-hsb-dashboard\PoC\libs\entities\obj\Debug\net7.0\HSB.Entities.AssemblyInfoInputs.cache
+D:\SourceCode\fosol\ocio-hsb-dashboard\PoC\libs\entities\obj\Debug\net7.0\HSB.Entities.AssemblyInfo.cs
+D:\SourceCode\fosol\ocio-hsb-dashboard\PoC\libs\entities\obj\Debug\net7.0\HSB.Entities.csproj.CoreCompileInputs.cache
+d:\SourceCode\fosol\ocio-hsb-dashboard\PoC\libs\entities\obj\Debug\net7.0\HSB.Entities.csproj.CopyComplete
+D:\SourceCode\fosol\ocio-hsb-dashboard\PoC\libs\entities\obj\Debug\net7.0\HSB.Entities.dll
+D:\SourceCode\fosol\ocio-hsb-dashboard\PoC\libs\entities\obj\Debug\net7.0\refint\HSB.Entities.dll
+D:\SourceCode\fosol\ocio-hsb-dashboard\PoC\libs\entities\obj\Debug\net7.0\HSB.Entities.pdb
+d:\SourceCode\fosol\ocio-hsb-dashboard\PoC\libs\entities\obj\Debug\net7.0\ref\HSB.Entities.dll

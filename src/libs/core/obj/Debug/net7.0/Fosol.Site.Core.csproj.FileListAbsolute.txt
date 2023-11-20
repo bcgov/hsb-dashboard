@@ -1,0 +1,12 @@
+D:\SourceCode\fosol\fosol.site\backend\libs\core\bin\Debug\net7.0\Fosol.Site.Core.deps.json
+D:\SourceCode\fosol\fosol.site\backend\libs\core\bin\Debug\net7.0\Fosol.Site.Core.dll
+D:\SourceCode\fosol\fosol.site\backend\libs\core\bin\Debug\net7.0\Fosol.Site.Core.pdb
+D:\SourceCode\fosol\fosol.site\backend\libs\core\obj\Debug\net7.0\Fosol.Site.Core.csproj.AssemblyReference.cache
+D:\SourceCode\fosol\fosol.site\backend\libs\core\obj\Debug\net7.0\Fosol.Site.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\SourceCode\fosol\fosol.site\backend\libs\core\obj\Debug\net7.0\Fosol.Site.Core.AssemblyInfoInputs.cache
+D:\SourceCode\fosol\fosol.site\backend\libs\core\obj\Debug\net7.0\Fosol.Site.Core.AssemblyInfo.cs
+D:\SourceCode\fosol\fosol.site\backend\libs\core\obj\Debug\net7.0\Fosol.Site.Core.csproj.CoreCompileInputs.cache
+D:\SourceCode\fosol\fosol.site\backend\libs\core\obj\Debug\net7.0\Fosol.Site.Core.dll
+D:\SourceCode\fosol\fosol.site\backend\libs\core\obj\Debug\net7.0\refint\Fosol.Site.Core.dll
+D:\SourceCode\fosol\fosol.site\backend\libs\core\obj\Debug\net7.0\Fosol.Site.Core.pdb
+D:\SourceCode\fosol\fosol.site\backend\libs\core\obj\Debug\net7.0\ref\Fosol.Site.Core.dll

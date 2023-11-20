@@ -1,0 +1,165 @@
+version: '3.5'
+
+services:
+  ####################### Database #######################
+  database:
+    image: hsb:database
+    restart: "no"
+    container_name: hsb-database
+    profiles:
+       - all
+       - main
+    build:
+      context: database
+    env_file:
+      - database/.env
+    ports:
+      - ${DATABASE_PORT:-30000}:5432
+    volumes:
+      - hsb-database:/var/lib/postgresql/data
+    networks:
+      - hsb
+
+  ####################### Keycloak #######################
+  keycloak:
+    image: hsb:keycloak
+    restart: "no"
+    container_name: hsb-keycloak
+    profiles:
+       - all
+       - secure
+    build:
+      context: ./keycloak
+    env_file:
+      - keycloak/.env
+    volumes:
+      - ./keycloak/config/realm-export.json:/tmp/realm-export.json
+    ports:
+      - ${KEYCLOAK_HTTP_PORT:-30001}:8080
+      - ${KEYCLOAK_HTTPS_PORT:-30002}:443
+    depends_on:
+      - database
+    networks:
+      - hsb
+    healthcheck:
+      test: curl -s -f http://localhost:8080/auth/realms/hsb || exit 1
+      interval: 5m
+      timeout: 15s
+      retries: 3
+      start_period: 1m
+
+  ####################### CSS API #######################
+  css:
+    image: hsb:css
+    restart: "no"
+    container_name: hsb-css
+    profiles:
+       - all
+       - main
+    build:
+      context: ./
+      dockerfile: src/api-css/Dockerfile
+    env_file: src/api-css/.env
+    ports:
+      - ${CSS_API_HTTP_PORT:-30003}:8080
+      - ${CSS_API_HTTPS_PORT:-30004}:443
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    depends_on:
+      - database
+      # - keycloak
+    networks:
+      - hsb
+
+  ####################### API #######################
+  api:
+    image: hsb:api
+    restart: "no"
+    container_name: hsb-api
+    profiles:
+       - all
+       - main
+    build:
+      context: ./
+      dockerfile: src/api/Dockerfile
+    env_file: src/api/.env
+    ports:
+      - ${API_HTTP_PORT:-30005}:8080
+      - ${API_HTTPS_PORT:-30006}:443
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    depends_on:
+      - database
+      # - keycloak
+    networks:
+      - hsb
+    # healthcheck:
+    #   test: curl -s -f http://localhost:8080/health
+    #   interval: 5m
+    #   timeout: 30s
+    #   retries: 3
+    #   start_period: 2m
+
+  ####################### App #######################
+  app:
+    image: hsb:app
+    stdin_open: true
+    tty: true
+    restart: "no"
+    container_name: hsb-app
+    profiles:
+       - all
+       - main
+    build:
+      context: src/dashboard
+      dockerfile: Dockerfile
+    env_file: src/dashboard/.env
+    ports:
+      - ${APP_HTTP_PORT:-30007}:3000
+      - ${APP_HTTPS_PORT:-30008}:3443
+    volumes:
+      - ./src/dashboard/src:/usr/dashboard/src
+      - ./src/dashboard/public:/usr/dashboard/public
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    depends_on:
+      - api
+    networks:
+      - hsb
+
+  ####################### Nginx #######################
+  nginx:
+    image: hsb:nginx
+    restart: "no"
+    container_name: hsb-nginx
+    profiles:
+       - all
+       - main
+    build:
+      context: nginx
+    env_file:
+      - nginx/.env
+    ports:
+      - ${NGINX_HTTP_PORT:-30080}:80
+      - ${NGINX_HTTPS_PORT:-30443}:443
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    depends_on:
+      - api
+      - app
+    networks:
+      - hsb
+
+####################### Volumes Definition #######################
+volumes:
+  hsb-database:
+    name: hsb-database
+  hsb-prometheus:
+    name: hsb-prometheus
+  hsb-grafana:
+    name: hsb-grafana
+
+####################### Networks Definition #######################
+networks:
+  hsb:
+    driver: bridge

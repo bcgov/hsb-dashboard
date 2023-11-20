@@ -1,0 +1,76 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace HSB.Core.Extensions;
+
+/// <summary>
+/// EnumExtensions static class, provides extension methods for enum values.
+/// </summary>
+public static class EnumExtensions
+{
+    /// <summary>
+    /// Get the enum name value of the specified value.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static string? GetName<T>(this T value)
+    {
+        if (value == null) return null;
+
+        var enumType = typeof(T);
+        var memberInfos = enumType.GetMember(value.ToString() ?? "");
+        var enumValueMemberInfo = memberInfos.FirstOrDefault(m => m.DeclaringType == enumType) ?? throw new InvalidOperationException("Invalid enum type");
+        var attribute = (DisplayAttribute?)enumValueMemberInfo.GetCustomAttributes(typeof(DisplayAttribute), false).FirstOrDefault();
+        return attribute?.Name ?? value.ToString();
+    }
+
+    /// <summary>
+    /// Convert flagged enum into an array of int.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static int[] GetFlagValues<T>(this T value)
+        where T : Enum
+    {
+        return Enum.GetValues(typeof(T))
+            .Cast<T>()
+            .Where(v => value.HasFlag(v))
+            .Select(v => (int)(object)v)
+            .ToArray();
+    }
+
+    /// <summary>
+    /// Convert array of int into flagged enum.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static T ToFlagEnum<T>(this IEnumerable<int> value)
+        where T : Enum
+    {
+        return (T)(object)value.Aggregate(0, (c, n) => c |= n);
+    }
+
+    /// <summary>
+    /// Return a new enumerable by extracting all items that are null or empty or whitespace.
+    /// </summary>
+    /// <param name="items"></param>
+    /// <returns></returns>
+    public static IEnumerable<T> NotNullOrWhiteSpace<T>(this IEnumerable<T> items)
+    {
+        return items.Where(v => v != null && !String.IsNullOrWhiteSpace($"{v}"));
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <typeparam name="TEnum"></typeparam>
+    /// <param name="value"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public static TEnum TryParseEnum<TEnum>(this string value, TEnum defaultValue = default)
+         where TEnum : struct
+    {
+        return Enum.TryParse<TEnum>(value, out TEnum result) ? result : defaultValue;
+    }
+}

@@ -1,0 +1,14 @@
+**/sh.exe.stackdump
+bash.exe.stackdump
+*.env
+*.nkbak
+.vs
+*.orig
+*.param
+.scannerwork/
+.sonarqube/
+auth/keycloak/config/hsperfdata_jboss/
+auth/keycloak/config/*.log
+.DS_Store
+~
+
