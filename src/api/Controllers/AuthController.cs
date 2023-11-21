@@ -7,6 +7,8 @@ using Swashbuckle.AspNetCore.Annotations;
 using HSB.API.CSS;
 using HSB.API.Models.Auth;
 using HSB.DAL.Services;
+using HSB.Core.Models;
+using System.Net;
 
 namespace HSB.API.Controllers;
 
@@ -16,10 +18,9 @@ namespace HSB.API.Controllers;
 [Authorize]
 [ApiController]
 [ApiVersion("1.0")]
-[Route("api/v{version:apiVersion}/[controller]")]
-[Route("api/[controller]")]
 [Route("v{version:apiVersion}/[controller]")]
-[Route("[controller]")]
+[ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.Unauthorized)]
+[ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.Forbidden)]
 public class AuthController : ControllerBase
 {
     #region Variables

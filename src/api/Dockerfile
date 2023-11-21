@@ -1,4 +1,4 @@
-ARG BUILD_CONFIGURATION=Release
+ARG ASPNETCORE_ENVIRONMENT=Release
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 
 RUN apt-get update && apt-get -y upgrade
@@ -14,18 +14,18 @@ ENV PATH="$PATH:/root/.dotnet/tools"
 RUN dotnet tool install --global dotnet-ef --version 8.0.0
 
 WORKDIR /src/api
-COPY PoC/api/ .
-COPY PoC/libs/ /src/libs/
+COPY src/api/ .
+COPY src/libs/ /src/libs/
 
 RUN dotnet restore
-RUN dotnet publish "HSB.API.csproj" -c "$BUILD_CONFIGURATION" -o /app/publish
+RUN dotnet publish "HSB.API.csproj" -c "$ASPNETCORE_ENVIRONMENT" -o /app/publish
 
 # Runtime image
 FROM base AS final
 
 WORKDIR /app
 COPY --from=build /app/publish .
-COPY PoC/api/entrypoint.sh .
+COPY src/api/entrypoint.sh .
 RUN chmod +x /app/entrypoint.sh
 
 # USER appuser

@@ -1,3 +1,7 @@
+using System.Security.Claims;
+using HSB.DAL.Services;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,12 +22,14 @@ public static class ServiceCollectionExtensions
     /// Configure the default database.
     /// </summary>
     /// <param name="services"></param>
-    /// <param name="config"></param>
+    /// <param name="builder"></param>
     /// <param name="options"></param>
-    /// <param name="env"></param>
     /// <returns></returns>
-    public static IServiceCollection AddHSBContext(this IServiceCollection services, IConfiguration config, Action<DbContextOptionsBuilder>? options = null, IHostEnvironment? env = null)
+    public static IServiceCollection AddHSBContext(this IServiceCollection services, WebApplicationBuilder builder, Action<DbContextOptionsBuilder>? options = null)
     {
+        var config = builder.Configuration;
+        var env = builder.Environment;
+
         return services.AddDbContext<HSBContext>(opt =>
         {
             // Generate the database connection string.
@@ -49,6 +55,32 @@ public static class ServiceCollectionExtensions
 
             options?.Invoke(opt);
         });
+    }
+
+    /// <summary>
+    /// Add all required services to support DAL layer.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="builder"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static IServiceCollection AddHSBServices(this IServiceCollection services, WebApplicationBuilder builder, Action<DbContextOptionsBuilder>? options = null)
+    {
+        // Find all the configuration classes.
+        var assembly = typeof(BaseService).Assembly;
+        var type = typeof(IBaseService);
+        var tnoServiceTypes = assembly.GetTypes().Where(t => !t.IsAbstract && t.IsClass && t.GetInterfaces().Any(i => i.Name.Equals(type.Name)));
+        foreach (var serviceType in tnoServiceTypes)
+        {
+            var sInterface = serviceType.GetInterface($"I{serviceType.Name}") ?? throw new InvalidOperationException($"Service type '{serviceType.Name}' is missing its interface.");
+            services.AddScoped(sInterface, serviceType);
+        }
+
+        return services
+            .AddHSBContext(builder, options)
+            .AddHttpContextAccessor()
+            .AddTransient(s => s.GetService<IHttpContextAccessor>()?.HttpContext?.User ?? new ClaimsPrincipal());
     }
     #endregion
 }

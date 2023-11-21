@@ -1,12 +1,10 @@
-using System.Security.Claims;
 using System.Text.Json.Serialization;
-using HSB.API.Swagger;
+using HSB.API.Middleware;
 using HSB.Core.Extensions;
 using HSB.DAL.Extensions;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace HSB.API;
 
@@ -29,7 +27,10 @@ public class Program
         var env = builder.Environment;
 
         var jsonSerializerOptions = config.GetSerializerOptions();
-        builder.Services.AddControllers()
+        builder.Services.AddControllers(options =>
+        {
+            options.RespectBrowserAcceptHeader = true;
+        })
           .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.DefaultIgnoreCondition = jsonSerializerOptions.DefaultIgnoreCondition;
@@ -40,39 +41,24 @@ public class Program
                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 // options.JsonSerializerOptions.Converters.Add(new Int32ToStringJsonConverter());
             });
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+        builder.Services.AddOptions<KestrelServerOptions>().Bind(config.GetSection("Kestrel"));
+        builder.Services.AddOptions<FormOptions>().Bind(config.GetSection("Form"));
         builder.Services
-            .AddSerializerOptions(config)
-            .AddEndpointsApiExplorer()
-            .AddSwaggerGen()
-            .AddApiVersioning(options =>
-            {
-                options.DefaultApiVersion = new ApiVersion(1, 0);
-                options.AssumeDefaultVersionWhenUnspecified = true;
-                options.ReportApiVersions = true;
-                options.ApiVersionReader = ApiVersionReader.Combine(
-                new UrlSegmentApiVersionReader(),
-                new HeaderApiVersionReader("api-version"),
-                new MediaTypeApiVersionReader("api-version"));
-            })
-            .AddVersionedApiExplorer(setup =>
-            {
-                setup.GroupNameFormat = "'v'VVV";
-                setup.SubstituteApiVersionInUrl = true;
-            })
-            .ConfigureOptions<ConfigureSwaggerOptions>()
             .Configure<RouteOptions>(options => options.LowercaseUrls = true)
-            .AddHttpContextAccessor()
-            .AddTransient(s => s.GetService<IHttpContextAccessor>()?.HttpContext?.User ?? new ClaimsPrincipal())
             .Configure<ForwardedHeadersOptions>(options =>
               {
                   options.ForwardedHeaders = ForwardedHeaders.All;
-                  options.AllowedHosts = config.GetValue<string>("AllowedHosts")?.Split(';').ToList() ?? new List<string>();
+                  options.AllowedHosts = config.GetValue<string>("AllowedHosts")?.Split(';').ToList() ?? [];
               })
+            .AddSerializerOptions(config)
+            .AddOpenAPI(config)
+            .AddKeycloak(builder)
+            .AddHSBServices(builder)
             .AddCors(options =>
             {
-                var withOrigins = config.GetSection("Cors:WithOrigins").Value?.Split(" ") ?? Array.Empty<string>();
-                if (withOrigins.Any())
+                var withOrigins = config.GetSection("Cors:WithOrigins").Value?.Split(" ") ?? [];
+                if (withOrigins.Length != 0)
                 {
                     options.AddPolicy(
                     name: "allowedOrigins",
@@ -84,33 +70,29 @@ public class Program
                         .AllowAnyMethod(); ;
                     });
                 }
-            })
-            .AddHSBContext(config);
+            });
 
         var app = builder.Build();
 
-        app.UsePathBase(config.GetValue<string>("BaseUrl"));
-        app.UseForwardedHeaders();
-
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
-            var apiVersionDescriptionProvider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-            app.UseSwagger();
-            app.UseSwaggerUI(options =>
-            {
-                foreach (var description in apiVersionDescriptionProvider.ApiVersionDescriptions.Reverse())
-                {
-                    options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
-                  description.GroupName.ToUpperInvariant());
-                }
-            });
+            app.UseDeveloperExceptionPage();
         }
 
-        // app.UseHttpsRedirection();
-        app.UseCors("allowedOrigins");
-        app.UseStaticFiles();
+        app.UsePathBase(config.GetValue<string>("BaseUrl"));
+        app.UseOpenAPI();
+        app.UseForwardedHeaders();
 
+        app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+        app.UseMiddleware(typeof(ResponseTimeMiddleware));
+
+        // app.UseHttpsRedirection();
+        app.UseRouting();
+        app.UseCors("CorsPolicy");
+
+        app.UseMiddleware(typeof(LogRequestMiddleware));
+
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();

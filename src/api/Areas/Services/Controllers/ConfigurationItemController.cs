@@ -1,50 +1,62 @@
-using Microsoft.EntityFrameworkCore;
 using System.Net.Mime;
-using HSB.DAL;
 using HSB.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using HSB.Core.Models;
+using System.Net;
+using HSB.DAL.Services;
 
 namespace HSB.API.Areas.Services.Controllers;
 
+/// <summary>
+/// ConfigurationItemController class, provides endpoints for configuration items.
+/// </summary>
 [ApiController]
 [ApiVersion("1.0")]
 [Area("services")]
-[Route("v{version:apiVersion}/{area}/configuration-items")]
+[Route("v{version:apiVersion}/[area]/configuration-items")]
+[ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.Unauthorized)]
+[ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.Forbidden)]
 public class ConfigurationItemController : ControllerBase
 {
     #region Variables
     private readonly ILogger _logger;
-    private readonly HSBContext _context;
+    private readonly IConfigurationItemService _service;
     #endregion
 
     #region Constructors
-    public ConfigurationItemController(HSBContext context, ILogger<ConfigurationItemController> logger)
+    /// <summary>
+    /// Creates a new instance of a ConfigurationItemController object.
+    /// </summary>
+    /// <param name="service"></param>
+    /// <param name="logger"></param>
+    public ConfigurationItemController(IConfigurationItemService service, ILogger<ConfigurationItemController> logger)
     {
-        _context = context;
+        _service = service;
         _logger = logger;
     }
     #endregion
 
     #region Endpoints
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
     [HttpGet(Name = "GetConfigurationItems")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<ConfigurationItemModel>), 200)]
     [SwaggerOperation(Tags = ["Configuration Item"])]
     public IActionResult Get()
     {
-        var configurationItems = _context.ConfigurationItems
-            .AsNoTracking()
-            .Include(ci => ci.Organization)
-                .ThenInclude(o => o!.Parent)
-                    .ThenInclude(o => o!.Parent)
-            .Include(ci => ci.FileSystemItems)
-            .Include(ci => ci.ServerItems)
-                .ThenInclude(si => si.OperatingSystemItem)
-            .ToArray();
+        var configurationItems = _service.Find(ci => true);
         return new JsonResult(configurationItems.Select(ci => new ConfigurationItemModel(ci)));
     }
 
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
     [HttpPost(Name = "AddConfigurationItems")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(ConfigurationItemModel), 201)]
@@ -52,8 +64,8 @@ public class ConfigurationItemController : ControllerBase
     public IActionResult Add(ConfigurationItemModel model)
     {
         var entity = model.ToEntity();
-        _context.Add(entity);
-        _context.SaveChanges();
+        _service.Add(entity);
+        _service.CommitTransaction();
         return new JsonResult(new ConfigurationItemModel(entity));
     }
     #endregion

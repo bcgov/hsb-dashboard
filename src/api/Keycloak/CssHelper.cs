@@ -1,9 +1,9 @@
 using System.Security.Claims;
 using HSB.Core.Exceptions;
 using HSB.Core.Extensions;
-using BCGov.CSS;
-using BCGov.CSS.Models;
-using BCGov.CSS.Extensions;
+using HSB.CSS;
+using HSB.CSS.Models;
+using HSB.CSS.Extensions;
 using HSB.DAL.Services;
 
 namespace HSB.API.CSS;
@@ -89,7 +89,7 @@ public class CssHelper : ICssHelper
     /// <param name="cssUser"></param>
     /// <returns></returns>
     /// <exception cref="ConfigurationException"></exception>
-    private async Task AddOrUpdateUserAsync(string username, Entities.User? user, BCGov.CSS.Models.UserModel cssUser)
+    private async Task AddOrUpdateUserAsync(string username, Entities.User? user, HSB.CSS.Models.UserModel cssUser)
     {
         var key = Guid.Parse(cssUser.Username);
         user ??= new Entities.User(username, cssUser.Email ?? "", key);
@@ -117,7 +117,7 @@ public class CssHelper : ICssHelper
 
     /// <summary>
     /// Activate the user with TNO and CSS.
-    /// If the user doesn't currently exist in TNO, activate a new user by adding them to TNO.
+    /// If the user doesn't currently exist in TNO, activate a new user by adding them to HSB.
     /// If the user exists in TNO, activate user by linking to CSS and updating CSS.
     /// </summary>
     /// <param name="principal"></param>

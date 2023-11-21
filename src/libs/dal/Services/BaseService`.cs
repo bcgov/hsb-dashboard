@@ -1,5 +1,6 @@
 
 
+using System.Data.Entity;
 using System.Security.Claims;
 using Microsoft.Extensions.Logging;
 
@@ -24,6 +25,36 @@ public abstract class BaseService<TEntity> : BaseService, IBaseService<TEntity>
     public TEntity? FindForId(params object?[]? keyValues)
     {
         return this.Context.Find<TEntity>(keyValues);
+    }
+
+    /// <summary>
+    /// Find the entity for the specified predicate filter.
+    /// </summary>
+    /// <param name="predicate"></param>
+    /// <param name="sort"></param>
+    /// <param name="take"></param>
+    /// <param name="skip"></param>
+    /// <returns></returns>
+    public IEnumerable<TEntity> Find(
+        System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate,
+        System.Linq.Expressions.Expression<Func<TEntity, bool>>? sort = null,
+        int? take = null,
+        int? skip = null)
+    {
+        var query = this.Context
+            .Set<TEntity>()
+            .AsNoTracking()
+            .Where(predicate);
+
+        if (sort != null)
+            query = query.OrderBy(sort);
+        if (take.HasValue)
+            query = query.Take(take.Value);
+        if (skip.HasValue)
+            query = query.Skip(skip.Value);
+
+        return query
+            .ToArray();
     }
 
     /// <summary>
