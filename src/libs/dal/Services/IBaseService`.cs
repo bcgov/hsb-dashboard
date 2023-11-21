@@ -11,6 +11,20 @@ public interface IBaseService<TEntity> : IBaseService
     TEntity? FindForId(params object?[]? keyValues);
 
     /// <summary>
+    /// Find the entity for the specified predicate filter.
+    /// </summary>
+    /// <param name="predicate"></param>
+    /// <param name="sort"></param>
+    /// <param name="take"></param>
+    /// <param name="skip"></param>
+    /// <returns></returns>
+    IEnumerable<TEntity> Find(
+        System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate,
+        System.Linq.Expressions.Expression<Func<TEntity, bool>>? sort = null,
+        int? take = null,
+        int? skip = null);
+
+    /// <summary>
     /// Add the specified 'entity' to the context..
     /// </summary>
     /// <param name="entity"></param>

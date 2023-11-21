@@ -33,3 +33,4 @@ D:\SourceCode\fosol\bcgov\hsb-dashboard\src\libs\models\obj\Debug\net8.0\HSB.Mod
 D:\SourceCode\fosol\bcgov\hsb-dashboard\src\libs\models\obj\Debug\net8.0\refint\HSB.Models.dll
 D:\SourceCode\fosol\bcgov\hsb-dashboard\src\libs\models\obj\Debug\net8.0\HSB.Models.pdb
 D:\SourceCode\fosol\bcgov\hsb-dashboard\src\libs\models\obj\Debug\net8.0\ref\HSB.Models.dll
+D:\SourceCode\fosol\bcgov\hsb-dashboard\src\libs\models\obj\Debug\net8.0\HSB.Models.sourcelink.json

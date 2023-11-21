@@ -29,3 +29,4 @@ D:\SourceCode\fosol\bcgov\hsb-dashboard\src\libs\entities\obj\Debug\net8.0\HSB.E
 D:\SourceCode\fosol\bcgov\hsb-dashboard\src\libs\entities\obj\Debug\net8.0\refint\HSB.Entities.dll
 D:\SourceCode\fosol\bcgov\hsb-dashboard\src\libs\entities\obj\Debug\net8.0\HSB.Entities.pdb
 D:\SourceCode\fosol\bcgov\hsb-dashboard\src\libs\entities\obj\Debug\net8.0\ref\HSB.Entities.dll
+D:\SourceCode\fosol\bcgov\hsb-dashboard\src\libs\entities\obj\Debug\net8.0\HSB.Entities.sourcelink.json
