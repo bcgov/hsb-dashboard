@@ -11,6 +11,7 @@ gen_env () {
     if [ -f "src/api/.env" ]; then rm src/api/.env; fi
     if [ -f "src/libs/dal/.env" ]; then rm src/libs/dal/.env; fi
     if [ -f "src/dashboard/.env" ]; then rm src/dashboard/.env; fi
+    if [ -f "src/nginx/.env" ]; then rm src/nginx/.env; fi
     if [ -f "keycloak/.env" ]; then rm keycloak/.env; fi
   fi
 
@@ -23,7 +24,6 @@ gen_env () {
   gen_dal_env ${1-}
   gen_app_env ${1-}
   gen_nginx_env ${1-}
-  gen_grafana_env ${1-}
 }
 
 gen_root_env () {
@@ -149,19 +149,12 @@ SALT_LENGTH=$saltLength" >> ./src/libs/dal/.env
 }
 
 gen_app_env () {
-  if test -f "./src/dashboard/next/.env"; then
-    echo "./src/dashboard/next/.env exists"
+  if test -f "./src/dashboard/.env"; then
+    echo "./src/dashboard/.env exists"
   else
     echo \
-"" >> ./src/dashboard/next/.env
-    echo "./src/dashboard/next/.env created"
-  fi
-  if test -f "./src/dashboard/vite/.env"; then
-    echo "./src/dashboard/vite/.env exists"
-  else
-    echo \
-"" >> ./src/dashboard/vite/.env
-    echo "./src/dashboard/vite/.env created"
+"" >> ./src/dashboard/.env
+    echo "./src/dashboard/.env created"
   fi
 }
 
