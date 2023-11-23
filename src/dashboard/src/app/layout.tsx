@@ -1,3 +1,5 @@
+import { AuthState } from '@/components/auth';
+import { SessionProviderWrapper } from '@/components/keycloak';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -9,13 +11,22 @@ export const metadata: Metadata = {
   description: 'Visualize their storage allocation and consumption',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-      </head>
-      <body className={inter.className}>{children}</body>
+      <SessionProviderWrapper>
+        <head>
+          <link rel="icon" href="/favicon.ico" sizes="any" />
+        </head>
+        <body className={inter.className}>
+          <header>
+            Hosting Storage Dashboard
+            <AuthState />
+          </header>
+          {children}
+          <footer>footer</footer>
+        </body>
+      </SessionProviderWrapper>
     </html>
   );
 }

@@ -1,5 +1,4 @@
-﻿using System.Data.Entity.ModelConfiguration.Conventions;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using HSB.Core.Extensions;
 using HSB.DAL.Configuration;
@@ -83,7 +82,7 @@ public class HSBContext : DbContext
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         base.ConfigureConventions(configurationBuilder);
-        configurationBuilder.Conventions.Remove(typeof(PluralizingTableNameConvention));
+        // configurationBuilder.Conventions.Remove(typeof(PluralizingTableNameConvention));
     }
 
     /// <summary>
@@ -93,6 +92,7 @@ public class HSBContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyAllConfigurations(typeof(AuditableConfiguration<>), this);
+        modelBuilder.RemovePluralizingTableNameConvention();
     }
 
     /// <summary>

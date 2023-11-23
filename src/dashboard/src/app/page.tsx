@@ -1,7 +1,12 @@
-export default function Home() {
+import Link from 'next/link';
+
+export default function Page() {
   return (
     <main>
-      <div>Hosting Storage Dashboard</div>
+      <div>
+        <Link href="/login">Login Page</Link>
+      </div>
+      <div>Welcome Home</div>
     </main>
   );
 }

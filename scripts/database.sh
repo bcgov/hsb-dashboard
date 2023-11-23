@@ -1,8 +1,11 @@
 #!/bin/bash
 
+# Change directory to the DAL, or back to root
 change-dir () {
   if [[ ! "$(pwd)" =~ .*"src/libs/dal" ]]; then
     cd src/libs/dal
+  else
+    cd ../../../
   fi
 }
 
@@ -14,6 +17,7 @@ tool-update () {
 db-migrations () {
   change-dir
   dotnet ef migrations list
+  change-dir
 }
 
 db-add () {
@@ -26,6 +30,7 @@ db-add () {
   dotnet ef migrations add $1
   code -r ./Migrations/*_$1.cs
   bash ../../scripts/db-migration.sh $1
+  change-dir
 }
 
 # Update the database with the latest migration (n=name of migration).
@@ -33,6 +38,7 @@ db-update () {
   echo "Update the database to the specified migration '${1-"latest"}'"
   change-dir
   dotnet ef database update ${1-} --verbose
+  change-dir
 }
 
 db-rollback () {
@@ -48,12 +54,14 @@ db-remove () {
   echo "Delete the last migration files"
   change-dir
 	dotnet ef migrations remove --force;
+  change-dir
 }
 
 db-drop () {
   echo "Drop the database"
   change-dir
   dotnet ef database drop --force;
+  change-dir
 }
 
 db-refresh () {
