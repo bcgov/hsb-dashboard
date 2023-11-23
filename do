@@ -17,7 +17,7 @@ elif [ "$action" = "setup" ]; then
 elif [ "$action" = "init" ]; then
   gen_env ${2-}
   docker_up database
-  db-update
+  db-migration
   docker_up
 
 # Docker
@@ -41,6 +41,8 @@ elif [ "$action" = "ssh" ]; then
 # Database
 elif [ "$action" = "tool-update" ]; then
   tool-update $s
+elif [ "$action" = "db-migration" ]; then
+  db-migration $s
 elif [ "$action" = "db-migrations" ]; then
   db-migrations $s
 elif [ "$action" = "db-add" ]; then
@@ -64,7 +66,6 @@ elif [ "$action" = "db-connect" ]; then
 
 # Other
 elif [ "$action" = "go" ]; then
-echo $OSTYPE
   if [[ "$OSTYPE" == "darwin"* ]]; then # Macos
     open http://localhost:30080
   elif [[ "$OSTYPE" == "win32" ]] || [[ "$OSTYPE" == "msys" ]]; then # Windows

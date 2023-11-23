@@ -4,9 +4,9 @@ export default function Page() {
   return (
     <main>
       <div>
-        <Link href="/login">Login Page</Link>
+        <Link href="/login">Go to Login Page</Link>
       </div>
-      <div>Welcome Home</div>
+      <div>Welcome Home Page</div>
     </main>
   );
 }

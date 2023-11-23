@@ -1,0 +1,57 @@
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: api
+  namespace: default
+  labels:
+    name: api
+    part-of: hsb
+    version: 1.0.0
+    component: api
+    managed-by: kustomize
+    created-by: jeremy.foster
+  annotations:
+    description: Route for api.
+spec:
+  host: hsb-api-dev.apps.emerald.devops.gov.bc.ca
+  path: ""
+  port:
+    targetPort: 8080-tcp
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+    # caCertificate: ""
+    # certificate: ""
+    # key: ""
+  to:
+    kind: Service
+    name: api
+    weight: 100
+# ---
+# kind: Route
+# apiVersion: route.openshift.io/v1
+# metadata:
+#   name: api-tls
+#   namespace: default
+#   labels:
+#     name: api-tls
+#     part-of: hsb
+#     version: 1.0.0
+#     component: api
+#     managed-by: kustomize
+#     created-by: jeremy.foster
+# spec:
+#   host: api.hsb.gov.bc.ca
+#   port:
+#     targetPort: 8080-tcp
+#   tls:
+#     insecureEdgeTerminationPolicy: Redirect
+#     termination: edge
+#     # caCertificate: ""
+#     # certificate: ""
+#     # key: ""
+#   to:
+#     kind: Service
+#     name: api
+#     weight: 100

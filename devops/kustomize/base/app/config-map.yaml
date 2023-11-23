@@ -1,0 +1,16 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: dashboard
+  namespace: default
+  annotations:
+    description: Dashboard application configuration
+  labels:
+    name: dashboard
+    part-of: tno
+    version: 1.0.0
+    component: app
+    managed-by: kustomize
+    created-by: jeremy.foster
+data:
+  NEXTAUTH_URL: https://hsb-dev.apps.emerald.devops.gov.bc.ca

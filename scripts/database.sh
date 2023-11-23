@@ -14,6 +14,21 @@ tool-update () {
 	dotnet tool update --global $package
 }
 
+db-migration () {
+  cd src/libs
+  if [[ "$(docker inspect hsb:db-migration > /dev/null 2>&1 && echo 'yes' || echo 'no')" == "yes" ]]; then
+    docker image rm hsb:db-migration -f
+  fi
+  if [[ "$(docker inspect hsb-db-migration > /dev/null 2>&1 && echo 'yes' || echo 'no')" == "yes" ]]; then
+    docker rm hsb-db-migration -f
+  fi
+  docker build -t hsb:db-migration . --no-cache --force-rm
+  docker run -i --env-file=dal/.env --name hsb-db-migration hsb:db-migration
+  docker rm hsb-db-migration -f
+  docker image rm hsb:db-migration -f
+  cd ../../
+}
+
 db-migrations () {
   change-dir
   dotnet ef migrations list

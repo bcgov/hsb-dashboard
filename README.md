@@ -25,12 +25,12 @@ Execute the following command to initialize your local environment and start the
 ```bash
 # Start the database and run the migration.
 # Spin up all other required containers.
-./do init
+bash do init
 ```
 
 The default configuration will initialize the database and run the web application.
 
 ```bash
 # Open the web application in your default browser
-./do go
+bash do go
 ```
