@@ -1,7 +1,7 @@
 
 
-using System.Data.Entity;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace HSB.DAL.Services;

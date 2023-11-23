@@ -2,6 +2,7 @@ namespace HSB.Core.Extensions;
 
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 /// <summary>
 /// ModelBuilderExtensions static class, provides extension methods for ModelBuilder objects.
@@ -18,7 +19,7 @@ public static class ModelBuilderExtensions
     /// <returns></returns>
     public static ModelBuilder ApplyAllConfigurations(this ModelBuilder modelBuilder, Type type, DbContext context)
     {
-        if (type == null) throw new ArgumentNullException(nameof(type));
+        ArgumentNullException.ThrowIfNull(type);
         return modelBuilder.ApplyAllConfigurations(type.Assembly, context);
     }
 
@@ -31,7 +32,7 @@ public static class ModelBuilderExtensions
     /// <returns></returns>
     public static ModelBuilder ApplyAllConfigurations(this ModelBuilder modelBuilder, Assembly assembly, DbContext context)
     {
-        if (assembly == null) throw new ArgumentNullException(nameof(assembly));
+        ArgumentNullException.ThrowIfNull(assembly);
 
         // Find all the configuration classes.
         var type = typeof(IEntityTypeConfiguration<>);
@@ -52,6 +53,21 @@ public static class ModelBuilderExtensions
         }
 
         return modelBuilder;
+    }
+
+    /// <summary>
+    /// Remove pluralizing table name convention.
+    /// </summary>
+    /// <param name="modelBuilder"></param>
+    public static void RemovePluralizingTableNameConvention(this ModelBuilder modelBuilder)
+    {
+        foreach (IMutableEntityType entity in modelBuilder.Model.GetEntityTypes())
+        {
+            if (entity.BaseType == null)
+            {
+                entity.SetTableName(entity.DisplayName());
+            }
+        }
     }
     #endregion
 }

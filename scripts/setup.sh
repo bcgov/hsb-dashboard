@@ -5,14 +5,14 @@ gen_env () {
 
   if [ "$action" = "refresh" ]; then
     echo "Deleting environment files"
-    if [ -f ".env" ]; then rm .env; fi
-    if [ -f "database/.env" ]; then rm database/.env; fi
-    if [ -f "src/api-css/.env" ]; then rm src/api-css/.env; fi
-    if [ -f "src/api/.env" ]; then rm src/api/.env; fi
-    if [ -f "src/libs/dal/.env" ]; then rm src/libs/dal/.env; fi
-    if [ -f "src/dashboard/.env" ]; then rm src/dashboard/.env; fi
-    if [ -f "src/nginx/.env" ]; then rm src/nginx/.env; fi
-    if [ -f "keycloak/.env" ]; then rm keycloak/.env; fi
+    if [ -f ".env" ]; then mv .env .bak.env 2>/dev/null; true; fi
+    if [ -f "database/.env" ]; then mv database/.env database/.bak.env 2>/dev/null; true; fi
+    if [ -f "keycloak/.env" ]; then mv keycloak/.env keycloak/.bak.env 2>/dev/null; true; fi
+    if [ -f "src/api-css/.env" ]; then mv src/api-css/.env src/api-css/.bak.env 2>/dev/null; true; fi
+    if [ -f "src/api/.env" ]; then mv src/api/.env src/api/.bak.env 2>/dev/null; true; fi
+    if [ -f "src/libs/dal/.env" ]; then mv src/libs/dal/.env src/libs/dal/.bak.env 2>/dev/null; true; fi
+    if [ -f "src/dashboard/.env" ]; then mv src/dashboard/.env src/dashboard/.bak.env 2>/dev/null; true; fi
+    if [ -f "nginx/.env" ]; then mv nginx/.env nginx/.bak.env 2>/dev/null; true; fi
   fi
 
   echo "Generating environment files"
@@ -31,13 +31,13 @@ gen_root_env () {
     echo "./.env exists"
   else
     echo \
-"DB_PORT=$portDb
+"DB_PORT=$dbPort
 
 KEYCLOAK_HTTP_PORT=$portKeycloakHttp
 KEYCLOAK_HTTPS_PORT=$portKeycloakHttps
 
-CSS_API_HTTP_PORT=$portCssApiHttp
-CSS_API_HTTPS_PORT=$portCssApiHttps
+CSS_HTTP_PORT=$portCssApiHttp
+CSS_HTTPS_PORT=$portCssApiHttps
 
 API_HTTP_PORT=$portApiHttp
 API_HTTPS_PORT=$portApiHttps
@@ -113,22 +113,20 @@ ASPNETCORE_ENVIRONMENT=Development
 ASPNETCORE_URLS=http://+:8080
 
 # Database
-ConnectionStrings__Default=Host=$dockerHost:$portDb;Include Error Detail=true;Log Parameters=true;
+ConnectionStrings__Default=Host=$dockerHost:$dbPort;Include Error Detail=true;Log Parameters=true;
 DB_NAME=$dbName
 DB_USER=$dbUser
 DB_PASSWORD=$dbPassword
 
 # Authentication
-Authentication__Issuer=http://localhost:$portAppHttp/
-Authentication__Audience=http://localhost:$portAppHttp/
-Authentication__PrivateKey=$privateKey
-Authentication__SaltLength=$saltLength
-Authentication__AccessTokenExpiresIn=00:05:00
-Authentication__RefreshTokenExpiresIn=01:00:00
-
-# Mail
-Mail__FromEmail=
-Mail__Password=" >> ./src/api/.env
+Keycloak__Authority=http://$dockerHost:$portKeycloakHttp/auth/realms/hsb
+Keycloak__Audience=hsb-app,hsb-service-account
+Keycloak__Issuer=hsb-app,hsb-service-account
+CSS__ApiUrl=http://$dockerHost:$portCssApiHttp/api
+CSS__Authority=http://$dockerHost:$portCssApiHttp
+CSS__TokenPath=/api/v1/token
+CSS__ClientId={GET FROM CSS}
+CSS__Secret={GET FROM CSS}" >> ./src/api/.env
     echo "./src/api/.env created"
   fi
 }
@@ -138,12 +136,9 @@ gen_dal_env () {
     echo "./src/libs/dal/.env exists"
   else
     echo \
-"ConnectionStrings__Default=Host=$dockerHost:$portDb;Database=$dbName;Include Error Detail=true;Log Parameters=true;
+"ConnectionStrings__Default=Host=$dockerHost:$dbPort;Database=$dbName;Include Error Detail=true;Log Parameters=true;
 POSTGRES_USER=$dbUser
-POSTGRES_PASSWORD=$dbPassword
-
-DEFAULT_PASSWORD=$defaultPassword
-SALT_LENGTH=$saltLength" >> ./src/libs/dal/.env
+POSTGRES_PASSWORD=$dbPassword" >> ./src/libs/dal/.env
     echo "./src/libs/dal/.env created"
   fi
 }
@@ -153,7 +148,15 @@ gen_app_env () {
     echo "./src/dashboard/.env exists"
   else
     echo \
-"" >> ./src/dashboard/.env
+"KEYCLOAK_DEBUG=true
+KEYCLOAK_CLIENT_ID=hsb-app
+KEYCLOAK_SECRET={GET FROM KEYCLOAK}
+KEYCLOAK_ISSUER=http://host.docker.internal:$portKeycloakHttp/auth/realms/hsb
+KEYCLOAK_END_SESSION_PATH=/protocol/openid-connect/logout
+
+NEXTAUTH_URL=http://localhost:$portAppHttp
+NEXTAUTH_SECRET=$privateKey
+" >> ./src/dashboard/.env
     echo "./src/dashboard/.env created"
   fi
 }

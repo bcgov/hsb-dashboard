@@ -26,6 +26,13 @@ then
     export dbPassword
 fi
 
+export dbPort=$("$GREP" -Po 'DB_PORT=\K.*$' ./.env 2>/dev/null)
+if [ -z "$dbPort" ]
+then
+    dbPort=30000
+    export dbPort
+fi
+
 export keycloakUser=$("$GREP" -Po 'KEYCLOAK_USER=\K.*$' ./keycloak/.env 2>/dev/null)
 if [[ ! -z "$1" && -z "$keycloakUser" ]]
 then
@@ -42,32 +49,16 @@ then
     export keycloakPassword
 fi
 
-export defaultPassword=$("$GREP" -Po 'DEFAULT_PASSWORD=\K.*$' ./src/libs/dal/.env 2>/dev/null)
-if [[ ! -z "$1" &&-z "$defaultPassword" ]]
-then
-    echo 'Enter a default password for initial users.'
-    read -p 'Password: ' defaultPassword
-    export defaultPassword
-fi
-
-export privateKey=$("$GREP" -Po 'Authentication__PrivateKey=\K.*$' ./src/api/.env 2>/dev/null)
+export privateKey=$("$GREP" -Po 'NEXTAUTH_SECRET=\K.*$' ./src/dashboard/.env 2>/dev/null)
 if [ -z "$privateKey" ]
 then
     privateKey=$(date +%s | sha256sum | base64 | head -c 32)
     export privateKey
 fi
-saltLength=50
-export saltLength
 
 #######################################################
 # Docker Environment Variables
 #######################################################
-export portDb=$("$GREP" -Po 'DB_PORT=\K.*$' ./.env 2>/dev/null)
-if [ -z "$portDb" ]
-then
-    portDb=30000
-    export portDb
-fi
 
 export portKeycloakHttp=$("$GREP" -Po 'KEYCLOAK_HTTP_PORT=\K.*$' ./.env 2>/dev/null)
 if [ -z "$portKeycloakHttp" ]
@@ -82,13 +73,13 @@ then
     export portApiHttps
 fi
 
-export portCssApiHttp=$("$GREP" -Po 'CSS_API_HTTP_PORT=\K.*$' ./.env 2>/dev/null)
+export portCssApiHttp=$("$GREP" -Po 'CSS_HTTP_PORT=\K.*$' ./.env 2>/dev/null)
 if [ -z "$portCssApiHttp" ]
 then
     portCssApiHttp=30003
     export portCssApiHttp
 fi
-export portCssApiHttps=$("$GREP" -Po 'CSS_API_HTTPS_PORT=\K.*$' ./.env 2>/dev/null)
+export portCssApiHttps=$("$GREP" -Po 'CSS_HTTPS_PORT=\K.*$' ./.env 2>/dev/null)
 if [ -z "$portCssApiHttps" ]
 then
     portCssApiHttps=30004
@@ -111,38 +102,25 @@ fi
 export portAppHttp=$("$GREP" -Po 'APP_HTTP_PORT=\K.*$' ./.env 2>/dev/null)
 if [ -z "$portAppHttp" ]
 then
-    portAppHttp=30007
+    portAppHttp=30080
     export portAppHttp
 fi
 export portAppHttps=$("$GREP" -Po 'APP_HTTPS_PORT=\K.*$' ./.env 2>/dev/null)
 if [ -z "$portAppHttps" ]
 then
-    portAppHttps=30008
+    portAppHttps=30443
     export portAppHttps
 fi
 
 export portNginxHttp=$("$GREP" -Po 'NGINX_HTTP_PORT=\K.*$' ./.env 2>/dev/null)
 if [ -z "$portNginxHttp" ]
 then
-    portNginxHttp=30080
+    portNginxHttp=30007
     export portNginxHttp
 fi
 export portNginxHttps=$("$GREP" -Po 'NGINX_HTTPS_PORT=\K.*$' ./.env 2>/dev/null)
 if [ -z "$portNginxHttps" ]
 then
-    portNginxHttps=30443
+    portNginxHttps=30008
     export portNginxHttps
-fi
-
-export portPrometheus=$("$GREP" -Po 'PROMETHEUS_PORT=\K.*$' ./.env 2>/dev/null)
-if [ -z "$portPrometheus" ]
-then
-    portPrometheus=30107
-    export portPrometheus
-fi
-export portGrafana=$("$GREP" -Po 'GRAFANA_PORT=\K.*$' ./.env 2>/dev/null)
-if [ -z "$portGrafana" ]
-then
-    portGrafana=30108
-    export portGrafana
 fi

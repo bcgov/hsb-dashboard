@@ -14,6 +14,11 @@ if [ "$action" = "help" ]; then
   do_help
 elif [ "$action" = "setup" ]; then
   gen_env ${2-}
+elif [ "$action" = "init" ]; then
+  gen_env ${2-}
+  docker_up database
+  db-update
+  docker_up
 
 # Docker
 elif [ "$action" = "up" ]; then
@@ -26,6 +31,10 @@ elif [ "$action" = "down" ]; then
   docker_down
 elif [ "$action" = "refresh" ]; then
   docker_refresh $s
+elif [ "$action" = "remove" ]; then
+  docker_remove $s
+elif [ "$action" = "nuke" ]; then
+  docker_nuke
 elif [ "$action" = "ssh" ]; then
   docker exec -it "hsb-$2" sh
 
@@ -55,7 +64,14 @@ elif [ "$action" = "db-connect" ]; then
 
 # Other
 elif [ "$action" = "go" ]; then
-  start firefox --new-tab --url http://localhost:30001
+echo $OSTYPE
+  if [[ "$OSTYPE" == "darwin"* ]]; then # Macos
+    open http://localhost:30080
+  elif [[ "$OSTYPE" == "win32" ]] || [[ "$OSTYPE" == "msys" ]]; then # Windows
+    start http://localhost:30080
+  else
+    xdg-open http://localhost:30080
+  fi
 else
   echo "Invalid action '$action', refer to help."
 fi

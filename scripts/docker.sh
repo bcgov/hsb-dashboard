@@ -2,48 +2,45 @@
 
 # Run the specified docker service, or the profile, or all of them.
 docker_up () {
-  echo "docker up $s"
-  if [ ! -z "$p" ] && [ ! -z "$s" ]; then
-    docker-compose\
-      -f docker-compose.yaml\
-      --profile $p\
-      up -d $s
-  else
-    docker-compose\
-      -f docker-compose.yaml\
-      --profile all\
-      up -d $s
-  fi
+  profile="${p:-main}"
+  echo "docker -p $profile up $s"
+  docker-compose\
+    -f docker-compose.yaml\
+    --profile $profile\
+    up -d $s
 }
 
 # Build the specified docker service, or all of them.
 docker_build () {
-  echo "docker build $s"
+  profile="${p:-all}"
+  echo "docker -p $profile build $s"
   docker-compose\
     -f docker-compose.yaml\
-    --profile all\
+    --profile $profile\
     build --no-cache --force-rm $s
 }
 
 # Stop the specified docker service, or all of them.
 docker_stop () {
-  echo "docker stop $s"
+  profile="${p:-all}"
+  echo "docker -p $profile stop $s"
   docker-compose\
     -f docker-compose.yaml\
-    --profile all\
+    --profile $profile\
     stop $s
 }
 
 # Stop and remove the specified docker service, or all of them.
 docker_down () {
-  echo "docker down $s"
+  profile="${p:-all}"
+  echo "docker -p $profile down $s"
   docker-compose\
     -f docker-compose.yaml\
-    --profile all\
+    --profile $profile\
     down $s
 }
 
-# Remove all the docker services and images.
+# Remove the specified docker services and images.
 docker_remove () {
   echo "Removing container hsb-$1"
   docker rm -f hsb-$1
@@ -56,8 +53,18 @@ docker_refresh () {
     echo "$0: The service name is required"
     exit 4
   fi
-  docker_stop
+  docker_stop $1
   docker_remove $1
-  docker_build
-  docker_up
+  docker_build $1
+  docker_up $1
+}
+
+# Nuke the environment
+docker_nuke () {
+  profile="${p:-all}"
+  docker-compose \
+    -f docker-compose.yaml\
+    --profile $profile\
+    down -v
+  docker-compose rm -f -v
 }
