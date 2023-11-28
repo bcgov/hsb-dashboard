@@ -14,7 +14,7 @@ metadata:
   annotations:
     description: Route for dashboard application.
 spec:
-  host: hsb-dev.apps.emerald.devops.gov.bc.ca
+  host: dev-hsb.apps.emerald.devops.gov.bc.ca
   path: ""
   port:
     targetPort: 8080-tcp

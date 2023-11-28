@@ -13,4 +13,4 @@ metadata:
     managed-by: kustomize
     created-by: jeremy.foster
 data:
-  NEXTAUTH_URL: https://hsb-dev.apps.emerald.devops.gov.bc.ca
+  NEXTAUTH_URL: https://dev-hsb.apps.emerald.devops.gov.bc.ca/

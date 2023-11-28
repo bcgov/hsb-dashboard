@@ -14,7 +14,7 @@ metadata:
   annotations:
     description: Route for api.
 spec:
-  host: hsb-api-dev.apps.emerald.devops.gov.bc.ca
+  host: dev-api-hsb.apps.emerald.devops.gov.bc.ca
   path: ""
   port:
     targetPort: 8080-tcp
