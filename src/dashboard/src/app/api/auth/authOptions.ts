@@ -5,7 +5,7 @@ import { JWT } from 'next-auth/jwt';
 import KeycloakProvider from 'next-auth/providers/keycloak';
 
 export const authOptions: AuthOptions = {
-  debug: !!!process.env.KEYCLOAK_DEBUG,
+  debug: !!process.env.KEYCLOAK_DEBUG,
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     // AzureADProvider({
@@ -15,8 +15,8 @@ export const authOptions: AuthOptions = {
     // }),
 
     KeycloakProvider({
-      clientId: process.env.KEYCLOAK_CLIENT_ID!,
-      clientSecret: process.env.KEYCLOAK_SECRET!,
+      clientId: `${process.env.KEYCLOAK_CLIENT_ID}`,
+      clientSecret: `${process.env.KEYCLOAK_SECRET}`,
       issuer: process.env.KEYCLOAK_ISSUER,
       profile(profile) {
         return {

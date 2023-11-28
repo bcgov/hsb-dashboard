@@ -118,7 +118,8 @@ public static class ServiceCollectionExtensions
         .AddJwtBearer(options =>
         {
             var section = builder.Configuration.GetSection("Keycloak");
-            options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
+            var requireHttpsMetadata = section.GetValue<bool?>("RequireHttpsMetadata");
+            options.RequireHttpsMetadata = requireHttpsMetadata ?? !builder.Environment.IsDevelopment();
             options.Authority = section.GetValue<string>("Authority");
             options.Audience = section.GetValue<string>("Audience");
             options.SaveToken = true;
@@ -126,10 +127,10 @@ public static class ServiceCollectionExtensions
             {
                 ValidateIssuerSigningKey = true,
                 // ValidIssuer = section.GetValue<string>("Issuer"),
-                ValidIssuers = section.GetValue<string>("Issuer")?.Split(",") ?? Array.Empty<string>(),
+                ValidIssuers = section.GetValue<string>("Issuer")?.Split(",") ?? [],
                 ValidateIssuer = section.GetValue<bool>("ValidateIssuer"),
                 // ValidAudience = section.GetValue<string>("Audience"),
-                ValidAudiences = section.GetValue<string>("Audience")?.Split(",") ?? Array.Empty<string>(),
+                ValidAudiences = section.GetValue<string>("Audience")?.Split(",") ?? [],
                 ValidateAudience = section.GetValue<bool>("ValidateAudience"),
                 ValidateLifetime = true
             };

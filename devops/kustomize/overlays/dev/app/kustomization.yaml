@@ -1,0 +1,95 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: e89443-dev
+
+resources:
+  - ../../../base/app
+  - ../../../base/config
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+secretGenerator:
+  - name: keycloak
+    envs:
+      - keycloak.env
+  - name: dashboard
+    envs:
+      - dashboard.env
+
+patches:
+  - target:
+      kind: ConfigMap
+      name: keycloak
+    patch: |-
+      - op: replace
+        path: /data/KEYCLOAK_DEBUG
+        value: "true"
+      - op: replace
+        path: /data/KEYCLOAK_AUTHORITY
+        value: https://dev.loginproxy.gov.bc.ca/auth/realms/standard
+      - op: replace
+        path: /data/KEYCLOAK_AUDIENCE
+        value: hsb-dashboard-5128
+      - op: replace
+        path: /data/KEYCLOAK_ISSUER
+        value: hsb-dashboard-5128
+  - target:
+      kind: ConfigMap
+      name: css
+    patch: |-
+      - op: replace
+        path: /data/CSS_ENVIRONMENT
+        value: dev
+      - op: replace
+        path: /data/CSS_API_URL
+        value: https://api.loginproxy.gov.bc.ca
+      - op: replace
+        path: /data/CSS_AUTHORITY
+        value: https://loginproxy.gov.bc.ca
+  - target:
+      kind: ConfigMap
+      name: dashboard
+    patch: |-
+      - op: replace
+        path: /data/NEXTAUTH_URL
+        value: https://hsb-dev.apps.emerald.devops.gov.bc.ca
+
+  - target:
+      kind: Route
+      name: dashboard
+    patch: |-
+      - op: replace
+        path: /spec/host
+        value: hsb-dev.apps.emerald.devops.gov.bc.ca
+  # - target:
+  #     kind: Route
+  #     name: dashboard-tls
+  #   patch: |-
+  #     - op: replace
+  #       path: /spec/host
+  #       value: hsb.gov.bc.ca
+
+  - target:
+      kind: DeploymentConfig
+      name: dashboard
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: 50m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: 100Mi
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 100m
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 250Mi
+      - op: replace
+        path: /spec/triggers/1/imageChangeParams/from/name
+        value: dashboard:dev

@@ -1,0 +1,59 @@
+---
+# The final build image.
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: dashboard
+  annotations:
+    description: Destination for built images.
+  labels:
+    name: dashboard
+    part-of: hsb
+    version: 1.0.0
+    component: app
+    managed-by: kustomize
+    created-by: jeremy.foster
+
+---
+# The build config that will be created will be named for the branch you created it for.
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: dashboard.dev
+  annotations:
+    description: Build image from Dockerfile in git repo.
+  labels:
+    name: dashboard
+    part-of: hsb
+    version: 1.0.0
+    component: app
+    managed-by: kustomize
+    created-by: jeremy.foster
+    branch: dev
+spec:
+  completionDeadlineSeconds: 2700
+  triggers:
+    - type: ImageChange
+    - type: ConfigChange
+  runPolicy: Serial
+  source:
+    git:
+      uri: https://github.com/bcgov/hsb-dashboard.git
+      ref: dev
+    contextDir: ./src/dashboard
+  strategy:
+    type: Docker
+    dockerStrategy:
+      imageOptimizationPolicy: SkipLayers
+      dockerfilePath: Dockerfile.prod
+  output:
+    to:
+      kind: ImageStreamTag
+      name: dashboard:latest
+  resources:
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    limits:
+      cpu: 500m
+      memory: 500Mi

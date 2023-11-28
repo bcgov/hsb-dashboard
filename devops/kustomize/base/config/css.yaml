@@ -1,0 +1,18 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: css
+  namespace: default
+  annotations:
+    description: Common Single-Sign On configuration
+  labels:
+    name: css
+    part-of: hsb
+    version: 1.0.0
+    component: api
+    managed-by: kustomize
+    created-by: jeremy.foster
+data:
+  CSS_ENVIRONMENT: dev
+  CSS_API_URL: https://api.loginproxy.gov.bc.ca
+  CSS_AUTHORITY: https://loginproxy.gov.bc.ca

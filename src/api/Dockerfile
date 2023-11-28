@@ -2,7 +2,7 @@ ARG ASPNETCORE_ENVIRONMENT=Release
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 
 RUN apt-get update && apt-get -y upgrade
-# RUN apt -y install curl libc6-dev libgdiplus
+RUN apt -y install curl libc6-dev libgdiplus
 RUN apt-get clean
 
 EXPOSE 443 8080
@@ -11,7 +11,7 @@ EXPOSE 443 8080
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 ENV PATH="$PATH:/root/.dotnet/tools"
-RUN dotnet tool install --global dotnet-ef --version 8.0.0
+# RUN dotnet tool install --global dotnet-ef --version 8.0.0
 
 WORKDIR /src/api
 COPY src/api/ .
