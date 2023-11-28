@@ -1,0 +1,26 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: api
+  namespace: default
+  annotations:
+    description: Exposes and load balances the api pods.
+  labels:
+    name: api
+    part-of: hsb
+    version: 1.0.0
+    component: api
+    managed-by: kustomize
+    created-by: jeremy.foster
+spec:
+  ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    part-of: hsb
+    component: api
+  sessionAffinity: None
+  type: ClusterIP

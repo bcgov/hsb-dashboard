@@ -1,0 +1,132 @@
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  name: dashboard
+  namespace: default
+  annotations:
+    description: Defines how to deploy the dashboard application
+  labels:
+    name: dashboard
+    part-of: hsb
+    version: 1.0.0
+    component: app
+    managed-by: kustomize
+    created-by: jeremy.foster
+    DataClass: Low
+spec:
+  replicas: 1
+  selector:
+    name: dashboard
+    part-of: hsb
+    component: app
+  strategy:
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      name: dashboard
+      labels:
+        name: dashboard
+        part-of: hsb
+        component: app
+        DataClass: Low
+    spec:
+      containers:
+        - name: dashboard
+          image: ""
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 25m
+              memory: 30Mi
+            limits:
+              cpu: 50m
+              memory: 100Mi
+          env:
+            - name: HTTP_PROXY
+              value: http://swpxkam.gov.bc.ca:8080
+            - name: HTTPS_PROXY
+              value: http://swpxkam.gov.bc.ca:8080
+            - name: NO_PROXY
+              value: .cluster.local,.svc,10.91.0.0/16,172.30.0.0/16,127.0.0.1,localhost,.gov.bc.ca
+
+            - name: NEXTAUTH_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: dashboard
+                  key: NEXTAUTH_URL
+            - name: NEXTAUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: dashboard
+                  key: NEXTAUTH_SECRET
+
+            - name: KEYCLOAK_DEBUG
+              valueFrom:
+                configMapKeyRef:
+                  name: keycloak
+                  key: KEYCLOAK_DEBUG
+            - name: KEYCLOAK_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: keycloak
+                  key: KEYCLOAK_ISSUER
+            - name: KEYCLOAK_ISSUER
+              valueFrom:
+                configMapKeyRef:
+                  name: keycloak
+                  key: KEYCLOAK_AUTHORITY
+            - name: KEYCLOAK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: keycloak
+                  key: KEYCLOAK_CLIENT_SECRET
+            - name: KEYCLOAK_END_SESSION_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: keycloak
+                  key: KEYCLOAK_END_SESSION_PATH
+          # livenessProbe:
+          #   httpGet:
+          #     path: "/nginx-status"
+          #     port: 3000
+          #     scheme: HTTP
+          #   initialDelaySeconds: 30
+          #   timeoutSeconds: 60
+          #   periodSeconds: 10
+          #   successThreshold: 1
+          #   failureThreshold: 3
+          # readinessProbe:
+          #   httpGet:
+          #     path: "/nginx-status"
+          #     port: 3000
+          #     scheme: HTTP
+          #   initialDelaySeconds: 10
+          #   timeoutSeconds: 60
+          #   periodSeconds: 10
+          #   successThreshold: 1
+          #   failureThreshold: 3
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  test: false
+  triggers:
+    - type: ConfigChange
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - dashboard
+        from:
+          kind: ImageStreamTag
+          namespace: e89443-tools
+          name: dashboard:dev

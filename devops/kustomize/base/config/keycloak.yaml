@@ -1,0 +1,20 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: keycloak
+  namespace: default
+  annotations:
+    description: Keycloak configuration
+  labels:
+    name: keycloak
+    part-of: hsb
+    version: 1.0.0
+    component: api
+    managed-by: kustomize
+    created-by: jeremy.foster
+data:
+  KEYCLOAK_DEBUG: "true"
+  KEYCLOAK_AUTHORITY: https://loginproxy.gov.bc.ca/auth/realms/standard
+  KEYCLOAK_AUDIENCE: hsb-dashboard-5128
+  KEYCLOAK_ISSUER: hsb-dashboard-5128
+  KEYCLOAK_END_SESSION_PATH: /protocol/openid-connect/logout

@@ -1,0 +1,27 @@
+---
+# Open up ports to communicate with the app.
+kind: Service
+apiVersion: v1
+metadata:
+  name: dashboard
+  namespace: default
+  annotations:
+    description: Exposes and load balances the application pods.
+  labels:
+    name: dashboard
+    part-of: hsb
+    version: 1.0.0
+    component: app
+    managed-by: kustomize
+    created-by: jeremy.foster
+spec:
+  ports:
+    - name: 3000-tcp
+      port: 3000
+      protocol: TCP
+      targetPort: 3000
+  selector:
+    part-of: hsb
+    component: app
+  sessionAffinity: None
+  type: ClusterIP
