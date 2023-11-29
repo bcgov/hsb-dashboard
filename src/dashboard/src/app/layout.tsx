@@ -1,10 +1,9 @@
-import { AuthState } from '@/components/auth';
-import { SessionProviderWrapper } from '@/components/keycloak';
+import { Footer, Header, SessionProviderWrapper } from '@/components';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Source_Sans_3 } from 'next/font/google';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Source_Sans_3({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Hosting Storage Dashboard',
@@ -18,13 +17,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <head>
           <link rel="icon" href="/favicon.ico" sizes="any" />
         </head>
-        <body className={inter.className}>
-          <header>
-            Hosting Storage Dashboard
-            <AuthState />
-          </header>
+        <body className={`${inter.className} bg-gray`}>
+          <Header />
           {children}
-          <footer>footer</footer>
+          <Footer />
         </body>
       </SessionProviderWrapper>
     </html>
