@@ -16,7 +16,7 @@ Currently you'll need to install the following.
 | ------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | Docker Desktop, or equivalent that supports `docker` and `docker-compose` | [download](https://www.docker.com/products/docker-desktop/)        |
 | Windows Bash (if you're using Windows OS)                                 | [download](https://git-scm.com/download/win)                       |
-| .NET SDK 8.0                                                              | [download](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) |
+| .NET SDK 8.0 (only if you want to run .NET locally)                       | [download](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) |
 
 Execute the following command to initialize your local environment and start the required Docker containers.
 

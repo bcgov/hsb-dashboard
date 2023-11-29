@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-icons/all-files": "^4.1.0",
     "axios": "^1.6.2",
     "cryptr": "^6.3.0",
     "jsonwebtoken": "^9.0.2",
@@ -19,7 +20,8 @@
     "next-auth": "^4.24.5",
     "qs": "^6.11.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-icons": "^4.12.0"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.5",
@@ -29,6 +31,7 @@
     "@types/qs": "^6.9.10",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-icons": "^3.0.0",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.0.3",
