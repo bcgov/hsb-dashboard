@@ -188,7 +188,7 @@ KEYCLOAK_END_SESSION_PATH=/protocol/openid-connect/logout
 
 NEXTAUTH_URL=http://localhost:$portAppHttp
 NEXTAUTH_SECRET=$privateKey
-" >> ./src/dashboard/.env
+NEXT_WEBPACK_USEPOLLING=false" >> ./src/dashboard/.env
     echo "./src/dashboard/.env created"
   fi
 }

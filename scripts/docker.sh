@@ -47,6 +47,16 @@ docker_remove () {
   docker image rm -f hsb:$1
 }
 
+# Stop, and start the specified docker service.
+docker_restart () {
+  if [ -z "${1-}" ]; then
+    echo "$0: The service name is required"
+    exit 4
+  fi
+  docker_stop $1
+  docker_up $1
+}
+
 # Stop, remove, build and run the specified docker service.
 docker_refresh () {
   if [ -z "${1-}" ]; then

@@ -26,5 +26,5 @@ RUN chmod -R 0777 /.local
 # Run container by default as user with id 1001 (default)
 USER 1001
 
-ENTRYPOINT cd /src/dal && dotnet ef database update -v
+ENTRYPOINT cd /src/dal && dotnet ef database update $MIGRATION -v
 # ENTRYPOINT ["tail", "-f", "/dev/null"]

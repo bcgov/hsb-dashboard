@@ -1,0 +1,28 @@
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: dashboard
+  namespace: e89443-tools
+  labels:
+    component: app
+    created-by: jeremy.foster
+    managed-by: kustomize
+    name: dashboard
+    part-of: hsb
+    version: 1.0.0
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+    - name: latest
+      annotations: null
+      from:
+        kind: DockerImage
+        name: >-
+          artifacts.developer.gov.bc.ca/github-docker-remote/bcgov/bcgov/hsb-dashboard/dashboard:latest
+      generation: 1
+      importPolicy:
+        scheduled: true
+        importMode: Legacy
+      referencePolicy:
+        type: Source

@@ -30,6 +30,8 @@ elif [ "$action" = "stop" ]; then
   docker_stop
 elif [ "$action" = "down" ]; then
   docker_down
+elif [ "$action" = "restart" ]; then
+  docker_restart $s
 elif [ "$action" = "refresh" ]; then
   docker_refresh $s
 elif [ "$action" = "remove" ]; then

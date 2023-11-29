@@ -3,5 +3,6 @@
     "Kustomization",
     "Kustomize",
     "Swashbuckle"
-  ]
+  ],
+  "yaml.schemaStore.enable": false,
 }

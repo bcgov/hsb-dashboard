@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       working-directory: ./
-      codecov-token: ${{ secrets.CODECOV_TOKEN }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     steps:
       - uses: actions/checkout@v3
@@ -114,7 +114,7 @@ jobs:
           # User defined upload name. Visible in Codecov UI
           name: HSB-Dashboard
           # Repository upload token - get it from codecov.io. Required only for private repositories
-          token: ${{env.codecov-token}}
+          token: ${{env.CODECOV_TOKEN}}
           # Path to coverage file to upload
           file: ${{env.working-directory}}/TestResults/coverage.opencover.xml
           # Flag upload to group coverage metrics (e.g. unittests | integration | ui,chrome)

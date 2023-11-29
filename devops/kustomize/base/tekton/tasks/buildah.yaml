@@ -1,0 +1,69 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: buildah
+  description: |
+    Using Buildah pull images from GitHub registry into Openshift.
+  annotations:
+    tekton.dev/displayName: Buildah Image
+    tekton.dev/pipelines.minVersion: 0.17.0
+    tekton.dev/tags: build
+  labels:
+    name: buildah
+    part-of: hsb
+    version: 1.0.0
+    component: task
+    managed-by: kustomize
+spec:
+  params:
+    - name: SOURCE_IMAGE_REGISTRY
+      description: The Root url of the image registry.
+      default: ghcr.io/bcgov/hsb-dashboard
+    - name: SOURCE_IMAGE
+      description: Name of image to pull.
+    - name: SOURCE_IMAGE_TAG
+      description: The tag of the source image.
+      type: string
+      default: latest
+
+    - name: IMAGE_REGISTRY
+      description: The Root url of the image registry.
+      default: image-registry.apps.emerald.devops.gov.bc.ca/e89443-tools
+    - name: IMAGE
+      description: Reference of the image buildah will produce.
+    - name: IMAGE_TAG
+      description: The tag given to the built image.
+      type: string
+      default: latest
+
+    - name: STORAGE_DRIVER
+      description: Set buildah storage driver
+      default: vfs
+  steps:
+    - name: pull
+      image: image-registry.apps.emerald.devops.gov.bc.ca/e89443-tools/buildah:latest
+      env:
+        - name: HTTP_PROXY
+          value: http://swpxkam.gov.bc.ca:8080
+        - name: HTTPS_PROXY
+          value: http://swpxkam.gov.bc.ca:8080
+        - name: NO_PROXY
+          value: .cluster.local,.svc,10.91.0.0/16,172.30.0.0/16,127.0.0.1,localhost,.gov.bc.ca
+      securityContext:
+        capabilities:
+          add:
+            - SETFCAP
+        runAsUser: 0
+      resources:
+        requests:
+          memory: 250Mi
+          cpu: 500m
+        limits:
+          memory: 1Gi
+          cpu: 1000m
+      script: |
+        # Pull the image from the source registry
+        buildah pull $(params.SOURCE_IMAGE_REGISTRY)/$(params.SOURCE_IMAGE):$(params.SOURCE_IMAGE_TAG)
+
+        # Push the image to the registry.
+        buildah --storage-driver=$(params.STORAGE_DRIVER) push $(params.IMAGE_REGISTRY)/$(params.IMAGE):$(params.IMAGE_TAG)
