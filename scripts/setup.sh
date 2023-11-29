@@ -15,6 +15,36 @@ gen_env () {
     if [ -f "nginx/.env" ]; then mv nginx/.env nginx/.bak.env 2>/dev/null; true; fi
   fi
 
+  if [[ -z "$dbUser" ]]
+  then
+      echo 'Enter a username for the database.'
+      read -p 'Username: ' dbUser
+      export dbUser
+  fi
+
+  if [[ -z "$dbPassword" ]]
+  then
+      # Generate a random password that satisfies password requirements.
+      echo 'A password is randomly being generated.'
+      dbPassword=$(date +%s | sha256sum | base64 | head -c 29)A8!
+      echo "Your generated password is: $dbPassword"
+      export dbPassword
+  fi
+
+  if [[ -z "$keycloakUser" ]]
+  then
+      echo 'Enter a username for keycloak.'
+      read -p 'Username: ' keycloakUser
+      export keycloakUser
+  fi
+
+  if [[ -z "$keycloakPassword" ]]
+  then
+      echo 'Enter a password for the keycloak user $keycloakUser.'
+      read -p 'Password: ' keycloakPassword
+      export keycloakPassword
+  fi
+
   echo "Generating environment files"
   gen_root_env ${1-}
   gen_db_env ${1-}

@@ -67,4 +67,6 @@ docker_nuke () {
     --profile $profile\
     down -v
   docker-compose rm -f -v
+  docker image prune -f
+  docker rmi hsb:database hsb:keycloak hsb:api hsb:app
 }

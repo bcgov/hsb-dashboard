@@ -16,7 +16,15 @@ Currently you'll need to install the following.
 | ------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | Docker Desktop, or equivalent that supports `docker` and `docker-compose` | [download](https://www.docker.com/products/docker-desktop/)        |
 | Windows Bash (if you're using Windows OS)                                 | [download](https://git-scm.com/download/win)                       |
+| Node Version Manager - NVM                                                | [download](https://github.com/coreybutler/nvm-windows/releases)    |
 | .NET SDK 8.0 (only if you want to run .NET locally)                       | [download](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) |
+
+Docker Desktop on Windows defaults to WSL mode. This may work, but has known issues. You many need to WSL off.
+
+When you install Node Version Manager (nvm) on Windows you will need to open a new command window as an administrator.
+Run `nvm install 20.8.1` to install the version of Node required for this project.
+Once it is installed run `nvm use 20.8.w1`.
+If it installed correctly you can run `node -v` and it will display the correct version.
 
 Execute the following command to initialize your local environment and start the required Docker containers.
 
@@ -26,6 +34,7 @@ Execute the following command to initialize your local environment and start the
 # Generate .env files.
 # Start the database and run the migration.
 # Spin up all other required containers.
+# This process will ask you to input usernames and passwords.
 bash do init
 ```
 
