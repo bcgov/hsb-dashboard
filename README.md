@@ -23,6 +23,7 @@ Execute the following command to initialize your local environment and start the
 > If you run into errors with a Mac it is most likely a script needs execute permission.
 
 ```bash
+# Generate .env files.
 # Start the database and run the migration.
 # Spin up all other required containers.
 bash do init

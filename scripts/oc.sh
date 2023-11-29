@@ -19,3 +19,33 @@ db-connect () {
   fi
 }
 
+deploy () {
+  image=${1-}
+  tag=${2-'latest'}
+  env=${3-}
+
+  # Extract the random characters of the project namespace.
+  project=$(oc project --short); project=${project//-[a-z]*/}; echo $project
+  # Change the current environment
+  oc project $project-tools
+  # login
+  docker login -u $(oc whoami) -p $(oc whoami -t) image-registry.apps.emerald.devops.gov.bc.ca/$project-tools
+
+  if [ "$image" = "api" ]; then
+    # buid and deploy api
+    docker build -f src/api/Dockerfile -t image-registry.apps.emerald.devops.gov.bc.ca/$project-tools/api:$tag .
+    docker push image-registry.apps.emerald.devops.gov.bc.ca/$project-tools/api:$tag
+
+    if [ ! -z "$env" ]; then
+      oc tag api:$tag api:$env
+    fi
+  elif [ "$image" = "app" ]; then
+    # buid and deploy app
+    docker build -f src/dashboard/Dockerfile.prod -t image-registry.apps.emerald.devops.gov.bc.ca/$project-tools/dashboard:$tag ./src/dashboard
+    docker push image-registry.apps.emerald.devops.gov.bc.ca/$project-tools/dashboard:$tag
+
+    if [ ! -z "$env" ]; then
+      oc tag dashboard:$tag dashboard:$env
+    fi
+  fi
+}

@@ -27,26 +27,26 @@ spec:
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: enable-app-to-internet
+  name: enable-app-to-keycloak
   labels:
-    name: enable-app-to-internet
+    name: enable-app-to-keycloak
     part-of: hsb
     version: 1.0.0
     component: app
     managed-by: kustomize
     created-by: jeremy.foster
   annotations:
-    description: Enable the app to communicate with the internet
+    description: Enable the app to communicate with the keycloak
 spec:
   egress:
     - to:
         - ipBlock:
-            cidr: 142.34.229.249/32
+            cidr: 142.34.229.4/32 # Gold cluster *.apps IP
         - ipBlock:
-            cidr: 142.34.94.249/32
+            cidr: 142.34.64.4/32 # Gold DR cluster *.apps IP in case SSO fails over
       ports:
-        - port: 8080
-          protocol: TCP
+        - protocol: TCP
+          port: 443
   podSelector:
     matchLabels:
       part-of: hsb

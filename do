@@ -15,6 +15,7 @@ if [ "$action" = "help" ]; then
 elif [ "$action" = "setup" ]; then
   gen_env ${2-}
 elif [ "$action" = "init" ]; then
+  s='' # Clear service argument
   gen_env ${2-}
   docker_up database
   db-migration
@@ -63,6 +64,8 @@ elif [ "$action" = "db-redo" ]; then
 # Openshift
 elif [ "$action" = "db-connect" ]; then
   db-connect ${2-prod} ${3-} ${4-}
+elif [ "$action" = "deploy" ]; then
+  deploy ${2-} ${3-} ${4-}
 
 # Other
 elif [ "$action" = "go" ]; then

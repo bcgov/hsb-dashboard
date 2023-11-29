@@ -119,9 +119,11 @@ DB_USER=$dbUser
 DB_PASSWORD=$dbPassword
 
 # Authentication
+Keycloak__RequireHttpsMetadata=false
 Keycloak__Authority=http://$dockerHost:$portKeycloakHttp/auth/realms/hsb
 Keycloak__Audience=hsb-app,hsb-service-account
 Keycloak__Issuer=hsb-app,hsb-service-account
+Keycloak__Secret={GET FROM KEYCLOAK}
 CSS__ApiUrl=http://$dockerHost:$portCssApiHttp/api
 CSS__Authority=http://$dockerHost:$portCssApiHttp
 CSS__TokenPath=/api/v1/token
