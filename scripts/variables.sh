@@ -9,22 +9,8 @@ export dockerHost=host.docker.internal
 #######################################################
 export dbName=hsb
 export dbUser=$("$GREP" -Po 'POSTGRES_USER=\K.*$' ./database/.env 2>/dev/null)
-if [[ ! -z "$1" && -z "$dbUser" ]]
-then
-    echo 'Enter a username for the database.'
-    read -p 'Username: ' dbUser
-    export dbUser
-fi
 
 export dbPassword=$("$GREP" -Po 'POSTGRES_PASSWORD=\K.*$' ./database/.env 2>/dev/null)
-if [[ ! -z "$1" &&-z "$dbPassword" ]]
-then
-    # Generate a random password that satisfies password requirements.
-    echo 'A password is randomly being generated.'
-    dbPassword=$(date +%s | sha256sum | base64 | head -c 29)A8!
-    echo "Your generated password is: $dbPassword"
-    export dbPassword
-fi
 
 export dbPort=$("$GREP" -Po 'DB_PORT=\K.*$' ./.env 2>/dev/null)
 if [ -z "$dbPort" ]
@@ -34,20 +20,8 @@ then
 fi
 
 export keycloakUser=$("$GREP" -Po 'KEYCLOAK_USER=\K.*$' ./keycloak/.env 2>/dev/null)
-if [[ ! -z "$1" && -z "$keycloakUser" ]]
-then
-    echo 'Enter a username for keycloak.'
-    read -p 'Username: ' keycloakUser
-    export keycloakUser
-fi
 
 export keycloakPassword=$("$GREP" -Po 'KEYCLOAK_PASSWORD=\K.*$' ./keycloak/.env 2>/dev/null)
-if [[ ! -z "$1" &&-z "$keycloakPassword" ]]
-then
-    echo 'Enter a password for the keycloak user $keycloakUser.'
-    read -p 'Password: ' keycloakPassword
-    export keycloakPassword
-fi
 
 export privateKey=$("$GREP" -Po 'NEXTAUTH_SECRET=\K.*$' ./src/dashboard/.env 2>/dev/null)
 if [ -z "$privateKey" ]

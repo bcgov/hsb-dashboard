@@ -50,28 +50,28 @@ services:
       start_period: 1m
 
   ####################### CSS API #######################
-  css:
-    image: hsb:css
-    restart: "no"
-    container_name: hsb-css
-    profiles:
-       - all
-       - main
-       - auth
-    build:
-      context: ./
-      dockerfile: src/api-css/Dockerfile
-    env_file: src/api-css/.env
-    ports:
-      - ${CSS_HTTP_PORT:-30003}:8080
-      - ${CSS_HTTPS_PORT:-30004}:443
-    extra_hosts:
-      - host.docker.internal:host-gateway
-    depends_on:
-      - database
-      - keycloak
-    networks:
-      - hsb
+  # css:
+  #   image: hsb:css
+  #   restart: "no"
+  #   container_name: hsb-css
+  #   profiles:
+  #      - all
+  #      - main
+  #      - auth
+  #   build:
+  #     context: ./
+  #     dockerfile: src/api-css/Dockerfile
+  #   env_file: src/api-css/.env
+  #   ports:
+  #     - ${CSS_HTTP_PORT:-30003}:8080
+  #     - ${CSS_HTTPS_PORT:-30004}:443
+  #   extra_hosts:
+  #     - host.docker.internal:host-gateway
+  #   depends_on:
+  #     - database
+  #     - keycloak
+  #   networks:
+  #     - hsb
 
   ####################### API #######################
   api:
