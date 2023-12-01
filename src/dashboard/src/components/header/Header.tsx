@@ -11,7 +11,7 @@ export const Header: React.FC = () => {
   const isLogin = path.includes('/login');
 
   return (
-    <header className="header test">
+    <header className="header">
       <div className="flex-1 flex flex-row gap-4">
         <Image src="/images/BCLogo.png" alt="Logo" width={215} height={90} />
         <div className="border-l-2 p-2 text-2xl font-light">Storage Dashboard</div>
