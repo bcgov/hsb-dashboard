@@ -14,7 +14,9 @@ export const Header: React.FC = () => {
     <header className="header">
       <div className="flex-1 flex flex-row gap-4">
         <Fa500Px className="flex-no-shrink fill-current" size="50px" />
-        <div className="border-l-2 p-2 text-2xl font-light">Storage Dashboard</div>
+        <div className="border-l-2 p-2 text-2xl font-light">
+          Storage Dashboard - FORCE MERGE CONFLICT
+        </div>
       </div>
       {!isLogin && <AuthState />}
     </header>
