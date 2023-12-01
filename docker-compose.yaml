@@ -124,8 +124,8 @@ services:
       - ./src/dashboard/public:/usr/dashboard/public
     extra_hosts:
       - host.docker.internal:host-gateway
-    depends_on:
-      - api
+    # depends_on:
+    #   - api
     networks:
       - hsb
 
