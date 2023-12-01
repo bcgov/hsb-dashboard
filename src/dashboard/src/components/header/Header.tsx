@@ -1,8 +1,8 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Fa500Px } from 'react-icons/fa';
 import { AuthState } from '../auth';
+import Image from 'next/image';
 import './style.css';
 
 export const Header: React.FC = () => {
@@ -13,10 +13,8 @@ export const Header: React.FC = () => {
   return (
     <header className="header">
       <div className="flex-1 flex flex-row gap-4">
-        <Fa500Px className="flex-no-shrink fill-current" size="50px" />
-        <div className="border-l-2 p-2 text-2xl font-light">
-          Storage Dashboard - FORCE MERGE CONFLICT
-        </div>
+        <Image src="/images/BCLogo.png" alt="Logo" width={215} height={90} />
+        <div className="border-l-2 p-2 text-2xl font-light">Storage Dashboard</div>
       </div>
       {!isLogin && <AuthState />}
     </header>

@@ -1,9 +1,8 @@
 import { Footer, Header, SessionProviderWrapper } from '@/components';
 import type { Metadata } from 'next';
-import { Source_Sans_3 } from 'next/font/google';
+import "./styles/_globals.scss";
 import './globals.css';
-
-const inter = Source_Sans_3({ subsets: ['latin'] });
+import "./styles/_fonts.scss";
 
 export const metadata: Metadata = {
   title: 'Hosting Storage Dashboard',
@@ -17,7 +16,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <head>
           <link rel="icon" href="/favicon.ico" sizes="any" />
         </head>
-        <body className={`${inter.className} bg-gray`}>
+        <body className="bg-gray">
           <Header />
           {children}
           <Footer />

@@ -1,0 +1,35 @@
+$test-color: #9492ec;
+
+@mixin panel-style($min-height: null, $max-height: null, $min-width: null, $max-width: null) {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 34px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    // Conditional inclusion of properties if the arguments are passed
+    @if $min-height !=null {
+        min-height: $min-height;
+    }
+
+    @if $max-height !=null {
+        max-height: $max-height;
+    }
+
+    @if $min-width !=null {
+        min-width: $min-width;
+    }
+
+    @if $max-width !=null {
+        max-width: $max-width;
+    }
+}
+
+.container {
+    max-width: 1440px;
+    margin: 0 auto;
+}
+
+.panel {
+    @include panel-style;
+}
