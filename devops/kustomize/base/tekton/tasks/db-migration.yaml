@@ -1,0 +1,123 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: db-migration
+  description: >-
+    This task runs the database migration.
+  annotations:
+    tekton.dev/displayName: Run Database Migration
+    tekton.dev/pipelines.minVersion: 0.12.1
+    tekton.dev/tags: docker
+  labels:
+    name: db-migration
+    part-of: hsb
+    version: 1.0.0
+    component: task
+    managed-by: kustomize
+spec:
+  params:
+    - name: IMAGE
+      description: The name of the database migration image.
+      type: string
+      default: db-migration
+    - name: PROJECT_SHORTNAME
+      description: The shortname of the project namespace.
+      type: string
+      default: e89443
+
+    - name: IMAGE_REGISTRY
+      description: The image registry
+      type: string
+      default: image-registry.apps.emerald.devops.gov.bc.ca
+    - name: IMAGE_TAG
+      description: The tag given to the built image.
+      type: string
+      default: latest
+
+    - name: DEPLOY_TO
+      description: Which environment to deploy to
+      type: string
+      default: dev
+
+    - name: MIGRATION
+      description: The migration to apply
+      type: string
+
+  steps:
+    - name: run
+      image: "image-registry.openshift-image-registry.svc:5000/openshift/cli:latest"
+      resources: {}
+      script: |
+        #!/usr/bin/env bash
+        set -e
+
+        echo "Running database migration in $(params.PROJECT_SHORTNAME)-$(params.DEPLOY_TO)"
+        overrides="{
+            \"apiVersion\":\"v1\",
+            \"spec\":{
+              \"containers\":[
+                {
+                  \"name\":\"$(params.IMAGE)\",
+                  \"image\":\"$IMAGE_REGISTRY/$(params.PROJECT_SHORTNAME)-tools/$(params.IMAGE):$(params.DEPLOY_TO)\",
+                  \"env\":[
+                    {
+                      \"name\":\"MIGRATION\",
+                      \"value\":\"$(params.MIGRATION)\"
+                    },
+                    {
+                      \"name\":\"ConnectionStrings__Default\",
+                      \"valueFrom\":{
+                        \"secretKeyRef\":{
+                          \"name\":\"database\",
+                          \"key\":\"CONNECTION_STRING\"
+                        }
+                      }
+                    },
+                    {
+                      \"name\":\"POSTGRES_USER\",
+                      \"valueFrom\":{
+                        \"secretKeyRef\":{
+                          \"name\":\"database\",
+                          \"key\":\"DB_USER\"
+                        }
+                      }
+                    },
+                    {
+                      \"name\":\"POSTGRES_PASSWORD\",
+                      \"valueFrom\":{
+                        \"secretKeyRef\":{
+                          \"name\":\"database\",
+                          \"key\":\"DB_PASSWORD\"
+                        }
+                      }
+                    }
+                  ],
+                  \"labels\":{
+                    \"name\":\"db-migration\",\"part-of\":\"hsb\",\"component\":\"database\",\"DataClass\":\"Low\"
+                    },
+                  \"resources\":{
+                    \"requests\":{
+                      \"memory\":\"250Mi\",
+                      \"cpu\":\"50m\"
+                    },
+                    \"limits\":{
+                      \"memory\":\"500Mi\",
+                      \"cpu\":\"500m\"
+                    }
+                  },
+                  \"imagePullPolicy\": \"Always\"
+                }
+              ]
+            }
+          }"
+        oc run $(params.IMAGE) \
+          -n $(params.PROJECT_SHORTNAME)-$(params.DEPLOY_TO) \
+          --image=$(params.IMAGE) \
+          --image-pull-policy=Always \
+          --attach \
+          --rm \
+          --labels='name=db-migration,part-of=hsb,component=database,DataClass=Low' \
+          --restart=Never \
+          --timeout=10m \
+          --override-type='merge' \
+          --overrides="$overrides"

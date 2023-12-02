@@ -1,0 +1,106 @@
+name: CD/CD Pipeline to DEV
+env:
+  # Artifactory - can't get this to work yet
+  # DOCKER_ARTIFACTORY_REPO: artifacts.developer.gov.bc.ca/docker-remote
+  # ARTIFACTORY_REPO: artifacts.developer.gov.bc.ca
+  # IMAGE_REGISTRY: ${{ secrets.IMAGE_REGISTRY }}
+  # IMAGE_REGISTRY_USER: ${{ secrets.IMAGE_REGISTRY_USER }}
+  # IMAGE_REGISTRY_PASSWORD: ${{ secrets.IMAGE_REGISTRY_PASSWORD }}
+
+  # Registries such as GHCR, Quay.io, and Docker Hub are supported.
+  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  IMAGE_REGISTRY_USER: ${{ github.actor }}
+  IMAGE_REGISTRY_PASSWORD: ${{ github.token }}
+
+  API_IMAGE_NAME: api
+  APP_IMAGE_NAME: dashboard
+  DB_MIGRATION_IMAGE_NAME: db-migration
+
+  IMAGE_TAG: latest
+  DEPLOY_TO: dev
+  VERSION: 1.0.0
+
+on:
+  pull_request_target:
+    branches:
+      - dev
+      - main
+    types:
+      - closed
+  # push:
+  #   branches:
+  #     - dev
+  #     - main
+
+jobs:
+  build-push:
+    name: Build and Push to Registry
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+        ## BUILD
+      - name: Build API
+        id: build-api
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ github.repository }}/${{ env.API_IMAGE_NAME }}
+          tags: ${{ env.IMAGE_TAG }} ${{ env.VERSION }} ${{ env.DEPLOY_TO }}
+          context: .
+          dockerfiles: |
+            src/api/Dockerfile
+
+      - name: Build Dasbhoard
+        id: build-app
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ github.repository }}/${{ env.APP_IMAGE_NAME }}
+          tags: ${{ env.IMAGE_TAG }} ${{ env.VERSION }} ${{ env.DEPLOY_TO }}
+          context: src/dashboard
+          dockerfiles: |
+            src/dashboard/Dockerfile.prod
+
+      - name: Build DB Migration
+        id: build-db-migration
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ github.repository }}/${{ env.DB_MIGRATION_IMAGE_NAME }}
+          tags: ${{ env.IMAGE_TAG }} ${{ env.VERSION }} ${{ env.DEPLOY_TO }}
+          context: src/libs
+          dockerfiles: |
+            src/libs/Dockerfile
+
+        ## PUSH TO REGISTRY
+      - name: Push API to registry
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ github.repository }}/${{ env.DB_MIGRATION_IMAGE_NAME }}
+          tags: ${{ steps.build-api.outputs.tags }}
+          registry: ${{ env.IMAGE_REGISTRY }}
+          username: ${{ env.IMAGE_REGISTRY_USER }}
+          password: ${{ env.IMAGE_REGISTRY_PASSWORD }}
+
+      - name: Push Dashboard to registry
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-app.outputs.image }}
+          tags: ${{ steps.build-app.outputs.tags }}
+          registry: ${{ env.IMAGE_REGISTRY }}
+          username: ${{ env.IMAGE_REGISTRY_USER }}
+          password: ${{ env.IMAGE_REGISTRY_PASSWORD }}
+
+      - name: Push DB Migration to registry
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ steps.build-db-migration.outputs.image }}
+          tags: ${{ steps.build-db-migration.outputs.tags }}
+          registry: ${{ env.IMAGE_REGISTRY }}
+          username: ${{ env.IMAGE_REGISTRY_USER }}
+          password: ${{ env.IMAGE_REGISTRY_PASSWORD }}

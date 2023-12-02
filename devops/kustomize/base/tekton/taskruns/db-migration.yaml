@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  generateName: example-db-migration-run-
+  # name: example-db-migration-run
+  labels:
+    name: db-migration
+    part-of: hsb
+    version: 1.0.0
+    component: database
+    managed-by: kustomize
+    created-by: jeremy.foster
+
+spec:
+  taskRef:
+    kind: Task
+    name: db-migration
+
+  params:
+    - name: DEPLOY_TO
+      value: dev
+    - name: MIGRATION
+      value: 0

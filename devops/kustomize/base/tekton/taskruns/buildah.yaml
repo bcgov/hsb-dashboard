@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  generateName: example-buildah-run-
+  # name: example-buildah-run
+  labels:
+    name: db-migration
+    part-of: hsb
+    version: 1.0.0
+    component: database
+    managed-by: kustomize
+    created-by: jeremy.foster
+
+spec:
+  taskRef:
+    kind: Task
+    name: buildah
+
+  params:
+    - name: SOURCE_IMAGE
+      value: api
+    - name: IMAGE
+      value: api
