@@ -1,5 +1,3 @@
-$test-color: #9492ec;
-
 @mixin panel-style($min-height: null, $max-height: null, $min-width: null, $max-width: null) {
     background-color: white;
     border-radius: 10px;

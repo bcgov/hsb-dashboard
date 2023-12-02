@@ -1,5 +1,4 @@
-
-    @font-face {
+@font-face {
     font-family: 'BCSans';
     src: url('../../../public/fonts/BcSans/2023_03_14_BCSans-Light_2g.woff2') format('woff2'),
          url('../../../public/fonts/BcSans/2023_03_14_BCSans-Light_2g.woff') format('woff');
@@ -37,13 +36,16 @@
   }
   
   h1 {
-    font-size: 2em; // Twice the font-size of body (32px if base is 16px)
-    font-family: "BCSans";
+    font-size: 1.25em;
+    font-weight: bold;
+  }
+
+  h2 {
+    font-weight: bold;
   }
   
   p {
     font-size: 1em; // Equals the font-size of body (16px if base is 16px)
-    font-family: "BCSans";
   }
 
   

@@ -1,0 +1,80 @@
+@import '../styles/utils.scss';
+
+.styleGuide {
+    margin: 34px auto;
+
+    >.panel {
+        margin: 0 auto;
+        max-width: 1440px;
+
+        >div {
+            margin: 20px 0;
+
+            &::after {
+                content: '';
+                height: 1px;
+                width: 95%;
+                display: block;
+                background-color: $light-gray;
+                margin-top: 25px;
+            }
+        }
+    }
+}
+
+.list {
+    list-style-type: disc;
+    margin-left: 25px;
+
+    li {
+        margin: 5px 0;
+    }
+}
+
+.heading {
+    font-size: 1.5em;
+    font-weight: 400;
+    margin-bottom: 15px;
+}
+
+h1.heading {
+    font-size: 2em;
+    position: relative;
+    display: inline-block;
+
+    &::after {
+        content: '';
+        height: 10px;
+        width: 100%;
+        display: block;
+        background-color: $bc-blue;
+        position: absolute;
+        bottom: -20px;
+        opacity: .4;
+    }
+}
+
+.colours {
+    display: flex;
+
+    > div {
+        height: 45px;
+        width: 45px;
+        background-color: $dark-gray;
+        margin: 0 20px 0 0;
+
+        &:first-of-type {
+            background-color: $bc-blue;
+        }
+        &:nth-child(2) {
+            background-color: $bc-yellow;
+        }
+        &:nth-child(3) {
+            background-color: $bc-black;
+        }
+    }
+}
+
+.buttons > button {
+    margin-right: 10px;
+}
