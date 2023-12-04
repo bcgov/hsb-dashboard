@@ -1,8 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { AuthState } from '../auth';
-import Image from 'next/image';
 import './style.css';
 
 export const Header: React.FC = () => {

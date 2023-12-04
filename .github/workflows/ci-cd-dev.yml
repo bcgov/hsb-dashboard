@@ -31,11 +31,16 @@ on:
   #   branches:
   #     - dev
   #     - main
+  #     - test
 
 jobs:
   build-push:
     name: Build and Push to Registry
     runs-on: ubuntu-latest
+    outputs:
+      api: ${{ steps.filter.outputs.api }}
+      dashboard: ${{ steps.filter.outputs.dashboard }}
+      db-migration: ${{ steps.filter.outputs.db-migration }}
     timeout-minutes: 10
     permissions:
       contents: read
@@ -46,12 +51,26 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
+      - name: filter
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            api:
+              - 'src/api/**'
+              - 'src/libs/**'
+            dashboard:
+              - 'src/dashboard/**'
+            db-migration:
+              - 'src/libs/dal/**'
+
         ## BUILD
       - name: Build API
         id: build-api
         uses: redhat-actions/buildah-build@v2
+        if: steps.filter.outputs.api == 'true'
         with:
-          image: ${{ github.repository }}/${{ env.API_IMAGE_NAME }}
+          image: ${{ github.event.repository.name }}/${{ env.API_IMAGE_NAME }}
           tags: ${{ env.IMAGE_TAG }} ${{ env.VERSION }} ${{ env.DEPLOY_TO }}
           context: .
           dockerfiles: |
@@ -60,8 +79,9 @@ jobs:
       - name: Build Dasbhoard
         id: build-app
         uses: redhat-actions/buildah-build@v2
+        if: steps.filter.outputs.dashboard == 'true'
         with:
-          image: ${{ github.repository }}/${{ env.APP_IMAGE_NAME }}
+          image: ${{ github.event.repository.name }}/${{ env.APP_IMAGE_NAME }}
           tags: ${{ env.IMAGE_TAG }} ${{ env.VERSION }} ${{ env.DEPLOY_TO }}
           context: src/dashboard
           dockerfiles: |
@@ -70,8 +90,9 @@ jobs:
       - name: Build DB Migration
         id: build-db-migration
         uses: redhat-actions/buildah-build@v2
+        if: steps.filter.outputs.db-migration == 'true'
         with:
-          image: ${{ github.repository }}/${{ env.DB_MIGRATION_IMAGE_NAME }}
+          image: ${{ github.event.repository.name }}/${{ env.DB_MIGRATION_IMAGE_NAME }}
           tags: ${{ env.IMAGE_TAG }} ${{ env.VERSION }} ${{ env.DEPLOY_TO }}
           context: src/libs
           dockerfiles: |
@@ -80,8 +101,9 @@ jobs:
         ## PUSH TO REGISTRY
       - name: Push API to registry
         uses: redhat-actions/push-to-registry@v2
+        if: steps.filter.outputs.api == 'true'
         with:
-          image: ${{ github.repository }}/${{ env.DB_MIGRATION_IMAGE_NAME }}
+          image: ${{ steps.build-api.outputs.image }}
           tags: ${{ steps.build-api.outputs.tags }}
           registry: ${{ env.IMAGE_REGISTRY }}
           username: ${{ env.IMAGE_REGISTRY_USER }}
@@ -89,6 +111,7 @@ jobs:
 
       - name: Push Dashboard to registry
         uses: redhat-actions/push-to-registry@v2
+        if: steps.filter.outputs.dashboard == 'true'
         with:
           image: ${{ steps.build-app.outputs.image }}
           tags: ${{ steps.build-app.outputs.tags }}
@@ -98,6 +121,7 @@ jobs:
 
       - name: Push DB Migration to registry
         uses: redhat-actions/push-to-registry@v2
+        if: steps.filter.outputs.db-migration == 'true'
         with:
           image: ${{ steps.build-db-migration.outputs.image }}
           tags: ${{ steps.build-db-migration.outputs.tags }}

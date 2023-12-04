@@ -67,8 +67,12 @@ elif [ "$action" = "db-redo" ]; then
 # Openshift
 elif [ "$action" = "db-connect" ]; then
   db-connect ${2-prod} ${3-} ${4-}
-elif [ "$action" = "deploy" ]; then
-  deploy ${2-} ${3-} ${4-}
+elif [ "$action" = "oc-build" ]; then
+  oc-build ${2-} ${3-}
+elif [ "$action" = "oc-push" ]; then
+  oc-push ${2-} ${3-}
+elif [ "$action" = "oc-deploy" ]; then
+  oc-deploy ${2-} ${3-} ${4-} ${5-}
 
 # NPM
 elif [ "$action" = "npm-install" ]; then
