@@ -44,3 +44,14 @@ The default configuration will initialize the database and run the web applicati
 # Open the web application in your default browser
 bash do go
 ```
+
+## Script Help
+
+There are a number of scripts and commands to help local development and the CI/CD pipeline.
+
+```bash
+# Show all the help commands
+bash do help
+```
+
+The Dashboard web application is setup for hot-reload within a Docker container.

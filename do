@@ -7,6 +7,7 @@
 . ./scripts/help.sh
 . ./scripts/database.sh
 . ./scripts/oc.sh
+. ./scripts/npm.sh
 
 action=${1-"help"}
 
@@ -68,6 +69,10 @@ elif [ "$action" = "db-connect" ]; then
   db-connect ${2-prod} ${3-} ${4-}
 elif [ "$action" = "deploy" ]; then
   deploy ${2-} ${3-} ${4-}
+
+# NPM
+elif [ "$action" = "npm-install" ]; then
+  npm-install $@
 
 # Other
 elif [ "$action" = "go" ]; then

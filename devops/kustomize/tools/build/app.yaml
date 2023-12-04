@@ -13,6 +13,21 @@ metadata:
     component: app
     managed-by: kustomize
     created-by: jeremy.foster
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+    - name: latest
+      annotations: null
+      from:
+        kind: DockerImage
+        name: >-
+          artifacts.developer.gov.bc.ca/github-docker-remote/bcgov/bcgov/hsb-dashboard/dashboard:latest
+      importPolicy:
+        scheduled: true
+        importMode: Legacy
+      referencePolicy:
+        type: Source
 
 ---
 # The build config that will be created will be named for the branch you created it for.
