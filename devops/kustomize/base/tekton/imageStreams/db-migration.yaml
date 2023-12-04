@@ -14,13 +14,34 @@ spec:
   lookupPolicy:
     local: false
   tags:
+    - name: dev
+      annotations: null
+      from:
+        kind: DockerImage
+        name: >-
+          artifacts.developer.gov.bc.ca/github-docker-remote/bcgov/hsb-dashboard/db-migration:dev
+      importPolicy:
+        scheduled: true
+        importMode: Legacy
+      referencePolicy:
+        type: Source
     - name: latest
       annotations: null
       from:
         kind: DockerImage
         name: >-
-          artifacts.developer.gov.bc.ca/github-docker-remote/bcgov/bcgov/hsb-dashboard/db-migration:latest
-      generation: 1
+          artifacts.developer.gov.bc.ca/github-docker-remote/bcgov/hsb-dashboard/db-migration:latest
+      importPolicy:
+        scheduled: true
+        importMode: Legacy
+      referencePolicy:
+        type: Source
+    - name: test
+      annotations: null
+      from:
+        kind: DockerImage
+        name: >-
+          artifacts.developer.gov.bc.ca/github-docker-remote/bcgov/hsb-dashboard/db-migration:test
       importPolicy:
         scheduled: true
         importMode: Legacy
