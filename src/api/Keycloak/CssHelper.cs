@@ -33,14 +33,14 @@ public class CssHelper : ICssHelper
 
     #region Methods
     /// <summary>
-    /// Sync CSS 'Key' value in users, groups, and roles with the TNO users, roles, and claims.
+    /// Sync CSS 'Key' value in users, groups, and roles with the HSB users, roles, and claims.
     /// </summary>
     /// <returns></returns>
     public async Task SyncAsync()
     {
         // For each user already in the database, determine if there is a user in keycloak with the same email.
         // If so, update the local user information.
-        var dbUsers = _userService.FindAll();
+        var dbUsers = _userService.Find((u) => true);
         await SyncKeycloakUsersWithLocal(dbUsers);
     }
 
@@ -66,7 +66,7 @@ public class CssHelper : ICssHelper
         foreach (var cssUser in cssUsers)
         {
             // If the user has a matching key we assume that it has already been synced.
-            var dbUser = users.FirstOrDefault(u => u.Key == Guid.Parse(cssUser.Username));
+            var dbUser = users.FirstOrDefault(u => u.Key == cssUser.Username);
             if (dbUser == null)
             {
                 // Extract friendly username.  There is no guarantee that the username attribute is available until the user logs in the first time.
@@ -89,12 +89,11 @@ public class CssHelper : ICssHelper
     /// <param name="cssUser"></param>
     /// <returns></returns>
     /// <exception cref="ConfigurationException"></exception>
-    private async Task AddOrUpdateUserAsync(string username, Entities.User? user, HSB.CSS.Models.UserModel cssUser)
+    private Task AddOrUpdateUserAsync(string username, Entities.User? user, HSB.CSS.Models.UserModel cssUser)
     {
-        var key = Guid.Parse(cssUser.Username);
+        var key = cssUser.Username;
         user ??= new Entities.User(username, cssUser.Email ?? "", key);
 
-        // user.Key = kUser.Id;
         user.Username = username;
         user.Key = key;
         user.Email = cssUser.Email ?? user.Email;
@@ -104,8 +103,9 @@ public class CssHelper : ICssHelper
         user.IsEnabled = true;
         user.DisplayName = cssUser.Attributes["display_name"]?.FirstOrDefault() ?? user.DisplayName;
 
+        // TODO: Roles are assigned by adding the user to groups and currently must be completed by an administrator.
         // Fetch the roles for the user
-        var userRoles = await _cssService.GetRolesForUserAsync(cssUser.Username);
+        // var userRoles = await _cssService.GetRolesForUserAsync(cssUser.Username);
         // user.Roles = String.Join(",", userRoles.Roles.Select(r => $"[{r.Name}]"));
 
         if (user.Id == 0)
@@ -113,20 +113,21 @@ public class CssHelper : ICssHelper
         else
             _userService.Update(user);
         _userService.CommitTransaction();
+
+        return Task.FromResult(true);
     }
 
     /// <summary>
-    /// Activate the user with TNO and CSS.
-    /// If the user doesn't currently exist in TNO, activate a new user by adding them to HSB.
-    /// If the user exists in TNO, activate user by linking to CSS and updating CSS.
+    /// Activate the user with HSB and CSS.
+    /// If the user doesn't currently exist in HSB, activate a new user by adding them to HSB.
+    /// If the user exists in HSB, activate user by linking to CSS and updating CSS.
     /// </summary>
     /// <param name="principal"></param>
     /// <returns></returns>
     public async Task<Entities.User?> ActivateAsync(ClaimsPrincipal principal)
     {
         // CSS uses the preferred_username value as a username, but it's not the actual username...
-        var claimKey = principal.GetKey() ?? throw new NotAuthorizedException("The 'preferred_username' is required but missing from token");
-        var key = Guid.Parse(claimKey);
+        var key = principal.GetKey() ?? throw new NotAuthorizedException("The 'preferred_username' is required but missing from token");
         var user = _userService.FindByKey(key);
 
         // If user doesn't exist, add them to the database.
@@ -166,7 +167,7 @@ public class CssHelper : ICssHelper
             }
             else if (user != null)
             {
-                // The user was created in TNO initially, but now the user has logged in and activated their account.
+                // The user was created in HSB initially, but now the user has logged in and activated their account.
                 user.Username = username;
                 user.DisplayName = principal.GetDisplayName() ?? user.DisplayName;
                 user.Key = key;
@@ -176,8 +177,11 @@ public class CssHelper : ICssHelper
                 user.LastLoginOn = DateTime.UtcNow;
                 user.EmailVerified = principal.GetEmailVerified() ?? false;
 
+                // Extract roles from groups.
+                var preapprovedRoles = user.Groups.SelectMany(g => g.Roles.Select(r => r.Name)).Distinct().ToArray();
+
                 // Apply the preapproved roles to the user.
-                // var roles = await UpdateUserRolesAsync(key, user.Roles.Split(",").Select(r => r[1..^1]).ToArray());
+                var roles = await UpdateUserRolesAsync(key.ToString(), preapprovedRoles);
                 // user.Roles = String.Join(",", roles.Select(r => $"[{r}]"));
                 _userService.Update(user);
                 return user;
@@ -230,9 +234,9 @@ public class CssHelper : ICssHelper
     /// <returns></returns>
     public async Task DeleteUserAsync(Entities.User entity)
     {
-        if (!entity.Key.HasValue) throw new InvalidOperationException("User model 'key' is required.");
-        var userRoles = await _cssService.GetRolesForUserAsync(entity.Key.Value.ToString());
-        await userRoles.Roles.ForEachAsync(async r => await _cssService.DeleteUserRoleAsync(entity.Key.Value.ToString(), r.Name));
+        if (String.IsNullOrWhiteSpace(entity.Key)) throw new InvalidOperationException("User model 'key' is required.");
+        var userRoles = await _cssService.GetRolesForUserAsync(entity.Key);
+        await userRoles.Roles.ForEachAsync(async r => await _cssService.DeleteUserRoleAsync(entity.Key, r.Name));
         _userService.Remove(entity);
         _userService.CommitTransaction();
     }

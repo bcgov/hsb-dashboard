@@ -36,7 +36,7 @@ public class User : Auditable
     /// <summary>
     /// get/set - Unique key to identify this user.
     /// </summary>
-    public Guid? Key { get; set; }
+    public string Key { get; set; } = "";
 
     /// <summary>
     /// get/set - A unique display name for this user.
@@ -91,22 +91,22 @@ public class User : Auditable
     /// <summary>
     /// get/set - A collection of groups this user belongs to.
     /// </summary>
-    public List<Group> Groups { get; } = [];
+    public List<Group> Groups { get; } = new List<Group>();
 
     /// <summary>
     /// get/set - A collection of groups this user belongs to (many-to-many).
     /// </summary>
-    public List<UserGroup> GroupsManyToMany { get; } = [];
+    public List<UserGroup> GroupsManyToMany { get; } = new List<UserGroup>();
 
     /// <summary>
-    /// get/set - A collection of organizations this user belongs to.
+    /// get/set - A collection of tenants this user belongs to.
     /// </summary>
-    public List<Organization> Organizations { get; } = [];
+    public List<Tenant> Tenants { get; } = new List<Tenant>();
 
     /// <summary>
-    /// get/set - A collection of organizations this user belongs to (many-to-many).
+    /// get/set - A collection of tenants this user belongs to (many-to-many).
     /// </summary>
-    public List<UserOrganization> OrganizationsManyToMany { get; } = [];
+    public List<UserTenant> TenantsManyToMany { get; } = new List<UserTenant>();
     #endregion
 
     #region Constructors
@@ -121,7 +121,7 @@ public class User : Auditable
     /// <param name="username"></param>
     /// <param name="email"></param>
     /// <param name="key"></param>
-    public User(string username, string email, Guid key)
+    public User(string username, string email, string key)
     {
         this.Username = username;
         this.Email = email;
@@ -134,7 +134,7 @@ public class User : Auditable
     /// </summary>
     /// <param name="username"></param>
     /// <param name="email"></param>
-    public User(string username, string email) : this(username, email, Guid.NewGuid())
+    public User(string username, string email) : this(username, email, Guid.NewGuid().ToString())
     {
     }
     #endregion

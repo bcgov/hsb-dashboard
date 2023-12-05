@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using HSB.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace HSB.DAL.Services;
@@ -14,24 +15,26 @@ public class UserService : BaseService<User>, IUserService
     #endregion
 
     #region Methods
-    public IEnumerable<User> FindAll()
-    {
-        throw new NotImplementedException();
-    }
-
     public IEnumerable<User> FindByEmail(string email)
     {
-        throw new NotImplementedException();
+        return this.Context.Users
+            .Include(u => u.Groups).ThenInclude(g => g.Roles)
+            .Where(u => EF.Functions.Like(u.Email, email))
+            .ToArray();
     }
 
-    public User? FindByKey(Guid key)
+    public User? FindByKey(string key)
     {
-        throw new NotImplementedException();
+        return this.Context.Users
+            .Include(u => u.Groups).ThenInclude(g => g.Roles)
+            .FirstOrDefault(u => u.Key == key);
     }
 
     public User? FindByUsername(string username)
     {
-        throw new NotImplementedException();
+        return this.Context.Users
+            .Include(u => u.Groups).ThenInclude(g => g.Roles)
+            .FirstOrDefault(u => EF.Functions.Like(u.Username, username));
     }
     #endregion
 }

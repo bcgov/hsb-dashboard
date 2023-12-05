@@ -1,8 +1,9 @@
 import { encrypt } from '@/utils';
 import { jwtDecode } from 'jwt-decode';
-import { Account, AuthOptions, Session } from 'next-auth';
+import { Account, AuthOptions, Session, User } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import KeycloakProvider from 'next-auth/providers/keycloak';
+import { refreshAccessToken } from './refreshToken';
 
 export const authOptions: AuthOptions = {
   debug: !!process.env.KEYCLOAK_DEBUG,
@@ -44,11 +45,19 @@ export const authOptions: AuthOptions = {
   //   error: '/api/auth/error',
   // },
   callbacks: {
-    async jwt({ token, account }: { token: JWT; account: Account | null }) {
+    async jwt({
+      token,
+      account,
+      user,
+    }: {
+      token: JWT;
+      account: Account | null;
+      user: User | null;
+    }) {
       const nowTimeStamp = Math.floor(Date.now() / 1000);
       const aToken = token as any;
 
-      if (account) {
+      if (account && user) {
         token.access_token = account.access_token;
         token.id_token = account.id_token;
         token.expires_at = account.expires_at;
@@ -61,9 +70,17 @@ export const authOptions: AuthOptions = {
         // Token has not expired.
         return token;
       } else {
-        console.debug('Token has expired');
-        // TODO: Refresh
-        return token;
+        console.debug('Refresh Token');
+        const refreshToken = await refreshAccessToken(token);
+        return refreshToken;
+      }
+    },
+    async signIn({ user, account }) {
+      if (account && user) {
+        return true;
+      } else {
+        // TODO : Add unauthorized page
+        return '/unauthorized';
       }
     },
     async session({ session, token }: { session: Session; token: JWT }) {
@@ -71,9 +88,9 @@ export const authOptions: AuthOptions = {
       if (token) {
         const aToken = token as any;
         const aSession = session as any;
-        aSession.id_token = encrypt(`${token.id_token}`);
-        aSession.access_token = encrypt(`${token.access_token}`);
-        aSession.roles = aToken.decoded.realm_access?.roles ?? [];
+        aSession.idToken = encrypt(`${token.id_token}`);
+        aSession.accessToken = encrypt(`${token.access_token}`);
+        aSession.roles = aToken.decoded.client_roles ?? [];
         aSession.user.roles = token.roles || []; // Adding roles to session.user here
       }
 

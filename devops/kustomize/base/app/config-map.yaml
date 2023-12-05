@@ -7,7 +7,7 @@ metadata:
     description: Dashboard application configuration
   labels:
     name: dashboard
-    part-of: tno
+    part-of: hsb
     version: 1.0.0
     component: app
     managed-by: kustomize

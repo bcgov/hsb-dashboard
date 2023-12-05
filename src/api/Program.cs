@@ -49,7 +49,7 @@ public class Program
             .Configure<ForwardedHeadersOptions>(options =>
               {
                   options.ForwardedHeaders = ForwardedHeaders.All;
-                  options.AllowedHosts = config.GetValue<string>("AllowedHosts")?.Split(';').ToList() ?? [];
+                  options.AllowedHosts = config.GetValue<string>("AllowedHosts")?.Split(';').ToList() ?? new List<string>();
               })
             .AddSerializerOptions(config)
             .AddOpenAPI(config)
@@ -57,7 +57,7 @@ public class Program
             .AddHSBServices(builder)
             .AddCors(options =>
             {
-                var withOrigins = config.GetSection("Cors:WithOrigins").Value?.Split(" ") ?? [];
+                var withOrigins = config.GetSection("Cors:WithOrigins").Value?.Split(" ") ?? Array.Empty<string>();
                 if (withOrigins.Length != 0)
                 {
                     options.AddPolicy(

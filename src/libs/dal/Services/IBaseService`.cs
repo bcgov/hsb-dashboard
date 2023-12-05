@@ -25,6 +25,20 @@ public interface IBaseService<TEntity> : IBaseService
         int? skip = null);
 
     /// <summary>
+    /// Find the entity for the specified predicate filter.
+    /// </summary>
+    /// <param name="predicate"></param>
+    /// <param name="sort">Array of string pairs ["name asc", "name desc"]</param>
+    /// <param name="take"></param>
+    /// <param name="skip"></param>
+    /// <returns></returns>
+    IEnumerable<TEntity> Find(
+        System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate,
+        string[] sort,
+        int? take = null,
+        int? skip = null);
+
+    /// <summary>
     /// Add the specified 'entity' to the context..
     /// </summary>
     /// <param name="entity"></param>

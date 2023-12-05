@@ -10,6 +10,7 @@ metadata:
     component: database
     managed-by: kustomize
     created-by: jeremy.foster
+    DataClass: Low
 
 spec:
   taskRef:

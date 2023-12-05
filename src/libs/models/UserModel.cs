@@ -33,7 +33,7 @@ public class UserModel : AuditableModel
     /// <summary>
     /// get/set - Unique key to identify this user.
     /// </summary>
-    public Guid Key { get; set; }
+    public string Key { get; set; } = "";
 
     /// <summary>
     /// get/set - A unique display name for this user.
@@ -88,12 +88,12 @@ public class UserModel : AuditableModel
     /// <summary>
     /// get/set - A collection of groups this user belongs to.
     /// </summary>
-    public IEnumerable<GroupModel> Groups { get; set; } = [];
+    public IEnumerable<GroupModel> Groups { get; set; } = Array.Empty<GroupModel>();
 
     /// <summary>
-    /// get/set - A collection of organizations this user belongs to.
+    /// get/set - A collection of tenants this user belongs to.
     /// </summary>
-    public IEnumerable<OrganizationModel> Organizations { get; set; } = [];
+    public IEnumerable<TenantModel> Tenants { get; set; } = Array.Empty<TenantModel>();
     #endregion
 
     #region Constructors
@@ -102,7 +102,19 @@ public class UserModel : AuditableModel
     public UserModel(User user) : base(user)
     {
         this.Id = user.Id;
-        this.Username = user.Username;
+        this.Key = user.Key;
+        this.DisplayName = user.DisplayName;
+        this.EmailVerified = user.EmailVerified;
+        this.EmailVerifiedOn = user.EmailVerifiedOn;
+        this.FailedLogins = user.FailedLogins;
+        this.FirstName = user.FirstName;
+        this.MiddleName = user.MiddleName;
+        this.LastName = user.LastName;
+        this.LastLoginOn = user.LastLoginOn;
+        this.IsEnabled = user.IsEnabled;
+        this.Note = user.Note;
+        this.Phone = user.Phone;
+        this.Preferences = user.Preferences;
     }
     #endregion
 
@@ -132,7 +144,7 @@ public class UserModel : AuditableModel
             Version = model.Version
         };
         user.GroupsManyToMany.AddRange(model.Groups.Select(g => new UserGroup(user.Id, g.Id)));
-        user.OrganizationsManyToMany.AddRange(model.Organizations.Select(o => new UserOrganization(user.Id, o.Id)));
+        user.TenantsManyToMany.AddRange(model.Tenants.Select(t => new UserTenant(user.Id, t.Id)));
 
         return user;
     }

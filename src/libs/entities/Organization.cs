@@ -5,7 +5,6 @@ namespace HSB.Entities;
 public class Organization : SortableCodeAuditable<int>
 {
     #region Properties
-    public OrganizationType OrganizationType { get; set; }
 
     public int? ParentId { get; set; }
 
@@ -26,19 +25,19 @@ public class Organization : SortableCodeAuditable<int>
     public ICollection<ConfigurationItem> ConfigurationItems { get; } = new List<ConfigurationItem>();
 
     /// <summary>
-    ///
-    /// </summary>
-    public ICollection<User> Users { get; } = new List<User>();
-
-    /// <summary>
-    ///
-    /// </summary>
-    public ICollection<UserOrganization> UsersManyToMany { get; } = new List<UserOrganization>();
-
-    /// <summary>
     /// get - Child organizations.
     /// </summary>
     public ICollection<Organization> Children { get; } = new List<Organization>();
+
+    /// <summary>
+    /// get - Tenants that belong to this organization.
+    /// </summary>
+    public ICollection<Tenant> Tenants { get; } = new List<Tenant>();
+
+    /// <summary>
+    /// get - Tenants that belong to this organization. (many-to-many).
+    /// </summary>
+    public ICollection<TenantOrganization> TenantsManyToMany { get; } = new List<TenantOrganization>();
     #endregion
 
     #region Constructors
@@ -47,10 +46,9 @@ public class Organization : SortableCodeAuditable<int>
 
     }
 
-    public Organization(string name, OrganizationType type)
+    public Organization(string name)
     {
         this.Name = name;
-        this.OrganizationType = type;
     }
     #endregion
 }

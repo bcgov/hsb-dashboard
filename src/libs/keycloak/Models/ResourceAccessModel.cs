@@ -7,29 +7,29 @@ namespace HSB.Keycloak.Models;
 /// </summary>
 public class ResourceAccessModel
 {
-  #region Properties
-  /// <summary>
-  /// get/set - Realm management claims.
-  /// </summary>
-  [JsonPropertyName("realm-management")]
-  public RolesModel RealmManagement { get; set; } = new RolesModel();
+    #region Properties
+    /// <summary>
+    /// get/set - Realm management claims.
+    /// </summary>
+    [JsonPropertyName("realm-management")]
+    public RolesModel RealmManagement { get; set; } = new RolesModel();
 
-  /// <summary>
-  /// get/set - Realm management claims.
-  /// </summary>
-  [JsonPropertyName("tno-app")]
-  public RolesModel App { get; set; } = new RolesModel();
+    /// <summary>
+    /// get/set - Realm management claims.
+    /// </summary>
+    [JsonPropertyName("hsb-app")]
+    public RolesModel App { get; set; } = new RolesModel();
 
-  /// <summary>
-  /// get/set - Realm management claims.
-  /// </summary>
-  [JsonPropertyName("tno-service-account")]
-  public RolesModel ServiceAccount { get; set; } = new RolesModel();
+    /// <summary>
+    /// get/set - Realm management claims.
+    /// </summary>
+    [JsonPropertyName("hsb-service-account")]
+    public RolesModel ServiceAccount { get; set; } = new RolesModel();
 
-  /// <summary>
-  /// get/set - Realm management claims.
-  /// </summary>
-  [JsonPropertyName("account")]
-  public RolesModel Account { get; set; } = new RolesModel();
-  #endregion
+    /// <summary>
+    /// get/set - Realm management claims.
+    /// </summary>
+    [JsonPropertyName("account")]
+    public RolesModel Account { get; set; } = new RolesModel();
+    #endregion
 }

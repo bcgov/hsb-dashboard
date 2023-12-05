@@ -14,6 +14,7 @@ metadata:
     version: 1.0.0
     component: task
     managed-by: kustomize
+    DataClass: Low
 spec:
   params:
     - name: IMAGE
@@ -42,6 +43,7 @@ spec:
     - name: MIGRATION
       description: The migration to apply
       type: string
+      default: ""
 
   steps:
     - name: run
@@ -58,7 +60,7 @@ spec:
               \"containers\":[
                 {
                   \"name\":\"$(params.IMAGE)\",
-                  \"image\":\"$IMAGE_REGISTRY/$(params.PROJECT_SHORTNAME)-tools/$(params.IMAGE):$(params.DEPLOY_TO)\",
+                  \"image\":\"$(params.IMAGE_REGISTRY)/$(params.PROJECT_SHORTNAME)-tools/$(params.IMAGE):$(params.DEPLOY_TO)\",
                   \"env\":[
                     {
                       \"name\":\"MIGRATION\",

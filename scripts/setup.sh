@@ -128,7 +128,8 @@ ASPNETCORE_ENVIRONMENT=Development
 ASPNETCORE_URLS=http://+:8080
 
 # Keycloak API
-Keycloak__Secret={GET FROM KEYCLOAK}" >> ./src/api-css/.env
+Keycloak__ClientId={GET FROM Keycloak Client UID}
+Keycloak__Secret={GET FROM Keycloak Client Credentials Secret}" >> ./src/api-css/.env
     echo "./src/api-css/.env created"
   fi
 }
@@ -185,10 +186,13 @@ KEYCLOAK_CLIENT_ID=hsb-app
 KEYCLOAK_SECRET={GET FROM KEYCLOAK}
 KEYCLOAK_ISSUER=http://host.docker.internal:$portKeycloakHttp/auth/realms/hsb
 KEYCLOAK_END_SESSION_PATH=/protocol/openid-connect/logout
+KEYCLOAK_TOKEN_URL=/protocol/openid-connect/token
 
 NEXTAUTH_URL=http://localhost:$portAppHttp
 NEXTAUTH_SECRET=$privateKey
-NEXT_WEBPACK_USEPOLLING=false" >> ./src/dashboard/.env
+NEXT_WEBPACK_USEPOLLING=false
+
+API_URL=http://host.docker.internal:$portApiHttp" >> ./src/dashboard/.env
     echo "./src/dashboard/.env created"
   fi
 }

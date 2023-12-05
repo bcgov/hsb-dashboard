@@ -19,7 +19,7 @@ Currently you'll need to install the following.
 | Node Version Manager - NVM                                                | [download](https://github.com/coreybutler/nvm-windows/releases)    |
 | .NET SDK 8.0 (only if you want to run .NET locally)                       | [download](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) |
 
-Docker Desktop on Windows defaults to WSL mode. This may work, but has known issues. You many need to WSL off.
+Docker Desktop on Windows defaults to WSL mode. This may work, but has known issues. You may need to turn WSL off.
 
 When you install Node Version Manager (nvm) on Windows you will need to open a new command window as an administrator.
 Run `nvm install 20.8.1` to install the version of Node required for this project.

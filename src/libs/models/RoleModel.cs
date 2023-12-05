@@ -12,7 +12,7 @@ public class RoleModel : SortableAuditableModel<int>
     /// <summary>
     ///
     /// </summary>
-    public IEnumerable<GroupModel> Groups { get; set; } = [];
+    public IEnumerable<GroupModel> Groups { get; set; } = Array.Empty<GroupModel>();
     #endregion
 
     #region Constructors

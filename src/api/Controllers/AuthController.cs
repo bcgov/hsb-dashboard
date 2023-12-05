@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 using HSB.API.CSS;
 using HSB.API.Models.Auth;
-using HSB.DAL.Services;
 using HSB.Core.Models;
 using System.Net;
 
@@ -25,7 +24,6 @@ public class AuthController : ControllerBase
 {
     #region Variables
     private readonly ICssHelper _cssHelper;
-    private readonly IUserService _userService;
     private readonly JsonSerializerOptions _serializerOptions;
     #endregion
 
@@ -35,13 +33,10 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="cssHelper"></param>
     /// <param name="serializerOptions"></param>
-    /// <param name="userService"></param>
-    public AuthController(ICssHelper cssHelper, IUserService userService, IOptions<JsonSerializerOptions> serializerOptions)
+    public AuthController(ICssHelper cssHelper, IOptions<JsonSerializerOptions> serializerOptions)
     {
         _cssHelper = cssHelper;
-        _userService = userService;
         _serializerOptions = serializerOptions.Value;
-
     }
     #endregion
 
@@ -54,8 +49,8 @@ public class AuthController : ControllerBase
     /// <returns></returns>
     [HttpPost("userinfo")]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(PrincipalModel), 200)]
-    [SwaggerOperation(Tags = ["Auth"])]
+    [ProducesResponseType(typeof(PrincipalModel), (int)HttpStatusCode.OK)]
+    [SwaggerOperation(Tags = new[] { "Auth" })]
     public async Task<IActionResult> UserInfoAsync()
     {
         var user = await _cssHelper.ActivateAsync(this.User);

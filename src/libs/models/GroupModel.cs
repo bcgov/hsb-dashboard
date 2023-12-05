@@ -12,12 +12,12 @@ public class GroupModel : SortableAuditableModel<int>
     /// <summary>
     ///
     /// </summary>
-    public IEnumerable<RoleModel> Roles { get; set; } = [];
+    public IEnumerable<RoleModel> Roles { get; set; } = Array.Empty<RoleModel>();
 
     /// <summary>
     ///
     /// </summary>
-    public IEnumerable<UserModel> Users { get; set; } = [];
+    public IEnumerable<UserModel> Users { get; set; } = Array.Empty<UserModel>();
     #endregion
 
     #region Constructors

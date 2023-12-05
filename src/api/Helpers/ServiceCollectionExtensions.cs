@@ -9,6 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using Microsoft.Extensions.Primitives;
+using HSB.API.CSS;
+using HSB.CSS;
+using HSB.CSS.Config;
+using System.IdentityModel.Tokens.Jwt;
+using HSB.Core.Http;
 
 namespace HSB.API;
 
@@ -101,6 +107,14 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddKeycloak(this IServiceCollection services, WebApplicationBuilder builder)
     {
         // The following dependencies provide dynamic authorization based on keycloak client roles.
+        services
+            .AddHttpClient()
+            .AddTransient<JwtSecurityTokenHandler>()
+            .AddTransient<IHttpRequestClient, HttpRequestClient>()
+            .AddTransient<IOpenIdConnectRequestClient, OpenIdConnectRequestClient>()
+            .AddScoped<IKeycloakService, KeycloakService>()
+            .AddTransient<ICssHelper, CssHelper>()
+            .AddCssEnvironmentService(builder.Configuration.GetSection("CSS"));
         services.AddOptions<Config.KeycloakOptions>().Bind(builder.Configuration.GetSection("Keycloak"));
         services.AddSingleton<IAuthorizationHandler, KeycloakClientRoleHandler>();
         services.AddSingleton<IAuthorizationPolicyProvider, ClientRoleAuthorizationPolicyProvider>();
@@ -127,10 +141,10 @@ public static class ServiceCollectionExtensions
             {
                 ValidateIssuerSigningKey = true,
                 // ValidIssuer = section.GetValue<string>("Issuer"),
-                ValidIssuers = section.GetValue<string>("Issuer")?.Split(",") ?? [],
+                ValidIssuers = section.GetValue<string>("Issuer")?.Split(",") ?? Array.Empty<string>(),
                 ValidateIssuer = section.GetValue<bool>("ValidateIssuer"),
                 // ValidAudience = section.GetValue<string>("Audience"),
-                ValidAudiences = section.GetValue<string>("Audience")?.Split(",") ?? [],
+                ValidAudiences = section.GetValue<string>("Audience")?.Split(",") ?? Array.Empty<string>(),
                 ValidateAudience = section.GetValue<bool>("ValidateAudience"),
                 ValidateLifetime = true
             };
@@ -144,6 +158,10 @@ public static class ServiceCollectionExtensions
             {
                 OnMessageReceived = context =>
                 {
+                    if (context.Request.Headers.TryGetValue("Authorization", out StringValues authorization))
+                    {
+                        var value = authorization.ToString();
+                    }
                     var accessToken = context.Request.Query["access_token"];
 
                     var path = context.HttpContext.Request.Path;

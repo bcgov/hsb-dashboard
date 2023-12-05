@@ -16,7 +16,7 @@ export const getIdToken = async () => {
   const session = await getServerSession(authOptions);
   if (session) {
     const aSession = session as any;
-    const result = decrypt(aSession.id_token);
+    const result = decrypt(aSession.idToken);
     return result;
   }
   return null;

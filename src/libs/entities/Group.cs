@@ -14,22 +14,22 @@ public class Group : SortableAuditable<int>
     /// <summary>
     ///
     /// </summary>
-    public List<Role> Roles { get; } = [];
+    public List<Role> Roles { get; } = new List<Role>();
 
     /// <summary>
     ///
     /// </summary>
-    public List<GroupRole> RolesManyToMany { get; } = [];
+    public List<GroupRole> RolesManyToMany { get; } = new List<GroupRole>();
 
     /// <summary>
     ///
     /// </summary>
-    public List<User> Users { get; } = [];
+    public List<User> Users { get; } = new List<User>();
 
     /// <summary>
     ///
     /// </summary>
-    public List<UserGroup> UsersManyToMany { get; } = [];
+    public List<UserGroup> UsersManyToMany { get; } = new List<UserGroup>();
     #endregion
 
     #region Constructors
