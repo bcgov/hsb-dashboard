@@ -46,9 +46,9 @@
     margin: 5px 10px 0 0;
     border: 1px solid $medium-gray;
 
-    &:focus {
-        outline: 1px solid $focus-blue;
-        border: 0;
+    &:focus, &:focus-visible {
+        border: 1px solid $focus-blue;
+        outline: 0;
     }
 
     &.searchIcon, &.filterIcon {
