@@ -1,0 +1,78 @@
+@import '../../../app/styles/utils.scss';
+
+.toggleSwitch {
+  position: relative;
+  display: inline-block;
+  width: 55px;
+  height: 34px;
+
+  .toggleSwitchCheckbox {
+    display: none;
+
+    &:checked + .toggleSwitchLabel {
+      background-color: $bc-blue;
+
+      .toggleSwitchSwitch {
+        left: 21px;
+      }
+    }
+  }
+
+  .toggleSwitchLabel {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 34px;
+    background-color: $dark-gray;
+    transition: background-color 0.2s ease-in-out;
+    
+    .toggleSwitchInner {
+      display: block;
+      width: 200%;
+      margin-left: -100%;
+      transition: margin 0.3s ease-in-out;
+
+      &:before,
+      &:after {
+        display: block;
+        float: left;
+        width: 50%;
+        height: 34px;
+        line-height: 34px;
+        font-size: 14px;
+        color: white;
+        box-sizing: border-box;
+      }
+
+      &:before {
+        content: "";
+        padding-left: 10px;
+      }
+
+      &:after {
+        content: "";
+        padding-right: 10px;
+      }
+    }
+
+    .toggleSwitchSwitch {
+      display: block;
+      width: 27px;
+      height: 27px;
+      margin: 3px;
+      background: #fff;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 21px;
+      border-radius: 22px;
+      transition: left 0.3s ease-in-out;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+// Add focus styles for keyboard users
+.toggleSwitch:focus-within {
+    outline: 1px solid $focus-blue;
+}

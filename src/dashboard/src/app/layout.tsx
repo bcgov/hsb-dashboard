@@ -1,6 +1,5 @@
 import { Footer, Header, SessionProviderWrapper } from '@/components';
 import type { Metadata } from 'next';
-import "./styles/_globals.scss";
 import './globals.css';
 import "./styles/_fonts.scss";
 

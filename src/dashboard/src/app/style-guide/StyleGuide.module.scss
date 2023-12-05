@@ -58,10 +58,20 @@ h1.heading {
     display: flex;
 
     > div {
-        height: 45px;
-        width: 45px;
+        height: 95px;
+        width: 95px;
         background-color: $dark-gray;
-        margin: 0 20px 0 0;
+        margin: 25px 20px 0 0;
+
+        &::after {
+            content: attr(data-color);
+            height: 20px;
+            width: 40px;
+            display: block;
+            position: relative;
+            bottom: 25px;
+            color: $dark-gray;
+        }
 
         &:first-of-type {
             background-color: $bc-blue;
@@ -71,6 +81,9 @@ h1.heading {
         }
         &:nth-child(3) {
             background-color: $bc-black;
+        }
+        &:nth-child(4) {
+            background-color: $light-gray;
         }
     }
 }

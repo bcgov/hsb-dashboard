@@ -3,6 +3,8 @@
 import { Button } from '@/components';
 import { Checkbox } from '@/components/forms/checkbox';
 import { Select } from '@/components/forms/select';
+import { Text } from '@/components/forms/text';
+import { Toggle } from '@/components/forms/toggle';
 import styles from './StyleGuide.module.scss';
 
 export default function Page() {
@@ -13,10 +15,11 @@ export default function Page() {
         <div>
           <h2 className={styles.heading}>Colours</h2>
           <div className={styles.colours}>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+            <div data-color="#003366"></div>
+            <div data-color="#FCBA19"></div>
+            <div data-color="#313132"></div>
+            <div data-color="#F2F2F2"></div>
+            <div data-color="#949494"></div>
           </div>
         </div>
         <div>
@@ -25,6 +28,7 @@ export default function Page() {
             <li><h1>Main Heading</h1></li>
             <li><h2>Sub-heading</h2></li>
             <li><p>Paragraph text</p></li>
+            <li><a href="#" className={styles.link}>Link text</a></li>
           </ul>
         </div>
         <div className={styles.buttons}>
@@ -35,6 +39,9 @@ export default function Page() {
           <Button title="Secondary Button" variant="secondary">
             Button secondary
           </Button>
+          <Button title="Secondary Button" variant="secondary" iconPath="/images/trash-icon.png">
+            Button with icon
+          </Button>
         </div>
         <div>
           <h2 className={styles.heading}>Checkbox</h2>
@@ -42,14 +49,17 @@ export default function Page() {
         </div>
         <div>
           <h2 className={styles.heading}>Toggle</h2>
-          <Checkbox></Checkbox>
+          <Toggle></Toggle>          
         </div>
         <div>
           <h2 className={styles.heading}>Select</h2>
           <Select title="dropdown example"></Select>
         </div>
         <div>
-          <h2 className={styles.heading}>Inputs</h2>
+          <h2 className={styles.heading}>Text Inputs</h2>
+          <Text placeholder="Placeholder Text"></Text>
+          <Text placeholder="Search icon" iconType={"search"}></Text>
+          <Text placeholder="Filter icon" iconType={"filter"}></Text>
         </div>
       </div>
     </div>
