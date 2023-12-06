@@ -1,0 +1,90 @@
+@import '../../app/styles/utils.scss';
+
+.header {
+    background-image: linear-gradient(to bottom, $bc-blue, $chart-blue);
+    color: $white;
+
+    .container {
+        max-width: 1440px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        padding: 0 65px;
+
+        > div {
+            display: flex;
+        }
+    }
+}
+
+.headerTop {
+    font-weight: 300;
+    justify-content: space-between;
+    margin-top: 23px;
+
+    > div {
+        display: flex;
+        align-items: center;
+    }
+
+    h1 {
+        margin-left: 100px;
+        position: relative;
+
+        &:after {
+            content: '';
+            height: 55px;
+            width: 1px;
+            background-color: $white;
+            display: block;
+            position: absolute;
+            left: -50px;
+            top: 0px;
+        }
+    }
+
+    button {
+        align-self: baseline;
+        margin-top: 10px;
+    }
+}
+
+.headerMiddle {
+    margin: 20px 0 35px;
+    font-size: 1.25em;
+    font-weight: 300;
+}
+
+.headerBottom nav {
+    display: flex;
+    margin-bottom: 60px;
+    font-size: 1.25em;
+    font-weight: 300;
+
+    > a:not(:first-of-type) {
+        margin: 0 25px;
+    }
+
+    > a {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .active {
+        font-weight: 700;
+        margin-right: 25px;
+
+        &::after {
+            content: '';
+            height: 11px;
+            width: 11px;
+            background-color: $white;
+            border-radius: 50%;
+            display: block;
+            position: absolute;
+            right: -30px;
+            top: 10px;
+            pointer-events: none;
+        }
+    }
+}
