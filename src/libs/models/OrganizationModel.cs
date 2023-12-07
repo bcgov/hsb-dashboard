@@ -5,7 +5,6 @@ namespace HSB.Models;
 public class OrganizationModel : SortableCodeAuditableModel<int>
 {
     #region Properties
-    public OrganizationType OrganizationType { get; set; }
     public int? ParentId { get; set; }
     public OrganizationModel? Parent { get; set; }
     public JsonDocument? RawData { get; set; }
@@ -23,7 +22,6 @@ public class OrganizationModel : SortableCodeAuditableModel<int>
     public OrganizationModel(Organization organization, bool includeChildren = false) : base(organization)
     {
         this.Id = organization.Id;
-        this.OrganizationType = organization.OrganizationType;
         this.ParentId = organization.ParentId;
         if (!includeChildren) this.Parent = organization.Parent != null ? new OrganizationModel(organization.Parent) : null;
         this.RawData = organization.RawData;
@@ -41,7 +39,7 @@ public class OrganizationModel : SortableCodeAuditableModel<int>
     {
         if (model.RawData == null) throw new InvalidOperationException("Property 'RawData' is required.");
 
-        return new Organization(model.Name, model.OrganizationType)
+        return new Organization(model.Name)
         {
             Id = model.Id,
             Description = model.Description,

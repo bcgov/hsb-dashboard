@@ -308,22 +308,41 @@
         "attributes" : { }
       } ],
       "hsb-service-account" : [ {
-        "id" : "66489a9d-ea44-408e-b3c8-d1b4568640af",
-        "name" : "admin",
+        "id" : "931789b2-b93a-4ba7-8da1-218405ed894b",
+        "name" : "hsb",
+        "description" : "Standard user for HSB staff who can view all information.",
         "composite" : false,
         "clientRole" : true,
         "containerId" : "c8c6977e-55e0-4146-a38c-8420c5761b6c",
         "attributes" : { }
       }, {
-        "id" : "87db2286-ff9d-4660-aff2-fe94e1edf2da",
-        "name" : "editor",
+        "id" : "283c574f-783d-46b2-abb9-5df4a73fc092",
+        "name" : "organization-admin",
+        "description" : "Organization administrator can self manage users within their organization(s). They can assign roles to users within their organization(s) and to add users to their organization(s).",
         "composite" : false,
         "clientRole" : true,
         "containerId" : "c8c6977e-55e0-4146-a38c-8420c5761b6c",
         "attributes" : { }
       }, {
-        "id" : "cfbc592c-b7ab-4b10-bbb7-d2add53ee263",
-        "name" : "subscriber",
+        "id" : "1b4a8ac4-7106-4bca-a8b3-376f4b86a1f4",
+        "name" : "service-now",
+        "description" : "Service account associated with the ServiceNow Data Service.",
+        "composite" : false,
+        "clientRole" : true,
+        "containerId" : "c8c6977e-55e0-4146-a38c-8420c5761b6c",
+        "attributes" : { }
+      }, {
+        "id" : "59eb0c6a-e953-45fb-bf29-59966262ad5e",
+        "name" : "system-admin",
+        "description" : "System administrator can access and configure the whole solution",
+        "composite" : false,
+        "clientRole" : true,
+        "containerId" : "c8c6977e-55e0-4146-a38c-8420c5761b6c",
+        "attributes" : { }
+      }, {
+        "id" : "10185c07-a2fc-4b6a-a148-e3a707cb1c1a",
+        "name" : "client",
+        "description" : "Standard user only has access to view information associated to the organization(s) they belong to.",
         "composite" : false,
         "clientRole" : true,
         "containerId" : "c8c6977e-55e0-4146-a38c-8420c5761b6c",
@@ -530,6 +549,24 @@
     "notBefore" : 0,
     "groups" : [ ]
   }, {
+    "id" : "ac0736d1-3134-42a8-99e2-6195b67d6e7b",
+    "createdTimestamp" : 1701822221148,
+    "username" : "service-account-hsb-app",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "serviceAccountClientId" : "hsb-app",
+    "credentials" : [ ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "default-roles-hsb" ],
+    "clientRoles" : {
+      "realm-management" : [ "realm-admin" ],
+      "hsb-app" : [ "hsb", "client", "organization-admin", "service-now", "system-admin" ]
+    },
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
     "id" : "616beebf-ce6c-4b28-bd5f-a32ceded524b",
     "createdTimestamp" : 1632771846135,
     "username" : "service-account-hsb-service-account",
@@ -543,7 +580,7 @@
     "realmRoles" : [ "default-roles-hsb" ],
     "clientRoles" : {
       "realm-management" : [ "realm-admin" ],
-      "hsb-service-account" : [ "admin", "editor", "subscriber", "uma_protection" ]
+      "hsb-service-account" : [ "uma_protection" ]
     },
     "notBefore" : 0,
     "groups" : [ ]
@@ -705,23 +742,23 @@
     "clientAuthenticatorType" : "client-secret",
     "secret" : "5npvvMumlVeM0UzXzQzSXHb28N21G32c",
     "redirectUris" : [ "http://localhost:30007", "http://localhost:30007/*", "http://localhost:30080/*" ],
-    "webOrigins" : [ "http://localhost:30007" ],
+    "webOrigins" : [ "http://localhost:30080", "http://localhost:30007", "http://localhost:8080", "http://localhost:30005" ],
     "notBefore" : 0,
     "bearerOnly" : false,
     "consentRequired" : false,
     "standardFlowEnabled" : true,
     "implicitFlowEnabled" : false,
     "directAccessGrantsEnabled" : true,
-    "serviceAccountsEnabled" : false,
+    "serviceAccountsEnabled" : true,
     "publicClient" : false,
     "frontchannelLogout" : false,
     "protocol" : "openid-connect",
     "attributes" : {
-      "access.token.lifespan" : "300",
+      "access.token.lifespan" : "60",
       "saml.force.post.binding" : "false",
       "saml.multivalued.roles" : "false",
       "oauth2.device.authorization.grant.enabled" : "false",
-      "backchannel.logout.revoke.offline.tokens" : "false",
+      "backchannel.logout.revoke.offline.tokens" : "true",
       "saml.server.signature.keyinfo.ext" : "false",
       "use.refresh.tokens" : "true",
       "oidc.ciba.grant.enabled" : "false",
@@ -729,6 +766,8 @@
       "client_credentials.use_refresh_token" : "false",
       "require.pushed.authorization.requests" : "false",
       "saml.client.signature" : "false",
+      "client.session.max.lifespan" : "60",
+      "client.session.idle.timeout" : "60",
       "id.token.as.detached.signature" : "false",
       "saml.assertion.signature" : "false",
       "saml.encrypt" : "false",

@@ -18,7 +18,7 @@ namespace HSB.DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("ProductVersion", "7.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -102,6 +102,9 @@ namespace HSB.DAL.Migrations
                         .HasColumnType("character varying(100)")
                         .HasDefaultValueSql("''");
 
+                    b.Property<int?>("TenantId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("UPlatform")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -128,6 +131,8 @@ namespace HSB.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OrganizationId");
+
+                    b.HasIndex("TenantId");
 
                     b.HasIndex("ServiceNowKey", "Name", "Category", "SubCategory");
 
@@ -501,9 +506,6 @@ namespace HSB.DAL.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<int>("OrganizationType")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("ParentId")
                         .HasColumnType("integer");
 
@@ -737,6 +739,127 @@ namespace HSB.DAL.Migrations
                     b.ToTable("ServerItem", (string)null);
                 });
 
+            modelBuilder.Entity("HSB.Entities.Tenant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<JsonDocument>("RawData")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("jsonb")
+                        .HasDefaultValueSql("'{}'::jsonb");
+
+                    b.Property<string>("ServiceNowKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.Property<DateTimeOffset>("UpdatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "Code" }, "IX_tenant_code")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "Name" }, "IX_tenant_name")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "ServiceNowKey" }, "IX_tenant_serviceNowKey")
+                        .IsUnique();
+
+                    b.ToTable("Tenant", (string)null);
+                });
+
+            modelBuilder.Entity("HSB.Entities.TenantOrganization", b =>
+                {
+                    b.Property<int>("TenantId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.Property<DateTimeOffset>("UpdatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
+
+                    b.HasKey("TenantId", "OrganizationId");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.ToTable("TenantOrganization", (string)null);
+                });
+
             modelBuilder.Entity("HSB.Entities.User", b =>
                 {
                     b.Property<long>("Id")
@@ -784,9 +907,10 @@ namespace HSB.DAL.Migrations
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("boolean");
 
-                    b.Property<Guid>("Key")
+                    b.Property<string>("Key")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("text")
                         .HasDefaultValueSql("uuid_generate_v1()");
 
                     b.Property<DateTime?>("LastLoginOn")
@@ -802,10 +926,18 @@ namespace HSB.DAL.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("character varying(15)");
+
+                    b.Property<JsonDocument>("Preferences")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
@@ -885,12 +1017,12 @@ namespace HSB.DAL.Migrations
                     b.ToTable("UserGroup", (string)null);
                 });
 
-            modelBuilder.Entity("HSB.Entities.UserOrganization", b =>
+            modelBuilder.Entity("HSB.Entities.UserTenant", b =>
                 {
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("OrganizationId")
+                    b.Property<int>("TenantId")
                         .HasColumnType("integer");
 
                     b.Property<string>("CreatedBy")
@@ -919,11 +1051,11 @@ namespace HSB.DAL.Migrations
                         .HasColumnType("bigint")
                         .HasDefaultValueSql("0");
 
-                    b.HasKey("UserId", "OrganizationId");
+                    b.HasKey("UserId", "TenantId");
 
-                    b.HasIndex("OrganizationId");
+                    b.HasIndex("TenantId");
 
-                    b.ToTable("UserOrganization", (string)null);
+                    b.ToTable("UserTenant", (string)null);
                 });
 
             modelBuilder.Entity("HSB.Entities.ConfigurationItem", b =>
@@ -933,6 +1065,10 @@ namespace HSB.DAL.Migrations
                         .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("HSB.Entities.Tenant", null)
+                        .WithMany("ConfigurationItems")
+                        .HasForeignKey("TenantId");
 
                     b.Navigation("Organization");
                 });
@@ -996,6 +1132,25 @@ namespace HSB.DAL.Migrations
                     b.Navigation("OperatingSystemItem");
                 });
 
+            modelBuilder.Entity("HSB.Entities.TenantOrganization", b =>
+                {
+                    b.HasOne("HSB.Entities.Organization", "Organization")
+                        .WithMany("TenantsManyToMany")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HSB.Entities.Tenant", "Tenant")
+                        .WithMany("OrganizationsManyToMany")
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
+
+                    b.Navigation("Tenant");
+                });
+
             modelBuilder.Entity("HSB.Entities.UserGroup", b =>
                 {
                     b.HasOne("HSB.Entities.Group", "Group")
@@ -1015,21 +1170,21 @@ namespace HSB.DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("HSB.Entities.UserOrganization", b =>
+            modelBuilder.Entity("HSB.Entities.UserTenant", b =>
                 {
-                    b.HasOne("HSB.Entities.Organization", "Organization")
+                    b.HasOne("HSB.Entities.Tenant", "Tenant")
                         .WithMany("UsersManyToMany")
-                        .HasForeignKey("OrganizationId")
+                        .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("HSB.Entities.User", "User")
-                        .WithMany("OrganizationsManyToMany")
+                        .WithMany("TenantsManyToMany")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Organization");
+                    b.Navigation("Tenant");
 
                     b.Navigation("User");
                 });
@@ -1059,7 +1214,7 @@ namespace HSB.DAL.Migrations
 
                     b.Navigation("ConfigurationItems");
 
-                    b.Navigation("UsersManyToMany");
+                    b.Navigation("TenantsManyToMany");
                 });
 
             modelBuilder.Entity("HSB.Entities.Role", b =>
@@ -1067,11 +1222,20 @@ namespace HSB.DAL.Migrations
                     b.Navigation("GroupsManyToMany");
                 });
 
+            modelBuilder.Entity("HSB.Entities.Tenant", b =>
+                {
+                    b.Navigation("ConfigurationItems");
+
+                    b.Navigation("OrganizationsManyToMany");
+
+                    b.Navigation("UsersManyToMany");
+                });
+
             modelBuilder.Entity("HSB.Entities.User", b =>
                 {
                     b.Navigation("GroupsManyToMany");
 
-                    b.Navigation("OrganizationsManyToMany");
+                    b.Navigation("TenantsManyToMany");
                 });
 #pragma warning restore 612, 618
         }

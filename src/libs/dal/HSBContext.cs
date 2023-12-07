@@ -130,7 +130,7 @@ public class HSBContext : DbContext
             }
         }
 
-        return base.SaveChanges();
+        return base.SaveChanges(acceptAllChangesOnSuccess);
     }
 
     /// <summary>

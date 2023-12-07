@@ -5,12 +5,14 @@ using Swashbuckle.AspNetCore.Annotations;
 using HSB.Core.Models;
 using System.Net;
 using HSB.DAL.Services;
+using HSB.Keycloak;
 
 namespace HSB.API.Areas.Services.Controllers;
 
 /// <summary>
 /// OrganizationController class, provides endpoints for organizations.
 /// </summary>
+[ClientRoleAuthorize(ClientRole.ServiceNow)]
 [ApiController]
 [ApiVersion("1.0")]
 [Area("services")]
@@ -42,10 +44,10 @@ public class OrganizationController : ControllerBase
     ///
     /// </summary>
     /// <returns></returns>
-    [HttpGet(Name = "GetOrganizations")]
+    [HttpGet(Name = "GetOrganizations-Services")]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<OrganizationModel>), 200)]
-    [SwaggerOperation(Tags = ["Organization Item"])]
+    [ProducesResponseType(typeof(IEnumerable<OrganizationModel>), (int)HttpStatusCode.OK)]
+    [SwaggerOperation(Tags = new[] { "Organization Item" })]
     public IActionResult Get()
     {
         var organizations = _service.Find(o => true);
@@ -55,16 +57,66 @@ public class OrganizationController : ControllerBase
     /// <summary>
     ///
     /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("{id}", Name = "GetOrganization-Services")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(OrganizationModel), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [SwaggerOperation(Tags = new[] { "Organization Item" })]
+    public IActionResult GetForId(int id)
+    {
+        var entity = _service.FindForId(id);
+
+        if (entity == null) return new NoContentResult();
+
+        return new JsonResult(new OrganizationModel(entity));
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
-    [HttpPost(Name = "AddOrganizations")]
+    [HttpPost(Name = "AddOrUpdateOrganization-Services")]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(OrganizationModel), 201)]
-    [SwaggerOperation(Tags = ["Organization Item"])]
-    public IActionResult Add(OrganizationModel model)
+    [ProducesResponseType(typeof(OrganizationModel), (int)HttpStatusCode.Created)]
+    [ProducesResponseType(typeof(OrganizationModel), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
+    [SwaggerOperation(Tags = new[] { "Organization Item" })]
+    public IActionResult AddOrUpdate(OrganizationModel model)
     {
         var entity = model.ToEntity();
-        _service.Add(entity);
+        var existing = _service.FindForId(model.Id);
+        if (existing == null)
+        {
+            _service.Add(entity);
+            _service.CommitTransaction();
+            return CreatedAtAction(nameof(GetForId), new { id = entity.Id }, new OrganizationModel(entity));
+        }
+        else
+        {
+            _service.ClearChangeTracker(); // Remove existing from context.
+            _service.Update(entity);
+            _service.CommitTransaction();
+            return new JsonResult(new OrganizationModel(entity));
+        }
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    [HttpPut("{id}", Name = "UpdateOrganization-Services")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(OrganizationModel), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
+    [SwaggerOperation(Tags = new[] { "Organization Item" })]
+    public IActionResult Update(OrganizationModel model)
+    {
+        var entity = model.ToEntity();
+        _service.Update(entity);
         _service.CommitTransaction();
         return new JsonResult(new OrganizationModel(entity));
     }

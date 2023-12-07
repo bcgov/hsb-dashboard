@@ -6,7 +6,7 @@ To setup team access to Sysdig follow [BCGov Developer Hub Sysdig Onboarding](ht
 
 We created the Kubernetes CRD template with required information and applied the template TNO `*-tools` namespace.
 
-For furture team onboarding or any update will be added to `./tno-sysdig-access.yaml` file. Anyone with contributor access to namespace can publish the changes to `*-tools` namespace and it will reflected in sysdig.
+For furture team onboarding or any update will be added to `./hsb-sysdig-access.yaml` file. Anyone with contributor access to namespace can publish the changes to `*-tools` namespace and it will reflected in sysdig.
 
 ```yaml
 apiVersion: ops.gov.bc.ca/v1alpha1

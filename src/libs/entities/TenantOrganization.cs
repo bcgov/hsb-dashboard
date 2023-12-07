@@ -3,18 +3,18 @@ namespace HSB.Entities;
 /// <summary>
 ///
 /// </summary>
-public class UserOrganization : Auditable
+public class TenantOrganization : Auditable
 {
     #region Properties
     /// <summary>
     ///
     /// </summary>
-    public long UserId { get; set; }
+    public int TenantId { get; set; }
 
     /// <summary>
     ///
     /// </summary>
-    public User? User { get; set; }
+    public Tenant? Tenant { get; set; }
 
     /// <summary>
     ///
@@ -31,13 +31,13 @@ public class UserOrganization : Auditable
     /// <summary>
     ///
     /// </summary>
-    /// <param name="user"></param>
+    /// <param name="tenant"></param>
     /// <param name="organization"></param>
     /// <exception cref="ArgumentNullException"></exception>
-    public UserOrganization(User user, Organization organization)
+    public TenantOrganization(Tenant tenant, Organization organization)
     {
-        this.User = user ?? throw new ArgumentNullException(nameof(user));
-        this.UserId = user.Id;
+        this.Tenant = tenant ?? throw new ArgumentNullException(nameof(tenant));
+        this.TenantId = tenant.Id;
         this.Organization = organization ?? throw new ArgumentNullException(nameof(organization));
         this.OrganizationId = organization.Id;
     }
@@ -45,11 +45,11 @@ public class UserOrganization : Auditable
     /// <summary>
     ///
     /// </summary>
-    /// <param name="userId"></param>
+    /// <param name="tenantId"></param>
     /// <param name="organizationId"></param>
-    public UserOrganization(long userId, int organizationId)
+    public TenantOrganization(int tenantId, int organizationId)
     {
-        this.UserId = userId;
+        this.TenantId = tenantId;
         this.OrganizationId = organizationId;
     }
 
@@ -60,8 +60,8 @@ public class UserOrganization : Auditable
     /// <returns></returns>
     public override bool Equals(object? obj)
     {
-        if (obj is not UserOrganization entity) return false;
-        return (this.UserId, this.OrganizationId).Equals((entity.UserId, entity.OrganizationId));
+        if (obj is not TenantOrganization entity) return false;
+        return (this.TenantId, this.OrganizationId).Equals((entity.TenantId, entity.OrganizationId));
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public class UserOrganization : Auditable
     /// <returns></returns>
     public override int GetHashCode()
     {
-        return HashCode.Combine(UserId, OrganizationId);
+        return HashCode.Combine(TenantId, OrganizationId);
     }
     #endregion
 }

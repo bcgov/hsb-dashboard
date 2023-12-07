@@ -36,7 +36,7 @@ public class HealthController : ControllerBase
     [HttpGet]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(StatusModel), 200)]
-    [SwaggerOperation(Tags = ["health"])]
+    [SwaggerOperation(Tags = new[] { "health" })]
     public IActionResult Status()
     {
         return new JsonResult(new StatusModel("running"));
@@ -49,7 +49,7 @@ public class HealthController : ControllerBase
     [HttpGet("env")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(EnvModel), 200)]
-    [SwaggerOperation(Tags = ["health"])]
+    [SwaggerOperation(Tags = new[] { "health" })]
     public IActionResult Environment()
     {
         return new JsonResult(new EnvModel(_environment));

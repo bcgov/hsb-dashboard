@@ -7,19 +7,29 @@ namespace HSB.Keycloak;
 /// </summary>
 public enum ClientRole
 {
-  /// <summary>
-  /// Administrator role.
-  /// </summary>
-  [Display(Name = "administrator")]
-  Administrator,
-  /// <summary>
-  /// Editor role.
-  /// </summary>
-  [Display(Name = "editor")]
-  Editor,
-  /// <summary>
-  /// Subscriber role.
-  /// </summary>
-  [Display(Name = "subscriber")]
-  Subscriber
+    /// <summary>
+    /// System Administrator role.
+    /// </summary>
+    [Display(Name = "system-admin")]
+    SystemAdministrator,
+    /// <summary>
+    /// Editor role.
+    /// </summary>
+    [Display(Name = "organization-admin")]
+    OrganizationAdministrator,
+    /// <summary>
+    /// Client role.
+    /// </summary>
+    [Display(Name = "client")]
+    Client,
+    /// <summary>
+    /// HSB role.
+    /// </summary>
+    [Display(Name = "hsb")]
+    HSB,
+    /// <summary>
+    /// Service Now role.
+    /// </summary>
+    [Display(Name = "service-now")]
+    ServiceNow,
 }

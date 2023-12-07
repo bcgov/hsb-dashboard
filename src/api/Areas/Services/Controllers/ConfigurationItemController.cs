@@ -5,12 +5,14 @@ using Swashbuckle.AspNetCore.Annotations;
 using HSB.Core.Models;
 using System.Net;
 using HSB.DAL.Services;
+using HSB.Keycloak;
 
 namespace HSB.API.Areas.Services.Controllers;
 
 /// <summary>
 /// ConfigurationItemController class, provides endpoints for configuration items.
 /// </summary>
+[ClientRoleAuthorize(ClientRole.ServiceNow)]
 [ApiController]
 [ApiVersion("1.0")]
 [Area("services")]
@@ -42,10 +44,11 @@ public class ConfigurationItemController : ControllerBase
     ///
     /// </summary>
     /// <returns></returns>
-    [HttpGet(Name = "GetConfigurationItems")]
+    [HttpGet(Name = "GetConfigurationItems-Services")]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<ConfigurationItemModel>), 200)]
-    [SwaggerOperation(Tags = ["Configuration Item"])]
+    [ProducesResponseType(typeof(IEnumerable<ConfigurationItemModel>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
+    [SwaggerOperation(Tags = new[] { "Configuration Item" })]
     public IActionResult Get()
     {
         var configurationItems = _service.Find(ci => true);
@@ -55,16 +58,54 @@ public class ConfigurationItemController : ControllerBase
     /// <summary>
     ///
     /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpGet("{id}", Name = "GetConfigurationItem-Services")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(ConfigurationItemModel), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.NoContent)]
+    [SwaggerOperation(Tags = new[] { "Configuration Item" })]
+    public IActionResult GetForId(int id)
+    {
+        var entity = _service.FindForId(id);
+
+        if (entity == null) return new NoContentResult();
+
+        return new JsonResult(new ConfigurationItemModel(entity));
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
-    [HttpPost(Name = "AddConfigurationItems")]
+    [HttpPost(Name = "AddConfigurationItem-Services")]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(ConfigurationItemModel), 201)]
-    [SwaggerOperation(Tags = ["Configuration Item"])]
+    [ProducesResponseType(typeof(ConfigurationItemModel), (int)HttpStatusCode.Created)]
+    [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
+    [SwaggerOperation(Tags = new[] { "Configuration Item" })]
     public IActionResult Add(ConfigurationItemModel model)
     {
         var entity = model.ToEntity();
         _service.Add(entity);
+        _service.CommitTransaction();
+        return CreatedAtAction(nameof(GetForId), new { id = entity.Id }, new ConfigurationItemModel(entity));
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    [HttpPut("{id}", Name = "UpdateConfigurationItem-Services")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(ConfigurationItemModel), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
+    [SwaggerOperation(Tags = new[] { "Configuration Item" })]
+    public IActionResult Update(ConfigurationItemModel model)
+    {
+        var entity = model.ToEntity();
+        _service.Update(entity);
         _service.CommitTransaction();
         return new JsonResult(new ConfigurationItemModel(entity));
     }
