@@ -11,8 +11,8 @@ export const AuthState = () => {
   else if (session.status === 'authenticated') {
     return (
         <button onClick={() => keycloakSessionLogOut()} title="Sign out">
-          <div className="group flex flex-row gap-1 items-center text-gray-100 hover:text-gray-500 active:text-gray-900">
-            <FaSignOutAlt className="fill-gray-100 group-hover:fill-gray-500 group-active:fill-gray-900" />
+          <div className="group flex flex-row gap-1 items-center text-white-100 hover:text-gray-500 active:text-gray-900 font-bold">
+            <FaSignOutAlt/>
             Sign out
           </div>
         </button>
@@ -21,8 +21,8 @@ export const AuthState = () => {
 
   return (
       <button onClick={() => signIn('keycloak')} title="Sign in">
-        <div className="group flex flex-row gap-1 items-center text-gray-100 hover:text-gray-500 active:text-gray-900 font-bold">
-          <FaSignInAlt className="fill-gray-100 hover:fill-gray-500 active:fill-gray-900" />
+        <div className="group flex flex-row gap-1 items-center text-white-100 hover:text-gray-500 active:text-gray-900 font-bold">
+          <FaSignInAlt/>
           Sign in
         </div>
       </button>
