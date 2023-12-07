@@ -12,6 +12,7 @@ export const Header: React.FC = () => {
 
   const isLogin = path.includes('/login');
 
+  const isAdmin = true;
   const isHSBAdmin = true;
   const isHSBAdminOrganizations = true;
   const filtersApplied = false;
@@ -21,8 +22,8 @@ export const Header: React.FC = () => {
       <div className={style.container}>
         <div className={style.headerTop}>
           <div>
-          <Image src="/images/BCLogo.png" alt="Logo" width={134} height={56} />
-          <h1>Storage Dashboard</h1>
+            <Image src="/images/BCLogo.png" alt="Logo" width={134} height={56} />
+            <h1>Storage Dashboard</h1>
           </div>
           {!isLogin && <AuthState />}
         </div>
@@ -32,8 +33,8 @@ export const Header: React.FC = () => {
         </div>
         <div className={style.headerBottom}>
           <nav>
-            <a href="" className={`${!isHSBAdmin && style.active} ${style.storage}`}>Storage</a>
-            <a href="" className={`${isHSBAdmin && style.active} ${style.admin} `}>Administration</a>
+            <a href="" className={`${!isAdmin && style.active} ${style.storage}`}>Storage</a>
+            <a href="" className={`${isAdmin && style.active} ${style.admin} `}>Administration</a>
           </nav>
           {isHSBAdmin && ( 
             <>
@@ -46,7 +47,7 @@ export const Header: React.FC = () => {
               <span className={style.navLine}></span>
             </>
           )}
-          {isHSBAdminOrganizations && (
+          {isHSBAdmin && isHSBAdminOrganizations && (
             <nav className={style.adminSubNav}>
                 <a href="" className={`${style.subNavItem} ${style.active}`}>All Organizations</a>
                 <a href="" className={`${style.subNavItem}`}>Add New Organization</a>
