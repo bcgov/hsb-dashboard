@@ -13,6 +13,7 @@ export const Header: React.FC = () => {
   const isLogin = path.includes('/login');
 
   const isHSBAdmin = true;
+  const isHSBAdminOrganizations = true;
   const filtersApplied = false;
 
   return (
@@ -38,12 +39,19 @@ export const Header: React.FC = () => {
             <>
               <nav>
                 <div className={style.adminNav}>
-                  <a href="" className={style.active}>Organizations</a>
-                  <a href="">Users</a>
+                  <a href="" title="Look up organizations and enable them on dashboard" className={style.active}>Organizations</a>
+                  <a href="" title="Manage user access to dashboard, assign roles">Users</a>
                 </div>
               </nav>
               <span className={style.navLine}></span>
             </>
+          )}
+          {isHSBAdminOrganizations && (
+            <nav className={style.adminSubNav}>
+                <a href="" className={`${style.subNavItem} ${style.active}`}>All Organizations</a>
+                <a href="" className={`${style.subNavItem}`}>Add New Organization</a>
+                <a href="" className={`${style.subNavItem}`}>Update Existing Organization</a>
+            </nav>
           )}
         </div>
       </div>

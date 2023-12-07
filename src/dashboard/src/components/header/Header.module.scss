@@ -1,9 +1,24 @@
 @import '../../app/styles/utils.scss';
 
+@mixin nav-icon($image-path) {
+    &::before {
+      content: '';
+      height: 22px;
+      width: 22px;
+      display: inline-block;
+      background-image: url($image-path);
+      background-repeat: no-repeat;
+      position: relative;
+      top: 5px;
+      margin-right: 10px;
+    }
+  }
+
 .header {
     background-image: linear-gradient(to bottom, $bc-blue, $chart-blue);
     color: $white;
     border-bottom: 2px solid $bc-yellow;
+    margin-bottom: 48px;
 
     .container {
         max-width: 1440px;
@@ -33,7 +48,7 @@
         margin-left: 50px;
         position: relative;
         font-weight: 300;
-        font-size: 1.5em;
+        font-size: $font-size-medium;
 
         &:after {
             content: '';
@@ -55,7 +70,7 @@
 
 .headerMiddle {
     margin: 20px 0 20px;
-    font-size: 1em;
+    font-size: $font-size-normal;
     font-weight: 300;
 }
 
@@ -72,7 +87,7 @@
 .headerBottom nav {
     display: flex;
     margin-bottom: 45px;
-    font-size: 1em;
+    font-size: $font-size-normal;
     font-weight: 300;
 
     > a:not(:first-of-type) {
@@ -89,17 +104,7 @@
     }
 
     .storage, .admin {
-        &::before {
-            content: '';
-            height: 22px;
-            width: 22px;
-            display: inline-block;
-            background-image: url(../../../public/images/home-icon.png);
-            background-repeat: no-repeat;
-            position: relative;
-            top: 5px;
-            margin-right: 10px;
-        }
+        @include nav-icon('../../../public/images/home-icon.png');
     }
 
     .admin::before {
@@ -177,5 +182,59 @@
         position: absolute;
         right: -22px;
         top: -6px;
+    }
+}
+
+nav.adminSubNav {
+    position: absolute;
+    bottom: -22px;
+    background: $white;
+    color: $dark-gray;
+    font-weight: bold;
+    border-radius: 40px;
+    @include dropshadow;
+    margin: 0;
+
+    a.subNavItem {
+        margin: 0;
+        padding: 7px 22px 9px;
+
+        &:first-child {
+            @include nav-icon('../../../public/images/list-icon.png')
+        }
+
+        &:nth-child(2) {
+            border-right: 1px solid $dark-gray;
+            border-left: 1px solid $dark-gray;
+            @include nav-icon('../../../public/images/plus-icon.png')
+        }
+
+        &:last-child {
+            @include nav-icon('../../../public/images/edit-icon.png')
+        }
+
+        &::before {
+            opacity: .4;
+        }
+
+       &:hover {
+            color: $bc-black;
+
+            &::before {
+                opacity: 1;
+            }
+        }
+
+        &.active {
+            color: $bc-black;
+
+            &::before {
+                opacity: 1;
+            }
+
+            &::after {
+                display: none;
+            }
+        } 
     }
 }
