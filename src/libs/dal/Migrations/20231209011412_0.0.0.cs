@@ -25,7 +25,7 @@ namespace HSB.DAL.Migrations
                     UpdatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     UpdatedBy = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     Version = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
-                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     IsEnabled = table.Column<bool>(type: "boolean", nullable: false),
                     SortOrder = table.Column<int>(type: "integer", nullable: false)
@@ -43,7 +43,7 @@ namespace HSB.DAL.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     RawData = table.Column<JsonDocument>(type: "jsonb", nullable: false, defaultValueSql: "'{}'::jsonb"),
                     ServiceNowKey = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    UName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     CreatedBy = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     UpdatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
@@ -69,7 +69,7 @@ namespace HSB.DAL.Migrations
                     UpdatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     UpdatedBy = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     Version = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
-                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     IsEnabled = table.Column<bool>(type: "boolean", nullable: false),
                     SortOrder = table.Column<int>(type: "integer", nullable: false),
@@ -98,7 +98,7 @@ namespace HSB.DAL.Migrations
                     UpdatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     UpdatedBy = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     Version = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
-                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     IsEnabled = table.Column<bool>(type: "boolean", nullable: false),
                     SortOrder = table.Column<int>(type: "integer", nullable: false)
@@ -121,7 +121,7 @@ namespace HSB.DAL.Migrations
                     UpdatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     UpdatedBy = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     Version = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0"),
-                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
                     IsEnabled = table.Column<bool>(type: "boolean", nullable: false),
                     SortOrder = table.Column<int>(type: "integer", nullable: false),
@@ -199,18 +199,18 @@ namespace HSB.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    OrganizationId = table.Column<int>(type: "integer", nullable: false),
+                    TenantId = table.Column<int>(type: "integer", nullable: true),
+                    OrganizationId = table.Column<int>(type: "integer", nullable: true),
                     RawData = table.Column<JsonDocument>(type: "jsonb", nullable: false, defaultValueSql: "'{}'::jsonb"),
                     ServiceNowKey = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     Category = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
                     SubCategory = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
-                    UPlatform = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
+                    Platform = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
                     DnsDomain = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
-                    SysClassName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
+                    ClassName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
                     FQDN = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
                     IPAddress = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValueSql: "''"),
-                    TenantId = table.Column<int>(type: "integer", nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     CreatedBy = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     UpdatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
@@ -230,7 +230,8 @@ namespace HSB.DAL.Migrations
                         name: "FK_ConfigurationItem_Tenant_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenant",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -329,14 +330,14 @@ namespace HSB.DAL.Migrations
                     ConfigurationItemId = table.Column<int>(type: "integer", nullable: false),
                     RawData = table.Column<JsonDocument>(type: "jsonb", nullable: false, defaultValueSql: "'{}'::jsonb"),
                     ServiceNowKey = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     Label = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Category = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
                     SubCategory = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
                     StorageType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
                     MediaType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
                     VolumeId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
-                    SysClassName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
+                    ClassName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
                     Capacity = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValueSql: "''"),
                     DiskSpace = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValueSql: "''"),
                     Size = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValueSql: "''"),
@@ -369,15 +370,16 @@ namespace HSB.DAL.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ConfigurationItemId = table.Column<int>(type: "integer", nullable: false),
-                    OperatingSystemItemId = table.Column<int>(type: "integer", nullable: false),
+                    OperatingSystemItemId = table.Column<int>(type: "integer", nullable: true),
                     RawData = table.Column<JsonDocument>(type: "jsonb", nullable: false, defaultValueSql: "'{}'::jsonb"),
                     ServiceNowKey = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    OperatingSystemKey = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     Category = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
                     SubCategory = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
                     DiskSpace = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValueSql: "''"),
                     DnsDomain = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
-                    SysClassName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
+                    ClassName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
                     Platform = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
                     IPAddress = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValueSql: "''"),
                     CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
@@ -399,9 +401,13 @@ namespace HSB.DAL.Migrations
                         name: "FK_ServerItem_OperatingSystemItem_OperatingSystemItemId",
                         column: x => x.OperatingSystemItemId,
                         principalTable: "OperatingSystemItem",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ConfigurationItem_Name",
+                table: "ConfigurationItem",
+                column: "Name");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ConfigurationItem_OrganizationId",
@@ -409,9 +415,9 @@ namespace HSB.DAL.Migrations
                 column: "OrganizationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ConfigurationItem_ServiceNowKey_Name_Category_SubCategory",
+                name: "IX_ConfigurationItem_ServiceNowKey",
                 table: "ConfigurationItem",
-                columns: new[] { "ServiceNowKey", "Name", "Category", "SubCategory" });
+                column: "ServiceNowKey");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ConfigurationItem_TenantId",
@@ -451,9 +457,27 @@ namespace HSB.DAL.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OperatingSystemItem_ServiceNowKey_UName",
+                name: "IX_OperatingSystemItem_Name",
                 table: "OperatingSystemItem",
-                columns: new[] { "ServiceNowKey", "UName" });
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OperatingSystemItem_ServiceNowKey",
+                table: "OperatingSystemItem",
+                column: "ServiceNowKey",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Organization_Code",
+                table: "Organization",
+                column: "Code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Organization_Name",
+                table: "Organization",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Organization_ParentId",
@@ -461,19 +485,7 @@ namespace HSB.DAL.Migrations
                 column: "ParentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_organize_code",
-                table: "Organization",
-                column: "Code",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_organize_name",
-                table: "Organization",
-                column: "Name",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_organize_serviceNowKey",
+                name: "IX_Organization_ServiceNowKey",
                 table: "Organization",
                 column: "ServiceNowKey",
                 unique: true);
@@ -506,24 +518,29 @@ namespace HSB.DAL.Migrations
                 column: "OperatingSystemItemId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ServerItem_OperatingSystemKey",
+                table: "ServerItem",
+                column: "OperatingSystemKey");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ServerItem_ServiceNowKey",
                 table: "ServerItem",
                 column: "ServiceNowKey");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tenant_code",
+                name: "IX_Tenant_Code",
                 table: "Tenant",
                 column: "Code",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_tenant_name",
+                name: "IX_Tenant_Name",
                 table: "Tenant",
                 column: "Name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_tenant_serviceNowKey",
+                name: "IX_Tenant_ServiceNowKey",
                 table: "Tenant",
                 column: "ServiceNowKey",
                 unique: true);

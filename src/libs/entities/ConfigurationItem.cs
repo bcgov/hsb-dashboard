@@ -6,7 +6,9 @@ public class ConfigurationItem : Auditable
 {
     #region Properties
     public int Id { get; set; }
-    public int OrganizationId { get; set; }
+    public int? TenantId { get; set; }
+    public Tenant? Tenant { get; set; }
+    public int? OrganizationId { get; set; }
     public Organization? Organization { get; set; }
     public JsonDocument RawData { get; set; } = JsonDocument.Parse("{}");
 
@@ -15,9 +17,9 @@ public class ConfigurationItem : Auditable
     public string Name { get; set; } = "";
     public string Category { get; set; } = "";
     public string SubCategory { get; set; } = "";
-    public string UPlatform { get; set; } = "";
+    public string Platform { get; set; } = "";
     public string DnsDomain { get; set; } = "";
-    public string SysClassName { get; set; } = "";
+    public string ClassName { get; set; } = "";
     public string FQDN { get; set; } = "";
     public string IPAddress { get; set; } = "";
     #endregion
@@ -25,45 +27,39 @@ public class ConfigurationItem : Auditable
     /// <summary>
     ///
     /// </summary>
-    public ICollection<ServerItem> ServerItems { get; } = new List<ServerItem>();
+    public List<ServerItem> ServerItems { get; } = new List<ServerItem>();
 
     /// <summary>
     ///
     /// </summary>
-    public ICollection<FileSystemItem> FileSystemItems { get; } = new List<FileSystemItem>();
+    public List<FileSystemItem> FileSystemItems { get; } = new List<FileSystemItem>();
     #endregion
 
     #region Constructors
     public ConfigurationItem() { }
 
-    public ConfigurationItem(Organization organization, JsonDocument serviceNowJson)
-        : this(organization?.Id ?? 0, serviceNowJson)
+    public ConfigurationItem(Tenant? tenant, Organization? organization, JsonDocument serviceNowJson)
+        : this(tenant?.Id, organization?.Id, serviceNowJson)
     {
-        this.Organization = organization ?? throw new ArgumentNullException(nameof(organization));
+        this.Tenant = tenant;
+        this.Organization = organization;
     }
 
-    public ConfigurationItem(int organizationId, JsonDocument serviceNowJson)
+    public ConfigurationItem(int? tenantId, int? organizationId, JsonDocument data)
     {
+        this.TenantId = tenantId;
         this.OrganizationId = organizationId;
-        this.RawData = serviceNowJson;
+        this.RawData = data;
 
-        var values = JsonSerializer.Deserialize<Dictionary<string, object>>(serviceNowJson);
-        InitServiceNowProperties(values);
-    }
-    #endregion
-
-    #region Methods
-    private void InitServiceNowProperties(Dictionary<string, object>? values)
-    {
-        this.ServiceNowKey = values?.GetDictionaryJsonValue<string>("sys_id") ?? "";
-        this.Name = values?.GetDictionaryJsonValue<string>("name") ?? "";
-        this.Category = values?.GetDictionaryJsonValue<string>("category") ?? "";
-        this.SubCategory = values?.GetDictionaryJsonValue<string>("subcategory") ?? "";
-        this.UPlatform = values?.GetDictionaryJsonValue<string>("u_platform") ?? "";
-        this.DnsDomain = values?.GetDictionaryJsonValue<string>("dns_domain") ?? "";
-        this.SysClassName = values?.GetDictionaryJsonValue<string>("sys_class_name") ?? "";
-        this.FQDN = values?.GetDictionaryJsonValue<string>("fqdn") ?? "";
-        this.IPAddress = values?.GetDictionaryJsonValue<string>("ip_address") ?? "";
+        this.ServiceNowKey = data.GetElementValue<string>(".sys_id") ?? "";
+        this.Name = data.GetElementValue<string>(".name") ?? "";
+        this.Category = data.GetElementValue<string>(".category") ?? "";
+        this.SubCategory = data.GetElementValue<string>(".subcategory") ?? "";
+        this.Platform = data.GetElementValue<string>(".u_platform") ?? "";
+        this.DnsDomain = data.GetElementValue<string>(".dns_domain") ?? "";
+        this.ClassName = data.GetElementValue<string>(".sys_class_name") ?? "";
+        this.FQDN = data.GetElementValue<string>(".fqdn") ?? "";
+        this.IPAddress = data.GetElementValue<string>(".ip_address") ?? "";
     }
     #endregion
 }

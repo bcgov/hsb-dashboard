@@ -30,7 +30,7 @@ public class OperatingSystemItemFilter : PageFilter
     {
         var predicate = PredicateBuilder.New<Entities.OperatingSystemItem>();
         if (this.UName != null)
-            predicate = predicate.And((u) => EF.Functions.Like(u.UName, $"%{this.UName}%"));
+            predicate = predicate.And((u) => EF.Functions.Like(u.Name, $"%{this.UName}%"));
         return predicate;
     }
     #endregion

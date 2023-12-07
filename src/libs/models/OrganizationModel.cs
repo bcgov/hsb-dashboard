@@ -19,13 +19,25 @@ public class OrganizationModel : SortableCodeAuditableModel<int>
     #region Constructors
     public OrganizationModel() { }
 
-    public OrganizationModel(Organization organization, bool includeChildren = false) : base(organization)
+    public OrganizationModel(Organization entity, bool includeChildren = false) : base(entity)
     {
-        this.Id = organization.Id;
-        this.ParentId = organization.ParentId;
-        if (!includeChildren) this.Parent = organization.Parent != null ? new OrganizationModel(organization.Parent) : null;
-        this.RawData = organization.RawData;
-        if (includeChildren) this.Children = organization.Children.Select(c => new OrganizationModel(c));
+        this.Id = entity.Id;
+        this.ParentId = entity.ParentId;
+        if (!includeChildren) this.Parent = entity.Parent != null ? new OrganizationModel(entity.Parent) : null;
+        if (includeChildren) this.Children = entity.Children.Select(c => new OrganizationModel(c));
+
+        this.ServiceNowKey = entity.ServiceNowKey;
+        this.RawData = entity.RawData;
+    }
+
+    public OrganizationModel(ServiceNow.ResultModel<ServiceNow.ClientOrganizationModel> model)
+    {
+        if (model.Data == null) throw new InvalidOperationException("Organization data cannot be null");
+
+        this.Name = model.Data.Name ?? "";
+        this.Code = model.Data.OrganizationCode ?? Guid.NewGuid().ToString();
+        this.ServiceNowKey = model.Data.Id;
+        this.RawData = model.RawData;
     }
     #endregion
 

@@ -54,6 +54,7 @@ gen_env () {
   gen_dal_env ${1-}
   gen_app_env ${1-}
   gen_nginx_env ${1-}
+  gen_data_service_env ${1-}
 }
 
 gen_root_env () {
@@ -204,5 +205,27 @@ gen_nginx_env () {
     echo \
 "" >> ./nginx/.env
     echo "./nginx/.env created"
+  fi
+}
+
+gen_data_service_env () {
+  if test -f "./src/data-service/.env"; then
+    echo "./src/data-service/.env exists"
+  else
+    echo \
+"# Service Now Configuration
+ServiceNow__Instance={GET FROM SERVICE NOW}
+ServiceNow__Username={GET FROM SERVICE NOW}
+ServiceNow__Password={GET FROM SERVICE NOW}
+
+# HSB API Configuration
+Service__ApiUrl=http://host.docker.internal:$portApiHttp
+
+Keycloak__RequireHttpsMetadata=false
+Keycloak__Authority=http://host.docker.internal:$portKeycloakHttp/auth/realms/hsb
+Keycloak__Audience=hsb-app,hsb-service-account
+Keycloak__Issuer=hsb-app,hsb-service-account
+Keycloak__Secret={GET FROM KEYCLOAK}" >> ./src/data-service/.env
+    echo "./src/data-service/.env created"
   fi
 }

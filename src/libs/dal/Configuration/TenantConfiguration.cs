@@ -16,9 +16,9 @@ public class TenantConfiguration : SortableCodeAuditableConfiguration<Tenant, in
 
         builder.HasMany(m => m.Organizations).WithMany(m => m.Tenants).UsingEntity<TenantOrganization>();
 
-        builder.HasIndex(m => m.Name, "IX_tenant_name").IsUnique();
-        builder.HasIndex(m => m.Code, "IX_tenant_code").IsUnique();
-        builder.HasIndex(m => m.ServiceNowKey, "IX_tenant_serviceNowKey").IsUnique();
+        builder.HasIndex(m => m.Name, "IX_Tenant_Name").IsUnique();
+        builder.HasIndex(m => m.Code, "IX_Tenant_Code").IsUnique();
+        builder.HasIndex(m => m.ServiceNowKey, "IX_Tenant_ServiceNowKey").IsUnique();
 
         base.Configure(builder);
     }

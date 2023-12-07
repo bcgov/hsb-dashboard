@@ -10,32 +10,19 @@ public class OperatingSystemItem : Auditable
 
     #region ServiceNow Properties
     public string ServiceNowKey { get; set; } = "";
-    public string UName { get; set; } = "";
+    public string Name { get; set; } = "";
     #endregion
-
-    /// <summary>
-    ///
-    /// </summary>
-    public ICollection<ServerItem> ServerItems { get; } = new List<ServerItem>();
     #endregion
 
     #region Constructors
     protected OperatingSystemItem() { }
 
-    public OperatingSystemItem(JsonDocument serviceNowJson)
+    public OperatingSystemItem(JsonDocument data)
     {
-        this.RawData = serviceNowJson;
+        this.RawData = data;
 
-        var values = JsonSerializer.Deserialize<Dictionary<string, object>>(serviceNowJson);
-        InitServiceNowProperties(values);
-    }
-    #endregion
-
-    #region Methods
-    private void InitServiceNowProperties(Dictionary<string, object>? values)
-    {
-        this.ServiceNowKey = values?.GetDictionaryJsonValue<string>("sys_id") ?? "";
-        this.UName = values?.GetDictionaryJsonValue<string>("u_name") ?? "";
+        this.ServiceNowKey = data.GetElementValue<string>(".sys_id") ?? "";
+        this.Name = data.GetElementValue<string>(".u_name") ?? "";
     }
     #endregion
 }

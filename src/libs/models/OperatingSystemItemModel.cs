@@ -7,7 +7,11 @@ public class OperatingSystemItemModel : AuditableModel
     #region Properties
     public int Id { get; set; }
     public JsonDocument? RawData { get; set; }
+
+    #region ServiceNow Properties
     public string ServiceNowKey { get; set; } = "";
+    public string Name { get; set; } = "";
+    #endregion
     #endregion
 
     #region Constructors
@@ -18,6 +22,16 @@ public class OperatingSystemItemModel : AuditableModel
         this.Id = entity.Id;
         this.RawData = entity.RawData;
         this.ServiceNowKey = entity.ServiceNowKey;
+        this.Name = entity.Name;
+    }
+
+    public OperatingSystemItemModel(ServiceNow.ResultModel<ServiceNow.OperatingSystemModel> model)
+    {
+        if (model.Data == null) throw new InvalidOperationException("Operating System data cannot be null");
+
+        this.ServiceNowKey = model.Data.Id;
+        this.Name = model.Data.Name ?? "";
+        this.RawData = model.RawData;
     }
     #endregion
 

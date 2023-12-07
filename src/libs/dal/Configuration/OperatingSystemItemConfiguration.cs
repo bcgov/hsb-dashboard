@@ -15,9 +15,10 @@ public class OperatingSystemItemConfiguration : AuditableConfiguration<Operating
         builder.Property(m => m.RawData).IsRequired().HasColumnType("jsonb").HasDefaultValueSql("'{}'::jsonb");
 
         builder.Property(m => m.ServiceNowKey).IsRequired().HasMaxLength(100);
-        builder.Property(m => m.UName).IsRequired().HasMaxLength(100);
+        builder.Property(m => m.Name).IsRequired().HasMaxLength(200);
 
-        builder.HasIndex(m => new { m.ServiceNowKey, m.UName });
+        builder.HasIndex(m => new { m.ServiceNowKey }, "IX_OperatingSystemItem_ServiceNowKey").IsUnique();
+        builder.HasIndex(m => new { m.Name }, "IX_OperatingSystemItem_Name");
 
         base.Configure(builder);
     }
