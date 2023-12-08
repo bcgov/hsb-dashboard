@@ -131,6 +131,14 @@
     }
 }
 
+.allServers {
+    position: absolute;
+    right: 0;
+    top: 4px;
+    font-weight: 300;
+    text-decoration: underline;
+}
+
 .navLine {
     height: 1px;
     width: calc(100% - 600px);

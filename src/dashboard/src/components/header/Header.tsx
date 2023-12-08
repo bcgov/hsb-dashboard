@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AuthState } from '../auth';
 import Image from 'next/image';
+import Link from 'next/link';
 import style from './Header.module.scss';
 
 export const Header: React.FC = () => {
@@ -15,20 +16,22 @@ export const Header: React.FC = () => {
   const isAdmin = true;
   const isHSBAdmin = true;
   const isHSBAdminOrganizations = true;
-  const filtersApplied = false;
+  const infoIcon = false;
 
   return (
     <header className={style.header}>
       <div className={style.container}>
         <div className={style.headerTop}>
           <div>
-            <Image src="/images/BCLogo.png" alt="Logo" width={134} height={56} />
+            <Link href="">
+              <Image src="/images/BCLogo.png" alt="Logo" width={134} height={56} />
+            </Link>
             <h1>Storage Dashboard</h1>
           </div>
           {!isLogin && <AuthState />}
         </div>
         <div className={style.headerMiddle}>
-          { filtersApplied && <span className={style.infoIcon}></span>}
+          {infoIcon && <span className={style.infoIcon}></span>}
           <p>Welcome to the storage dashboard.  This is an overview of the storage consumption for all organizations you belong to.  <br/>Use the filters to see further breakdowns of storage data.</p>
         </div>
         <div className={style.headerBottom}>
@@ -36,7 +39,8 @@ export const Header: React.FC = () => {
             <a href="" className={`${!isAdmin && style.active} ${style.storage}`}>Storage</a>
             <a href="" className={`${isAdmin && style.active} ${style.admin} `}>Administration</a>
           </nav>
-          {isHSBAdmin && ( 
+          {!isAdmin && <a href="" className={style.allServers}>See all servers</a>}
+          {isAdmin && isHSBAdmin && ( 
             <>
               <nav>
                 <div className={style.adminNav}>
@@ -47,7 +51,7 @@ export const Header: React.FC = () => {
               <span className={style.navLine}></span>
             </>
           )}
-          {isHSBAdmin && isHSBAdminOrganizations && (
+          {isAdmin && isHSBAdmin && isHSBAdminOrganizations && (
             <nav className={style.adminSubNav}>
                 <a href="" className={`${style.subNavItem} ${style.active}`}>All Organizations</a>
                 <a href="" className={`${style.subNavItem}`}>Add New Organization</a>
