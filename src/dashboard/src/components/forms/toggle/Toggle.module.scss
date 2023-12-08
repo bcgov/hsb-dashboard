@@ -39,7 +39,6 @@
         width: 50%;
         height: 34px;
         line-height: 34px;
-        font-size: 14px;
         color: white;
         box-sizing: border-box;
       }
@@ -67,7 +66,7 @@
       right: 21px;
       border-radius: 22px;
       transition: left 0.3s ease-in-out;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      @include dropshadow;
     }
   }
 }

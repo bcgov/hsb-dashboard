@@ -5,7 +5,7 @@
 
     >.panel {
         margin: 0 auto;
-        max-width: 1440px;
+        max-width: 1310px;
 
         >div {
             margin: 20px 0;
@@ -32,13 +32,13 @@
 }
 
 .heading {
-    font-size: 1.5em;
+    font-size: $font-size-medium;
     font-weight: 400;
     margin-bottom: 15px;
 }
 
 h1.heading {
-    font-size: 2em;
+    font-size: $font-size-large;
     position: relative;
     display: inline-block;
 

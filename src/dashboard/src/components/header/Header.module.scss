@@ -1,0 +1,248 @@
+@import '../../app/styles/utils.scss';
+
+@mixin nav-icon($image-path) {
+    &::before {
+      content: '';
+      height: 22px;
+      width: 22px;
+      display: inline-block;
+      background-image: url($image-path);
+      background-repeat: no-repeat;
+      position: relative;
+      top: 5px;
+      margin-right: 10px;
+    }
+  }
+
+.header {
+    background-image: linear-gradient(to bottom, $bc-blue, $chart-blue);
+    color: $white;
+    border-bottom: 2px solid $bc-yellow;
+    margin-bottom: 48px;
+
+    .container {
+        max-width: 1440px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        padding: 0 65px;
+
+        > div {
+            display: flex;
+            position: relative;
+        }
+    }
+}
+
+.headerTop {
+    font-weight: 300;
+    justify-content: space-between;
+    margin-top: 23px;
+
+    > div {
+        display: flex;
+        align-items: center;
+    }
+
+    h1 {
+        margin-left: 50px;
+        position: relative;
+        font-weight: 300;
+        font-size: $font-size-medium;
+
+        &:after {
+            content: '';
+            height: 35px;
+            width: 1px;
+            background-color: $white;
+            display: block;
+            position: absolute;
+            left: -25px;
+            top: 0px;
+        }
+    }
+
+    button {
+        align-self: baseline;
+        margin-top: 10px;
+    }
+}
+
+.headerMiddle {
+    margin: 20px 0 20px;
+    font-size: $font-size-normal;
+    font-weight: 300;
+}
+
+.infoIcon {
+    height: 20px;
+    width: 20px;
+    background-image: url(../../../public/images/info-icon.png);
+    background-size: contain;
+    margin-right: 15px;
+    position: relative;
+    top: 5px;
+}
+
+.headerBottom nav {
+    display: flex;
+    margin-bottom: 45px;
+    font-size: $font-size-normal;
+    font-weight: 300;
+
+    > a:not(:first-of-type) {
+        margin: 0 25px;
+    }
+
+    > a {
+        position: relative;
+        cursor: pointer;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    .storage, .admin {
+        @include nav-icon('../../../public/images/home-icon.png');
+    }
+
+    .admin::before {
+        background-image: url(../../../public/images/admin-icon.png);
+        margin-left: 5px;
+    }
+
+    .active {
+        font-weight: 700;
+        margin-right: 22px;
+
+        &::after {
+            content: '';
+            height: 9px;
+            width: 9px;
+            background-color: $white;
+            border-radius: 50%;
+            display: block;
+            position: absolute;
+            right: -30px;
+            top: 12px;
+            pointer-events: none;
+        }
+    }
+}
+
+.allServers {
+    position: absolute;
+    right: 0;
+    top: 4px;
+    font-weight: 300;
+    text-decoration: underline;
+}
+
+.navLine {
+    height: 1px;
+    width: calc(100% - 600px);
+    background-color: $white;
+    position: relative;
+    top: 17px;
+    left: 32px;
+}
+
+.adminNav {
+    border: 1px solid $white;
+    border-radius: 20px;
+    padding: 4px 0;
+    position: absolute;
+    right: 0;
+
+    a {
+        position: relative;
+        margin: 0 22px 0 22px;
+        &:hover {
+            text-decoration: underline;
+
+            &::before {
+                content: '';
+                background-color: $white;
+                display: inline-block;
+                height: 34px;
+                width: 156px;
+                position: absolute;
+                border-radius: 20px 0 0 20px;
+                left: -22px;
+                top: -6px;
+                opacity: .2;
+            }
+        }
+
+        &:last-child:hover::before {
+            width: 86px;
+            border-radius: 0 20px 20px 0;
+        }
+    }
+
+    a:first-of-type::after {
+        content: '';
+        height: 34px;
+        width: 1px;
+        background-color: $white;
+        display: block;
+        position: absolute;
+        right: -22px;
+        top: -6px;
+    }
+}
+
+nav.adminSubNav {
+    position: absolute;
+    bottom: -22px;
+    background: $white;
+    color: $dark-gray;
+    font-weight: bold;
+    border-radius: 40px;
+    @include dropshadow;
+    margin: 0;
+
+    a.subNavItem {
+        margin: 0;
+        padding: 7px 22px 9px;
+
+        &:first-child {
+            @include nav-icon('../../../public/images/list-icon.png')
+        }
+
+        &:nth-child(2) {
+            border-right: 1px solid $dark-gray;
+            border-left: 1px solid $dark-gray;
+            @include nav-icon('../../../public/images/plus-icon.png')
+        }
+
+        &:last-child {
+            @include nav-icon('../../../public/images/edit-icon.png')
+        }
+
+        &::before {
+            opacity: .4;
+        }
+
+       &:hover {
+            color: $bc-black;
+
+            &::before {
+                opacity: 1;
+            }
+        }
+
+        &.active {
+            color: $bc-black;
+
+            &::before {
+                opacity: 1;
+            }
+
+            &::after {
+                display: none;
+            }
+        } 
+    }
+}
