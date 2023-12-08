@@ -4,8 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { AuthState } from '../auth';
-import Image from 'next/image';
-import Link from 'next/link';
 import style from './Header.module.scss';
 
 export const Header: React.FC = () => {
