@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@react-icons/all-files": "^4.1.0",
+    "@uidotdev/usehooks": "^2.4.1",
     "axios": "^1.6.2",
     "cryptr": "^6.3.0",
     "jsonwebtoken": "^9.0.2",

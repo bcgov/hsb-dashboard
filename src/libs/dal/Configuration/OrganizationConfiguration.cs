@@ -17,9 +17,9 @@ public class OrganizationConfiguration : SortableCodeAuditableConfiguration<Orga
 
         builder.HasOne(m => m.Parent).WithMany(m => m.Children).HasForeignKey(m => m.ParentId).OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasIndex(m => m.Name, "IX_organize_name").IsUnique();
-        builder.HasIndex(m => m.Code, "IX_organize_code").IsUnique();
-        builder.HasIndex(m => m.ServiceNowKey, "IX_organize_serviceNowKey").IsUnique();
+        builder.HasIndex(m => m.Name, "IX_Organization_Name").IsUnique();
+        builder.HasIndex(m => m.Code, "IX_Organization_Code").IsUnique();
+        builder.HasIndex(m => m.ServiceNowKey, "IX_Organization_ServiceNowKey").IsUnique();
 
         base.Configure(builder);
     }

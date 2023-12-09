@@ -11,7 +11,7 @@ public class CommonAuditableConfiguration<TEntity, TKey> : AuditableConfiguratio
     {
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id).IsRequired();
-        builder.Property(m => m.Name).IsRequired().HasMaxLength(50);
+        builder.Property(m => m.Name).IsRequired().HasMaxLength(200);
         builder.Property(m => m.Description).IsRequired().HasMaxLength(500);
         builder.Property(m => m.IsEnabled).IsRequired();
 

@@ -23,7 +23,7 @@ public abstract class BaseService<TEntity> : BaseService, IBaseService<TEntity>
     /// </summary>
     /// <param name="keyValues"></param>
     /// <returns></returns>
-    public TEntity? FindForId(params object?[]? keyValues)
+    public virtual TEntity? FindForId(params object?[]? keyValues)
     {
         return this.Context.Find<TEntity>(keyValues);
     }
@@ -36,7 +36,7 @@ public abstract class BaseService<TEntity> : BaseService, IBaseService<TEntity>
     /// <param name="take"></param>
     /// <param name="skip"></param>
     /// <returns></returns>
-    public IEnumerable<TEntity> Find(
+    public virtual IEnumerable<TEntity> Find(
         System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate,
         System.Linq.Expressions.Expression<Func<TEntity, bool>>? sort = null,
         int? take = null,
@@ -66,7 +66,7 @@ public abstract class BaseService<TEntity> : BaseService, IBaseService<TEntity>
     /// <param name="take"></param>
     /// <param name="skip"></param>
     /// <returns></returns>
-    public IEnumerable<TEntity> Find(
+    public virtual IEnumerable<TEntity> Find(
         System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate,
         string[] sort,
         int? take = null,
@@ -93,7 +93,7 @@ public abstract class BaseService<TEntity> : BaseService, IBaseService<TEntity>
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>
-    public Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<TEntity> Add(TEntity entity)
+    public virtual Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<TEntity> Add(TEntity entity)
     {
         return this.Context.Add(entity);
     }
@@ -103,7 +103,7 @@ public abstract class BaseService<TEntity> : BaseService, IBaseService<TEntity>
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>
-    public Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<TEntity> Update(TEntity entity)
+    public virtual Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<TEntity> Update(TEntity entity)
     {
         return this.Context.Update(entity);
     }
@@ -113,7 +113,7 @@ public abstract class BaseService<TEntity> : BaseService, IBaseService<TEntity>
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>
-    public Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<TEntity> Remove(TEntity entity)
+    public virtual Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<TEntity> Remove(TEntity entity)
     {
         return this.Context.Remove(entity);
     }

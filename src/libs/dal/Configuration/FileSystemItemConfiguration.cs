@@ -16,13 +16,13 @@ public class FileSystemFileSystem : AuditableConfiguration<FileSystemItem>
         builder.Property(m => m.RawData).IsRequired().HasColumnType("jsonb").HasDefaultValueSql("'{}'::jsonb");
 
         builder.Property(m => m.ServiceNowKey).IsRequired().HasMaxLength(100);
-        builder.Property(m => m.Name).IsRequired().HasMaxLength(100);
+        builder.Property(m => m.Name).IsRequired().HasMaxLength(200);
         builder.Property(m => m.Label).IsRequired().HasMaxLength(100);
         builder.Property(m => m.Category).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
         builder.Property(m => m.SubCategory).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
         builder.Property(m => m.StorageType).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
         builder.Property(m => m.MediaType).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
-        builder.Property(m => m.SysClassName).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
+        builder.Property(m => m.ClassName).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
         builder.Property(m => m.VolumeId).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
         builder.Property(m => m.Capacity).IsRequired().HasMaxLength(50).HasDefaultValueSql("''");
         builder.Property(m => m.DiskSpace).IsRequired().HasMaxLength(50).HasDefaultValueSql("''");
@@ -35,7 +35,8 @@ public class FileSystemFileSystem : AuditableConfiguration<FileSystemItem>
 
         builder.HasOne(m => m.ConfigurationItem).WithMany(m => m.FileSystemItems).HasForeignKey(m => m.ConfigurationItemId).OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasIndex(m => new { m.ServiceNowKey });
+        builder.HasIndex(m => new { m.ServiceNowKey }, "IX_FileSystemItem_ServiceNowKey");
+
 
         base.Configure(builder);
     }

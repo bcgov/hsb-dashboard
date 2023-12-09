@@ -19,13 +19,16 @@ public class HSBContext : DbContext
     #endregion
 
     #region Properties
+    public DbSet<Tenant> Tenants => Set<Tenant>();
+    public DbSet<Organization> Organizations => Set<Organization>();
+    public DbSet<TenantOrganization> TenantOrganizations => Set<TenantOrganization>();
     public DbSet<ConfigurationItem> ConfigurationItems => Set<ConfigurationItem>();
     public DbSet<OperatingSystemItem> OperatingSystemItems => Set<OperatingSystemItem>();
     public DbSet<FileSystemItem> FileSystemItems => Set<FileSystemItem>();
     public DbSet<ServerItem> ServerItems => Set<ServerItem>();
-    public DbSet<Organization> Organizations => Set<Organization>();
     public DbSet<User> Users => Set<User>();
     public DbSet<UserGroup> UserGroups => Set<UserGroup>();
+    public DbSet<UserTenant> UserTenants => Set<UserTenant>();
     public DbSet<Role> Groups => Set<Role>();
     public DbSet<GroupRole> GroupRoles => Set<GroupRole>();
     public DbSet<Role> Roles => Set<Role>();

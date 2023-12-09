@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using HSB.Core.Extensions;
 
 namespace HSB.Entities;
 
@@ -22,22 +23,22 @@ public class Organization : SortableCodeAuditable<int>
     /// <summary>
     ///
     /// </summary>
-    public ICollection<ConfigurationItem> ConfigurationItems { get; } = new List<ConfigurationItem>();
+    public List<ConfigurationItem> ConfigurationItems { get; } = new List<ConfigurationItem>();
 
     /// <summary>
     /// get - Child organizations.
     /// </summary>
-    public ICollection<Organization> Children { get; } = new List<Organization>();
+    public List<Organization> Children { get; } = new List<Organization>();
 
     /// <summary>
     /// get - Tenants that belong to this organization.
     /// </summary>
-    public ICollection<Tenant> Tenants { get; } = new List<Tenant>();
+    public List<Tenant> Tenants { get; } = new List<Tenant>();
 
     /// <summary>
     /// get - Tenants that belong to this organization. (many-to-many).
     /// </summary>
-    public ICollection<TenantOrganization> TenantsManyToMany { get; } = new List<TenantOrganization>();
+    public List<TenantOrganization> TenantsManyToMany { get; } = new List<TenantOrganization>();
     #endregion
 
     #region Constructors
@@ -49,6 +50,15 @@ public class Organization : SortableCodeAuditable<int>
     public Organization(string name)
     {
         this.Name = name;
+    }
+
+    public Organization(JsonDocument data)
+    {
+        this.RawData = data;
+
+        this.ServiceNowKey = data.GetElementValue<string>(".sys_id") ?? "";
+        this.Name = data.GetElementValue<string>(".u_name") ?? "";
+        this.Code = data.GetElementValue<string>(".u_org_code") ?? "";
     }
     #endregion
 }

@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HSB.DAL.Migrations
 {
     [DbContext(typeof(HSBContext))]
-    [Migration("20231206145555_0.0.0")]
+    [Migration("20231209011412_0.0.0")]
     partial class _000
     {
         /// <inheritdoc />
@@ -35,6 +35,13 @@ namespace HSB.DAL.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Category")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValueSql("''");
+
+                    b.Property<string>("ClassName")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(100)
@@ -74,11 +81,18 @@ namespace HSB.DAL.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
-                    b.Property<int>("OrganizationId")
+                    b.Property<int?>("OrganizationId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Platform")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValueSql("''");
 
                     b.Property<JsonDocument>("RawData")
                         .IsRequired()
@@ -98,22 +112,8 @@ namespace HSB.DAL.Migrations
                         .HasColumnType("character varying(100)")
                         .HasDefaultValueSql("''");
 
-                    b.Property<string>("SysClassName")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasDefaultValueSql("''");
-
                     b.Property<int?>("TenantId")
                         .HasColumnType("integer");
-
-                    b.Property<string>("UPlatform")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasDefaultValueSql("''");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
@@ -137,7 +137,9 @@ namespace HSB.DAL.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.HasIndex("ServiceNowKey", "Name", "Category", "SubCategory");
+                    b.HasIndex(new[] { "Name" }, "IX_ConfigurationItem_Name");
+
+                    b.HasIndex(new[] { "ServiceNowKey" }, "IX_ConfigurationItem_ServiceNowKey");
 
                     b.ToTable("ConfigurationItem", (string)null);
                 });
@@ -165,6 +167,13 @@ namespace HSB.DAL.Migrations
                         .HasDefaultValueSql("''");
 
                     b.Property<string>("Category")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValueSql("''");
+
+                    b.Property<string>("ClassName")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(100)
@@ -219,8 +228,8 @@ namespace HSB.DAL.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<JsonDocument>("RawData")
                         .IsRequired()
@@ -261,13 +270,6 @@ namespace HSB.DAL.Migrations
                         .HasColumnType("character varying(100)")
                         .HasDefaultValueSql("''");
 
-                    b.Property<string>("SysClassName")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasDefaultValueSql("''");
-
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
                         .HasMaxLength(250)
@@ -302,7 +304,7 @@ namespace HSB.DAL.Migrations
 
                     b.HasIndex("ConfigurationItemId");
 
-                    b.HasIndex("ServiceNowKey");
+                    b.HasIndex(new[] { "ServiceNowKey" }, "IX_FileSystemItem_ServiceNowKey");
 
                     b.ToTable("FileSystemItem", (string)null);
                 });
@@ -340,8 +342,8 @@ namespace HSB.DAL.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
@@ -434,6 +436,11 @@ namespace HSB.DAL.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
                     b.Property<JsonDocument>("RawData")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -441,11 +448,6 @@ namespace HSB.DAL.Migrations
                         .HasDefaultValueSql("'{}'::jsonb");
 
                     b.Property<string>("ServiceNowKey")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.Property<string>("UName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
@@ -468,7 +470,10 @@ namespace HSB.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ServiceNowKey", "UName");
+                    b.HasIndex(new[] { "Name" }, "IX_OperatingSystemItem_Name");
+
+                    b.HasIndex(new[] { "ServiceNowKey" }, "IX_OperatingSystemItem_ServiceNowKey")
+                        .IsUnique();
 
                     b.ToTable("OperatingSystemItem", (string)null);
                 });
@@ -506,8 +511,8 @@ namespace HSB.DAL.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<int?>("ParentId")
                         .HasColumnType("integer");
@@ -546,13 +551,13 @@ namespace HSB.DAL.Migrations
 
                     b.HasIndex("ParentId");
 
-                    b.HasIndex(new[] { "Code" }, "IX_organize_code")
+                    b.HasIndex(new[] { "Code" }, "IX_Organization_Code")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Name" }, "IX_organize_name")
+                    b.HasIndex(new[] { "Name" }, "IX_Organization_Name")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "ServiceNowKey" }, "IX_organize_serviceNowKey")
+                    b.HasIndex(new[] { "ServiceNowKey" }, "IX_Organization_ServiceNowKey")
                         .IsUnique();
 
                     b.ToTable("Organization", (string)null);
@@ -591,8 +596,8 @@ namespace HSB.DAL.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<int>("SortOrder")
                         .HasColumnType("integer");
@@ -641,6 +646,13 @@ namespace HSB.DAL.Migrations
                         .HasColumnType("character varying(100)")
                         .HasDefaultValueSql("''");
 
+                    b.Property<string>("ClassName")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValueSql("''");
+
                     b.Property<int>("ConfigurationItemId")
                         .HasColumnType("integer");
 
@@ -677,11 +689,16 @@ namespace HSB.DAL.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int?>("OperatingSystemItemId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("OperatingSystemKey")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
-
-                    b.Property<int>("OperatingSystemItemId")
-                        .HasColumnType("integer");
 
                     b.Property<string>("Platform")
                         .IsRequired()
@@ -702,13 +719,6 @@ namespace HSB.DAL.Migrations
                         .HasColumnType("character varying(100)");
 
                     b.Property<string>("SubCategory")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasDefaultValueSql("''");
-
-                    b.Property<string>("SysClassName")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(100)
@@ -737,7 +747,9 @@ namespace HSB.DAL.Migrations
 
                     b.HasIndex("OperatingSystemItemId");
 
-                    b.HasIndex("ServiceNowKey");
+                    b.HasIndex(new[] { "OperatingSystemKey" }, "IX_ServerItem_OperatingSystemKey");
+
+                    b.HasIndex(new[] { "ServiceNowKey" }, "IX_ServerItem_ServiceNowKey");
 
                     b.ToTable("ServerItem", (string)null);
                 });
@@ -775,8 +787,8 @@ namespace HSB.DAL.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<JsonDocument>("RawData")
                         .IsRequired()
@@ -810,13 +822,13 @@ namespace HSB.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Code" }, "IX_tenant_code")
+                    b.HasIndex(new[] { "Code" }, "IX_Tenant_Code")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "Name" }, "IX_tenant_name")
+                    b.HasIndex(new[] { "Name" }, "IX_Tenant_Name")
                         .IsUnique();
 
-                    b.HasIndex(new[] { "ServiceNowKey" }, "IX_tenant_serviceNowKey")
+                    b.HasIndex(new[] { "ServiceNowKey" }, "IX_Tenant_ServiceNowKey")
                         .IsUnique();
 
                     b.ToTable("Tenant", (string)null);
@@ -1066,14 +1078,16 @@ namespace HSB.DAL.Migrations
                     b.HasOne("HSB.Entities.Organization", "Organization")
                         .WithMany("ConfigurationItems")
                         .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("HSB.Entities.Tenant", null)
+                    b.HasOne("HSB.Entities.Tenant", "Tenant")
                         .WithMany("ConfigurationItems")
-                        .HasForeignKey("TenantId");
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Organization");
+
+                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("HSB.Entities.FileSystemItem", b =>
@@ -1125,10 +1139,8 @@ namespace HSB.DAL.Migrations
                         .IsRequired();
 
                     b.HasOne("HSB.Entities.OperatingSystemItem", "OperatingSystemItem")
-                        .WithMany("ServerItems")
-                        .HasForeignKey("OperatingSystemItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("OperatingSystemItemId");
 
                     b.Navigation("ConfigurationItem");
 
@@ -1204,11 +1216,6 @@ namespace HSB.DAL.Migrations
                     b.Navigation("RolesManyToMany");
 
                     b.Navigation("UsersManyToMany");
-                });
-
-            modelBuilder.Entity("HSB.Entities.OperatingSystemItem", b =>
-                {
-                    b.Navigation("ServerItems");
                 });
 
             modelBuilder.Entity("HSB.Entities.Organization", b =>

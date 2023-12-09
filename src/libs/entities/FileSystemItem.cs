@@ -19,7 +19,7 @@ public class FileSystemItem : Auditable
     public string StorageType { get; set; } = "";
     public string MediaType { get; set; } = "";
     public string VolumeId { get; set; } = "";
-    public string SysClassName { get; set; } = "";
+    public string ClassName { get; set; } = "";
     public string Capacity { get; set; } = "";
     public string DiskSpace { get; set; } = "";
     public string Size { get; set; } = "";
@@ -40,36 +40,28 @@ public class FileSystemItem : Auditable
         this.ConfigurationItem = configurationItem ?? throw new ArgumentNullException(nameof(configurationItem));
     }
 
-    public FileSystemItem(int configurationItemId, JsonDocument serviceNowJson)
+    public FileSystemItem(int configurationItemId, JsonDocument data)
     {
         this.ConfigurationItemId = configurationItemId;
-        this.RawData = serviceNowJson;
+        this.RawData = data;
 
-        var values = JsonSerializer.Deserialize<Dictionary<string, object>>(serviceNowJson);
-        InitServiceNowProperties(values);
-    }
-    #endregion
-
-    #region Methods
-    private void InitServiceNowProperties(Dictionary<string, object>? values)
-    {
-        this.ServiceNowKey = values?.GetDictionaryJsonValue<string>("sys_id") ?? "";
-        this.Name = values?.GetDictionaryJsonValue<string>("name") ?? "";
-        this.Label = values?.GetDictionaryJsonValue<string>("label") ?? "";
-        this.Category = values?.GetDictionaryJsonValue<string>("category") ?? "";
-        this.SubCategory = values?.GetDictionaryJsonValue<string>("subcategory") ?? "";
-        this.StorageType = values?.GetDictionaryJsonValue<string>("u_platform") ?? "";
-        this.MediaType = values?.GetDictionaryJsonValue<string>("dns_domain") ?? "";
-        this.SysClassName = values?.GetDictionaryJsonValue<string>("sys_class_name") ?? "";
-        this.VolumeId = values?.GetDictionaryJsonValue<string>("volume_id") ?? "";
-        this.Capacity = values?.GetDictionaryJsonValue<string>("capacity") ?? "";
-        this.DiskSpace = values?.GetDictionaryJsonValue<string>("disk_space") ?? "";
-        this.Size = values?.GetDictionaryJsonValue<string>("size") ?? "";
-        this.SizeBytes = values?.GetDictionaryJsonValue<string>("size_bytes") ?? "";
-        this.UsedSizeBytes = values?.GetDictionaryJsonValue<string>("used_size_bytes") ?? "";
-        this.AvailableSpace = values?.GetDictionaryJsonValue<string>("available_space") ?? "";
-        this.FreeSpace = values?.GetDictionaryJsonValue<string>("free_space") ?? "";
-        this.FreeSpaceBytes = values?.GetDictionaryJsonValue<string>("free_space_bytes") ?? "";
+        this.ServiceNowKey = data.GetElementValue<string>(".sys_id") ?? "";
+        this.Name = data.GetElementValue<string>(".name") ?? "";
+        this.Label = data.GetElementValue<string>(".label") ?? "";
+        this.Category = data.GetElementValue<string>(".category") ?? "";
+        this.SubCategory = data.GetElementValue<string>(".subcategory") ?? "";
+        this.StorageType = data.GetElementValue<string>(".u_platform") ?? "";
+        this.MediaType = data.GetElementValue<string>(".dns_domain") ?? "";
+        this.ClassName = data.GetElementValue<string>(".sys_class_name") ?? "";
+        this.VolumeId = data.GetElementValue<string>(".volume_id") ?? "";
+        this.Capacity = data.GetElementValue<string>(".capacity") ?? "";
+        this.DiskSpace = data.GetElementValue<string>(".disk_space") ?? "";
+        this.Size = data.GetElementValue<string>(".size") ?? "";
+        this.SizeBytes = data.GetElementValue<string>(".size_bytes") ?? "";
+        this.UsedSizeBytes = data.GetElementValue<string>(".used_size_bytes") ?? "";
+        this.AvailableSpace = data.GetElementValue<string>(".available_space") ?? "";
+        this.FreeSpace = data.GetElementValue<string>(".free_space") ?? "";
+        this.FreeSpaceBytes = data.GetElementValue<string>(".free_space_bytes") ?? "";
     }
     #endregion
 }
