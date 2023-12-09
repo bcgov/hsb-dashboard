@@ -86,12 +86,9 @@ export const authOptions: AuthOptions = {
     async session({ session, token }: { session: Session; token: JWT }) {
       // Send properties to the client, like an access_token from a provider.
       if (token) {
-        const aToken = token as any;
-        const aSession = session as any;
-        aSession.idToken = encrypt(`${token.id_token}`);
-        aSession.accessToken = encrypt(`${token.access_token}`);
-        aSession.roles = aToken.decoded.client_roles ?? [];
-        aSession.user.roles = token.roles || []; // Adding roles to session.user here
+        session.idToken = encrypt(`${token.id_token}`);
+        session.accessToken = encrypt(`${token.access_token}`);
+        session.user.roles = token.roles ?? token.decoded?.client_roles ?? [];
       }
 
       return session;

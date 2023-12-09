@@ -5,4 +5,7 @@
     "Swashbuckle"
   ],
   "yaml.schemaStore.enable": false,
+  "notebook.codeActionsOnSave": {
+    "source.organizeImports": true,
+  },
 }

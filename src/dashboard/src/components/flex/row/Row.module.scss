@@ -1,0 +1,12 @@
+@import '@/app/styles/utils.scss';
+
+.row {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
+
+  >div:first-child {
+    font-size: 0.75rem;
+  }
+}

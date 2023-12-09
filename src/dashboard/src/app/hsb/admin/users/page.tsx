@@ -1,5 +1,5 @@
 'use client';
-import { useApi } from '@/app/hooks';
+import { useApi } from '@/hooks';
 import React from 'react';
 
 export default function Page() {
@@ -14,5 +14,6 @@ export default function Page() {
       })
       .catch(() => {});
   }, [api]);
+
   return <div>HSB User Admin</div>;
 }

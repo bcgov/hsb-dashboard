@@ -487,7 +487,7 @@
     "requiredActions" : [ ],
     "realmRoles" : [ "default-roles-hsb" ],
     "clientRoles" : {
-      "hsb-app" : [ "hsb", "client", "organization-admin", "service-now", "system-admin" ]
+      "hsb-app" : [ "hsb", "service-now", "system-admin" ]
     },
     "notBefore" : 0,
     "groups" : [ ]
@@ -501,7 +501,13 @@
     "firstName" : "Client",
     "lastName" : "User",
     "email" : "admin@local.com",
-    "credentials" : [ ],
+    "credentials" : [ {
+      "id" : "8362b6e5-05b3-40fe-9cf2-522955fd9910",
+      "type" : "password",
+      "createdDate" : 1702304484048,
+      "secretData" : "{\"value\":\"4LTTw+VjmGACSHsM3q3N5ZIXTjYZ85w3njfLZ+nLQbMGIhclHxdQ20IODauuCW0byTXq3OAp/gwXMqTIaFJ/0A==\",\"salt\":\"Z/XBGM1gMFwdC1aJo+dlUA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
     "realmRoles" : [ "default-roles-hsb" ],
@@ -754,7 +760,7 @@
     "frontchannelLogout" : false,
     "protocol" : "openid-connect",
     "attributes" : {
-      "access.token.lifespan" : "60",
+      "access.token.lifespan" : "300",
       "saml.force.post.binding" : "false",
       "saml.multivalued.roles" : "false",
       "oauth2.device.authorization.grant.enabled" : "false",
@@ -766,8 +772,6 @@
       "client_credentials.use_refresh_token" : "false",
       "require.pushed.authorization.requests" : "false",
       "saml.client.signature" : "false",
-      "client.session.max.lifespan" : "60",
-      "client.session.idle.timeout" : "60",
       "id.token.as.detached.signature" : "false",
       "saml.assertion.signature" : "false",
       "saml.encrypt" : "false",

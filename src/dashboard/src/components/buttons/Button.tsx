@@ -1,4 +1,7 @@
 import styles from './buttons.module.scss';
+
+import Image from 'next/image';
+
 interface IButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'success' | 'warn' | 'error' | 'info' | 'link';
   children?: React.ReactNode;
@@ -25,7 +28,7 @@ export const Button: React.FC<IButtonProps> = ({ variant, children, iconPath, ..
 
   return (
     <button className={`${style}${rest.className ? ` ${rest.className}` : ''}`} {...rest}>
-      {iconPath && <img src={iconPath} alt="icon" className={styles.buttonIcon} />}
+      {iconPath && <Image src={iconPath} alt="icon" className={styles.buttonIcon} />}
       {children}
     </button>
   );

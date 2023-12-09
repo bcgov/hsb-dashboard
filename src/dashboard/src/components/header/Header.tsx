@@ -1,19 +1,36 @@
 'use client';
 
+import style from './Header.module.scss';
+
+import { useAuth } from '@/hooks';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { redirect, usePathname } from 'next/navigation';
+import React from 'react';
 import { AuthState } from '../auth';
-import style from './Header.module.scss';
 
 export const Header: React.FC = () => {
   const path = usePathname();
+  const {
+    isLoading,
+    isAuthenticated,
+    isAuthorized,
+    isSystemAdmin,
+    isHSB,
+    isClient,
+    isOrganizationAdmin,
+  } = useAuth();
+
+  React.useEffect(() => {
+    if (!isLoading) {
+      if (!isAuthenticated && !path.includes('/login')) redirect('/login');
+      else if (isAuthenticated && !isAuthorized && !path.includes('/welcome')) redirect('/welcome');
+    }
+  }, [isAuthenticated, isAuthorized, isLoading, path]);
 
   const isLogin = path.includes('/login');
+  const rootPath = isHSB ? 'hsb' : 'client';
 
-  const isAdmin = true;
-  const isHSBAdmin = true;
-  const isHSBAdminOrganizations = true;
   const infoIcon = false;
 
   return (
@@ -21,40 +38,107 @@ export const Header: React.FC = () => {
       <div className={style.container}>
         <div className={style.headerTop}>
           <div>
-            <Link href="">
+            <Link href="/">
               <Image src="/images/BCLogo.png" alt="Logo" width={134} height={56} />
             </Link>
             <h1>Storage Dashboard</h1>
           </div>
-          {!isLogin && <AuthState />}
+          {!isLogin && <AuthState showName={true} />}
         </div>
         <div className={style.headerMiddle}>
           {infoIcon && <span className={style.infoIcon}></span>}
-          <p>Welcome to the storage dashboard.  This is an overview of the storage consumption for all organizations you belong to.  <br/>Use the filters to see further breakdowns of storage data.</p>
+          <p>
+            Welcome to the storage dashboard. This is an overview of the storage consumption for all
+            organizations you belong to. <br />
+            Use the filters to see further breakdowns of storage data.
+          </p>
         </div>
         <div className={style.headerBottom}>
-          <nav>
-            <a href="" className={`${!isAdmin && style.active} ${style.storage}`}>Storage</a>
-            <a href="" className={`${isAdmin && style.active} ${style.admin} `}>Administration</a>
-          </nav>
-          {!isAdmin && <a href="" className={style.allServers}>See all servers</a>}
-          {isAdmin && isHSBAdmin && ( 
+          {isAuthorized && (
             <>
-              <nav>
-                <div className={style.adminNav}>
-                  <a href="" title="Look up organizations and enable them on dashboard" className={style.active}>Organizations</a>
-                  <a href="" title="Manage user access to dashboard, assign roles">Users</a>
-                </div>
-              </nav>
-              <span className={style.navLine}></span>
+              {(isClient || isHSB) && (
+                <>
+                  <nav>
+                    <Link
+                      href={`/${rootPath}/dashboard`}
+                      className={`${path.startsWith(`/${rootPath}/dashboard`) && style.active} ${
+                        style.storage
+                      }`}
+                    >
+                      Storage
+                    </Link>
+                    {(isOrganizationAdmin || isSystemAdmin) && (
+                      <Link
+                        href={`/${rootPath}/admin`}
+                        className={`${path.startsWith(`/${rootPath}/admin`) && style.active} ${
+                          style.admin
+                        } `}
+                      >
+                        Administration
+                      </Link>
+                    )}
+                  </nav>
+                  {(isOrganizationAdmin || isSystemAdmin) && (
+                    <>
+                      {/* <Link href="/client/dashboard" className={style.allServers}>
+                        See all servers
+                      </Link> */}
+                      <nav>
+                        <div className={style.adminNav}>
+                          <Link
+                            href={`/${rootPath}/admin/organizations`}
+                            title="Look up organizations and enable them on dashboard"
+                            className={`${
+                              path.startsWith(`/${rootPath}/admin/organizations`) && style.active
+                            }`}
+                          >
+                            Organizations
+                          </Link>
+                          <Link
+                            href={`/${rootPath}/admin/users`}
+                            title="Manage user access to dashboard, assign roles"
+                            className={`${
+                              path.startsWith(`/${rootPath}/admin/users`) && style.active
+                            }`}
+                          >
+                            Users
+                          </Link>
+                        </div>
+                      </nav>
+                      <span className={style.navLine}></span>
+                    </>
+                  )}
+                </>
+              )}
+              {isSystemAdmin && path.startsWith('/hsb/admin/organizations') && (
+                <nav className={style.adminSubNav}>
+                  <Link
+                    href="/hsb/admin/organizations"
+                    className={`${style.subNavItem} ${
+                      path === '/hsb/admin/organizations' && style.active
+                    }`}
+                  >
+                    All Organizations
+                  </Link>
+                  <Link
+                    href="/hsb/admin/organizations/0"
+                    className={`${style.subNavItem} ${
+                      path.startsWith('/hsb/admin/organizations/0') && style.active
+                    }`}
+                  >
+                    Add New Organization
+                  </Link>
+                  <Link
+                    href="/hsb/admin/organizations/1"
+                    className={`${style.subNavItem} ${
+                      /\/hsb\/admin\/organizations\/[1-9]+/.test(path) && style.active
+                    }`}
+                  >
+                    Update Existing Organization
+                  </Link>
+                </nav>
+              )}
             </>
-          )}
-          {isAdmin && isHSBAdmin && isHSBAdminOrganizations && (
-            <nav className={style.adminSubNav}>
-                <a href="" className={`${style.subNavItem} ${style.active}`}>All Organizations</a>
-                <a href="" className={`${style.subNavItem}`}>Add New Organization</a>
-                <a href="" className={`${style.subNavItem}`}>Update Existing Organization</a>
-            </nav>
           )}
         </div>
       </div>

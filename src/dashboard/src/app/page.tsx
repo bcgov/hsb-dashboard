@@ -1,25 +1,18 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import React from 'react';
+import { useAuth } from '@/hooks';
+import { redirect } from 'next/navigation';
 
 export default function Page() {
-  const session = useSession();
-  const router = useRouter();
+  const { isClient, isHSB } = useAuth();
 
-  const isLoading = session?.status === 'loading';
-
-  React.useEffect(() => {
-    if (session?.status !== 'loading' && session?.status !== 'authenticated') router.push('/login');
-  }, [router, session]);
+  // Redirect to default page for each type of user.
+  if (isClient) redirect('/client/dashboard');
+  else if (isHSB) redirect('/hsb/dashboard');
 
   return (
     <main>
-      <div>Welcome Home Page</div>
-      <Link href={`/hsb/admin/users`}>hsb/admin/users</Link>
-      {isLoading && 'Loading...'}
+      <div>Loading...</div>
     </main>
   );
 }
