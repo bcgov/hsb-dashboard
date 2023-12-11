@@ -1,7 +1,8 @@
 import { Footer, Header, SessionProviderWrapper } from '@/components';
 import type { Metadata } from 'next';
+import React from 'react';
 import './globals.css';
-import "./styles/_fonts.scss";
+import './styles/_fonts.scss';
 
 export const metadata: Metadata = {
   title: 'Hosting Storage Dashboard',

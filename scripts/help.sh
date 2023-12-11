@@ -16,6 +16,8 @@ nuke:                                               Teardown whole environment
 ssh:            {service}                           SSH into docker container
 go:                                                 Open a browser and view app
 
+npm-install:                                        Install latest npm packages locally.
+
 tool-update:                                        Updates the dotnet tool (default ef)
 db-list:                                            Lists all migrations
 db-add:         {name}                              Create a migration
