@@ -70,7 +70,6 @@ export const authOptions: AuthOptions = {
         // Token has not expired.
         return token;
       } else {
-        console.debug('Refresh Token');
         const refreshToken = await refreshAccessToken(token);
         return refreshToken;
       }
