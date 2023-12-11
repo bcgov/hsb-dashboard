@@ -21,7 +21,6 @@ export async function refreshAccessToken(token: JWT) {
     });
     const formData = formBody.join('&');
     const url = `${process.env.KEYCLOAK_ISSUER}${process.env.KEYCLOAK_TOKEN_URL}`;
-    console.debug('Refresh URL: ', url);
     const response = await fetch(url, {
       method: 'POST',
       headers: {
