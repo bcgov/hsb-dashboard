@@ -1,13 +1,14 @@
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0
+FROM mcr.microsoft.com/dotnet/sdk:7.0
 
 ENV DOTNET_CLI_HOME=/tmp
 ENV PATH="$PATH:/tmp/.dotnet/tools"
 ENV ASPNETCORE_ENVIRONMENT=Production
+ENV MIGRATION=
 
 # Switch to root for package installs
 USER 0
-RUN dotnet tool install --global dotnet-ef --version 8.0.0
+RUN dotnet tool install --global dotnet-ef --version 7.0.0
 
 WORKDIR /src
 COPY . .
@@ -26,5 +27,7 @@ RUN chmod -R 0777 /.local
 # Run container by default as user with id 1001 (default)
 USER 1001
 
-ENTRYPOINT cd /src/dal && dotnet ef database update $MIGRATION -v
+ENTRYPOINT cd /src/dal && \
+  dotnet ef migrations list && \
+  dotnet ef database update $MIGRATION -v
 # ENTRYPOINT ["tail", "-f", "/dev/null"]

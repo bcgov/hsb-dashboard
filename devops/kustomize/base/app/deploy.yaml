@@ -69,6 +69,12 @@ spec:
                   name: dashboard
                   key: NEXTAUTH_SECRET
 
+            - name: API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: dashboard
+                  key: API_URL
+
             - name: KEYCLOAK_DEBUG
               valueFrom:
                 configMapKeyRef:
@@ -94,26 +100,26 @@ spec:
                 configMapKeyRef:
                   name: keycloak
                   key: KEYCLOAK_END_SESSION_PATH
-          # livenessProbe:
-          #   httpGet:
-          #     path: "/nginx-status"
-          #     port: 3000
-          #     scheme: HTTP
-          #   initialDelaySeconds: 30
-          #   timeoutSeconds: 60
-          #   periodSeconds: 10
-          #   successThreshold: 1
-          #   failureThreshold: 3
-          # readinessProbe:
-          #   httpGet:
-          #     path: "/nginx-status"
-          #     port: 3000
-          #     scheme: HTTP
-          #   initialDelaySeconds: 10
-          #   timeoutSeconds: 60
-          #   periodSeconds: 10
-          #   successThreshold: 1
-          #   failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: "/api/health?status=live"
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: "/api/health?status=ready"
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 60
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       securityContext: {}

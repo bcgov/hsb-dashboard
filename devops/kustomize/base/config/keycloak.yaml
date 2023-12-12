@@ -18,3 +18,4 @@ data:
   KEYCLOAK_AUDIENCE: hsb-dashboard-5128
   KEYCLOAK_ISSUER: hsb-dashboard-5128
   KEYCLOAK_END_SESSION_PATH: /protocol/openid-connect/logout
+  KEYCLOAK_TOKEN_URL: /protocol/openid-connect/token

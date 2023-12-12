@@ -1,119 +1,119 @@
-@import '../../app/styles/utils.scss';
+@import '@/styles/utils.scss';
 
 .filter {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1310px;
-    width: 100%;
-    background-color: $white;
-    @include dropshadow;
-    padding: 12px 22px;
-    border-radius: 10px;
-    position: absolute;
-    top: 215px;
-    transform: translateX(-50%);
-    left: 50%;
-    color: $bc-black;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1310px;
+  width: 100%;
+  background-color: $white;
+  @include dropshadow;
+  padding: 12px 22px;
+  border-radius: 10px;
+  position: absolute;
+  top: 215px;
+  transform: translateX(-50%);
+  left: 50%;
+  color: $bc-black;
 }
 
 .dropdown {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    width: 100%;
-    max-width: 248px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  width: 100%;
+  max-width: 248px;
+
+  @media screen and (max-width: $desktop) {
+    margin: 0 5px;
+  }
+
+  &::after {
+    content: '';
+    height: 12px;
+    width: 12px;
+    border-right: 3px solid $bc-black;
+    border-bottom: 3px solid $bc-black;
+    display: block;
+    position: absolute;
+    right: 16px;
+    top: 25px;
+    transform: rotate(45deg);
+    pointer-events: none;
+  }
+
+  label {
+    font-size: $font-size-normal;
+    font-weight: bold;
+    position: absolute;
+    left: 16px;
+    top: 8px;
+    pointer-events: none;
 
     @media screen and (max-width: $desktop) {
-        margin: 0 5px;
+      font-size: $font-size-small;
+    }
+  }
+
+  select {
+    background-color: $light-gray;
+    padding: 30px 16px 10px;
+    border-radius: 6px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $medium-gray;
     }
 
-    &::after {
-        content: '';
-        height: 12px;
-        width: 12px;
-        border-right: 3px solid $bc-black;
-        border-bottom: 3px solid $bc-black;
-        display: block;
-        position: absolute;
-        right: 16px;
-        top: 25px;
-        transform: rotate(45deg);
-        pointer-events: none;
+    &:focus {
+      outline: 1px solid $focus-blue;
     }
 
-    label {
-        font-size: $font-size-normal;
-        font-weight: bold;
-        position: absolute;
-        left: 16px;
-        top: 8px;
-        pointer-events: none;
-
-        @media screen and (max-width: $desktop) {
-            font-size: $font-size-small;
-        }
+    @media screen and (max-width: $desktop) {
+      font-size: $font-size-small;
     }
 
-    select {
-        background-color: $light-gray;
-        padding: 30px 16px 10px;
-        border-radius: 6px;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        cursor: pointer;
-
-        &:hover {
-            background-color: $medium-gray;
-        }
-
-        &:focus {
-            outline: 1px solid $focus-blue;
-        }
-
-        @media screen and (max-width: $desktop) {
-            font-size: $font-size-small;
-        }
-
-        option {
-            font-family: $bc-sans;
-        }
+    option {
+      font-family: $bc-sans;
     }
+  }
 }
 
 .date {
-    font-size: $font-size-small;
-    background-color: $light-gray;
-    border-radius: 6px;
+  font-size: $font-size-small;
+  background-color: $light-gray;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  padding: 5px 16px;
+  width: 100%;
+  max-width: 248px;
+
+  @media screen and (max-width: $desktop) {
+    margin: 0 5px;
+    width: auto;
+  }
+
+  .datePicker {
     display: flex;
-    flex-direction: column;
-    padding: 5px 16px;
-    width: 100%;
-    max-width: 248px;
+    justify-content: space-between;
+    align-items: center;
 
-    @media screen and (max-width: $desktop) {
-        margin: 0 5px;
-        width: auto;
+    label {
+      font-weight: bold;
+
+      @media screen and (max-width: $desktop) {
+        display: none;
+      }
     }
 
-    .datePicker {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        label {
-            font-weight: bold;
-
-            @media screen and (max-width: $desktop) {
-                display: none;
-            }
-        }
-
-        input {
-            padding: 2px 5px;
-            border-radius: 2px;
-            background-color: $light-gray;
-        }
+    input {
+      padding: 2px 5px;
+      border-radius: 2px;
+      background-color: $light-gray;
     }
+  }
 }

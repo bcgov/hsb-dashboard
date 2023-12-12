@@ -1,4 +1,4 @@
-@import '../../../app/styles/utils.scss';
+@import '@/styles/utils.scss';
 
 .toggleSwitch {
   position: relative;
@@ -25,7 +25,7 @@
     border-radius: 34px;
     background-color: $dark-gray;
     transition: background-color 0.2s ease-in-out;
-    
+
     .toggleSwitchInner {
       display: block;
       width: 200%;

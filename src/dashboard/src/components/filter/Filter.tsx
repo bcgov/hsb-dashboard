@@ -1,10 +1,9 @@
 'use client';
 
-import styles from './Filter.module.scss';
 import { Button } from '@/components/buttons';
+import styles from './Filter.module.scss';
 
 export const Filter: React.FC = () => {
-
   return (
     <div className={styles.filter}>
       <h1>Filter</h1>

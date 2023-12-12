@@ -892,8 +892,10 @@ namespace HSB.DAL.Migrations
 
                     b.Property<string>("DisplayName")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasDefaultValueSql("''");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -913,8 +915,10 @@ namespace HSB.DAL.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasDefaultValueSql("''");
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("boolean");
@@ -930,26 +934,36 @@ namespace HSB.DAL.Migrations
 
                     b.Property<string>("LastName")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasDefaultValueSql("''");
 
                     b.Property<string>("MiddleName")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasDefaultValueSql("''");
 
                     b.Property<string>("Note")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValueSql("''");
 
                     b.Property<string>("Phone")
                         .IsRequired()
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(15)
-                        .HasColumnType("character varying(15)");
+                        .HasColumnType("character varying(15)")
+                        .HasDefaultValueSql("''");
 
                     b.Property<JsonDocument>("Preferences")
                         .IsRequired()
-                        .HasColumnType("jsonb");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("jsonb")
+                        .HasDefaultValueSql("'{}'::jsonb");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()

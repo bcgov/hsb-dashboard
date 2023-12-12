@@ -97,12 +97,12 @@ services:
       - keycloak
     networks:
       - hsb
-    # healthcheck:
-    #   test: curl -s -f http://localhost:8080/health
-    #   interval: 5m
-    #   timeout: 30s
-    #   retries: 3
-    #   start_period: 2m
+    healthcheck:
+      test: curl -s -f http://localhost:8080/v1/health
+      interval: 5m
+      timeout: 30s
+      retries: 3
+      start_period: 2m
 
   ####################### App #######################
   app:
@@ -130,6 +130,12 @@ services:
     #   - api
     networks:
       - hsb
+    healthcheck:
+      test: curl -s -f http://localhost:3000/api/health
+      interval: 5m
+      timeout: 30s
+      retries: 3
+      start_period: 2m
 
   ####################### Nginx #######################
   nginx:

@@ -5,7 +5,7 @@ metadata:
   namespace: e89443-tools
 spec:
   team:
-    description: The Sysdig Team for the OpenShift Project Set e89443 - TNO
+    description: The Sysdig Team for the OpenShift Project Set e89443
     users:
       - name: Jeremy.1.Foster@gov.bc.ca
         role: ROLE_TEAM_EDIT

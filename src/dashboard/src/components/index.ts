@@ -8,3 +8,4 @@ export * from './grid';
 export * from './header';
 export * from './keycloak';
 export * from './navbar';
+export * from './table';

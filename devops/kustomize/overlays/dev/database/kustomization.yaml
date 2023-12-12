@@ -13,3 +13,6 @@ secretGenerator:
   - name: database
     envs:
       - database.env
+  - name: database-local
+    envs:
+      - database-local.env

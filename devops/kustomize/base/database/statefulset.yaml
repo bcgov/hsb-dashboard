@@ -71,17 +71,17 @@ spec:
             - name: POSTGRESQL_DATABASE
               valueFrom:
                 secretKeyRef:
-                  name: database
+                  name: database-local
                   key: DB_NAME
             - name: POSTGRESQL_USER
               valueFrom:
                 secretKeyRef:
-                  name: database
+                  name: database-local
                   key: DB_USER
             - name: POSTGRESQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: database
+                  name: database-local
                   key: DB_PASSWORD
 
   volumeClaimTemplates:

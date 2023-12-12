@@ -1,0 +1,77 @@
+@mixin panel-style($min-height: null, $max-height: null, $min-width: null, $max-width: null) {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 34px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  // Conditional inclusion of properties if the arguments are passed
+  @if $min-height !=null {
+    min-height: $min-height;
+  }
+
+  @if $max-height !=null {
+    max-height: $max-height;
+  }
+
+  @if $min-width !=null {
+    min-width: $min-width;
+  }
+
+  @if $max-width !=null {
+    max-width: $max-width;
+  }
+}
+
+@mixin dropshadow {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@mixin background-gradient-overlay {
+  content: '';
+  height: 75%;
+  width: 100%;
+  background-image: linear-gradient(to bottom, transparent, #9BAEC0);
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  z-index: -1;
+  transform: translateX(-50%);
+}
+
+.link {
+  color: $bc-blue;
+  text-decoration: underline;
+}
+
+.panel {
+  @include panel-style;
+}
+
+//including basic text input styles in global.scss file so multiple components can access it through importing utils.scss
+.textInput {
+  border-radius: 5px;
+  background-color: $light-gray;
+  height: 40px;
+  padding: 0 10px;
+  margin: 5px 10px 0 0;
+  border: 1px solid $medium-gray;
+
+  &:focus,
+  &:focus-visible {
+    border: 1px solid $focus-blue;
+    outline: 0;
+  }
+
+  &.searchIcon,
+  &.filterIcon {
+    background-image: url(/images/magnifying-glass.png);
+    background-repeat: no-repeat;
+    background-position: center left 10px;
+    padding: 0 10px 0 36px;
+  }
+
+  &.filterIcon {
+    background-image: url(/images/filter-icon.png);
+  }
+}
