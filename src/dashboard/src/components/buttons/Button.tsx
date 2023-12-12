@@ -28,7 +28,7 @@ export const Button: React.FC<IButtonProps> = ({ variant, children, iconPath, ..
 
   return (
     <button className={`${style}${rest.className ? ` ${rest.className}` : ''}`} {...rest}>
-      {iconPath && <Image src={iconPath} alt="icon" className={styles.buttonIcon} />}
+      {iconPath && <Image src={iconPath} alt="icon" width={17} height={17} className={styles.buttonIcon} />}
       {children}
     </button>
   );
