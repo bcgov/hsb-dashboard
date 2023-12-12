@@ -1,5 +1,7 @@
+'use client';
+
 import styles from './Filter.module.scss';
-import { Button } from '@/components';
+import { Button } from '@/components/buttons';
 
 export const Filter: React.FC = () => {
 
