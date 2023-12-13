@@ -32,6 +32,10 @@
       position: relative;
     }
   }
+
+  &.filterPadding {
+    margin-bottom: 110px;
+  }
 }
 
 .headerTop {
@@ -113,7 +117,7 @@
     margin-left: 5px;
   }
 
-  .active {
+  > .active {
     font-weight: 700;
     margin-right: 22px;
 
@@ -160,26 +164,12 @@
     position: relative;
     margin: 0 22px 0 22px;
 
-    &:hover {
-      text-decoration: underline;
-
-      &::before {
-        content: '';
-        background-color: $white;
-        display: inline-block;
-        height: 34px;
-        width: 156px;
-        position: absolute;
-        border-radius: 20px 0 0 20px;
-        left: -22px;
-        top: -6px;
-        opacity: .2;
-      }
+    &.active {
+      font-weight: bold;
     }
 
-    &:last-child:hover::before {
-      width: 86px;
-      border-radius: 0 20px 20px 0;
+    &:hover {
+      text-decoration: underline;
     }
   }
 
