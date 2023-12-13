@@ -27,14 +27,21 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+@mixin background-gradient-overlay {
+    content: '';
+    height: 75%;
+    width: 100%;
+    background-image: linear-gradient(to bottom, transparent, #9BAEC0);
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    z-index: -1;
+    transform: translateX(-50%);
+  }
+
 .link {
     color: $bc-blue;
     text-decoration: underline;
-}
-
-.dashboardContainer {
-    max-width: 1440px;
-    margin: 0 auto;
 }
 
 .panel {
