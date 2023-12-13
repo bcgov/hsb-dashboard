@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { redirect, usePathname } from 'next/navigation';
 import React from 'react';
 import { AuthState } from '../auth';
-import { Filter } from '@/components/Filter';
+import { Filter } from '@/components/filter';
 
 export const Header: React.FC = () => {
   const path = usePathname();
