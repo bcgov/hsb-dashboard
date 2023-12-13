@@ -9,7 +9,7 @@ export default function Page() {
       </div>
       <div className={styles.login}>
         <h2>Welcome to the Storage Dashboard</h2>
-        <p>Sign in to get insights into your organization’s data storage and usage.</p>
+        <p>Sign in to get insights into your organization's data storage and usage.</p>
       </div>
     </div>
   );
