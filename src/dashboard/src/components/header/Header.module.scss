@@ -43,6 +43,10 @@
   justify-content: space-between;
   margin-top: 23px;
 
+  &.login {
+    margin-bottom: 23px;
+  }
+
   >div {
     display: flex;
     align-items: center;
