@@ -1,4 +1,4 @@
-@import '../../app/styles/utils.scss';
+@import '@/styles/utils.scss';
 
 @mixin nav-icon($image-path) {
   &::before {

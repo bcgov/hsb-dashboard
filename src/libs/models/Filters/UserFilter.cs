@@ -1,5 +1,6 @@
 namespace HSB.Models.Filters;
 
+using System.Linq.Expressions;
 using HSB.Core.Extensions;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +32,7 @@ public class UserFilter : PageFilter
         this.Email = filter.GetStringValue(nameof(this.Email));
         this.FirstName = filter.GetStringValue(nameof(this.FirstName));
         this.LastName = filter.GetStringValue(nameof(this.LastName));
-        this.IsEnabled = filter.GetBoolNullValue(nameof(this.IsEnabled));
+        this.IsEnabled = filter.GetBoolNullValue(nameof(this.IsEnabled)) ?? filter.GetBoolNullValue("enabled");
 
         this.Sort = filter.GetStringArrayValue(nameof(this.Sort));
     }
@@ -51,6 +52,9 @@ public class UserFilter : PageFilter
             predicate = predicate.And((u) => EF.Functions.Like(u.LastName, $"%{this.LastName}%"));
         if (this.IsEnabled != null)
             predicate = predicate.And((u) => u.IsEnabled == this.IsEnabled);
+
+        if (!predicate.IsStarted) return predicate.And((u) => true);
+
         return predicate;
     }
     #endregion

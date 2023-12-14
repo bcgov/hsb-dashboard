@@ -2,13 +2,13 @@
 
 import style from './Header.module.scss';
 
+import { Filter } from '@/components/filter';
 import { useAuth } from '@/hooks';
 import Image from 'next/image';
 import Link from 'next/link';
 import { redirect, usePathname } from 'next/navigation';
 import React from 'react';
 import { AuthState } from '../auth';
-import { Filter } from '@/components/filter';
 
 export const Header: React.FC = () => {
   const path = usePathname();
@@ -39,7 +39,11 @@ export const Header: React.FC = () => {
     <>
       <header className={`${style.header} ${isClient && isDashboardView && style.filterPadding}`}>
         <div className={style.container}>
-          <div className={`${(path.startsWith(`/login`) || path.startsWith(`/welcome`)) && style.login} ${style.headerTop}`}>
+          <div
+            className={`${
+              (path.startsWith(`/login`) || path.startsWith(`/welcome`)) && style.login
+            } ${style.headerTop}`}
+          >
             <div>
               <Link href="/">
                 <Image src="/images/BCLogo.png" alt="Logo" width={134} height={56} />

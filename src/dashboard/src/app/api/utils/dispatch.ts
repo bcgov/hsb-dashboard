@@ -15,21 +15,25 @@ export const dispatch = async (
 ): Promise<Response> => {
   const session = await getServerSession(authOptions);
 
-  if (session) {
+  const headers: any = init?.headers;
+  var authorization = headers?.Authorization;
+  var accept = headers?.Accept ?? 'application/json, text/plain, */*';
+  var contentType = headers?.['Content-Type'] ?? 'application/json';
+
+  if (!authorization && session) {
     if (session.user && session.accessToken) {
       const token = decrypt(session.accessToken);
-      return await fetch(`${process.env.API_URL}${input}`, {
-        ...init,
-        headers: {
-          Accept: 'application/json, text/plain, */*',
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      authorization = `Bearer ${token}`;
     }
+  } else if (authorization === 'NA') authorization = undefined;
 
-    return Response.json({ message: 'Not authorized' }, { status: 403 });
-  }
-
-  return Response.json({ message: 'Not authenticated' }, { status: 401 });
+  console.debug(`API: ${process.env.API_URL}${input}`);
+  return await fetch(`${process.env.API_URL}${input}`, {
+    ...init,
+    headers: {
+      Accept: accept,
+      'Content-Type': contentType,
+      Authorization: authorization,
+    },
+  });
 };

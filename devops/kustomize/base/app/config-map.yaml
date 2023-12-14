@@ -14,3 +14,4 @@ metadata:
     created-by: jeremy.foster
 data:
   NEXTAUTH_URL: https://dev-hsb.apps.emerald.devops.gov.bc.ca/
+  API_URL: http://api:8080

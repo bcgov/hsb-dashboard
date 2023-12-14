@@ -14,13 +14,20 @@ public interface IBaseService<TEntity> : IBaseService
     /// Find the entity for the specified predicate filter.
     /// </summary>
     /// <param name="predicate"></param>
+    /// <returns></returns>
+    IEnumerable<TEntity> Find(System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate);
+
+    /// <summary>
+    /// Find the entity for the specified predicate filter.
+    /// </summary>
+    /// <param name="predicate"></param>
     /// <param name="sort"></param>
     /// <param name="take"></param>
     /// <param name="skip"></param>
     /// <returns></returns>
-    IEnumerable<TEntity> Find(
+    IEnumerable<TEntity> Find<T>(
         System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate,
-        System.Linq.Expressions.Expression<Func<TEntity, bool>>? sort = null,
+        System.Linq.Expressions.Expression<Func<TEntity, T>>? sort = null,
         int? take = null,
         int? skip = null);
 

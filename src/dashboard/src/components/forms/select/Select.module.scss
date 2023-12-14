@@ -1,43 +1,43 @@
-@import '../../../app/styles/utils.scss';
+@import '@/styles/utils.scss';
 
 .container {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
 .select {
-    border: 1px solid $dark-gray;
-    border-radius: 3px;
-    min-width: 200px;
-    height: 28px;
-    padding: 0 8px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
+  border: 1px solid $dark-gray;
+  border-radius: 3px;
+  min-width: 200px;
+  height: 28px;
+  padding: 0 8px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 
-    &:focus {
-        outline: 1px solid $focus-blue;
-        border: 0;
-    }
+  &:focus {
+    outline: 1px solid $focus-blue;
+    border: 0;
+  }
 
-    ~ span::after {
-        content: '';
-        height: 10px;
-        width: 10px;
-        display: block;
-        border: 1px solid;
-        border-bottom: 0;
-        border-left: 0;
-        position: absolute;
-        top: 6px;
-        right: 9px;
-        transform: rotate(136deg);
-        pointer-events: none;
-        transition: all .1s;
-    }
+  ~span::after {
+    content: '';
+    height: 10px;
+    width: 10px;
+    display: block;
+    border: 1px solid;
+    border-bottom: 0;
+    border-left: 0;
+    position: absolute;
+    top: 6px;
+    right: 9px;
+    transform: rotate(136deg);
+    pointer-events: none;
+    transition: all .1s;
+  }
 
-    &:focus ~ span::after {
-        transform: rotate(315deg);
-        top: 11px;
-    }
+  &:focus~span::after {
+    transform: rotate(315deg);
+    top: 11px;
+  }
 }

@@ -51,12 +51,12 @@ public class UserController : ControllerBase
 
     #region Endpoints
     /// <summary>
-    /// Find a page of user for the specified query filter.
+    /// Find an array of user for the specified query filter.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "GetUsers-SystemAdmin")]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(UserModel), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(UserModel[]), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "User" })]
     public IActionResult Find()
     {
@@ -64,7 +64,7 @@ public class UserController : ControllerBase
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
         var filter = new HSB.Models.Filters.UserFilter(query);
         var result = _userService.Find(filter.GeneratePredicate(), filter.Sort);
-        return new JsonResult(result.Select(u => new UserModel(u)));
+        return new JsonResult(result.Select(u => new UserModel(u)).ToArray());
     }
 
     /// <summary>
@@ -142,6 +142,22 @@ public class UserController : ControllerBase
     {
         await _cssHelper.DeleteUserAsync((Entities.User)model);
         return new JsonResult(model);
+    }
+
+    /// <summary>
+    /// Sync users, roles, and claims with Keycloak.
+    /// This ensures users, roles, and claims within TNO have their 'Key' linked to Keycloak.
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("sync")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType((int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
+    [SwaggerOperation(Tags = new[] { "Keycloak" })]
+    public async Task<IActionResult> SyncAsync()
+    {
+        await _cssHelper.SyncAsync();
+        return new OkResult();
     }
     #endregion
 }

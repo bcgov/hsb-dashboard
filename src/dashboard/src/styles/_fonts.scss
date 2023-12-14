@@ -1,0 +1,49 @@
+@font-face {
+  font-family: 'BCSans';
+  src: url('/fonts/BcSans/2023_03_14_BCSans-Light_2g.woff2') format('woff2'),
+    url('/fonts/BcSans/2023_03_14_BCSans-Light_2g.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BCSans';
+  src: url('/fonts/BcSans/2023_01_01_BCSans-Regular_2f.woff2') format('woff2'),
+    url('/fonts/BcSans/2023_01_01_BCSans-Regular_2f.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BCSans';
+  src: url('/fonts/BcSans/2023_01_01_BCSans-Bold_2f.woff2') format('woff2'),
+    url('/fonts/BcSans/2023_01_01_BCSans-Bold_2f.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+html {
+  font-size: 16px;
+  font-family: "BCSans";
+}
+
+body {
+  font-size: 1em; // Equals the font-size defined on html element (16px)
+  font-family: "BCSans";
+}
+
+h1 {
+  font-size: 1.25em;
+  font-weight: bold;
+}
+
+h2 {
+  font-weight: bold;
+}
+
+p {
+  font-size: 1em; // Equals the font-size of body (16px if base is 16px)
+}

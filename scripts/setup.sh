@@ -160,7 +160,20 @@ CSS__ApiUrl=http://$dockerHost:$portCssApiHttp/api
 CSS__Authority=http://$dockerHost:$portCssApiHttp
 CSS__TokenPath=/api/v1/token
 CSS__ClientId={GET FROM CSS}
-CSS__Secret={GET FROM CSS}" >> ./src/api/.env
+CSS__Secret={GET FROM CSS}
+
+###################################
+# Common Single Sign-On
+###################################
+# Keycloak__Authority=https://dev.loginproxy.gov.bc.ca/auth/realms/standard
+# Keycloak__Audience={GET FROM CSS}
+# Keycloak__Issuer={GET FROM CSS}
+# Keycloak__Secret={GET FROM CSS}
+# CSS__Environment=dev
+# CSS__ApiUrl=https://api.loginproxy.gov.bc.ca
+# CSS__Authority=https://loginproxy.gov.bc.ca
+# CSS__ClientId={GET FROM CSS}
+# CSS__Secret={GET FROM CSS}" >> ./src/api/.env
     echo "./src/api/.env created"
   fi
 }
@@ -193,7 +206,18 @@ NEXTAUTH_URL=http://localhost:$portAppHttp
 NEXTAUTH_SECRET=$privateKey
 NEXT_WEBPACK_USEPOLLING=false
 
-API_URL=http://host.docker.internal:$portApiHttp" >> ./src/dashboard/.env
+API_URL=http://host.docker.internal:$portApiHttp
+
+# Use to fake authentication and authorization.
+# NEXT_PUBLIC_AUTH_STATUS=authenticated
+# NEXT_PUBLIC_AUTH_ROLES=hsb
+
+###################################
+# Common Single Sign-On
+###################################
+# KEYCLOAK_ISSUER=https://dev.loginproxy.gov.bc.ca/auth/realms/standard
+# KEYCLOAK_CLIENT_ID={GET FROM CSS}
+# KEYCLOAK_SECRET={GET FROM CSS}" >> ./src/dashboard/.env
     echo "./src/dashboard/.env created"
   fi
 }

@@ -139,23 +139,23 @@ spec:
                   name: database
                   key: DB_PASSWORD
 
-          # livenessProbe:
-          #   httpGet:
-          #     path: "/health"
-          #     port: 8080
-          #     scheme: HTTP
-          #   initialDelaySeconds: 30
-          #   timeoutSeconds: 30
-          #   periodSeconds: 30
-          #   successThreshold: 1
-          #   failureThreshold: 3
-          # readinessProbe:
-          #   httpGet:
-          #     path: "/health"
-          #     port: 8080
-          #     scheme: HTTP
-          #   initialDelaySeconds: 30
-          #   timeoutSeconds: 60
-          #   periodSeconds: 30
-          #   successThreshold: 1
-          #   failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: "/v1/health?status=live"
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 30
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: "/v1/health?status=ready"
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 60
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 3

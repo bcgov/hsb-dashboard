@@ -1,47 +1,48 @@
-@import '../../app/styles/utils.scss';
+@import '@/styles/utils.scss';
 
 .container {
-    display: flex;
-    height: calc(100vh - 105px);
-    margin-top: -48px;
-    font-size: $font-size-18;
+  display: flex;
+  height: calc(100vh - 105px);
+  margin-top: -48px;
+  font-size: $font-size-18;
 
-    &::after, &::before {
-        @include background-gradient-overlay;
-        z-index: -2;
-    }
+  &::after,
+  &::before {
+    @include background-gradient-overlay;
+    z-index: -2;
+  }
 
-    &::before {
-        background-image: none;
-        left: 0;
-        background-color: white;
-        width: 50%;
-        top: 0;
-        height: 100%;
-        z-index: -1;
-    }
+  &::before {
+    background-image: none;
+    left: 0;
+    background-color: white;
+    width: 50%;
+    top: 0;
+    height: 100%;
+    z-index: -1;
+  }
 
-    > div {
-        width: 50%;
-        padding: 5% 7%;
-    }
+  >div {
+    width: 50%;
+    padding: 5% 7%;
+  }
 }
 
 .welcome {
-    background-color: $white;
+  background-color: $white;
 
-    h2 {
-        font-size: $font-size-40;
-    }
+  h2 {
+    font-size: $font-size-40;
+  }
 
-    a {
-        font-weight: bold;
-        font-style: italic;
-    }
+  a {
+    font-weight: bold;
+    font-style: italic;
+  }
 }
 
 .login {
-    display: flex;
-    flex-direction: column;
-    justify-content: end;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
 }

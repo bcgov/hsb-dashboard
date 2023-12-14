@@ -1,93 +1,96 @@
-@import '../styles/utils.scss';
+@import '@/styles/utils.scss';
 
 .styleGuide {
-    margin: 34px auto;
+  margin: 34px auto;
 
-    >.panel {
-        margin: 0 auto;
-        max-width: 1310px;
+  >.panel {
+    margin: 0 auto;
+    max-width: 1310px;
 
-        >div {
-            margin: 20px 0;
+    >div {
+      margin: 20px 0;
 
-            &::after {
-                content: '';
-                height: 1px;
-                width: 95%;
-                display: block;
-                background-color: $light-gray;
-                margin-top: 25px;
-            }
-        }
+      &::after {
+        content: '';
+        height: 1px;
+        width: 95%;
+        display: block;
+        background-color: $light-gray;
+        margin-top: 25px;
+      }
     }
+  }
 }
 
 .list {
-    list-style-type: disc;
-    margin-left: 25px;
+  list-style-type: disc;
+  margin-left: 25px;
 
-    li {
-        margin: 5px 0;
-    }
+  li {
+    margin: 5px 0;
+  }
 }
 
 .heading {
-    font-size: $font-size-medium;
-    font-weight: 400;
-    margin-bottom: 15px;
+  font-size: $font-size-medium;
+  font-weight: 400;
+  margin-bottom: 15px;
 }
 
 h1.heading {
-    font-size: $font-size-large;
-    position: relative;
-    display: inline-block;
+  font-size: $font-size-large;
+  position: relative;
+  display: inline-block;
 
-    &::after {
-        content: '';
-        height: 10px;
-        width: 100%;
-        display: block;
-        background-color: $bc-blue;
-        position: absolute;
-        bottom: -20px;
-        opacity: .4;
-    }
+  &::after {
+    content: '';
+    height: 10px;
+    width: 100%;
+    display: block;
+    background-color: $bc-blue;
+    position: absolute;
+    bottom: -20px;
+    opacity: .4;
+  }
 }
 
 .colours {
-    display: flex;
+  display: flex;
 
-    > div {
-        height: 95px;
-        width: 95px;
-        background-color: $dark-gray;
-        margin: 25px 20px 0 0;
+  >div {
+    height: 95px;
+    width: 95px;
+    background-color: $dark-gray;
+    margin: 25px 20px 0 0;
 
-        &::after {
-            content: attr(data-color);
-            height: 20px;
-            width: 40px;
-            display: block;
-            position: relative;
-            bottom: 25px;
-            color: $dark-gray;
-        }
-
-        &:first-of-type {
-            background-color: $bc-blue;
-        }
-        &:nth-child(2) {
-            background-color: $bc-yellow;
-        }
-        &:nth-child(3) {
-            background-color: $bc-black;
-        }
-        &:nth-child(4) {
-            background-color: $light-gray;
-        }
+    &::after {
+      content: attr(data-color);
+      height: 20px;
+      width: 40px;
+      display: block;
+      position: relative;
+      bottom: 25px;
+      color: $dark-gray;
     }
+
+    &:first-of-type {
+      background-color: $bc-blue;
+    }
+
+    &:nth-child(2) {
+      background-color: $bc-yellow;
+    }
+
+    &:nth-child(3) {
+      background-color: $bc-black;
+    }
+
+    &:nth-child(4) {
+      background-color: $light-gray;
+    }
+  }
 }
 
-.buttons > button {
-    margin-right: 10px;
+.buttons>button {
+  margin-right: 10px;
 }

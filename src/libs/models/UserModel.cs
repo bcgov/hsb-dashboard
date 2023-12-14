@@ -103,7 +103,9 @@ public class UserModel : AuditableModel
     {
         this.Id = user.Id;
         this.Key = user.Key;
+        this.Username = user.Username;
         this.DisplayName = user.DisplayName;
+        this.Email = user.Email;
         this.EmailVerified = user.EmailVerified;
         this.EmailVerifiedOn = user.EmailVerifiedOn;
         this.FailedLogins = user.FailedLogins;

@@ -16,12 +16,14 @@ public class UserConfiguration : AuditableConfiguration<User>
         builder.Property(m => m.EmailVerified).IsRequired();
         builder.Property(m => m.EmailVerifiedOn);
         builder.Property(m => m.Key).IsRequired().HasDefaultValueSql("uuid_generate_v1()");
-        builder.Property(m => m.DisplayName).IsRequired().HasMaxLength(50);
-        builder.Property(m => m.FirstName).IsRequired().HasMaxLength(50);
-        builder.Property(m => m.MiddleName).IsRequired().HasMaxLength(50);
-        builder.Property(m => m.LastName).IsRequired().HasMaxLength(50);
-        builder.Property(m => m.Phone).IsRequired().HasMaxLength(15);
+        builder.Property(m => m.DisplayName).IsRequired().HasMaxLength(50).HasDefaultValueSql("''");
+        builder.Property(m => m.FirstName).IsRequired().HasMaxLength(50).HasDefaultValueSql("''");
+        builder.Property(m => m.MiddleName).IsRequired().HasMaxLength(50).HasDefaultValueSql("''");
+        builder.Property(m => m.LastName).IsRequired().HasMaxLength(50).HasDefaultValueSql("''");
+        builder.Property(m => m.Phone).IsRequired().HasMaxLength(15).HasDefaultValueSql("''");
         builder.Property(m => m.IsEnabled).IsRequired();
+        builder.Property(m => m.Note).IsRequired().HasColumnType("text").HasDefaultValueSql("''");
+        builder.Property(m => m.Preferences).IsRequired().HasColumnType("jsonb").HasDefaultValueSql("'{}'::jsonb");
         builder.Property(m => m.FailedLogins).IsRequired().HasDefaultValueSql("0");
         builder.Property(m => m.LastLoginOn);
 
