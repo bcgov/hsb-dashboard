@@ -1,0 +1,16 @@
+@import '@/styles/utils.scss';
+
+.info {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+
+  align-items: center;
+  color: $dark-gray;
+
+  >svg {
+    color: $dark-gray;
+    width: 20px;
+    height: 20px;
+  }
+}

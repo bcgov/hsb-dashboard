@@ -40,4 +40,8 @@
     transform: rotate(315deg);
     top: 11px;
   }
+
+  option[class='placeholder'] {
+    color: $light-gray;
+  }
 }

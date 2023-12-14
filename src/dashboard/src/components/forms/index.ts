@@ -1,4 +1,5 @@
 export * from './checkbox';
+export * from './interfaces';
 export * from './select';
 export * from './slider';
 export * from './text';

@@ -1,7 +1,6 @@
-import { toQueryString } from '@/utils';
-import { signOut } from 'next-auth/react';
+import { dispatch, toQueryString } from '@/utils';
 import React from 'react';
-import { IUserFilter } from './interfaces';
+import { IUserFilter, IUserModel } from './interfaces';
 
 /**
  * Provides a simple way to manage all the API endpoints.
@@ -12,10 +11,19 @@ export const useApi = () => {
   return React.useMemo(
     () => ({
       findUsers: async (filter: IUserFilter | undefined = {}): Promise<Response> => {
-        const response = await fetch(`/api/hsb/admin/users?${toQueryString(filter)}`);
-        // If they are unauthenticated when making requests to the API then their token is expired.
-        if (response.status === 401) signOut();
-        return response;
+        return await dispatch(`/api/hsb/admin/users?${toQueryString(filter)}`);
+      },
+      updateUser: async (model: IUserModel): Promise<Response> => {
+        const url = `/api/hsb/admin/users/${model.id}`;
+        const res = await dispatch(url, {
+          method: 'PUT',
+          headers: {
+            'Content-type': 'application/json',
+          },
+          body: JSON.stringify(model),
+        });
+        if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+        return res;
       },
     }),
     [],
