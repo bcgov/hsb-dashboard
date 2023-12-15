@@ -25,10 +25,20 @@ export default function Page() {
         <div>
           <h2 className={styles.heading}>Typography</h2>
           <ul className={styles.list}>
-            <li><h1>Main Heading</h1></li>
-            <li><h2>Sub-heading</h2></li>
-            <li><p>Paragraph text</p></li>
-            <li><a href="#" className={styles.link}>Link text</a></li>
+            <li>
+              <h1>Main Heading</h1>
+            </li>
+            <li>
+              <h2>Sub-heading</h2>
+            </li>
+            <li>
+              <p>Paragraph text</p>
+            </li>
+            <li>
+              <a href="#" className={styles.link}>
+                Link text
+              </a>
+            </li>
           </ul>
         </div>
         <div className={styles.buttons}>
@@ -49,17 +59,17 @@ export default function Page() {
         </div>
         <div>
           <h2 className={styles.heading}>Toggle</h2>
-          <Toggle></Toggle>          
+          <Toggle></Toggle>
         </div>
         <div>
           <h2 className={styles.heading}>Select</h2>
-          <Select title="dropdown example"></Select>
+          <Select title="dropdown example" options={[]}></Select>
         </div>
         <div>
           <h2 className={styles.heading}>Text Inputs</h2>
           <Text placeholder="Placeholder Text"></Text>
-          <Text placeholder="Search icon" iconType={"search"}></Text>
-          <Text placeholder="Filter icon" iconType={"filter"}></Text>
+          <Text placeholder="Search icon" iconType={'search'}></Text>
+          <Text placeholder="Filter icon" iconType={'filter'}></Text>
         </div>
       </div>
     </div>

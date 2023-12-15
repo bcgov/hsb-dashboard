@@ -27,7 +27,7 @@ export const dispatch = async (
     }
   } else if (authorization === 'NA') authorization = undefined;
 
-  console.debug(`API: ${process.env.API_URL}${input}`);
+  console.debug(`API [${init?.method ?? 'GET'}]: ${process.env.API_URL}${input}`);
   return await fetch(`${process.env.API_URL}${input}`, {
     ...init,
     headers: {

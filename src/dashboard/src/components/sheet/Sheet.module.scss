@@ -1,0 +1,26 @@
+@import '@/styles/utils.scss';
+
+.sheet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: $white;
+  margin: 0 3rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 5px 5px $dark-gray;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.footerActions {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding: 1rem;
+}

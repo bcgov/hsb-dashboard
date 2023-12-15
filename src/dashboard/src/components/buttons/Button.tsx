@@ -2,7 +2,7 @@ import styles from './buttons.module.scss';
 
 import Image from 'next/image';
 
-interface IButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
+interface IButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'success' | 'warn' | 'error' | 'info' | 'link';
   children?: React.ReactNode;
   iconPath?: string;
@@ -11,7 +11,8 @@ interface IButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
 export const Button: React.FC<IButtonProps> = ({ variant, children, iconPath, ...rest }) => {
   var style = '';
   if (!variant || variant === 'primary')
-    style = 'group bg-blue hover:bg-blue-900 active:bg-blue-950 text-white py-2 px-4 rounded font-bold';
+    style =
+      'group bg-blue hover:bg-blue-900 active:bg-blue-950 text-white py-2 px-4 rounded font-bold';
   else if (variant === 'secondary')
     style =
       'group bg-white border border-gray-200 hover:bg-gray-100 active:bg-gray-950 text-black py-2 px-4 rounded font-bold';
@@ -28,7 +29,9 @@ export const Button: React.FC<IButtonProps> = ({ variant, children, iconPath, ..
 
   return (
     <button className={`${style}${rest.className ? ` ${rest.className}` : ''}`} {...rest}>
-      {iconPath && <Image src={iconPath} alt="icon" width={17} height={17} className={styles.buttonIcon} />}
+      {iconPath && (
+        <Image src={iconPath} alt="icon" width={17} height={17} className={styles.buttonIcon} />
+      )}
       {children}
     </button>
   );
