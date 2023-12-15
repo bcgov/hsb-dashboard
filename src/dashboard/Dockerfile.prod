@@ -1,8 +1,5 @@
 FROM node:20-bullseye as BUILD_IMAGE
 
-# RUN apt-get update && \
-#   apt-get install nano
-
 WORKDIR /usr/dashboard
 COPY package*.json ./
 
@@ -15,6 +12,8 @@ RUN npm run build
 RUN npm prune --production
 
 FROM node:20-slim
+
+RUN apt-get update && apt-get install curl nano -y
 
 ENV NODE_ENV production
 
