@@ -44,7 +44,7 @@ db-add () {
   change-dir
   dotnet ef migrations add $1
   code -r ./Migrations/*_$1.cs
-  bash ../../scripts/db-migration.sh $1
+  bash ../../../scripts/db-migration.sh $1
   change-dir
 }
 

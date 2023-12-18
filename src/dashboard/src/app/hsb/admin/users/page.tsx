@@ -83,7 +83,7 @@ export default function Page() {
       <div className={styles.section}>
         <Info>
           Find a user by name, username, or email. Click checkbox to enable user access to dashboard
-          fro selected group(s).
+          for selected group(s).
         </Info>
         <Row>
           <Text

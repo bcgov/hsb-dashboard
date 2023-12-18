@@ -3,7 +3,7 @@
 # Run the specified docker service, or the profile, or all of them.
 docker_up () {
   profile="${p:-main}"
-  echo "docker -p $profile up $s"
+  echo "docker -p $profile up -d $s"
   docker-compose\
     -f docker-compose.yaml\
     --profile $profile\
