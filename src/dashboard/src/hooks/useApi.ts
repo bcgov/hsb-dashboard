@@ -10,6 +10,14 @@ import { IUserFilter, IUserModel } from './interfaces';
 export const useApi = () => {
   return React.useMemo(
     () => ({
+      userinfo: async (): Promise<Response> => {
+        const url = `/api/auth/userinfo`;
+        const res = await dispatch(url, {
+          method: 'POST',
+        });
+        if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
+        return res;
+      },
       findUsers: async (filter: IUserFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/hsb/admin/users?${toQueryString(filter)}`);
       },

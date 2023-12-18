@@ -13,6 +13,8 @@ metadata:
   annotations:
     description: Enable the app to communicate with the api
 spec:
+  policyTypes:
+    - Ingress
   podSelector:
     matchLabels:
       part-of: hsb
@@ -23,6 +25,13 @@ spec:
             matchLabels:
               part-of: hsb
               component: app
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443
 ---
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1

@@ -56,6 +56,23 @@ export default function Page() {
     );
   }, [filter, records]);
 
+  const handleUpdate = React.useCallback(async () => {
+    const update = records.map(async (user) => {
+      if (user.isDirty) {
+        try {
+          const res = await api.updateUser(user);
+          const result: IUserModel = await res.json();
+          return { ...result, isDirty: false };
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      return user;
+    });
+    const results = await Promise.all(update);
+    setRecords(results);
+  }, [api, records]);
+
   return (
     <Sheet>
       {loading && (
@@ -124,22 +141,7 @@ export default function Page() {
       </Table>
       <Row className={styles.footerActions}>
         <Button
-          onClick={async () => {
-            const update = records.map(async (user) => {
-              if (user.isDirty) {
-                try {
-                  const res = await api.updateUser(user);
-                  const result: IUserModel = await res.json();
-                  return { ...result, isDirty: false };
-                } catch (error) {
-                  console.error(error);
-                }
-              }
-              return user;
-            });
-            const results = await Promise.all(update);
-            setRecords(results);
-          }}
+          onClick={async () => await handleUpdate()}
           disabled={isSubmitting || !records.some((r) => r.isDirty)}
         >
           Save
