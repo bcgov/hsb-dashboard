@@ -56,3 +56,33 @@ spec:
       component: api
   policyTypes:
     - Egress
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: enable-api-to-keycloak
+  labels:
+    name: enable-api-to-keycloak
+    part-of: hsb
+    version: 1.0.0
+    component: api
+    managed-by: kustomize
+    created-by: jeremy.foster
+  annotations:
+    description: Enable the api to communicate with the keycloak
+spec:
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 142.34.229.4/32 # Gold cluster *.apps IP
+        - ipBlock:
+            cidr: 142.34.64.4/32 # Gold DR cluster *.apps IP in case SSO fails over
+      ports:
+        - protocol: TCP
+          port: 443
+  podSelector:
+    matchLabels:
+      part-of: hsb
+      component: api
+  policyTypes:
+    - Egress

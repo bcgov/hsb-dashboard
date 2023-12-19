@@ -86,6 +86,40 @@ public class HsbApiService : IHsbApiService
         }
     }
 
+    #region Data Sync
+    /// <summary>
+    /// Get the data sync for the specified name.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public async Task<DataSyncModel?> GetDataSync(string name)
+    {
+        this.Logger.LogDebug("HSB - Fetching data sync");
+        var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
+        {
+            Path = $"{this.Options.Endpoints.DataSync}/{name}"
+        };
+        var results = await HsbSendAsync<DataSyncModel>(HttpMethod.Get, builder.Uri);
+        return results;
+    }
+
+    /// <summary>
+    /// Update the data sync.
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    public async Task<DataSyncModel?> UpdateDataSync(DataSyncModel model)
+    {
+        this.Logger.LogDebug("HSB - Update data sync");
+        var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
+        {
+            Path = $"{this.Options.Endpoints.DataSync}/{model.Id}"
+        };
+        var results = await HsbSendAsync<DataSyncModel>(HttpMethod.Put, builder.Uri, JsonContent.Create(model));
+        return results;
+    }
+    #endregion
+
     #region Operating System Items
     /// <summary>
     /// Fetch all operating system items from HSB.

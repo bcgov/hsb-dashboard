@@ -7,6 +7,22 @@ namespace HSB.DataService;
 /// </summary>
 public interface IHsbApiService
 {
+    #region Data Sync
+    /// <summary>
+    /// Get the data sync for the specified name.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public Task<DataSyncModel?> GetDataSync(string name);
+
+    /// <summary>
+    /// Update the data sync.
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    public Task<DataSyncModel?> UpdateDataSync(DataSyncModel model);
+    #endregion
+
     #region Operating System Items
     /// <summary>
     /// Fetch all operating system items from HSB.

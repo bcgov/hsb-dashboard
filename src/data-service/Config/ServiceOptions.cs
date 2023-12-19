@@ -15,5 +15,10 @@ public class ServiceOptions
     /// get/set -
     /// </summary>
     public HsbApiEndpointOptions Endpoints { get; set; } = new HsbApiEndpointOptions();
+
+    /// <summary>
+    /// get/set - An array of data sync configuration items to run in this service.
+    /// </summary>
+    public DataSyncOptions[] DataSync { get; set; } = Array.Empty<DataSyncOptions>();
     #endregion
 }

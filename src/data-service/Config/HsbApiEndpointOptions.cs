@@ -9,6 +9,11 @@ public class HsbApiEndpointOptions
     /// <summary>
     /// get/set -
     /// </summary>
+    public string DataSync { get; set; } = "/v1/services/data-syncs";
+
+    /// <summary>
+    /// get/set -
+    /// </summary>
     public string ConfigurationItems { get; set; } = "/v1/services/configuration-items";
 
     /// <summary>

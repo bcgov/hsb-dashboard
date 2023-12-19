@@ -15,6 +15,7 @@ public class DataService : IDataService
     private readonly List<Hsb.OrganizationModel> _organizations = new();
     private readonly List<Hsb.TenantModel> _tenants = new();
     private readonly List<Hsb.OperatingSystemItemModel> _operatingSystemItems = new();
+    private readonly List<Hsb.DataSyncModel> _dataSync = new();
     #endregion
 
     #region Properties
@@ -70,27 +71,59 @@ public class DataService : IDataService
     /// <exception cref="NotImplementedException"></exception>
     public async Task RunAsync()
     {
+        if (this.Options.DataSync.Any())
+        {
+            await this.Options.DataSync.ForEachAsync(async (option) =>
+            {
+                if (!String.IsNullOrWhiteSpace(option.Name))
+                {
+                    var ds = await this.HsbApi.GetDataSync(option.Name);
+                    if (ds != null)
+                    {
+                        _dataSync.Add(ds);
+                        option.DataType = ds.DataType;
+                        option.Offset = ds.Offset;
+                        option.Query = ds.Query;
+                        option.Model = ds;
+                    }
+                }
+            });
+        }
         _tenants.AddRange(await this.HsbApi.FetchTenantsAsync());
         _organizations.AddRange(await this.HsbApi.FetchOrganizationsAsync());
         _operatingSystemItems.AddRange(await this.HsbApi.FetchOperatingSystemItemsAsync());
 
-        await ProcessServersAsync();
-        await ProcessFileSystemItemsAsync();
+        foreach (var dataSync in this.Options.DataSync)
+        {
+            if (dataSync.DataType == Entities.ServiceNowDataType.Server)
+                await ProcessServersAsync(dataSync);
+            else if (dataSync.DataType == Entities.ServiceNowDataType.FileSystem)
+                await ProcessFileSystemItemsAsync(dataSync);
+
+            // Reset the current offset.
+            if (dataSync.Model != null)
+            {
+                dataSync.Model.Offset = 0;
+                dataSync.Model = await this.HsbApi.UpdateDataSync(dataSync.Model);
+            }
+        }
     }
 
     /// <summary>
     /// Add a new configuration item and server in HSB.
     /// </summary>
+    /// <param name="option"></param>
     /// <returns></returns>
-    private async Task ProcessServersAsync()
+    private async Task ProcessServersAsync(DataSyncOptions option)
     {
         var limit = this.ServiceNowApi.Options.Limit;
-        var offset = 0;
+        var offset = option.Offset;
+        var query = !String.IsNullOrWhiteSpace(option.Query) ? option.Query : $"sys_class_name={this.ServiceNowApi.Options.TableNames.Server}";
         var keepGoing = true;
 
         while (keepGoing)
         {
-            var configurationItems = await this.ServiceNowApi.FetchConfigurationItemsAsync(limit, offset, $"sys_class_name={this.ServiceNowApi.Options.TableNames.Server}");
+            var configurationItems = await this.ServiceNowApi.FetchConfigurationItemsAsync(limit, offset, query);
 
             // Iterate over configuration items and send them to HSB API.
             foreach (var model in configurationItems)
@@ -108,6 +141,14 @@ public class DataService : IDataService
                 }
                 else
                     this.Logger.LogWarning("Configuration Item is missing Tenant and Organization information: '{id}'", model.Data?.Id);
+
+                // Update the current offset
+                if (option.Model != null)
+                {
+                    // TODO: This is a really noisy update.
+                    option.Model.Offset = option.Model.Offset + 1;
+                    option.Model = await this.HsbApi.UpdateDataSync(option.Model);
+                }
             }
 
             // We assume that if the results contain the limit, we need to make another request for more.
@@ -119,16 +160,18 @@ public class DataService : IDataService
     /// <summary>
     /// Add a new configuration item and file system in HSB.
     /// </summary>
+    /// <param name="option"></param>
     /// <returns></returns>
-    private async Task ProcessFileSystemItemsAsync()
+    private async Task ProcessFileSystemItemsAsync(DataSyncOptions option)
     {
         var limit = this.ServiceNowApi.Options.Limit;
-        var offset = 0;
+        var offset = option.Offset;
+        var query = !String.IsNullOrWhiteSpace(option.Query) ? option.Query : $"sys_class_name={this.ServiceNowApi.Options.TableNames.FileSystem}";
         var keepGoing = true;
 
         while (keepGoing)
         {
-            var configurationItems = await this.ServiceNowApi.FetchConfigurationItemsAsync(limit, offset, $"sys_class_name={this.ServiceNowApi.Options.TableNames.FileSystem}");
+            var configurationItems = await this.ServiceNowApi.FetchConfigurationItemsAsync(limit, offset, query);
 
             // Iterate over configuration items and send them to HSB API.
             foreach (var model in configurationItems)
@@ -142,6 +185,14 @@ public class DataService : IDataService
                 }
                 else
                     this.Logger.LogWarning("Configuration Item is missing Tenant and Organization information: '{id}'", model.Data?.Id);
+
+                // Update the current offset
+                if (option.Model != null)
+                {
+                    // TODO: This is a really noisy update.
+                    option.Model.Offset = option.Model.Offset + 1;
+                    option.Model = await this.HsbApi.UpdateDataSync(option.Model);
+                }
             }
 
             // We assume that if the results contain the limit, we need to make another request for more.
