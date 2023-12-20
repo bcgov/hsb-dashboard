@@ -55,6 +55,7 @@ public class Program
             .AddOpenAPI(config)
             .AddKeycloak(builder)
             .AddHSBServices(builder)
+            .AddScoped<IXlsExporter, XlsExporter>()
             .AddCors(options =>
             {
                 var withOrigins = config.GetSection("Cors:WithOrigins").Value?.Split(" ") ?? Array.Empty<string>();

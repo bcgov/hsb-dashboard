@@ -76,16 +76,21 @@ public class ConfigurationItemModel : AuditableModel
     #region Methods
     public ConfigurationItem ToEntity()
     {
-        if (this.RawData == null) throw new InvalidOperationException("Property 'RawData' is required.");
+        return (ConfigurationItem)this;
+    }
 
-        return new ConfigurationItem(this.TenantId, this.OrganizationId, this.RawData)
+    public static explicit operator ConfigurationItem(ConfigurationItemModel model)
+    {
+        if (model.RawData == null) throw new InvalidOperationException("Property 'RawData' is required.");
+
+        return new ConfigurationItem(model.TenantId, model.OrganizationId, model.RawData)
         {
-            Id = this.Id,
-            CreatedOn = this.CreatedOn,
-            CreatedBy = this.CreatedBy,
-            UpdatedOn = this.UpdatedOn,
-            UpdatedBy = this.UpdatedBy,
-            Version = this.Version,
+            Id = model.Id,
+            CreatedOn = model.CreatedOn,
+            CreatedBy = model.CreatedBy,
+            UpdatedOn = model.UpdatedOn,
+            UpdatedBy = model.UpdatedBy,
+            Version = model.Version,
         };
     }
     #endregion

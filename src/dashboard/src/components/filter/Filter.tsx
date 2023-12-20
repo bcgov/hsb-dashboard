@@ -1,48 +1,27 @@
 'use client';
 
+import { Select } from '@/components';
 import { Button } from '@/components/buttons';
+import { useTenants } from '@/hooks';
+import { useOrganizations } from '@/hooks/useOrganizations';
+import React from 'react';
 import styles from './Filter.module.scss';
 
 export const Filter: React.FC = () => {
+  const { options: tenantOptions } = useTenants();
+  const { options: organizationOptions } = useOrganizations();
+
   return (
     <div className={styles.filter}>
       <h1>Filter</h1>
-      <div className={styles.dropdown}>
-        <label htmlFor="organization">Organization</label>
-        <select id="organization">
-          <option value="" selected disabled>
-            Select Organization
-          </option>
-          <option value="value1">Option 1</option>
-          <option value="value2">Option 2</option>
-          <option value="value3">Option 3</option>
-          <option value="value4">Option 4</option>
-        </select>
-      </div>
-      <div className={styles.dropdown}>
-        <label htmlFor="os">Operating system</label>
-        <select id="os">
-          <option value="" selected disabled>
-            Select OS
-          </option>
-          <option value="value1">Option 1</option>
-          <option value="value2">Option 2</option>
-          <option value="value3">Option 3</option>
-          <option value="value4">Option 4</option>
-        </select>
-      </div>
-      <div className={styles.dropdown}>
-        <label htmlFor="server">Server</label>
-        <select id="server">
-          <option value="" selected disabled>
-            Select server
-          </option>
-          <option value="value1">Option 1</option>
-          <option value="value2">Option 2</option>
-          <option value="value3">Option 3</option>
-          <option value="value4">Option 4</option>
-        </select>
-      </div>
+      <Select options={tenantOptions} label="Tenant" placeholder="Select tenant" />
+      <Select
+        options={organizationOptions}
+        label="Organization"
+        placeholder="Select organization"
+      />
+      <Select options={tenantOptions} label="Operating system" placeholder="Select OS" />
+      <Select options={tenantOptions} label="Server" placeholder="Select server" />
       <div className={styles.date}>
         <div className={styles.datePicker}>
           <label htmlFor="endDate">Start Date:</label>

@@ -1,6 +1,7 @@
 'use client';
 
-import { useApi, useApp, useAuth } from '@/hooks';
+import { useApiUsers, useAuth } from '@/hooks';
+import { useApp } from '@/store';
 import { keycloakSessionLogOut } from '@/utils';
 import { signIn } from 'next-auth/react';
 import React from 'react';
@@ -12,14 +13,13 @@ export interface IAuthState {
 }
 
 export const AuthState: React.FC<IAuthState> = ({ showName }) => {
-  const api = useApi();
+  const { userinfo } = useApiUsers();
   const { status, session } = useAuth();
   const setUserinfo = useApp((state) => state.setUserinfo);
 
   React.useEffect(() => {
     if (status === 'authenticated') {
-      api
-        .userinfo()
+      userinfo()
         .then(async (res) => {
           const userinfo = await res.json();
           setUserinfo(userinfo);
@@ -28,7 +28,7 @@ export const AuthState: React.FC<IAuthState> = ({ showName }) => {
           console.error('Failed to activate user', error);
         });
     }
-  }, [api, setUserinfo, status]);
+  }, [userinfo, setUserinfo, status]);
 
   if (status === 'loading') return <div>loading...</div>;
   else if (status === 'authenticated') {

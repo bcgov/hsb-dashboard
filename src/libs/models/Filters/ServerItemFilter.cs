@@ -31,6 +31,8 @@ public class ServerItemFilter : PageFilter
         var predicate = PredicateBuilder.New<Entities.ServerItem>();
         if (this.Name != null)
             predicate = predicate.And((u) => EF.Functions.Like(u.Name, $"%{this.Name}%"));
+
+        if (!predicate.IsStarted) return predicate.And((u) => true);
         return predicate;
     }
     #endregion

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 public class OperatingSystemItemFilter : PageFilter
 {
     #region Properties
-    public string? UName { get; set; }
+    public string? Name { get; set; }
 
     public string[] Sort { get; set; } = Array.Empty<string>();
     #endregion
@@ -19,7 +19,7 @@ public class OperatingSystemItemFilter : PageFilter
     {
         var filter = new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>(queryParams, StringComparer.OrdinalIgnoreCase);
 
-        this.UName = filter.GetStringValue(nameof(this.UName));
+        this.Name = filter.GetStringValue(nameof(this.Name));
 
         this.Sort = filter.GetStringArrayValue(nameof(this.Sort));
     }
@@ -29,8 +29,10 @@ public class OperatingSystemItemFilter : PageFilter
     public ExpressionStarter<Entities.OperatingSystemItem> GeneratePredicate()
     {
         var predicate = PredicateBuilder.New<Entities.OperatingSystemItem>();
-        if (this.UName != null)
-            predicate = predicate.And((u) => EF.Functions.Like(u.Name, $"%{this.UName}%"));
+        if (this.Name != null)
+            predicate = predicate.And((u) => EF.Functions.Like(u.Name, $"%{this.Name}%"));
+
+        if (!predicate.IsStarted) return predicate.And((u) => true);
         return predicate;
     }
     #endregion

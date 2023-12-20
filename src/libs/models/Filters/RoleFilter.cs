@@ -36,6 +36,8 @@ public class RoleFilter : PageFilter
             predicate = predicate.And((u) => EF.Functions.Like(u.Name, $"%{this.Name}%"));
         if (this.IsEnabled != null)
             predicate = predicate.And((u) => u.IsEnabled == this.IsEnabled);
+
+        if (!predicate.IsStarted) return predicate.And((u) => true);
         return predicate;
     }
     #endregion
