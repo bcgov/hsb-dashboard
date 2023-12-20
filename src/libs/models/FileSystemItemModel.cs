@@ -89,16 +89,21 @@ public class FileSystemItemModel : AuditableModel
     #region Methods
     public FileSystemItem ToEntity()
     {
-        if (this.RawData == null) throw new InvalidOperationException("Property 'RawData' is required.");
+        return (FileSystemItem)this;
+    }
 
-        return new FileSystemItem(this.ConfigurationItemId, this.RawData)
+    public static explicit operator FileSystemItem(FileSystemItemModel model)
+    {
+        if (model.RawData == null) throw new InvalidOperationException("Property 'RawData' is required.");
+
+        return new FileSystemItem(model.ConfigurationItemId, model.RawData)
         {
-            Id = this.Id,
-            CreatedOn = this.CreatedOn,
-            CreatedBy = this.CreatedBy,
-            UpdatedOn = this.UpdatedOn,
-            UpdatedBy = this.UpdatedBy,
-            Version = this.Version,
+            Id = model.Id,
+            CreatedOn = model.CreatedOn,
+            CreatedBy = model.CreatedBy,
+            UpdatedOn = model.UpdatedOn,
+            UpdatedBy = model.UpdatedBy,
+            Version = model.Version,
         };
     }
     #endregion

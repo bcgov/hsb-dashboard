@@ -72,16 +72,21 @@ public class ServerItemModel : AuditableModel
     #region Methods
     public ServerItem ToEntity()
     {
-        if (this.RawData == null) throw new InvalidOperationException("Property 'RawData' is required.");
+        return (ServerItem)this;
+    }
 
-        return new ServerItem(this.ConfigurationItemId, this.OperatingSystemItemId, this.RawData)
+    public static explicit operator ServerItem(ServerItemModel model)
+    {
+        if (model.RawData == null) throw new InvalidOperationException("Property 'RawData' is required.");
+
+        return new ServerItem(model.ConfigurationItemId, model.OperatingSystemItemId, model.RawData)
         {
-            Id = this.Id,
-            CreatedOn = this.CreatedOn,
-            CreatedBy = this.CreatedBy,
-            UpdatedOn = this.UpdatedOn,
-            UpdatedBy = this.UpdatedBy,
-            Version = this.Version,
+            Id = model.Id,
+            CreatedOn = model.CreatedOn,
+            CreatedBy = model.CreatedBy,
+            UpdatedOn = model.UpdatedOn,
+            UpdatedBy = model.UpdatedBy,
+            Version = model.Version,
         };
     }
     #endregion

@@ -1,47 +1,66 @@
 @import '@/styles/utils.scss';
 
-.container {
+.dropdown {
+  display: flex;
+  flex-direction: column;
   position: relative;
-  display: inline-block;
-}
+  width: 100%;
+  max-width: 248px;
 
-.select {
-  border: 1px solid $dark-gray;
-  border-radius: 3px;
-  min-width: 200px;
-  height: 28px;
-  padding: 0 8px;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-
-  &:focus {
-    outline: 1px solid $focus-blue;
-    border: 0;
+  @media screen and (max-width: $desktop) {
+    margin: 0 5px;
   }
 
-  ~span::after {
+  &::after {
     content: '';
-    height: 10px;
-    width: 10px;
+    height: 12px;
+    width: 12px;
+    border-right: 3px solid $bc-black;
+    border-bottom: 3px solid $bc-black;
     display: block;
-    border: 1px solid;
-    border-bottom: 0;
-    border-left: 0;
     position: absolute;
-    top: 6px;
-    right: 9px;
-    transform: rotate(136deg);
+    right: 16px;
+    top: 25px;
+    transform: rotate(45deg);
     pointer-events: none;
-    transition: all .1s;
   }
 
-  &:focus~span::after {
-    transform: rotate(315deg);
-    top: 11px;
+  label {
+    font-size: $font-size-normal;
+    font-weight: bold;
+    position: absolute;
+    left: 16px;
+    top: 8px;
+    pointer-events: none;
+
+    @media screen and (max-width: $desktop) {
+      font-size: $font-size-small;
+    }
   }
 
-  option[class='placeholder'] {
-    color: $light-gray;
+  select {
+    background-color: $light-gray;
+    padding: 30px 16px 10px;
+    border-radius: 6px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $medium-gray;
+    }
+
+    &:focus {
+      outline: 1px solid $focus-blue;
+    }
+
+    @media screen and (max-width: $desktop) {
+      font-size: $font-size-small;
+    }
+
+    option {
+      font-family: $bc-sans;
+    }
   }
 }

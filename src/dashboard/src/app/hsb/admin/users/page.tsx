@@ -14,12 +14,13 @@ import {
   Table,
   Text,
 } from '@/components';
-import { IUserModel, useApi } from '@/hooks';
+import { IUserModel } from '@/hooks';
+import { useApiUsers } from '@/hooks/api/admin';
 import React from 'react';
 import { IUserForm } from './IUserForm';
 
 export default function Page() {
-  const api = useApi();
+  const api = useApiUsers();
 
   const [loading, setLoading] = React.useState(true);
   const [records, setRecords] = React.useState<IUserForm[]>([]);

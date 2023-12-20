@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using HSB.Entities;
-using HSB.Core.Extensions;
 
 namespace HSB.Models;
 public class TenantModel : SortableCodeAuditableModel<int>

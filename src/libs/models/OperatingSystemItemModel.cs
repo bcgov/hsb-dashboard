@@ -38,16 +38,21 @@ public class OperatingSystemItemModel : AuditableModel
     #region Methods
     public OperatingSystemItem ToEntity()
     {
-        if (this.RawData == null) throw new InvalidOperationException("Property 'RawData' is required.");
+        return (OperatingSystemItem)this;
+    }
 
-        return new OperatingSystemItem(this.RawData)
+    public static explicit operator OperatingSystemItem(OperatingSystemItemModel model)
+    {
+        if (model.RawData == null) throw new InvalidOperationException("Property 'RawData' is required.");
+
+        return new OperatingSystemItem(model.RawData)
         {
-            Id = this.Id,
-            CreatedOn = this.CreatedOn,
-            CreatedBy = this.CreatedBy,
-            UpdatedOn = this.UpdatedOn,
-            UpdatedBy = this.UpdatedBy,
-            Version = this.Version,
+            Id = model.Id,
+            CreatedOn = model.CreatedOn,
+            CreatedBy = model.CreatedBy,
+            UpdatedOn = model.UpdatedOn,
+            UpdatedBy = model.UpdatedBy,
+            Version = model.Version,
         };
     }
     #endregion
