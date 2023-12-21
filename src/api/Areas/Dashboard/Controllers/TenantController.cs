@@ -1,12 +1,16 @@
-using System.Net.Mime;
-using HSB.Models;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
-using HSB.Core.Models;
 using System.Net;
+using System.Net.Mime;
+
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
+
+using HSB.Core.Models;
 using HSB.DAL.Services;
 using HSB.Keycloak;
-using Microsoft.AspNetCore.Http.Extensions;
+using HSB.Keycloak.Extensions;
+using HSB.Models;
+
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace HSB.API.Areas.Hsb.Controllers;
 
@@ -24,18 +28,24 @@ public class TenantController : ControllerBase
 {
     #region Variables
     private readonly ILogger _logger;
-    private readonly ITenantService _service;
+    private readonly ITenantService _tenantService;
+    private readonly IAuthorizationHelper _authorization;
     #endregion
 
     #region Constructors
     /// <summary>
     /// Creates a new instance of a TenantController.
     /// </summary>
-    /// <param name="service"></param>
+    /// <param name="tenantService"></param>
+    /// <param name="authorization"></param>
     /// <param name="logger"></param>
-    public TenantController(ITenantService service, ILogger<TenantController> logger)
+    public TenantController(
+        ITenantService tenantService,
+        IAuthorizationHelper authorization,
+        ILogger<TenantController> logger)
     {
-        _service = service;
+        _tenantService = tenantService;
+        _authorization = authorization;
         _logger = logger;
     }
     #endregion
@@ -55,8 +65,22 @@ public class TenantController : ControllerBase
         var uri = new Uri(this.Request.GetDisplayUrl());
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
         var filter = new HSB.Models.Filters.TenantFilter(query);
-        var result = _service.Find(filter.GeneratePredicate(), filter.Sort);
-        return new JsonResult(result.Select(ci => new TenantModel(ci)));
+
+        var isHSB = this.User.HasClientRole(ClientRole.HSB);
+        if (isHSB)
+        {
+            var result = _tenantService.Find(filter.GeneratePredicate(), filter.Sort);
+            return new JsonResult(result.Select(ci => new TenantModel(ci)));
+        }
+        else
+        {
+            // Only return tenants this user belongs to.
+            var user = _authorization.GetUser();
+            if (user == null) return Forbid();
+
+            var result = _tenantService.FindForUser(user.Id, filter.GeneratePredicate(), filter.Sort);
+            return new JsonResult(result.Select(ci => new TenantModel(ci)));
+        }
     }
 
     // TODO: Limit based on role and tenant.
@@ -72,11 +96,23 @@ public class TenantController : ControllerBase
     [SwaggerOperation(Tags = new[] { "Tenant" })]
     public IActionResult GetForId(int id)
     {
-        var tenant = _service.FindForId(id);
+        var isHSB = this.User.HasClientRole(ClientRole.HSB);
+        if (isHSB)
+        {
+            var entity = _tenantService.FindForId(id);
+            if (entity == null) return new NoContentResult();
+            return new JsonResult(new TenantModel(entity));
+        }
+        else
+        {
+            // Only return tenants this user belongs to.
+            var user = _authorization.GetUser();
+            if (user == null) return Forbid();
 
-        if (tenant == null) return new NoContentResult();
-
-        return new JsonResult(new TenantModel(tenant));
+            var entity = _tenantService.FindForUser(user.Id, (t) => t.Id == id).FirstOrDefault();
+            if (entity == null) return Forbid();
+            return new JsonResult(new TenantModel(entity));
+        }
     }
     #endregion
 }

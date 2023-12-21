@@ -4,6 +4,7 @@ using LinqKit;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using HSB.DAL.Extensions;
 
 namespace HSB.DAL.Services;
 
@@ -17,6 +18,56 @@ public class TenantService : BaseService<Tenant>, ITenantService
     #endregion
 
     #region Methods
+    public IEnumerable<Tenant> FindForUser(
+        long userId,
+        System.Linq.Expressions.Expression<Func<Tenant, bool>> predicate,
+        System.Linq.Expressions.Expression<Func<Tenant, Tenant>>? sort = null,
+        int? take = null,
+        int? skip = null)
+    {
+        var query = (from t in this.Context.Tenants
+                     join usert in this.Context.UserTenants on t.Id equals usert.TenantId
+                     where usert.UserId == userId
+                     select t)
+            .Where(predicate);
+
+        if (sort != null)
+            query = query.OrderBy(sort);
+        if (take.HasValue)
+            query = query.Take(take.Value);
+        if (skip.HasValue)
+            query = query.Skip(skip.Value);
+
+        return query
+            .AsNoTracking()
+            .ToArray();
+    }
+
+    public IEnumerable<Tenant> FindForUser(
+        long userId,
+        System.Linq.Expressions.Expression<Func<Tenant, bool>> predicate,
+        string[] sort,
+        int? take = null,
+        int? skip = null)
+    {
+        var query = (from t in this.Context.Tenants
+                     join usert in this.Context.UserTenants on t.Id equals usert.TenantId
+                     where usert.UserId == userId
+                     select t)
+            .Where(predicate);
+
+        if (sort?.Any() == true)
+            query = query.OrderByProperty(sort);
+        if (take.HasValue)
+            query = query.Take(take.Value);
+        if (skip.HasValue)
+            query = query.Skip(skip.Value);
+
+        return query
+            .AsNoTracking()
+            .ToArray();
+    }
+
     public override EntityEntry<Tenant> Add(Tenant entity)
     {
         if (entity.OrganizationsManyToMany.Any())

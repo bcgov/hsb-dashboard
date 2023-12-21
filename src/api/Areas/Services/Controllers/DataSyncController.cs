@@ -49,7 +49,7 @@ public class DataSyncController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(DataSyncModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "DataSync Item" })]
+    [SwaggerOperation(Tags = new[] { "DataSync" })]
     public IActionResult GetForName(string name)
     {
         var entity = _service.Find((ds) => ds.Name == name).FirstOrDefault();
@@ -68,7 +68,7 @@ public class DataSyncController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(DataSyncModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "DataSync Item" })]
+    [SwaggerOperation(Tags = new[] { "DataSync" })]
     public IActionResult Update(DataSyncModel model)
     {
         var entity = model.ToEntity();

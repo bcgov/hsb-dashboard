@@ -1,12 +1,16 @@
-using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Net.Mime;
-using Swashbuckle.AspNetCore.Annotations;
+
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
+
 using HSB.Core.Models;
 using HSB.DAL.Services;
 using HSB.Keycloak;
+using HSB.Keycloak.Extensions;
 using HSB.Models;
+
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace HSB.API.Areas.Hsb.Controllers;
 
@@ -25,6 +29,7 @@ public class ConfigurationItemController : ControllerBase
     #region Variables
     private readonly ILogger _logger;
     private readonly IConfigurationItemService _service;
+    private readonly IAuthorizationHelper _authorization;
     private readonly IXlsExporter _exporter;
     #endregion
 
@@ -33,11 +38,17 @@ public class ConfigurationItemController : ControllerBase
     /// Creates a new instance of a ConfigurationItemController.
     /// </summary>
     /// <param name="service"></param>
+    /// <param name="authorization"></param>
     /// <param name="exporter"></param>
     /// <param name="logger"></param>
-    public ConfigurationItemController(IConfigurationItemService service, IXlsExporter exporter, ILogger<ConfigurationItemController> logger)
+    public ConfigurationItemController(
+        IConfigurationItemService service,
+        IAuthorizationHelper authorization,
+        IXlsExporter exporter,
+        ILogger<ConfigurationItemController> logger)
     {
         _service = service;
+        _authorization = authorization;
         _exporter = exporter;
         _logger = logger;
     }
@@ -52,14 +63,28 @@ public class ConfigurationItemController : ControllerBase
     [HttpGet(Name = "GetConfigurationItems-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<ConfigurationItemModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "ConfigurationItem" })]
+    [SwaggerOperation(Tags = new[] { "Configuration Item" })]
     public IActionResult Get()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
         var filter = new HSB.Models.Filters.ConfigurationItemFilter(query);
-        var result = _service.Find(filter.GeneratePredicate(), filter.Sort);
-        return new JsonResult(result.Select(ci => new ConfigurationItemModel(ci)));
+
+        var isHSB = this.User.HasClientRole(ClientRole.HSB);
+        if (isHSB)
+        {
+            var result = _service.Find(filter.GeneratePredicate(), filter.Sort);
+            return new JsonResult(result.Select(ci => new ConfigurationItemModel(ci)));
+        }
+        else
+        {
+            // Only return server items this user has access to.
+            var user = _authorization.GetUser();
+            if (user == null) return Forbid();
+
+            var result = _service.FindForUser(user.Id, filter.GeneratePredicate(), filter.Sort);
+            return new JsonResult(result.Select(ci => new ConfigurationItemModel(ci)));
+        }
     }
 
     // TODO: Limit based on role and tenant.
@@ -72,14 +97,26 @@ public class ConfigurationItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(ConfigurationItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "ConfigurationItem" })]
+    [SwaggerOperation(Tags = new[] { "Configuration Item" })]
     public IActionResult GetForId(int id)
     {
-        var entity = _service.FindForId(id);
+        var isHSB = this.User.HasClientRole(ClientRole.HSB);
+        if (isHSB)
+        {
+            var entity = _service.FindForId(id);
+            if (entity == null) return new NoContentResult();
+            return new JsonResult(new ConfigurationItemModel(entity));
+        }
+        else
+        {
+            // Only return tenants this user belongs to.
+            var user = _authorization.GetUser();
+            if (user == null) return Forbid();
 
-        if (entity == null) return new NoContentResult();
-
-        return new JsonResult(new ConfigurationItemModel(entity));
+            var entity = _service.FindForUser(user.Id, (t) => t.Id == id).FirstOrDefault();
+            if (entity == null) return Forbid();
+            return new JsonResult(new ConfigurationItemModel(entity));
+        }
     }
 
     // TODO: Complete functionality
@@ -95,7 +132,7 @@ public class ConfigurationItemController : ControllerBase
     [Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "ConfigurationItem" })]
+    [SwaggerOperation(Tags = new[] { "Configuration Item" })]
     public IActionResult Export(string format, string name = "service-now")
     {
         if (format == "excel")

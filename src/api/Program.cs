@@ -55,6 +55,7 @@ public class Program
             .AddOpenAPI(config)
             .AddKeycloak(builder)
             .AddHSBServices(builder)
+            .AddScoped<IAuthorizationHelper, AuthorizationHelper>()
             .AddScoped<IXlsExporter, XlsExporter>()
             .AddCors(options =>
             {

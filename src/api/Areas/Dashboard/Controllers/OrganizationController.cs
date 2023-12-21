@@ -1,12 +1,16 @@
-using System.Net.Mime;
-using HSB.Models;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
-using HSB.Core.Models;
 using System.Net;
+using System.Net.Mime;
+
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
+
+using HSB.Core.Models;
 using HSB.DAL.Services;
 using HSB.Keycloak;
-using Microsoft.AspNetCore.Http.Extensions;
+using HSB.Keycloak.Extensions;
+using HSB.Models;
+
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace HSB.API.Areas.Hsb.Controllers;
 
@@ -25,6 +29,7 @@ public class OrganizationController : ControllerBase
     #region Variables
     private readonly ILogger _logger;
     private readonly IOrganizationService _service;
+    private readonly IAuthorizationHelper _authorization;
     #endregion
 
     #region Constructors
@@ -32,10 +37,15 @@ public class OrganizationController : ControllerBase
     /// Creates a new instance of a OrganizationController.
     /// </summary>
     /// <param name="service"></param>
+    /// <param name="authorization"></param>
     /// <param name="logger"></param>
-    public OrganizationController(IOrganizationService service, ILogger<OrganizationController> logger)
+    public OrganizationController(
+        IOrganizationService service,
+        IAuthorizationHelper authorization,
+        ILogger<OrganizationController> logger)
     {
         _service = service;
+        _authorization = authorization;
         _logger = logger;
     }
     #endregion
@@ -55,8 +65,22 @@ public class OrganizationController : ControllerBase
         var uri = new Uri(this.Request.GetDisplayUrl());
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
         var filter = new HSB.Models.Filters.OrganizationFilter(query);
-        var result = _service.Find(filter.GeneratePredicate(), filter.Sort);
-        return new JsonResult(result.Select(ci => new OrganizationModel(ci)));
+
+        var isHSB = this.User.HasClientRole(ClientRole.HSB);
+        if (isHSB)
+        {
+            var result = _service.Find(filter.GeneratePredicate(), filter.Sort);
+            return new JsonResult(result.Select(o => new OrganizationModel(o)));
+        }
+        else
+        {
+            // Only return server items this user has access to.
+            var user = _authorization.GetUser();
+            if (user == null) return Forbid();
+
+            var result = _service.FindForUser(user.Id, filter.GeneratePredicate(), filter.Sort);
+            return new JsonResult(result.Select(o => new OrganizationModel(o)));
+        }
     }
 
     // TODO: Limit based on role and tenant.
@@ -72,11 +96,23 @@ public class OrganizationController : ControllerBase
     [SwaggerOperation(Tags = new[] { "Organization" })]
     public IActionResult GetForId(int id)
     {
-        var tenant = _service.FindForId(id);
+        var isHSB = this.User.HasClientRole(ClientRole.HSB);
+        if (isHSB)
+        {
+            var entity = _service.FindForId(id);
+            if (entity == null) return new NoContentResult();
+            return new JsonResult(new OrganizationModel(entity));
+        }
+        else
+        {
+            // Only return tenants this user belongs to.
+            var user = _authorization.GetUser();
+            if (user == null) return Forbid();
 
-        if (tenant == null) return new NoContentResult();
-
-        return new JsonResult(new OrganizationModel(tenant));
+            var entity = _service.Find((o) => o.Id == id && o.Tenants.Any(t => t.UsersManyToMany.Any(um2m => um2m.UserId == user.Id))).FirstOrDefault();
+            if (entity == null) return Forbid();
+            return new JsonResult(new OrganizationModel(entity));
+        }
     }
     #endregion
 }
