@@ -52,7 +52,7 @@ export default function Page() {
           <Button title="Secondary Button" variant="secondary" iconPath="/images/trash-icon.png">
             Button with icon
           </Button>
-          <Button title="Disabled Button" disabled="disabled">
+          <Button title="Disabled Button" disabled>
             Disabled button
           </Button>
         </div>
