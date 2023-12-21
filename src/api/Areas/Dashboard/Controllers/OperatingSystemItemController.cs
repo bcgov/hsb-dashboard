@@ -64,7 +64,7 @@ public class OperatingSystemItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OperatingSystemItemModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Operating System Item" })]
-    public IActionResult Get()
+    public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
@@ -113,7 +113,7 @@ public class OperatingSystemItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var entity = _service.FindForUser(user.Id, (t) => t.Id == id).FirstOrDefault();
+            var entity = _service.FindForUser(user.Id, (t) => t.Id == id, osi => osi.Id).FirstOrDefault();
             if (entity == null) return Forbid();
             return new JsonResult(new OperatingSystemItemModel(entity));
         }

@@ -1,7 +1,6 @@
-import { IOption } from '@/components';
 import { useApp } from '@/store';
 import React from 'react';
-import { IFileSystemItemModel, useApiFileSystemItems, useAuth } from '.';
+import { IFileSystemItemModel, useApiFileSystemItems, useAuth } from '..';
 
 export const useFileSystemItems = () => {
   const { status } = useAuth();
@@ -12,22 +11,16 @@ export const useFileSystemItems = () => {
   React.useEffect(() => {
     // Get an array of fileSystemItems.
     if (status === 'authenticated' && !fileSystemItems.length) {
-      findFileSystemItems().then(async (res) => {
-        const fileSystemItems: IFileSystemItemModel[] = await res.json();
-        setFileSystemItems(fileSystemItems);
-      });
+      findFileSystemItems()
+        .then(async (res) => {
+          const fileSystemItems: IFileSystemItemModel[] = await res.json();
+          setFileSystemItems(fileSystemItems);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
   }, [findFileSystemItems, setFileSystemItems, status, fileSystemItems.length]);
 
-  const options = React.useMemo(
-    () =>
-      fileSystemItems.map<IOption<IFileSystemItemModel>>((t) => ({
-        label: t.name,
-        value: t.id,
-        data: t,
-      })),
-    [fileSystemItems],
-  );
-
-  return { fileSystemItems, options };
+  return fileSystemItems;
 };

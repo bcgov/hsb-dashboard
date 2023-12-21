@@ -16,10 +16,11 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
     #endregion
 
     #region Methods
-    public IEnumerable<ServerItem> FindForUser(
+    public IEnumerable<ServerItem> FindForUser<T>(
+        bool distinct,
         long userId,
         System.Linq.Expressions.Expression<Func<ServerItem, bool>> predicate,
-        System.Linq.Expressions.Expression<Func<ServerItem, ServerItem>>? sort = null,
+        System.Linq.Expressions.Expression<Func<ServerItem, T>>? sort = null,
         int? take = null,
         int? skip = null)
     {
@@ -30,6 +31,9 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
                      where usert.UserId == userId
                      select si)
             .Where(predicate);
+
+        if (distinct)
+            query = query.Distinct();
 
         if (sort != null)
             query = query.OrderBy(sort);
@@ -44,6 +48,7 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
     }
 
     public IEnumerable<ServerItem> FindForUser(
+        bool distinct,
         long userId,
         System.Linq.Expressions.Expression<Func<ServerItem, bool>> predicate,
         string[] sort,
@@ -57,6 +62,9 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
                      where usert.UserId == userId
                      select si)
             .Where(predicate);
+
+        if (distinct)
+            query = query.Distinct();
 
         if (sort?.Any() == true)
             query = query.OrderByProperty(sort);

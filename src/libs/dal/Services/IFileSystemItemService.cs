@@ -4,10 +4,10 @@ namespace HSB.DAL.Services;
 
 public interface IFileSystemItemService : IBaseService<FileSystemItem>
 {
-    IEnumerable<FileSystemItem> FindForUser(
+    IEnumerable<FileSystemItem> FindForUser<T>(
         long userId,
         System.Linq.Expressions.Expression<Func<FileSystemItem, bool>> predicate,
-        System.Linq.Expressions.Expression<Func<FileSystemItem, FileSystemItem>>? sort = null,
+        System.Linq.Expressions.Expression<Func<FileSystemItem, T>>? sort = null,
         int? take = null,
         int? skip = null);
 

@@ -64,7 +64,7 @@ public class FileSystemItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<FileSystemItemModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "File System Item" })]
-    public IActionResult Get()
+    public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
@@ -113,7 +113,7 @@ public class FileSystemItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var entity = _service.FindForUser(user.Id, (t) => t.Id == id).FirstOrDefault();
+            var entity = _service.FindForUser(user.Id, (t) => t.Id == id, fsi => fsi.Id).FirstOrDefault();
             if (entity == null) return Forbid();
             return new JsonResult(new FileSystemItemModel(entity));
         }

@@ -1,7 +1,6 @@
-import { IOption } from '@/components';
 import { useApp } from '@/store';
 import React from 'react';
-import { IOperatingSystemItemModel, useApiOperatingSystemItems, useAuth } from '.';
+import { IOperatingSystemItemModel, useApiOperatingSystemItems, useAuth } from '..';
 
 export const useOperatingSystemItems = () => {
   const { status } = useAuth();
@@ -12,22 +11,16 @@ export const useOperatingSystemItems = () => {
   React.useEffect(() => {
     // Get an array of operatingSystemItems.
     if (status === 'authenticated' && !operatingSystemItems.length) {
-      findOperatingSystemItems().then(async (res) => {
-        const operatingSystemItems: IOperatingSystemItemModel[] = await res.json();
-        setOperatingSystemItems(operatingSystemItems);
-      });
+      findOperatingSystemItems()
+        .then(async (res) => {
+          const operatingSystemItems: IOperatingSystemItemModel[] = await res.json();
+          setOperatingSystemItems(operatingSystemItems);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
   }, [findOperatingSystemItems, setOperatingSystemItems, status, operatingSystemItems.length]);
 
-  const options = React.useMemo(
-    () =>
-      operatingSystemItems.map<IOption<IOperatingSystemItemModel>>((t) => ({
-        label: t.name,
-        value: t.id,
-        data: t,
-      })),
-    [operatingSystemItems],
-  );
-
-  return { operatingSystemItems, options };
+  return operatingSystemItems;
 };

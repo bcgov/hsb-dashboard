@@ -6,7 +6,7 @@ import { FormError, IOption } from '..';
 import { generateKey } from './utils';
 
 export interface ISelectProps<T> {
-  simple?: boolean; 
+  variant?: 'primary' | 'filter';
   options: IOption<T>[];
   label?: string;
   title?: string;
@@ -19,12 +19,13 @@ export interface ISelectProps<T> {
   placeholder?: string;
   error?: React.ReactNode;
   isMulti?: boolean;
+  required?: boolean;
   onChange?: ChangeEventHandler<HTMLSelectElement>;
   onBlur?: FocusEventHandler<HTMLSelectElement>;
 }
 
 export const Select = <T extends unknown>({
-  simple = false,
+  variant = 'primary',
   options,
   label,
   title,
@@ -35,6 +36,7 @@ export const Select = <T extends unknown>({
   className = '',
   disabled,
   placeholder,
+  required,
   error,
   isMulti,
   onChange,
@@ -46,7 +48,8 @@ export const Select = <T extends unknown>({
     value,
   );
 
-  const selectClasses = simple ? styles.simpleDropdown : `${styles.dropdown} ${className}`;
+  const selectClasses =
+    variant === 'filter' ? `${styles.dropdown} ${className}` : styles.simpleDropdown;
 
   React.useEffect(() => {
     setSelected(value);
@@ -68,7 +71,7 @@ export const Select = <T extends unknown>({
         onBlur={onBlur}
       >
         {placeholder && (
-          <option className="placeholder" value="" disabled>
+          <option className="placeholder" value="" disabled={required}>
             {placeholder}
           </option>
         )}

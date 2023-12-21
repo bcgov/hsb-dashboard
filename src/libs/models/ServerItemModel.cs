@@ -7,7 +7,7 @@ public class ServerItemModel : AuditableModel
 {
     #region Properties
     public int Id { get; set; }
-    public int ConfigurationItemId { get; set; }
+    public long? ConfigurationItemId { get; set; }
     public int? OperatingSystemItemId { get; set; }
     public OperatingSystemItemModel? OperatingSystem { get; set; }
     public JsonDocument? RawData { get; set; }
@@ -48,7 +48,7 @@ public class ServerItemModel : AuditableModel
         this.IPAddress = entity.IPAddress;
     }
 
-    public ServerItemModel(ServiceNow.ResultModel<ServiceNow.ServerModel> model, int configurationItemId, int? operatingSystemItemId)
+    public ServerItemModel(ServiceNow.ResultModel<ServiceNow.ServerModel> model, long? configurationItemId, int? operatingSystemItemId)
     {
         if (model.Data == null) throw new InvalidOperationException("Server data cannot be null");
 

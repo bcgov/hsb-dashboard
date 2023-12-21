@@ -4,10 +4,10 @@ namespace HSB.DAL.Services;
 
 public interface IConfigurationItemService : IBaseService<ConfigurationItem>
 {
-    IEnumerable<ConfigurationItem> FindForUser(
+    IEnumerable<ConfigurationItem> FindForUser<T>(
         long userId,
         System.Linq.Expressions.Expression<Func<ConfigurationItem, bool>> predicate,
-        System.Linq.Expressions.Expression<Func<ConfigurationItem, ConfigurationItem>>? sort = null,
+        System.Linq.Expressions.Expression<Func<ConfigurationItem, T>>? sort = null,
         int? take = null,
         int? skip = null);
 

@@ -6,7 +6,7 @@ public class FileSystemItemModel : AuditableModel
 {
     #region Properties
     public int Id { get; set; }
-    public int ConfigurationItemId { get; set; }
+    public long ConfigurationItemId { get; set; }
     public JsonDocument? RawData { get; set; }
 
 
@@ -59,7 +59,7 @@ public class FileSystemItemModel : AuditableModel
         this.FreeSpaceBytes = entity.FreeSpaceBytes;
     }
 
-    public FileSystemItemModel(ServiceNow.ResultModel<ServiceNow.FileSystemModel> model, int configurationItemId)
+    public FileSystemItemModel(ServiceNow.ResultModel<ServiceNow.FileSystemModel> model, long configurationItemId)
     {
         if (model.Data == null) throw new InvalidOperationException("File System Item data cannot be null");
 

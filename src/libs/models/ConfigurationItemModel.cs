@@ -5,7 +5,7 @@ namespace HSB.Models;
 public class ConfigurationItemModel : AuditableModel
 {
     #region Properties
-    public int Id { get; set; }
+    public long Id { get; set; }
     public int? TenantId { get; set; }
     public TenantModel? Tenant { get; set; }
     public int? OrganizationId { get; set; }

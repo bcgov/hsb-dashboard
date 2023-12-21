@@ -6,7 +6,7 @@ public class FileSystemItem : Auditable
 {
     #region Properties
     public int Id { get; set; }
-    public int ConfigurationItemId { get; set; }
+    public long ConfigurationItemId { get; set; }
     public ConfigurationItem? ConfigurationItem { get; set; }
     public JsonDocument RawData { get; set; } = JsonDocument.Parse("{}");
 
@@ -40,7 +40,7 @@ public class FileSystemItem : Auditable
         this.ConfigurationItem = configurationItem ?? throw new ArgumentNullException(nameof(configurationItem));
     }
 
-    public FileSystemItem(int configurationItemId, JsonDocument data)
+    public FileSystemItem(long configurationItemId, JsonDocument data)
     {
         this.ConfigurationItemId = configurationItemId;
         this.RawData = data;

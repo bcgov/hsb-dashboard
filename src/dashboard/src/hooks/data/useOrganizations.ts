@@ -1,7 +1,6 @@
-import { IOption } from '@/components';
 import { useApp } from '@/store';
 import React from 'react';
-import { IOrganizationModel, useApiOrganizations, useAuth } from '.';
+import { IOrganizationModel, useApiOrganizations, useAuth } from '..';
 
 export const useOrganizations = () => {
   const { status } = useAuth();
@@ -12,22 +11,16 @@ export const useOrganizations = () => {
   React.useEffect(() => {
     // Get an array of organizations.
     if (status === 'authenticated' && !organizations.length) {
-      findOrganizations().then(async (res) => {
-        const organizations: IOrganizationModel[] = await res.json();
-        setOrganizations(organizations);
-      });
+      findOrganizations()
+        .then(async (res) => {
+          const organizations: IOrganizationModel[] = await res.json();
+          setOrganizations(organizations);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
   }, [findOrganizations, setOrganizations, status, organizations.length]);
 
-  const options = React.useMemo(
-    () =>
-      organizations.map<IOption<IOrganizationModel>>((t) => ({
-        label: t.name,
-        value: t.id,
-        data: t,
-      })),
-    [organizations],
-  );
-
-  return { organizations, options };
+  return organizations;
 };

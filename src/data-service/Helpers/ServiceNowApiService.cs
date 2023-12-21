@@ -149,6 +149,50 @@ public class ServiceNowApiService : IServiceNowApiService
     }
 
     /// <summary>
+    /// Fetch server items from service now.
+    /// </summary>
+    /// <param name="limit"></param>
+    /// <param name="offset"></param>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    public async Task<IEnumerable<ResultModel<ServerModel>>> FetchServerItemsAsync(int limit, int offset, string filter = "")
+    {
+        this.Logger.LogDebug("Service Now - Fetching server items");
+
+        var builder = new UriBuilder($"{this.SNClient.Client.BaseAddress}")
+        {
+            Path = this.Options.Endpoints.TablePath.Replace("{name}", this.Options.TableNames.Server)
+        };
+        var query = HttpUtility.ParseQueryString(builder.Query);
+        query.Add("sysparm_offset", $"{offset}");
+        query.Add("sysparm_limit", $"{limit}");
+        if (!String.IsNullOrWhiteSpace(filter))
+        {
+            var filterQuery = HttpUtility.ParseQueryString(filter);
+            query.Add(filterQuery);
+        }
+        builder.Query = query.ToString();
+
+        var result = await ServiceNowArraySendAsync<ServerModel>(HttpMethod.Get, builder.Uri);
+        return result.ToArray();
+    }
+
+    /// <summary>
+    /// Get the configuration item for the specified 'id'.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async Task<ResultModel<ConfigurationItemModel>?> GetConfigurationItemAsync(string id)
+    {
+        this.Logger.LogDebug("Service Now - Fetch operating system '{id}'", id);
+        var builder = new UriBuilder($"{this.SNClient.Client.BaseAddress}")
+        {
+            Path = this.Options.Endpoints.TablePath.Replace("{name}", $"{this.Options.TableNames.ConfigurationItem}/{id}")
+        };
+        return await ServiceNowSendAsync<ConfigurationItemModel>(HttpMethod.Get, builder.Uri);
+    }
+
+    /// <summary>
     /// Get the operating system for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>

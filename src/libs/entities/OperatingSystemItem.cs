@@ -8,6 +8,8 @@ public class OperatingSystemItem : Auditable
     public int Id { get; set; }
     public JsonDocument RawData { get; set; } = JsonDocument.Parse("{}");
 
+    public List<ServerItem> ServerItems { get; } = new List<ServerItem>();
+
     #region ServiceNow Properties
     public string ServiceNowKey { get; set; } = "";
     public string Name { get; set; } = "";

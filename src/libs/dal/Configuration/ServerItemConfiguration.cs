@@ -12,7 +12,7 @@ public class ServerItemServer : AuditableConfiguration<ServerItem>
         builder.ToTable("ServerItem");
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id).IsRequired().ValueGeneratedOnAdd();
-        builder.Property(m => m.ConfigurationItemId).IsRequired();
+        builder.Property(m => m.ConfigurationItemId);
         builder.Property(m => m.OperatingSystemItemId);
         builder.Property(m => m.RawData).IsRequired().HasColumnType("jsonb").HasDefaultValueSql("'{}'::jsonb");
 
@@ -28,6 +28,7 @@ public class ServerItemServer : AuditableConfiguration<ServerItem>
         builder.Property(m => m.DiskSpace).IsRequired().HasMaxLength(50).HasDefaultValueSql("''");
 
         builder.HasOne(m => m.ConfigurationItem).WithMany(m => m.ServerItems).HasForeignKey(m => m.ConfigurationItemId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(m => m.OperatingSystemItem).WithMany(m => m.ServerItems).HasForeignKey(m => m.OperatingSystemItemId).OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(m => new { m.ServiceNowKey }, "IX_ServerItem_ServiceNowKey");
         builder.HasIndex(m => new { m.OperatingSystemKey }, "IX_ServerItem_OperatingSystemKey");

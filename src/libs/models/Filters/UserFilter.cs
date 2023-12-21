@@ -34,7 +34,7 @@ public class UserFilter : PageFilter
         this.LastName = filter.GetStringValue(nameof(this.LastName));
         this.IsEnabled = filter.GetBoolNullValue(nameof(this.IsEnabled)) ?? filter.GetBoolNullValue("enabled");
 
-        this.Sort = filter.GetStringArrayValue(nameof(this.Sort));
+        this.Sort = filter.GetStringArrayValue(nameof(this.Sort), new[] { nameof(UserModel.Username) });
     }
     #endregion
 
