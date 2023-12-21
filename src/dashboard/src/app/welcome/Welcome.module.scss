@@ -2,7 +2,7 @@
 
 .container {
   display: flex;
-  height: calc(100vh - 105px);
+  height: calc(100vh - 109px);
   margin-top: -48px;
   font-size: $font-size-18;
 
@@ -38,11 +38,16 @@
   a {
     font-weight: bold;
     font-style: italic;
+    color: $bc-black;
+    
+    &:hover {
+        text-decoration: underline;
+    }
   }
 }
 
 .login {
   display: flex;
   flex-direction: column;
-  justify-content: end;
+  justify-content: flex-end;
 }

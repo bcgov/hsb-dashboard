@@ -4,7 +4,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 1510px;
+  max-width: $desktop;
   width: 100%;
   background-color: $white;
   @include dropshadow;
@@ -15,6 +15,10 @@
   transform: translateX(-50%);
   left: 50%;
   color: $bc-black;
+}
+
+.dropdown {
+  max-width: 205px;
 }
 
 .date {
@@ -49,6 +53,8 @@
       padding: 2px 5px;
       border-radius: 2px;
       background-color: $light-gray;
+      border: 0;
+      font-family: "BCSans";
     }
   }
 }

@@ -46,11 +46,17 @@
   a {
     font-weight: bold;
     font-style: italic;
+    color: $bc-black;
+
+    &:hover {
+        text-decoration: underline;
+    }
   }
 
   ul {
     list-style-type: disc;
     margin-left: 4%;
+    padding: 0;
 
     li {
       margin-top: 10px;

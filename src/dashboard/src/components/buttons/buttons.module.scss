@@ -1,4 +1,45 @@
+@import '@/styles/utils.scss';
+
+.btn {
+    padding: 10px 16px;
+    border-radius: 3px;
+    font-size: 1em;
+    font-weight: bold;
+    border: 0;
+    cursor: pointer;
+    position: relative;
+}
+
+.primary {
+    background-color: $bc-blue;
+    color: $white;
+
+    &:hover {
+        background-color: $chart-blue;
+    }
+}
+
+.secondary {
+    background-color: $white;
+    color: $bc-black;
+    border: 1px solid $dark-gray;
+
+    &:hover {
+        background-color: $light-gray;
+    }
+}
+
+.disabled {
+    background-color: $light-gray;
+    color: $dark-gray;
+    border: 1px solid $dark-gray;
+}
+
 .buttonIcon {
-    display: inline;
-    margin: 0 10px 3px 0;
+    position: absolute;
+    left: 16px;
+}
+
+.btnWithIcon {
+    padding-left: 42px;
 }

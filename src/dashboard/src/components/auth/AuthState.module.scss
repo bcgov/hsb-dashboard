@@ -1,0 +1,14 @@
+@import '@/styles/utils.scss';
+
+.button {
+    background-color: transparent;
+    color: $white;
+    border: 0;
+    font-size: $font-size-normal;
+    font-weight: bold;
+    cursor: pointer;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}

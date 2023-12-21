@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components';
+import { Button } from '@/components/buttons';
 import { Checkbox } from '@/components/forms/checkbox';
 import { Select } from '@/components/forms/select';
 import { Text } from '@/components/forms/text';
@@ -51,6 +51,9 @@ export default function Page() {
           </Button>
           <Button title="Secondary Button" variant="secondary" iconPath="/images/trash-icon.png">
             Button with icon
+          </Button>
+          <Button title="Disabled Button" variant="disabled">
+            Disabled button
           </Button>
         </div>
         <div>

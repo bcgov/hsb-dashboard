@@ -1,9 +1,24 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 body {
   background-color: #f2f2f2;
+  margin: 0;
+  font-family: "BCSans";
+  box-sizing: border-box;
+}
+
+div {
+  box-sizing: border-box;
+}
+
+button, select, option {
+  font-family: "BCSans";
+}
+
+h1, h2, p {
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
 }
 
 .dashboardContainer {
