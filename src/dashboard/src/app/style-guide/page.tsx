@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components';
+import { Button } from '@/components/buttons';
 import { Checkbox } from '@/components/forms/checkbox';
 import { Select } from '@/components/forms/select';
 import { Text } from '@/components/forms/text';
@@ -52,6 +52,9 @@ export default function Page() {
           <Button title="Secondary Button" variant="secondary" iconPath="/images/trash-icon.png">
             Button with icon
           </Button>
+          <Button title="Disabled Button" disabled>
+            Disabled button
+          </Button>
         </div>
         <div>
           <h2 className={styles.heading}>Checkbox</h2>
@@ -62,8 +65,10 @@ export default function Page() {
           <Toggle></Toggle>
         </div>
         <div>
-          <h2 className={styles.heading}>Select</h2>
-          <Select title="dropdown example" options={[]}></Select>
+          <h2 className={styles.heading}>Filter Select Dropdown</h2>
+          <Select title="filter dropdown example" options={[]} label="Filter dropdown" placeholder="Default option"></Select>
+          <br/>
+          <Select simple title="simple dropdown example" options={[]} label="Simple dropdown" placeholder="Default option"></Select>
         </div>
         <div>
           <h2 className={styles.heading}>Text Inputs</h2>

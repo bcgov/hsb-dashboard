@@ -1,34 +1,37 @@
-import styles from './buttons.module.scss';
-
+import React from 'react';
 import Image from 'next/image';
+import styles from './Button.module.scss';
 
 interface IButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'success' | 'warn' | 'error' | 'info' | 'link';
+  variant?: 'primary' | 'secondary';
   children?: React.ReactNode;
   iconPath?: string;
 }
 
-export const Button: React.FC<IButtonProps> = ({ variant, children, iconPath, ...rest }) => {
-  var style = '';
-  if (!variant || variant === 'primary')
-    style =
-      'group bg-blue hover:bg-blue-900 active:bg-blue-950 text-white py-2 px-4 rounded font-bold';
-  else if (variant === 'secondary')
-    style =
-      'group bg-white border border-gray-200 hover:bg-gray-100 active:bg-gray-950 text-black py-2 px-4 rounded font-bold';
-  else if (variant === 'success')
-    style = 'group bg-green hover:bg-green-400 active:bg-green-600 text-white py-2 px-4 rounded';
-  else if (variant === 'warn')
-    style = 'group bg-yellow hover:bg-yellow-400 active:bg-yellow-600 text-black py-2 px-4 rounded';
-  else if (variant === 'error')
-    style = 'group bg-red hover:bg-red-400 active:bg-red-600 text-white py-2 px-4 rounded';
-  else if (variant === 'info')
-    style = 'group bg-white hover:bg-gray-400 active:bg-gray-600 text-black py-2 px-4 rounded';
-  else if (variant === 'link')
-    style = 'group bg-white hover:bg-gray-400 active:bg-gray-600 text-black py-2 px-4 rounded';
+export const Button: React.FC<IButtonProps> = ({ variant = 'primary', children, iconPath, disabled, ...rest }) => {
+  // Determine the button's className based on the 'variant' prop and whether iconPath is provided.
+  const getButtonClassName = () => {
+    let buttonClasses = `${styles.btn} ${styles[variant] || ''}`;
+    
+    if (iconPath) {
+      // If iconPath is truthy, append the class for an icon
+      buttonClasses += ` ${styles.btnWithIcon}`;
+    }
+
+    if (disabled) {
+      // If the button is disabled, append the disabled class
+      buttonClasses += ` ${styles.disabled}`;
+    }
+
+    return buttonClasses;
+  };
 
   return (
-    <button className={`${style}${rest.className ? ` ${rest.className}` : ''}`} {...rest}>
+    <button
+      className={getButtonClassName()}
+      disabled={disabled} 
+      {...rest}
+    >
       {iconPath && (
         <Image src={iconPath} alt="icon" width={17} height={17} className={styles.buttonIcon} />
       )}

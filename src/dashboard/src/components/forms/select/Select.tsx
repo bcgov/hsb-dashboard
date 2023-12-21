@@ -6,6 +6,7 @@ import { FormError, IOption } from '..';
 import { generateKey } from './utils';
 
 export interface ISelectProps<T> {
+  simple?: boolean; 
   options: IOption<T>[];
   label?: string;
   title?: string;
@@ -23,6 +24,7 @@ export interface ISelectProps<T> {
 }
 
 export const Select = <T extends unknown>({
+  simple = false,
   options,
   label,
   title,
@@ -44,12 +46,14 @@ export const Select = <T extends unknown>({
     value,
   );
 
+  const selectClasses = simple ? styles.simpleDropdown : `${styles.dropdown} ${className}`;
+
   React.useEffect(() => {
     setSelected(value);
   }, [value]);
 
   return (
-    <div className={`${styles.dropdown} ${className}`}>
+    <div className={selectClasses}>
       {label && <label htmlFor={id}>{label}</label>}
       <select
         id={id}

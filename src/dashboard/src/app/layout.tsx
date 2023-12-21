@@ -1,6 +1,6 @@
 import { Footer, Header, SessionProviderWrapper } from '@/components';
 import '@/styles/_fonts.scss';
-import '@/styles/tailwind.scss';
+import '@/styles/globals.scss';
 import type { Metadata } from 'next';
 import React from 'react';
 
