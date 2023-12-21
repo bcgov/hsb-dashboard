@@ -1,7 +1,13 @@
 'use client';
 
+import { AllOrgDonutChart } from '@/components/allOrgDonutChart';
 import { Sheet } from '@/components';
 
 export default function Page() {
-  return <Sheet></Sheet>;
+  return (
+    <div className="dashboardContainer">
+      HSB Dashboard
+      <AllOrgDonutChart />
+    </div>
+  );
 }

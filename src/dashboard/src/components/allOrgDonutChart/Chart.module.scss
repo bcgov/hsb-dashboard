@@ -1,0 +1,57 @@
+@import '@/styles/utils.scss';
+
+.panel {
+    @include panel-style(370px, -height, -width, 638px);
+
+    button {
+        @include export-btn;
+    }
+}
+
+.info {
+    width: 45%;
+
+    h2 {
+        margin: 16px 0;
+    }
+
+    >div {
+        border-top: 1px solid $medium-gray;
+
+        &:nth-child(3) {
+            p::before {
+                border: 5px solid $bc-blue;
+            }
+        }
+
+        &:last-child {
+            border-bottom: 1px solid $medium-gray;
+
+            p::before {
+                border: 5px solid $medium-gray;
+            }
+        }
+    }
+
+    p {
+        padding: 20px 8px;
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        &::before {
+            content: '';
+            height: 24px;
+            width: 24px;
+            border: 5px solid $bc-yellow;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 14px;
+        }
+    }
+
+    span {
+        position: absolute;
+        right: 8px;
+    }
+}

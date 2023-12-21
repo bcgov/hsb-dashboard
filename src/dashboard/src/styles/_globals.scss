@@ -4,6 +4,7 @@
   padding: 20px;
   margin-bottom: 34px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
 
   // Conditional inclusion of properties if the arguments are passed
   @if $min-height !=null {
@@ -37,6 +38,22 @@
   bottom: 0;
   z-index: -1;
   transform: translateX(-50%);
+}
+
+@mixin export-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 5px;
+  padding-left: 28px;
+  font-size: $font-size-small;
+
+  img {
+    left: 9px;
+    top: 8px;
+    height: 12px;
+    width: 12px;
+  }
 }
 
 .link {
