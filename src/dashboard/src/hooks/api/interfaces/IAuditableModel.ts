@@ -1,4 +1,4 @@
-export interface IAuditModel {
+export interface IAuditableModel {
   createdOn: string;
   createdBy: string;
   updatedOn: string;

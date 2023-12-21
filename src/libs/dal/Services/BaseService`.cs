@@ -94,7 +94,7 @@ public abstract class BaseService<TEntity> : BaseService, IBaseService<TEntity>
             .AsNoTracking()
             .Where(predicate);
 
-        if (sort != null && sort.Any())
+        if (sort?.Any() == true)
             query = query.OrderByProperty(sort);
         if (take.HasValue)
             query = query.Take(take.Value);

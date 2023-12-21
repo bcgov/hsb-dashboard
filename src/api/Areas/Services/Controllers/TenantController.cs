@@ -47,7 +47,7 @@ public class TenantController : ControllerBase
     [HttpGet(Name = "GetTenants-Services")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<TenantModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Tenant Item" })]
+    [SwaggerOperation(Tags = new[] { "Tenant" })]
     public IActionResult Get()
     {
         var tenants = _service.Find(o => true);
@@ -63,7 +63,7 @@ public class TenantController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(TenantModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "Tenant Item" })]
+    [SwaggerOperation(Tags = new[] { "Tenant" })]
     public IActionResult GetForId(int id)
     {
         var tenant = _service.FindForId(id);
@@ -82,7 +82,7 @@ public class TenantController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(TenantModel), (int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Tenant Item" })]
+    [SwaggerOperation(Tags = new[] { "Tenant" })]
     public IActionResult Add(TenantModel model)
     {
         var entity = model.ToEntity();
@@ -100,7 +100,7 @@ public class TenantController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(TenantModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Tenant Item" })]
+    [SwaggerOperation(Tags = new[] { "Tenant" })]
     public IActionResult Update(TenantModel model)
     {
         var entity = model.ToEntity();
