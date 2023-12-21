@@ -14,15 +14,14 @@ export const Filter: React.FC = () => {
   return (
     <div className={styles.filter}>
       <h1>Filter</h1>
-      <Select className={styles.dropdown} options={tenantOptions} label="Tenant" placeholder="Select tenant" />
+      <Select options={tenantOptions} label="Tenant" placeholder="Select tenant" />
       <Select
-        className={styles.dropdown}
         options={organizationOptions}
         label="Organization"
         placeholder="Select organization"
       />
-      <Select className={styles.dropdown} options={tenantOptions} label="Operating system" placeholder="Select OS" />
-      <Select className={styles.dropdown} options={tenantOptions} label="Server" placeholder="Select server" />
+      <Select options={tenantOptions} label="Operating system" placeholder="Select OS" />
+      <Select options={tenantOptions} label="Server" placeholder="Select server" />
       <div className={styles.date}>
         <div className={styles.datePicker}>
           <label htmlFor="endDate">Start Date:</label>

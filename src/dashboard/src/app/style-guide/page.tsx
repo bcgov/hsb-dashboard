@@ -52,7 +52,7 @@ export default function Page() {
           <Button title="Secondary Button" variant="secondary" iconPath="/images/trash-icon.png">
             Button with icon
           </Button>
-          <Button title="Disabled Button" variant="disabled">
+          <Button title="Disabled Button" disabled="disabled">
             Disabled button
           </Button>
         </div>
@@ -65,8 +65,10 @@ export default function Page() {
           <Toggle></Toggle>
         </div>
         <div>
-          <h2 className={styles.heading}>Select</h2>
-          <Select title="dropdown example" options={[]}></Select>
+          <h2 className={styles.heading}>Filter Select Dropdown</h2>
+          <Select title="filter dropdown example" options={[]} label="Filter dropdown" placeholder="Default option"></Select>
+          <br/>
+          <Select simple title="simple dropdown example" options={[]} label="Simple dropdown" placeholder="Default option"></Select>
         </div>
         <div>
           <h2 className={styles.heading}>Text Inputs</h2>

@@ -1,11 +1,52 @@
 @import '@/styles/utils.scss';
 
+.simpleDropdown {
+  position: relative;
+  width: max-content;
+
+  label {
+    display: block;
+    margin-bottom: 12px;
+  }
+  
+  select {
+    border: 1px solid $dark-gray;
+    border-radius: 3px;
+    min-width: 200px;
+    min-height: 28px;
+    font-size: $font-size-normal;
+    color: $bc-black;
+    padding: 5px 33px 5px 8px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    &:focus {
+      outline: 1px solid $focus-blue;
+    }
+  }
+
+  &::after {
+    content: '';
+    height: 6px;
+    width: 6px;
+    border-right: 1px solid $bc-black;
+    border-bottom: 1px solid $bc-black;
+    display: block;
+    position: absolute;
+    right: 16px;
+    bottom: 15px;
+    transform: rotate(45deg);
+    pointer-events: none;
+  }
+}
+
 .dropdown {
   display: flex;
   flex-direction: column;
   position: relative;
   width: 100%;
-  max-width: 248px;
+  max-width: 205px;
 
   @media screen and (max-width: $desktop) {
     margin: 0 5px;
@@ -15,8 +56,8 @@
     content: '';
     height: 8px;
     width: 8px;
-    border-right: 3px solid $bc-black;
-    border-bottom: 3px solid $bc-black;
+    border-right: 2px solid $bc-black;
+    border-bottom: 2px solid $bc-black;
     display: block;
     position: absolute;
     right: 16px;

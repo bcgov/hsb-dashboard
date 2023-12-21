@@ -1,21 +1,26 @@
 import React from 'react';
 import Image from 'next/image';
-import styles from './buttons.module.scss';
+import styles from './Buttons.module.scss';
 
 interface IButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'disabled';
+  variant?: 'primary' | 'secondary';
   children?: React.ReactNode;
   iconPath?: string;
 }
 
-export const Button: React.FC<IButtonProps> = ({ variant = 'primary', children, iconPath, ...rest }) => {
+export const Button: React.FC<IButtonProps> = ({ variant = 'primary', children, iconPath, disabled, ...rest }) => {
   // Determine the button's className based on the 'variant' prop and whether iconPath is provided.
   const getButtonClassName = () => {
-    let buttonClasses = `${styles.btn} ${styles[variant] || styles.primary}`;
+    let buttonClasses = `${styles.btn} ${styles[variant] || ''}`;
     
     if (iconPath) {
       // If iconPath is truthy, append the class for an icon
       buttonClasses += ` ${styles.btnWithIcon}`;
+    }
+
+    if (disabled) {
+      // If the button is disabled, append the disabled class
+      buttonClasses += ` ${styles.disabled}`;
     }
 
     return buttonClasses;
@@ -24,8 +29,7 @@ export const Button: React.FC<IButtonProps> = ({ variant = 'primary', children, 
   return (
     <button
       className={getButtonClassName()}
-      // If the variant is 'disabled', add the 'disabled' attribute to the button element
-      disabled={variant === 'disabled'}
+      disabled={disabled} 
       {...rest}
     >
       {iconPath && (

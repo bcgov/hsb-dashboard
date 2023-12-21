@@ -33,6 +33,11 @@
     background-color: $light-gray;
     color: $dark-gray;
     border: 1px solid $dark-gray;
+    pointer-events: none;
+
+    &:hover {
+        background-color: $light-gray;
+    }
 }
 
 .buttonIcon {
