@@ -8,6 +8,10 @@
     }
 }
 
+.chartContainer {
+    display: flex;
+}
+
 .info {
     width: 45%;
 
@@ -53,5 +57,23 @@
     span {
         position: absolute;
         right: 8px;
+    }
+}
+
+.chart {
+    width: 55%;
+    padding-left: 45px;
+}
+
+.total {
+    font-size: $font-size-40;
+    text-align: center;
+    position: absolute;
+    top: 38%;
+    left: 67%;
+
+    span {
+        font-size: $font-size-small;
+        display: block;
     }
 }
