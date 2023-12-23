@@ -197,6 +197,18 @@ public static class DictionaryExtensions
     }
 
     /// <summary>
+    /// Get the value from the dictionary for the specified 'key' and return it as an array of string.
+    /// </summary>
+    /// <param name="dict"></param>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public static string[] GetStringArrayValue(this IDictionary<string, Microsoft.Extensions.Primitives.StringValues> dict, string key, string[] defaultValue)
+    {
+        return dict.TryGetValue(key, out Microsoft.Extensions.Primitives.StringValues value) ? value.Where(v => v != null).Select(v => v!).ToArray() : defaultValue;
+    }
+
+    /// <summary>
     /// Get the value from the dictionary for the specified 'key' and return it as an Guid.
     /// </summary>
     /// <param name="dict"></param>

@@ -16,10 +16,10 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
     #endregion
 
     #region Methods
-    public IEnumerable<FileSystemItem> FindForUser(
+    public IEnumerable<FileSystemItem> FindForUser<T>(
         long userId,
         System.Linq.Expressions.Expression<Func<FileSystemItem, bool>> predicate,
-        System.Linq.Expressions.Expression<Func<FileSystemItem, FileSystemItem>>? sort = null,
+        System.Linq.Expressions.Expression<Func<FileSystemItem, T>>? sort = null,
         int? take = null,
         int? skip = null)
     {

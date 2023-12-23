@@ -11,6 +11,9 @@ public class TenantFilter : PageFilter
 
     public bool? IsEnabled { get; set; }
 
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
+
     public string[] Sort { get; set; } = Array.Empty<string>();
     #endregion
 
@@ -23,8 +26,10 @@ public class TenantFilter : PageFilter
 
         this.Name = filter.GetStringValue(nameof(this.Name));
         this.IsEnabled = filter.GetBoolNullValue(nameof(this.IsEnabled));
+        this.StartDate = filter.GetDateTimeNullValue(nameof(this.StartDate));
+        this.EndDate = filter.GetDateTimeNullValue(nameof(this.EndDate));
 
-        this.Sort = filter.GetStringArrayValue(nameof(this.Sort));
+        this.Sort = filter.GetStringArrayValue(nameof(this.Sort), new[] { nameof(TenantModel.Name) });
     }
     #endregion
 
@@ -36,6 +41,10 @@ public class TenantFilter : PageFilter
             predicate = predicate.And((u) => EF.Functions.Like(u.Name, $"%{this.Name}%"));
         if (this.IsEnabled != null)
             predicate = predicate.And((u) => u.IsEnabled == this.IsEnabled);
+        if (this.StartDate != null)
+            predicate = predicate.And((u) => u.CreatedOn >= this.StartDate);
+        if (this.EndDate != null)
+            predicate = predicate.And((u) => u.CreatedOn <= this.EndDate);
 
         if (!predicate.IsStarted) return predicate.And((u) => true);
         return predicate;

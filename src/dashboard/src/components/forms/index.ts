@@ -1,4 +1,5 @@
 export * from './checkbox';
+export * from './date-picker';
 export * from './error';
 export * from './interfaces';
 export * from './select';

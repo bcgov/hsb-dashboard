@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using HSB.DAL.Extensions;
+using System.Linq.Expressions;
 
 namespace HSB.DAL.Services;
 
@@ -18,10 +19,10 @@ public class TenantService : BaseService<Tenant>, ITenantService
     #endregion
 
     #region Methods
-    public IEnumerable<Tenant> FindForUser(
+    public IEnumerable<Tenant> FindForUser<T>(
         long userId,
         System.Linq.Expressions.Expression<Func<Tenant, bool>> predicate,
-        System.Linq.Expressions.Expression<Func<Tenant, Tenant>>? sort = null,
+        System.Linq.Expressions.Expression<Func<Tenant, T>>? sort = null,
         int? take = null,
         int? skip = null)
     {

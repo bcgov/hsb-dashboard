@@ -7,7 +7,7 @@ public class ServerItem : Auditable
 {
     #region Properties
     public int Id { get; set; }
-    public int ConfigurationItemId { get; set; }
+    public long? ConfigurationItemId { get; set; }
     public ConfigurationItem? ConfigurationItem { get; set; }
     public int? OperatingSystemItemId { get; set; }
     public OperatingSystemItem? OperatingSystemItem { get; set; }
@@ -37,7 +37,7 @@ public class ServerItem : Auditable
         this.OperatingSystemItem = operatingSystemItem;
     }
 
-    public ServerItem(int configurationItemId, int? operatingSystemItemId, JsonDocument data)
+    public ServerItem(long? configurationItemId, int? operatingSystemItemId, JsonDocument data)
     {
         this.ConfigurationItemId = configurationItemId;
         this.OperatingSystemItemId = operatingSystemItemId;

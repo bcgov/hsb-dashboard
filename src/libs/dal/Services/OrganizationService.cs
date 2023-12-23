@@ -18,10 +18,10 @@ public class OrganizationService : BaseService<Organization>, IOrganizationServi
     #endregion
 
     #region Methods
-    public IEnumerable<Organization> FindForUser(
+    public IEnumerable<Organization> FindForUser<T>(
         long userId,
         System.Linq.Expressions.Expression<Func<Organization, bool>> predicate,
-        System.Linq.Expressions.Expression<Func<Organization, Organization>>? sort = null,
+        System.Linq.Expressions.Expression<Func<Organization, T>>? sort = null,
         int? take = null,
         int? skip = null)
     {

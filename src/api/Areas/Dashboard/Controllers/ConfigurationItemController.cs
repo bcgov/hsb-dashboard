@@ -64,7 +64,7 @@ public class ConfigurationItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<ConfigurationItemModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Configuration Item" })]
-    public IActionResult Get()
+    public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
@@ -113,7 +113,7 @@ public class ConfigurationItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var entity = _service.FindForUser(user.Id, (t) => t.Id == id).FirstOrDefault();
+            var entity = _service.FindForUser(user.Id, (t) => t.Id == id, ci => ci.Id).FirstOrDefault();
             if (entity == null) return Forbid();
             return new JsonResult(new ConfigurationItemModel(entity));
         }

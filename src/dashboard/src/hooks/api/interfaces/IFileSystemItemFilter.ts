@@ -1,3 +1,13 @@
 export interface IFileSystemItemFilter {
   name?: string;
+  serviceNowKey?: string;
+  tenantId?: number;
+  organizationId?: number;
+  operatingSystemItemId?: number;
+  serverItemId?: number;
+  category?: string;
+  subCategory?: string;
+  className?: string;
+  startDate?: string;
+  endDate?: string;
 }

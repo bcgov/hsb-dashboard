@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HSB.DAL.Migrations
 {
     [DbContext(typeof(HSBContext))]
-    [Migration("20231219205144_1.0.0")]
-    partial class _100
+    [Migration("20231221220405_0.0.0")]
+    partial class _000
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,11 +28,11 @@ namespace HSB.DAL.Migrations
 
             modelBuilder.Entity("HSB.Entities.ConfigurationItem", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -247,8 +247,8 @@ namespace HSB.DAL.Migrations
                         .HasColumnType("character varying(100)")
                         .HasDefaultValueSql("''");
 
-                    b.Property<int>("ConfigurationItemId")
-                        .HasColumnType("integer");
+                    b.Property<long>("ConfigurationItemId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -720,8 +720,8 @@ namespace HSB.DAL.Migrations
                         .HasColumnType("character varying(100)")
                         .HasDefaultValueSql("''");
 
-                    b.Property<int>("ConfigurationItemId")
-                        .HasColumnType("integer");
+                    b.Property<long?>("ConfigurationItemId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -1216,12 +1216,12 @@ namespace HSB.DAL.Migrations
                     b.HasOne("HSB.Entities.ConfigurationItem", "ConfigurationItem")
                         .WithMany("ServerItems")
                         .HasForeignKey("ConfigurationItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("HSB.Entities.OperatingSystemItem", "OperatingSystemItem")
-                        .WithMany()
-                        .HasForeignKey("OperatingSystemItemId");
+                        .WithMany("ServerItems")
+                        .HasForeignKey("OperatingSystemItemId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("ConfigurationItem");
 
@@ -1297,6 +1297,11 @@ namespace HSB.DAL.Migrations
                     b.Navigation("RolesManyToMany");
 
                     b.Navigation("UsersManyToMany");
+                });
+
+            modelBuilder.Entity("HSB.Entities.OperatingSystemItem", b =>
+                {
+                    b.Navigation("ServerItems");
                 });
 
             modelBuilder.Entity("HSB.Entities.Organization", b =>

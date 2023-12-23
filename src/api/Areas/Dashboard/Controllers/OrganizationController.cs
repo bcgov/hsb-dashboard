@@ -60,7 +60,7 @@ public class OrganizationController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OrganizationModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Organization" })]
-    public IActionResult Get()
+    public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
@@ -109,7 +109,7 @@ public class OrganizationController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var entity = _service.Find((o) => o.Id == id && o.Tenants.Any(t => t.UsersManyToMany.Any(um2m => um2m.UserId == user.Id))).FirstOrDefault();
+            var entity = _service.FindForUser(user.Id, (o) => o.Id == id, o => o.Id).FirstOrDefault();
             if (entity == null) return Forbid();
             return new JsonResult(new OrganizationModel(entity));
         }

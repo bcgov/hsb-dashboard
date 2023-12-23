@@ -25,6 +25,9 @@ public class ConfigurationItemFilter : PageFilter
 
     public string? DnsDomain { get; set; }
 
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
+
     public string[] Sort { get; set; } = Array.Empty<string>();
     #endregion
 
@@ -44,8 +47,10 @@ public class ConfigurationItemFilter : PageFilter
         this.SubCategory = filter.GetStringValue(nameof(this.SubCategory));
         this.Platform = filter.GetStringValue(nameof(this.Platform));
         this.DnsDomain = filter.GetStringValue(nameof(this.DnsDomain));
+        this.StartDate = filter.GetDateTimeNullValue(nameof(this.StartDate));
+        this.EndDate = filter.GetDateTimeNullValue(nameof(this.EndDate));
 
-        this.Sort = filter.GetStringArrayValue(nameof(this.Sort));
+        this.Sort = filter.GetStringArrayValue(nameof(this.Sort), new[] { nameof(ConfigurationItemModel.Name) });
     }
     #endregion
 
@@ -71,6 +76,10 @@ public class ConfigurationItemFilter : PageFilter
             predicate = predicate.And((u) => EF.Functions.Like(u.Platform, this.Platform));
         if (this.DnsDomain != null)
             predicate = predicate.And((u) => EF.Functions.Like(u.DnsDomain, this.DnsDomain));
+        if (this.StartDate != null)
+            predicate = predicate.And((u) => u.CreatedOn >= this.StartDate);
+        if (this.EndDate != null)
+            predicate = predicate.And((u) => u.CreatedOn <= this.EndDate);
 
         if (!predicate.IsStarted) return predicate.And((u) => true);
         return predicate;

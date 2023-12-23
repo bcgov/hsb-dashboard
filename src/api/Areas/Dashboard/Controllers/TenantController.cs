@@ -60,7 +60,7 @@ public class TenantController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<TenantModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Tenant" })]
-    public IActionResult Get()
+    public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
@@ -109,7 +109,7 @@ public class TenantController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var entity = _tenantService.FindForUser(user.Id, (t) => t.Id == id).FirstOrDefault();
+            var entity = _tenantService.FindForUser(user.Id, (t) => t.Id == id, t => t.Id).FirstOrDefault();
             if (entity == null) return Forbid();
             return new JsonResult(new TenantModel(entity));
         }

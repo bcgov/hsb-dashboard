@@ -24,7 +24,7 @@ public class RoleFilter : PageFilter
         this.Name = filter.GetStringValue(nameof(this.Name));
         this.IsEnabled = filter.GetBoolNullValue(nameof(this.IsEnabled));
 
-        this.Sort = filter.GetStringArrayValue(nameof(this.Sort));
+        this.Sort = filter.GetStringArrayValue(nameof(this.Sort), new[] { nameof(RoleModel.Name) });
     }
     #endregion
 

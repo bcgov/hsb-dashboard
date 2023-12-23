@@ -5,7 +5,7 @@ namespace HSB.Entities;
 public class ConfigurationItem : Auditable
 {
     #region Properties
-    public int Id { get; set; }
+    public long Id { get; set; }
     public int? TenantId { get; set; }
     public Tenant? Tenant { get; set; }
     public int? OrganizationId { get; set; }

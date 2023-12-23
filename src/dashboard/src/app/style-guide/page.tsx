@@ -66,9 +66,20 @@ export default function Page() {
         </div>
         <div>
           <h2 className={styles.heading}>Filter Select Dropdown</h2>
-          <Select title="filter dropdown example" options={[]} label="Filter dropdown" placeholder="Default option"></Select>
-          <br/>
-          <Select simple title="simple dropdown example" options={[]} label="Simple dropdown" placeholder="Default option"></Select>
+          <Select
+            title="filter dropdown example"
+            options={[]}
+            label="Filter dropdown"
+            placeholder="Default option"
+          ></Select>
+          <br />
+          <Select
+            variant="primary"
+            title="simple dropdown example"
+            options={[]}
+            label="Simple dropdown"
+            placeholder="Default option"
+          ></Select>
         </div>
         <div>
           <h2 className={styles.heading}>Text Inputs</h2>

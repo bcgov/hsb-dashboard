@@ -2,7 +2,7 @@ import { IAuditableModel, IConfigurationItemModel, IOperatingSystemItemModel } f
 
 export interface IServerItemModel extends IAuditableModel {
   id: number;
-  configurationItemId: number;
+  configurationItemId?: number;
   configurationItem?: IConfigurationItemModel;
   operatingSystemItemId?: number;
   operatingSystemItem?: IOperatingSystemItemModel;

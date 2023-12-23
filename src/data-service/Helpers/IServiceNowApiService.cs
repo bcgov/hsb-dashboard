@@ -25,6 +25,22 @@ public interface IServiceNowApiService
     public Task<IEnumerable<ResultModel<ConfigurationItemModel>>> FetchConfigurationItemsAsync(int limit, int offset, string filter = "");
 
     /// <summary>
+    /// Fetch server items from service now.
+    /// </summary>
+    /// <param name="limit"></param>
+    /// <param name="offset"></param>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    public Task<IEnumerable<ResultModel<ServerModel>>> FetchServerItemsAsync(int limit, int offset, string filter = "");
+
+    /// <summary>
+    /// Get the configuration item for the specified 'id'.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public Task<ResultModel<ConfigurationItemModel>?> GetConfigurationItemAsync(string id);
+
+    /// <summary>
     /// Get the operating system for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>

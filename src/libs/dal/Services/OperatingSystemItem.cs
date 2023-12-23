@@ -16,10 +16,10 @@ public class OperatingSystemItemService : BaseService<OperatingSystemItem>, IOpe
     #endregion
 
     #region Methods
-    public IEnumerable<OperatingSystemItem> FindForUser(
+    public IEnumerable<OperatingSystemItem> FindForUser<T>(
         long userId,
         System.Linq.Expressions.Expression<Func<OperatingSystemItem, bool>> predicate,
-        System.Linq.Expressions.Expression<Func<OperatingSystemItem, OperatingSystemItem>>? sort = null,
+        System.Linq.Expressions.Expression<Func<OperatingSystemItem, T>>? sort = null,
         int? take = null,
         int? skip = null)
     {

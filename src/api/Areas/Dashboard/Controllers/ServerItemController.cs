@@ -64,7 +64,7 @@ public class ServerItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<ServerItemModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Server Item" })]
-    public IActionResult Get()
+    public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
@@ -82,7 +82,7 @@ public class ServerItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var result = _service.FindForUser(user.Id, filter.GeneratePredicate(), filter.Sort);
+            var result = _service.FindForUser(filter.Distinct ?? false, user.Id, filter.GeneratePredicate(), filter.Sort);
             return new JsonResult(result.Select(si => new ServerItemModel(si)));
         }
     }
@@ -113,7 +113,7 @@ public class ServerItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var entity = _service.FindForUser(user.Id, (t) => t.Id == id).FirstOrDefault();
+            var entity = _service.FindForUser(false, user.Id, (t) => t.Id == id, si => si.Id).FirstOrDefault();
             if (entity == null) return Forbid();
             return new JsonResult(new ServerItemModel(entity));
         }
