@@ -1,14 +1,9 @@
 ﻿using HSB.Entities;
 
 namespace HSB.Models;
-public class DataSyncModel : CommonAuditableModel<int>
+public class DataSyncModel : SortableAuditable<int>
 {
     #region Properties
-    /// <summary>
-    /// get/set - The service now data type.
-    /// </summary>
-    public ServiceNowDataType DataType { get; set; }
-
     /// <summary>
     /// get/set - The offset to start importing data.
     /// </summary>
@@ -18,6 +13,11 @@ public class DataSyncModel : CommonAuditableModel<int>
     /// get/set - The query to filter data.
     /// </summary>
     public string Query { get; set; } = "";
+
+    /// <summary>
+    /// get/set - Whether this data sync is active.
+    /// </summary>
+    public bool IsActive { get; set; }
     #endregion
 
     #region Constructors
@@ -25,9 +25,9 @@ public class DataSyncModel : CommonAuditableModel<int>
 
     public DataSyncModel(DataSync entity) : base(entity)
     {
-        this.DataType = entity.DataType;
         this.Offset = entity.Offset;
         this.Query = entity.Query;
+        this.IsActive = entity.IsActive;
     }
     #endregion
 
@@ -39,11 +39,12 @@ public class DataSyncModel : CommonAuditableModel<int>
 
     public static explicit operator DataSync(DataSyncModel model)
     {
-        var entity = new DataSync(model.Name, model.DataType, model.Query)
+        var entity = new DataSync(model.Name, model.Query)
         {
             Id = model.Id,
             Description = model.Description,
             Offset = model.Offset,
+            IsActive = model.IsActive,
             IsEnabled = model.IsEnabled,
             Version = model.Version,
         };

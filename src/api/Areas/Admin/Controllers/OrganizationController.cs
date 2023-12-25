@@ -43,14 +43,14 @@ public class OrganizationController : ControllerBase
 
     #region Endpoints
     /// <summary>
-    ///
+    /// Find organizations for the specified query filter.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "GetOrganizations-SystemAdmin")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OrganizationModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Organization" })]
-    public IActionResult Get()
+    public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);

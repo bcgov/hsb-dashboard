@@ -93,7 +93,7 @@ public class ConfigurationItemModel
     /// get/set -
     /// </summary>
     [JsonPropertyName("subcategory")]
-    public string? SubCategory { get; set; }
+    public string? Subcategory { get; set; }
 
     /// <summary>
     /// get/set -

@@ -1,13 +1,16 @@
-import { IAuditableModel, IConfigurationItemModel } from '.';
+import { IAuditableModel, IFileSystemHistoryItemModel, IServerItemModel } from '.';
 
 export interface IFileSystemItemModel extends IAuditableModel {
-  id: number;
-  configurationItemId: number;
-  configurationItem?: IConfigurationItemModel;
-
-  rawData?: any;
-
   serviceNowKey: string;
+
+  serverItemServiceNowKey: string;
+  serverItem?: IServerItemModel;
+
+  // ServerNow data
+  rawData?: any;
+  rawDataCI?: any;
+
+  className: string;
   name: string;
   label: string;
   category: string;
@@ -15,7 +18,6 @@ export interface IFileSystemItemModel extends IAuditableModel {
   storageType: string;
   mediaType: string;
   volumeId: string;
-  className: string;
   capacity: string;
   diskSpace: string;
   size: string;
@@ -24,4 +26,7 @@ export interface IFileSystemItemModel extends IAuditableModel {
   availableSpace: string;
   freeSpace: string;
   freeSpaceBytes: string;
+
+  // Collections
+  history?: IFileSystemHistoryItemModel[];
 }

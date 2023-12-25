@@ -23,18 +23,24 @@ public class ServerItemController : ControllerBase
 {
     #region Variables
     private readonly ILogger _logger;
-    private readonly IServerItemService _service;
+    private readonly IServerItemService _serverItemService;
+    private readonly IServerHistoryItemService _serverHistoryItemService;
     #endregion
 
     #region Constructors
     /// <summary>
     /// Creates a new instance of a ServerItemController.
     /// </summary>
-    /// <param name="service"></param>
+    /// <param name="serverItemService"></param>
+    /// <param name="serverHistoryItemService"></param>
     /// <param name="logger"></param>
-    public ServerItemController(IServerItemService service, ILogger<ServerItemController> logger)
+    public ServerItemController(
+        IServerItemService serverItemService,
+        IServerHistoryItemService serverHistoryItemService,
+        ILogger<ServerItemController> logger)
     {
-        _service = service;
+        _serverItemService = serverItemService;
+        _serverHistoryItemService = serverHistoryItemService;
         _logger = logger;
     }
     #endregion
@@ -44,13 +50,13 @@ public class ServerItemController : ControllerBase
     ///
     /// </summary>
     /// <returns></returns>
-    [HttpGet(Name = "GetServerItems-Services")]
+    [HttpGet(Name = "FindServerItems-Services")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<ServerItemModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Server Item" })]
-    public IActionResult Get()
+    public IActionResult Find()
     {
-        var serverItems = _service.Find(o => true);
+        var serverItems = _serverItemService.Find(o => true);
         return new JsonResult(serverItems.Select(ci => new ServerItemModel(ci)));
     }
 
@@ -64,9 +70,9 @@ public class ServerItemController : ControllerBase
     [ProducesResponseType(typeof(ServerItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [SwaggerOperation(Tags = new[] { "Server Item" })]
-    public IActionResult GetForId(int id)
+    public IActionResult GetForId(string id)
     {
-        var entity = _service.FindForId(id);
+        var entity = _serverItemService.FindForId(id);
 
         if (entity == null) return new NoContentResult();
 
@@ -86,9 +92,9 @@ public class ServerItemController : ControllerBase
     public IActionResult Add(ServerItemModel model)
     {
         var entity = model.ToEntity();
-        _service.Add(entity);
-        _service.CommitTransaction();
-        return CreatedAtAction(nameof(GetForId), new { id = entity.Id }, new ServerItemModel(entity));
+        _serverItemService.Add(entity);
+        _serverItemService.CommitTransaction();
+        return CreatedAtAction(nameof(GetForId), new { id = entity.ServiceNowKey }, new ServerItemModel(entity));
     }
 
     /// <summary>
@@ -104,9 +110,27 @@ public class ServerItemController : ControllerBase
     public IActionResult Update(ServerItemModel model)
     {
         var entity = model.ToEntity();
-        _service.Update(entity);
-        _service.CommitTransaction();
+        _serverItemService.Update(entity);
+        _serverItemService.CommitTransaction();
         return new JsonResult(new ServerItemModel(entity));
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    [HttpPost("history", Name = "AddServerHistoryItem-Services")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(ServerHistoryItemModel), (int)HttpStatusCode.Created)]
+    [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
+    [SwaggerOperation(Tags = new[] { "Server Item" })]
+    public IActionResult Add(ServerHistoryItemModel model)
+    {
+        var entity = model.ToEntity();
+        _serverHistoryItemService.Add(entity);
+        _serverHistoryItemService.CommitTransaction();
+        return CreatedAtAction(nameof(GetForId), new { id = entity.ServiceNowKey }, new ServerHistoryItemModel(entity));
     }
     #endregion
 }

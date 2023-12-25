@@ -44,11 +44,11 @@ public class OperatingSystemItemController : ControllerBase
     ///
     /// </summary>
     /// <returns></returns>
-    [HttpGet(Name = "GetOperatingSystemItems-Services")]
+    [HttpGet(Name = "FindOperatingSystemItems-Services")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OperatingSystemItemModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Operating System Item" })]
-    public IActionResult Get()
+    public IActionResult Find()
     {
         var operatingSystemItems = _service.Find(o => true);
         return new JsonResult(operatingSystemItems.Select(ci => new OperatingSystemItemModel(ci)));

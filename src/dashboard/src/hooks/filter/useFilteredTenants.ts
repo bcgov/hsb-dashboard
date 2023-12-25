@@ -4,18 +4,18 @@ import React from 'react';
 import { ITenantFilter, ITenantModel, useApiTenants } from '..';
 
 export const useFilteredTenants = () => {
-  const { findTenants } = useApiTenants();
+  const { find } = useApiTenants();
   const tenants = useFiltered((state) => state.tenants);
   const setTenants = useFiltered((state) => state.setTenants);
 
   const fetch = React.useCallback(
     async (filter: ITenantFilter) => {
-      const res = await findTenants(filter);
+      const res = await find(filter);
       const tenants: ITenantModel[] = await res.json();
       setTenants(tenants);
       return tenants;
     },
-    [findTenants, setTenants],
+    [find, setTenants],
   );
 
   const options = React.useMemo(
@@ -24,6 +24,7 @@ export const useFilteredTenants = () => {
         label: t.name,
         value: t.id,
         data: t,
+        disabled: t.isEnabled,
       })),
     [tenants],
   );

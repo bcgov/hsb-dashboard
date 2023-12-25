@@ -10,9 +10,7 @@ import { IOperatingSystemItemFilter } from './interfaces';
 export const useApiOperatingSystemItems = () => {
   return React.useMemo(
     () => ({
-      findOperatingSystemItems: async (
-        filter: IOperatingSystemItemFilter | undefined = {},
-      ): Promise<Response> => {
+      find: async (filter: IOperatingSystemItemFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/dashboard/operating-system-items?${toQueryString(filter)}`);
       },
     }),

@@ -23,7 +23,7 @@ public class Organization : SortableCodeAuditable<int>
     /// <summary>
     ///
     /// </summary>
-    public List<ConfigurationItem> ConfigurationItems { get; } = new List<ConfigurationItem>();
+    public List<ServerItem> ServerItems { get; } = new List<ServerItem>();
 
     /// <summary>
     /// get - Child organizations.

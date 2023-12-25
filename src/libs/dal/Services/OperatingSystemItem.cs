@@ -25,8 +25,7 @@ public class OperatingSystemItemService : BaseService<OperatingSystemItem>, IOpe
     {
         var query = (from osi in this.Context.OperatingSystemItems
                      join si in this.Context.ServerItems on osi.Id equals si.OperatingSystemItemId
-                     join ci in this.Context.ConfigurationItems on si.ConfigurationItemId equals ci.Id
-                     join tenant in this.Context.Tenants on ci.TenantId equals tenant.Id
+                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
                      join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                      where usert.UserId == userId
                      select osi)
@@ -53,8 +52,7 @@ public class OperatingSystemItemService : BaseService<OperatingSystemItem>, IOpe
     {
         var query = (from osi in this.Context.OperatingSystemItems
                      join si in this.Context.ServerItems on osi.Id equals si.OperatingSystemItemId
-                     join ci in this.Context.ConfigurationItems on si.ConfigurationItemId equals ci.Id
-                     join tenant in this.Context.Tenants on ci.TenantId equals tenant.Id
+                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
                      join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                      where usert.UserId == userId
                      select osi)

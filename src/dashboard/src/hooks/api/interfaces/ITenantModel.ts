@@ -1,6 +1,11 @@
-import { ISortableCodeModel } from '.';
+import { IOrganizationModel, IServerItemModel, ISortableCodeModel } from '.';
 
 export interface ITenantModel extends ISortableCodeModel<number> {
-  serviceNowKey: string;
+  // ServiceNow data
   rawData?: any;
+  serviceNowKey: string;
+
+  // Collections
+  organizations?: IOrganizationModel[];
+  serverItems?: IServerItemModel[];
 }

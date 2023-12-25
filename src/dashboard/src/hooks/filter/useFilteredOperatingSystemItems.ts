@@ -8,18 +8,18 @@ import {
 } from '..';
 
 export const useFilteredOperatingSystemItems = () => {
-  const { findOperatingSystemItems } = useApiOperatingSystemItems();
+  const { find } = useApiOperatingSystemItems();
   const operatingSystemItems = useFiltered((state) => state.operatingSystemItems);
   const setOperatingSystemItems = useFiltered((state) => state.setOperatingSystemItems);
 
   const fetch = React.useCallback(
     async (filter: IOperatingSystemItemFilter) => {
-      const res = await findOperatingSystemItems(filter);
+      const res = await find(filter);
       const operatingSystemItems: IOperatingSystemItemModel[] = await res.json();
       setOperatingSystemItems(operatingSystemItems);
       return operatingSystemItems;
     },
-    [findOperatingSystemItems, setOperatingSystemItems],
+    [find, setOperatingSystemItems],
   );
 
   const options = React.useMemo(

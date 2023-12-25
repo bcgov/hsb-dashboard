@@ -10,7 +10,7 @@ import { ITenantFilter } from './interfaces';
 export const useApiTenants = () => {
   return React.useMemo(
     () => ({
-      findTenants: async (filter: ITenantFilter | undefined = {}): Promise<Response> => {
+      find: async (filter: ITenantFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/dashboard/tenants?${toQueryString(filter)}`);
       },
     }),

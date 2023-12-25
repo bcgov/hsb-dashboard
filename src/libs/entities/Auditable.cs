@@ -31,4 +31,24 @@ public abstract class Auditable
     /// </summary>
     public long Version { get; set; }
     #endregion
+
+    #region Constructors
+    /// <summary>
+    /// Creates a new instance of an Auditable object.
+    /// </summary>
+    protected Auditable() { }
+
+    /// <summary>
+    /// Creates a new instance of a Auditable object, initializes with specified parameters.
+    /// </summary>
+    /// <param name="entity"></param>
+    public Auditable(Auditable entity)
+    {
+        this.CreatedOn = entity.CreatedOn;
+        this.CreatedBy = entity.CreatedBy;
+        this.UpdatedOn = entity.UpdatedOn;
+        this.UpdatedBy = entity.UpdatedBy;
+        this.Version = entity.Version;
+    }
+    #endregion
 }

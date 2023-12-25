@@ -51,7 +51,7 @@ public class UserController : ControllerBase
 
     #region Endpoints
     /// <summary>
-    /// Find an array of user for the specified query filter.
+    /// Find users for the specified query filter.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "GetUsers-SystemAdmin")]

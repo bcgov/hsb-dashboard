@@ -16,63 +16,21 @@ public interface IServiceNowApiService
 
     #region Methods
     /// <summary>
-    /// Fetch configuration items from service now.
+    /// Fetch all items from the service now API.
     /// </summary>
+    /// <param name="tableName"></param>
     /// <param name="limit"></param>
     /// <param name="offset"></param>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public Task<IEnumerable<ResultModel<ConfigurationItemModel>>> FetchConfigurationItemsAsync(int limit, int offset, string filter = "");
+    public Task<IEnumerable<ResultModel<T>>> FetchTableItemsAsync<T>(string tableName, int limit, int offset, string filter = "");
 
     /// <summary>
-    /// Fetch server items from service now.
+    /// Get the item for the specified 'tableName' and 'id'.
     /// </summary>
-    /// <param name="limit"></param>
-    /// <param name="offset"></param>
-    /// <param name="filter"></param>
-    /// <returns></returns>
-    public Task<IEnumerable<ResultModel<ServerModel>>> FetchServerItemsAsync(int limit, int offset, string filter = "");
-
-    /// <summary>
-    /// Get the configuration item for the specified 'id'.
-    /// </summary>
+    /// <param name="tableName"></param>
     /// <param name="id"></param>
     /// <returns></returns>
-    public Task<ResultModel<ConfigurationItemModel>?> GetConfigurationItemAsync(string id);
-
-    /// <summary>
-    /// Get the operating system for the specified 'id'.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    public Task<ResultModel<OperatingSystemModel>?> GetOperatingSystemAsync(string id);
-
-    /// <summary>
-    /// Get the client organization for the specified 'id'.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    public Task<ResultModel<ClientOrganizationModel>?> GetClientOrganizationAsync(string id);
-
-    /// <summary>
-    /// Get the tenant for the specified 'id'.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    public Task<ResultModel<TenantModel>?> GetTenantAsync(string id);
-
-    /// <summary>
-    /// Get the server for the specified 'id'.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    public Task<ResultModel<ServerModel>?> GetServerAsync(string id);
-
-    /// <summary>
-    /// Get the file system for the specified 'id'.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    public Task<ResultModel<FileSystemModel>?> GetFileSystemAsync(string id);
+    public Task<ResultModel<T>?> GetTableItemAsync<T>(string tableName, string id);
     #endregion
 }

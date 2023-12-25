@@ -4,7 +4,7 @@ INSERT INTO public."ServerItem" (
   , "ServiceNowKey"
   , "Name"
   , "Category"
-  , "SubCategory"
+  , "Subcategory"
   , "DiskSpace"
   , "DnsDomain"
   , "SysClassName"
@@ -19,7 +19,7 @@ INSERT INTO public."ServerItem" (
   , 'a2bb92b4db747384fef69878db9619ad' -- ServiceNowKey
   , 'server1' -- Name
   , 'Hardware' -- Category
-  , 'Computer' -- SubCategory
+  , 'Computer' -- Subcategory
   , '130' -- DiskSpace
   , 'hs.advsol.tech' -- DnsDomain
   , 'cmdb_ci_win_server' -- SysClassName

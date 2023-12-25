@@ -29,5 +29,14 @@ public abstract class SortableCodeAuditable<TKey> : SortableAuditable<TKey>
     {
         this.Code = code;
     }
+
+    /// <summary>
+    /// Creates new instance of a SortableCodeAuditable object, initializes with specified parameters.
+    /// </summary>
+    /// <param name="entity"></param>
+    public SortableCodeAuditable(SortableCodeAuditable<TKey> entity) : base(entity)
+    {
+        this.Code = entity.Code;
+    }
     #endregion
 }

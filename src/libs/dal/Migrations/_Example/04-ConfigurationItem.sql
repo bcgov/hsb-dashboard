@@ -3,7 +3,7 @@ INSERT INTO public."ConfigurationItem" (
   , "ServiceNowKey"
   , "Name"
   , "Category"
-  , "SubCategory"
+  , "Subcategory"
   , "UPlatform"
   , "DnsDomain"
   , "SysClassName"
@@ -17,7 +17,7 @@ INSERT INTO public."ConfigurationItem" (
   , 'a2bb92b4db747384fef69878db9619ad' -- ServiceNowKey
   , 'server1' -- Name
   , 'Hardware' -- Category
-  , 'Computer' -- SubCategory
+  , 'Computer' -- Subcategory
   , 'windows' -- UPlatform
   , 'hs.advsol.tech' -- DnsDomain
   , 'cmdb_ci_win_server' -- SysClassName

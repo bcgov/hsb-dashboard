@@ -43,5 +43,17 @@ public abstract class CommonAuditable<TKey> : Auditable
     {
         this.Name = name;
     }
+
+    /// <summary>
+    /// Creates a new instance of a CommonAuditable object, initializes with specified parameters.
+    /// </summary>
+    /// <param name="entity"></param>
+    public CommonAuditable(CommonAuditable<TKey> entity) : base(entity)
+    {
+        this.Id = entity.Id;
+        this.Name = entity.Name;
+        this.Description = entity.Description;
+        this.IsEnabled = entity.IsEnabled;
+    }
     #endregion
 }

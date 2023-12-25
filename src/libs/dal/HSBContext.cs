@@ -22,7 +22,6 @@ public class HSBContext : DbContext
     public DbSet<Tenant> Tenants => Set<Tenant>();
     public DbSet<Organization> Organizations => Set<Organization>();
     public DbSet<TenantOrganization> TenantOrganizations => Set<TenantOrganization>();
-    public DbSet<ConfigurationItem> ConfigurationItems => Set<ConfigurationItem>();
     public DbSet<OperatingSystemItem> OperatingSystemItems => Set<OperatingSystemItem>();
     public DbSet<FileSystemItem> FileSystemItems => Set<FileSystemItem>();
     public DbSet<ServerItem> ServerItems => Set<ServerItem>();
@@ -116,7 +115,7 @@ public class HSBContext : DbContext
                 if (entry.State == EntityState.Added)
                 {
                     entity.CreatedBy = user?.GetUsername() ?? "";
-                    entity.CreatedOn = new DateTimeOffset();
+                    entity.CreatedOn = DateTimeOffset.UtcNow;
                     entity.UpdatedBy = entity.CreatedBy;
                     entity.UpdatedOn = entity.CreatedOn;
                     entity.Version = 0;
@@ -127,7 +126,7 @@ public class HSBContext : DbContext
                     entity.CreatedBy = entry.GetOriginalValue(nameof(Auditable.CreatedBy), entity.CreatedBy);
                     entity.CreatedOn = entry.GetOriginalValue(nameof(Auditable.CreatedOn), entity.CreatedOn);
                     entity.UpdatedBy = user?.GetUsername() ?? "";
-                    entity.UpdatedOn = new DateTimeOffset();
+                    entity.UpdatedOn = DateTimeOffset.UtcNow;
                     entity.Version++;
                 }
             }

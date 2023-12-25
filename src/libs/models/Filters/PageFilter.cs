@@ -6,9 +6,9 @@ namespace HSB.Models.Filters;
 public abstract class PageFilter
 {
     #region Properties
-    public int Page { get; set; } = 1;
+    public int? Page { get; set; }
 
-    public int Quantity { get; set; } = 10;
+    public int? Quantity { get; set; }
     #endregion
 
     #region Constructors
@@ -18,8 +18,8 @@ public abstract class PageFilter
     {
         var filter = new Dictionary<string, StringValues>(queryParams, StringComparer.OrdinalIgnoreCase);
 
-        this.Page = filter.GetIntValue(nameof(this.Page), 1);
-        this.Quantity = filter.GetIntValue(nameof(this.Quantity), 10);
+        this.Page = filter.GetIntNullValue(nameof(this.Page));
+        this.Quantity = filter.GetIntNullValue(nameof(this.Quantity));
     }
     #endregion
 }

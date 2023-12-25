@@ -1,5 +1,4 @@
 export interface IServerItemFilter {
-  distinct?: boolean;
   name?: string;
   serviceNowKey?: string;
   operatingSystemItemId?: number;

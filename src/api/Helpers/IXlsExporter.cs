@@ -14,14 +14,6 @@ public interface IXlsExporter
     /// <param name="sheetName"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    XSSFWorkbook GenerateExcel(string sheetName, IEnumerable<Entities.ConfigurationItem> items);
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="sheetName"></param>
-    /// <param name="items"></param>
-    /// <returns></returns>
     XSSFWorkbook GenerateExcel(string sheetName, IEnumerable<Entities.FileSystemItem> items);
 
     /// <summary>

@@ -11,11 +11,9 @@ export const useApiUsers = () => {
     () => ({
       userinfo: async (): Promise<Response> => {
         const url = `/api/auth/userinfo`;
-        const res = await dispatch(url, {
+        return await dispatch(url, {
           method: 'POST',
         });
-        if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
-        return res;
       },
     }),
     [],

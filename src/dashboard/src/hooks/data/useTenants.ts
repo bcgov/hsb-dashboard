@@ -4,23 +4,27 @@ import { ITenantModel, useApiTenants, useAuth } from '..';
 
 export const useTenants = () => {
   const { status } = useAuth();
-  const { findTenants } = useApiTenants();
+  const { find } = useApiTenants();
   const tenants = useApp((state) => state.tenants);
   const setTenants = useApp((state) => state.setTenants);
+
+  const [isReady, setIsReady] = React.useState(false);
 
   React.useEffect(() => {
     // Get an array of tenants.
     if (status === 'authenticated' && !tenants.length) {
-      findTenants()
+      setIsReady(false);
+      find()
         .then(async (res) => {
           const tenants: ITenantModel[] = await res.json();
           setTenants(tenants);
         })
         .catch((error) => {
           console.error(error);
-        });
-    }
-  }, [findTenants, setTenants, status, tenants.length]);
+        })
+        .finally(() => setIsReady(true));
+    } else if (tenants.length) setIsReady(true);
+  }, [find, setTenants, status, tenants.length]);
 
-  return tenants;
+  return { isReady, tenants };
 };

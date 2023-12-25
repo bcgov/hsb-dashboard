@@ -75,6 +75,10 @@ public class HsbApiService : IHsbApiService
         {
             var response = await this.ApiClient.SendAsync(uri, method, content);
             response.EnsureSuccessStatusCode();
+
+            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                return default;
+
             var json = await response.Content.ReadAsStringAsync();
             var model = JsonSerializer.Deserialize<T>(json, this.SerializerOptions);
             return model;
@@ -88,11 +92,26 @@ public class HsbApiService : IHsbApiService
 
     #region Data Sync
     /// <summary>
+    /// Fetch all data sync configuration items.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<IEnumerable<DataSyncModel>> FetchDataSyncAsync()
+    {
+        this.Logger.LogDebug("HSB - Fetching all data sync configuration items");
+        var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
+        {
+            Path = this.Options.Endpoints.DataSync
+        };
+        var results = await HsbSendAsync<IEnumerable<DataSyncModel>>(HttpMethod.Get, builder.Uri);
+        return results ?? Array.Empty<DataSyncModel>();
+    }
+
+    /// <summary>
     /// Get the data sync for the specified name.
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public async Task<DataSyncModel?> GetDataSync(string name)
+    public async Task<DataSyncModel?> GetDataSyncAsync(string name)
     {
         this.Logger.LogDebug("HSB - Fetching data sync");
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
@@ -108,7 +127,7 @@ public class HsbApiService : IHsbApiService
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
-    public async Task<DataSyncModel?> UpdateDataSync(DataSyncModel model)
+    public async Task<DataSyncModel?> UpdateDataSyncAsync(DataSyncModel model)
     {
         this.Logger.LogDebug("HSB - Update data sync");
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
@@ -309,9 +328,25 @@ public class HsbApiService : IHsbApiService
         this.Logger.LogDebug("HSB - Update server item");
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
         {
-            Path = $"{this.Options.Endpoints.ServerItems}/{model.Id}"
+            Path = $"{this.Options.Endpoints.ServerItems}/{model.ServiceNowKey}"
         };
         var results = await HsbSendAsync<ServerItemModel>(HttpMethod.Put, builder.Uri, JsonContent.Create(model));
+        return results;
+    }
+
+    /// <summary>
+    /// Add server history item to HSB.
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    public async Task<ServerHistoryItemModel?> AddServerHistoryItemAsync(ServerHistoryItemModel model)
+    {
+        this.Logger.LogDebug("HSB - Add server history item");
+        var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
+        {
+            Path = this.Options.Endpoints.ServerHistoryItems
+        };
+        var results = await HsbSendAsync<ServerHistoryItemModel>(HttpMethod.Post, builder.Uri, JsonContent.Create(model));
         return results;
     }
     #endregion
@@ -330,6 +365,22 @@ public class HsbApiService : IHsbApiService
         };
         var results = await HsbSendAsync<IEnumerable<FileSystemItemModel>>(HttpMethod.Get, builder.Uri);
         return results ?? Array.Empty<FileSystemItemModel>();
+    }
+
+    /// <summary>
+    /// Get the file system item from HSB for the specified 'id'.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public async Task<FileSystemItemModel?> GetFileSystemItemAsync(string id)
+    {
+        this.Logger.LogDebug("HSB - Get file system item");
+        var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
+        {
+            Path = $"{this.Options.Endpoints.FileSystemItems}/{id}"
+        };
+        var results = await HsbSendAsync<FileSystemItemModel>(HttpMethod.Get, builder.Uri);
+        return results;
     }
 
     /// <summary>
@@ -358,27 +409,25 @@ public class HsbApiService : IHsbApiService
         this.Logger.LogDebug("HSB - Update file system item");
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
         {
-            Path = $"{this.Options.Endpoints.FileSystemItems}/{model.Id}"
+            Path = $"{this.Options.Endpoints.FileSystemItems}/{model.ServiceNowKey}"
         };
         var results = await HsbSendAsync<FileSystemItemModel>(HttpMethod.Put, builder.Uri, JsonContent.Create(model));
         return results;
     }
-    #endregion
 
-    #region Configuration Items
     /// <summary>
-    /// Add configuration item to HSB.
+    /// Add configuration history item to HSB.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
-    public async Task<ConfigurationItemModel?> AddConfigurationItemAsync(ConfigurationItemModel model)
+    public async Task<FileSystemHistoryItemModel?> AddFileSystemHistoryItemAsync(FileSystemHistoryItemModel model)
     {
-        this.Logger.LogDebug("HSB - Add configuration item");
+        this.Logger.LogDebug("HSB - Add file system history item");
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
         {
-            Path = this.Options.Endpoints.ConfigurationItems
+            Path = this.Options.Endpoints.FileSystemHistoryItems
         };
-        var results = await HsbSendAsync<ConfigurationItemModel>(HttpMethod.Post, builder.Uri, JsonContent.Create(model));
+        var results = await HsbSendAsync<FileSystemHistoryItemModel>(HttpMethod.Post, builder.Uri, JsonContent.Create(model));
         return results;
     }
     #endregion

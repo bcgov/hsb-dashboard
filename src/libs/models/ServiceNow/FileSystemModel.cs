@@ -2,20 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace HSB.Models.ServiceNow;
 
-public class FileSystemModel
+public class FileSystemModel : BaseItemModel
 {
     #region Properties
-    /// <summary>
-    /// get/set -
-    /// </summary>
-    [JsonPropertyName("sys_id")]
-    public string Id { get; set; } = "";
-
-    /// <summary>
-    /// get/set -
-    /// </summary>
-    [JsonPropertyName("name")]
-    public string? Name { get; set; }
 
     /// <summary>
     /// get/set -
@@ -32,26 +21,8 @@ public class FileSystemModel
     /// <summary>
     /// get/set -
     /// </summary>
-    [JsonPropertyName("sys_class_name")]
-    public string? ClassName { get; set; }
-
-    /// <summary>
-    /// get/set -
-    /// </summary>
     [JsonPropertyName("label")]
     public string? Label { get; set; }
-
-    /// <summary>
-    /// get/set -
-    /// </summary>
-    [JsonPropertyName("sys_created_on")]
-    public string? CreatedOn { get; set; }
-
-    /// <summary>
-    /// get/set -
-    /// </summary>
-    [JsonPropertyName("sys_updated_on")]
-    public string? UpdatedOn { get; set; }
 
     /// <summary>
     /// get/set -
@@ -62,32 +33,8 @@ public class FileSystemModel
     /// <summary>
     /// get/set -
     /// </summary>
-    [JsonPropertyName("sys_domain_path")]
-    public string? DomainPath { get; set; }
-
-    /// <summary>
-    /// get/set -
-    /// </summary>
-    [JsonPropertyName("category")]
-    public string? Category { get; set; }
-
-    /// <summary>
-    /// get/set -
-    /// </summary>
-    [JsonPropertyName("subcategory")]
-    public string? SubCategory { get; set; }
-
-    /// <summary>
-    /// get/set -
-    /// </summary>
     [JsonPropertyName("mount_point")]
     public string? MountPoint { get; set; }
-
-    /// <summary>
-    /// get/set -
-    /// </summary>
-    [JsonPropertyName("disk_space")]
-    public string? DiskSpace { get; set; }
 
     /// <summary>
     /// get/set -

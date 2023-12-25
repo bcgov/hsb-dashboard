@@ -5,17 +5,28 @@ namespace HSB.Entities;
 public class FileSystemItem : Auditable
 {
     #region Properties
-    public int Id { get; set; }
-    public long ConfigurationItemId { get; set; }
-    public ConfigurationItem? ConfigurationItem { get; set; }
-    public JsonDocument RawData { get; set; } = JsonDocument.Parse("{}");
+    /// <summary>
+    /// get/set - Primary key for HSB, and foreign key to the ServiceNow API.
+    /// </summary>
+    public string ServiceNowKey { get; set; } = "";
+
+    /// <summary>
+    /// get/set - Foreign key to server that owns this file system item.
+    /// </summary>
+    public string ServerItemServiceNowKey { get; set; } = "";
+
+    /// <summary>
+    /// get/set - The server that owns this file system item.
+    /// </summary>
+    public ServerItem? ServerItem { get; set; }
 
     #region ServiceNow Properties
-    public string ServiceNowKey { get; set; } = "";
+    public JsonDocument RawData { get; set; } = JsonDocument.Parse("{}");
+    public JsonDocument RawDataCI { get; set; } = JsonDocument.Parse("{}");
     public string Name { get; set; } = "";
     public string Label { get; set; } = "";
     public string Category { get; set; } = "";
-    public string SubCategory { get; set; } = "";
+    public string Subcategory { get; set; } = "";
     public string StorageType { get; set; } = "";
     public string MediaType { get; set; } = "";
     public string VolumeId { get; set; } = "";
@@ -29,39 +40,46 @@ public class FileSystemItem : Auditable
     public string FreeSpace { get; set; } = "";
     public string FreeSpaceBytes { get; set; } = "";
     #endregion
+
+    /// <summary>
+    /// get - All file system item history.
+    /// </summary>
+    public List<FileSystemHistoryItem> History { get; } = new List<FileSystemHistoryItem>();
     #endregion
 
     #region Constructors
     protected FileSystemItem() { }
 
-    public FileSystemItem(ConfigurationItem configurationItem, JsonDocument serviceNowJson)
-        : this(configurationItem?.Id ?? 0, serviceNowJson)
+    public FileSystemItem(ServerItem serverItem, JsonDocument fileSystemItemData, JsonDocument configurationItemData)
+        : this(serverItem.ServiceNowKey, fileSystemItemData, configurationItemData)
     {
-        this.ConfigurationItem = configurationItem ?? throw new ArgumentNullException(nameof(configurationItem));
+        this.ServerItem = serverItem ?? throw new ArgumentNullException(nameof(serverItem));
     }
 
-    public FileSystemItem(long configurationItemId, JsonDocument data)
+    public FileSystemItem(string serverItemId, JsonDocument fileSystemItemData, JsonDocument configurationItemData)
     {
-        this.ConfigurationItemId = configurationItemId;
-        this.RawData = data;
+        this.ServerItemServiceNowKey = serverItemId;
 
-        this.ServiceNowKey = data.GetElementValue<string>(".sys_id") ?? "";
-        this.Name = data.GetElementValue<string>(".name") ?? "";
-        this.Label = data.GetElementValue<string>(".label") ?? "";
-        this.Category = data.GetElementValue<string>(".category") ?? "";
-        this.SubCategory = data.GetElementValue<string>(".subcategory") ?? "";
-        this.StorageType = data.GetElementValue<string>(".u_platform") ?? "";
-        this.MediaType = data.GetElementValue<string>(".dns_domain") ?? "";
-        this.ClassName = data.GetElementValue<string>(".sys_class_name") ?? "";
-        this.VolumeId = data.GetElementValue<string>(".volume_id") ?? "";
-        this.Capacity = data.GetElementValue<string>(".capacity") ?? "";
-        this.DiskSpace = data.GetElementValue<string>(".disk_space") ?? "";
-        this.Size = data.GetElementValue<string>(".size") ?? "";
-        this.SizeBytes = data.GetElementValue<string>(".size_bytes") ?? "";
-        this.UsedSizeBytes = data.GetElementValue<string>(".used_size_bytes") ?? "";
-        this.AvailableSpace = data.GetElementValue<string>(".available_space") ?? "";
-        this.FreeSpace = data.GetElementValue<string>(".free_space") ?? "";
-        this.FreeSpaceBytes = data.GetElementValue<string>(".free_space_bytes") ?? "";
+        this.RawData = fileSystemItemData;
+        this.RawDataCI = configurationItemData;
+
+        this.ServiceNowKey = fileSystemItemData.GetElementValue<string>(".sys_id") ?? "";
+        this.ClassName = fileSystemItemData.GetElementValue<string>(".sys_class_name") ?? "";
+        this.Name = fileSystemItemData.GetElementValue<string>(".name") ?? "";
+        this.Label = fileSystemItemData.GetElementValue<string>(".label") ?? "";
+        this.Category = fileSystemItemData.GetElementValue<string>(".category") ?? "";
+        this.Subcategory = fileSystemItemData.GetElementValue<string>(".subcategory") ?? "";
+        this.StorageType = fileSystemItemData.GetElementValue<string>(".u_platform") ?? "";
+        this.MediaType = fileSystemItemData.GetElementValue<string>(".dns_domain") ?? "";
+        this.VolumeId = fileSystemItemData.GetElementValue<string>(".volume_id") ?? "";
+        this.Capacity = fileSystemItemData.GetElementValue<string>(".capacity") ?? "";
+        this.DiskSpace = fileSystemItemData.GetElementValue<string>(".disk_space") ?? "";
+        this.Size = fileSystemItemData.GetElementValue<string>(".size") ?? "";
+        this.SizeBytes = fileSystemItemData.GetElementValue<string>(".size_bytes") ?? "";
+        this.UsedSizeBytes = fileSystemItemData.GetElementValue<string>(".used_size_bytes") ?? "";
+        this.AvailableSpace = fileSystemItemData.GetElementValue<string>(".available_space") ?? "";
+        this.FreeSpace = fileSystemItemData.GetElementValue<string>(".free_space") ?? "";
+        this.FreeSpaceBytes = fileSystemItemData.GetElementValue<string>(".free_space_bytes") ?? "";
     }
     #endregion
 }

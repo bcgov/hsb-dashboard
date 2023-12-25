@@ -1,28 +1,29 @@
 import { IOption } from '@/components';
-import { useFiltered } from '@/store';
+import { useApp, useFiltered } from '@/store';
 import React from 'react';
 import { IServerItemFilter, IServerItemModel, useApiServerItems } from '..';
 
 export const useFilteredServerItems = () => {
-  const { findServerItems } = useApiServerItems();
+  const { find } = useApiServerItems();
   const serverItems = useFiltered((state) => state.serverItems);
-  const setServerItems = useFiltered((state) => state.setServerItems);
+  const setFilteredServerItems = useFiltered((state) => state.setServerItems);
+  const setServerItems = useApp((state) => state.setServerItems);
 
   const fetch = React.useCallback(
     async (filter: IServerItemFilter) => {
-      const res = await findServerItems(filter);
+      const res = await find(filter);
       const serverItems: IServerItemModel[] = await res.json();
-      setServerItems(serverItems);
+      setFilteredServerItems(serverItems);
       return serverItems;
     },
-    [findServerItems, setServerItems],
+    [find, setFilteredServerItems],
   );
 
   const options = React.useMemo(
     () =>
       serverItems.map<IOption<IServerItemModel>>((t) => ({
         label: t.name ? `${t.name}` : '[NO NAME PROVIDED]',
-        value: t.id,
+        value: t.serviceNowKey,
         data: t,
       })),
     [serverItems],

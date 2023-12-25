@@ -56,9 +56,9 @@ public class OrganizationFilter : PageFilter
         if (this.TenantId != null)
             predicate = predicate.And((u) => u.TenantsManyToMany.Any(t => t.TenantId == this.TenantId));
         if (this.StartDate != null)
-            predicate = predicate.And((u) => u.CreatedOn >= this.StartDate);
+            predicate = predicate.And((u) => u.CreatedOn >= this.StartDate.Value.ToUniversalTime());
         if (this.EndDate != null)
-            predicate = predicate.And((u) => u.CreatedOn <= this.EndDate);
+            predicate = predicate.And((u) => u.CreatedOn <= this.EndDate.Value.ToUniversalTime());
 
         if (!predicate.IsStarted) return predicate.And((u) => true);
         return predicate;

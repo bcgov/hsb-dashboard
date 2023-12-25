@@ -16,9 +16,9 @@ public class Tenant : SortableCodeAuditable<int>
     #endregion
 
     /// <summary>
-    /// get - An array of configuration items that belong to this tenant.
+    /// get - An array of server items that belong to this tenant.
     /// </summary>
-    public List<ConfigurationItem> ConfigurationItems { get; } = new List<ConfigurationItem>();
+    public List<ServerItem> ServerItems { get; } = new List<ServerItem>();
 
     /// <summary>
     /// get - Users that belong to this tenant.

@@ -6,53 +6,94 @@ namespace HSB.Entities;
 public class ServerItem : Auditable
 {
     #region Properties
-    public int Id { get; set; }
-    public long? ConfigurationItemId { get; set; }
-    public ConfigurationItem? ConfigurationItem { get; set; }
+    /// <summary>
+    /// get/set - Primary key for HSB, and foreign key to the ServiceNow API.
+    /// </summary>
+    public string ServiceNowKey { get; set; } = "";
+
+    /// <summary>
+    /// get/set - Foreign key to tenant.
+    /// </summary>
+    public int? TenantId { get; set; }
+
+    /// <summary>
+    /// get/set - The tenant that owns this server.
+    /// </summary>
+    public Tenant? Tenant { get; set; }
+
+    /// <summary>
+    /// get/set - Foreign key to the organization
+    /// </summary>
+    public int OrganizationId { get; set; }
+
+    /// <summary>
+    /// get/set - The organization that owns this server.
+    /// </summary>
+    public Organization? Organization { get; set; }
+
+    /// <summary>
+    /// get/set - Foreign key to the operating system.
+    /// </summary>
     public int? OperatingSystemItemId { get; set; }
+
+    /// <summary>
+    /// get/set - The operating system for this server.
+    /// </summary>
     public OperatingSystemItem? OperatingSystemItem { get; set; }
-    public JsonDocument RawData { get; set; } = JsonDocument.Parse("{}");
 
     #region ServiceNow Properties
-    public string ServiceNowKey { get; set; } = "";
-    public string OperatingSystemKey { get; set; } = "";
+    public JsonDocument RawData { get; set; } = JsonDocument.Parse("{}");
+    public JsonDocument RawDataCI { get; set; } = JsonDocument.Parse("{}");
+    public string ClassName { get; set; } = "";
     public string Name { get; set; } = "";
     public string Category { get; set; } = "";
-    public string SubCategory { get; set; } = "";
-    public string DiskSpace { get; set; } = "";
+    public string Subcategory { get; set; } = "";
     public string DnsDomain { get; set; } = "";
-    public string ClassName { get; set; } = "";
     public string Platform { get; set; } = "";
     public string IPAddress { get; set; } = "";
+    public string FQDN { get; set; } = "";
     #endregion
+
+    /// <summary>
+    /// get - File system items that belong to this server.
+    /// </summary>
+    public List<FileSystemItem> FileSystemItems { get; } = new List<FileSystemItem>();
+
+    /// <summary>
+    /// get - All server item history.
+    /// </summary>
+    public List<ServerHistoryItem> History { get; } = new List<ServerHistoryItem>();
     #endregion
 
     #region Constructors
     protected ServerItem() { }
 
-    public ServerItem(ConfigurationItem configurationItem, OperatingSystemItem? operatingSystemItem, JsonDocument data)
-        : this(configurationItem?.Id ?? 0, operatingSystemItem?.Id, data)
+    public ServerItem(Tenant? tenant, Organization organization, OperatingSystemItem? operatingSystemItem, JsonDocument serverData, JsonDocument configurationData)
+        : this(tenant?.Id ?? 0, organization.Id, operatingSystemItem?.Id, serverData, configurationData)
     {
-        this.ConfigurationItem = configurationItem ?? throw new ArgumentNullException(nameof(configurationItem));
+        this.Tenant = tenant;
+        this.Tenant = tenant;
         this.OperatingSystemItem = operatingSystemItem;
     }
 
-    public ServerItem(long? configurationItemId, int? operatingSystemItemId, JsonDocument data)
+    public ServerItem(int? tenantId, int organizationId, int? operatingSystemItemId, JsonDocument serverData, JsonDocument configurationData)
     {
-        this.ConfigurationItemId = configurationItemId;
+        this.TenantId = tenantId;
+        this.OrganizationId = organizationId;
         this.OperatingSystemItemId = operatingSystemItemId;
-        this.RawData = data;
 
-        this.ServiceNowKey = data.GetElementValue<string>(".sys_id") ?? "";
-        this.OperatingSystemKey = data.GetElementValue<string>(".u_operating_system.value") ?? "";
-        this.Name = data.GetElementValue<string>(".name") ?? "";
-        this.Category = data.GetElementValue<string>(".category") ?? "";
-        this.SubCategory = data.GetElementValue<string>(".subcategory") ?? "";
-        this.DiskSpace = data.GetElementValue<string>(".disk_space") ?? "";
-        this.DnsDomain = data.GetElementValue<string>(".dns_domain") ?? "";
-        this.ClassName = data.GetElementValue<string>(".sys_class_name") ?? "";
-        this.Platform = data.GetElementValue<string>(".u_platform") ?? "";
-        this.IPAddress = data.GetElementValue<string>(".ip_address") ?? "";
+        this.RawData = serverData;
+        this.RawDataCI = configurationData;
+
+        this.ServiceNowKey = serverData.GetElementValue<string>(".sys_id") ?? "";
+        this.ClassName = serverData.GetElementValue<string>(".sys_class_name") ?? "";
+        this.Name = serverData.GetElementValue<string>(".name") ?? "";
+        this.Category = serverData.GetElementValue<string>(".category") ?? "";
+        this.Subcategory = serverData.GetElementValue<string>(".subcategory") ?? "";
+        this.DnsDomain = serverData.GetElementValue<string>(".dns_domain") ?? "";
+        this.Platform = serverData.GetElementValue<string>(".u_platform") ?? "";
+        this.IPAddress = serverData.GetElementValue<string>(".ip_address") ?? "";
+        this.FQDN = serverData.GetElementValue<string>(".fqdn") ?? "";
     }
     #endregion
 }

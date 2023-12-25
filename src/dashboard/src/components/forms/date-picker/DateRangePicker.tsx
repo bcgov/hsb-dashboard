@@ -1,4 +1,5 @@
 import { uniqueId } from 'lodash';
+import moment from 'moment';
 import React from 'react';
 import styles from './DateRangePicker.module.scss';
 
@@ -23,7 +24,10 @@ export const DateRangePicker = ({
   onChange,
 }: IDateRangePickerProps) => {
   // Always make sure there are two values in the array.
-  const values = [initValues[0], initValues.length > 1 ? initValues[1] : ''];
+  const values = [
+    initValues.length > 0 ? initValues[0] : '',
+    initValues.length > 1 ? initValues[1] : '',
+  ];
   const [selected, setSelected] = React.useState<string[]>(values);
 
   React.useEffect(() => {
@@ -40,13 +44,16 @@ export const DateRangePicker = ({
           type="date"
           id={`${id}-startDate`}
           name={`${name}-startDate`}
-          value={selected[0]}
+          value={selected[0] ? moment(selected[0]).format('YYYY-MM-DD') : ''}
           onChange={(e) => {
             if (onChange) {
-              const result = [e.target.value, values[1]];
+              const result = [moment(e.target.value).format('YYYY-MM-DD 00:00:00'), values[1]];
               onChange?.(result, e);
             } else {
-              setSelected((values) => [e.target.value, values[1]]);
+              setSelected((values) => [
+                moment(e.target.value).format('YYYY-MM-DD 00:00:00'),
+                values[1],
+              ]);
             }
           }}
         />
@@ -57,13 +64,16 @@ export const DateRangePicker = ({
           type="date"
           id={`${id}-endDate`}
           name={`${name}-endDate`}
-          value={selected[1]}
+          value={selected[1] ? moment(selected[1]).format('YYYY-MM-DD') : ''}
           onChange={(e) => {
             if (onChange) {
-              const result = [values[0], e.target.value];
+              const result = [values[0], moment(e.target.value).format('YYYY-MM-DD 23:59:59')];
               onChange?.(result, e);
             } else {
-              setSelected((values) => [values[0], e.target.value]);
+              setSelected((values) => [
+                values[0],
+                moment(e.target.value).format('YYYY-MM-DD 23:59:59'),
+              ]);
             }
           }}
         />

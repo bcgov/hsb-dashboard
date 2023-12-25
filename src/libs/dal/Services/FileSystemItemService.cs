@@ -24,8 +24,8 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
         int? skip = null)
     {
         var query = (from fsi in this.Context.FileSystemItems
-                     join ci in this.Context.ConfigurationItems on fsi.ConfigurationItemId equals ci.Id
-                     join tenant in this.Context.Tenants on ci.TenantId equals tenant.Id
+                     join si in this.Context.ServerItems on fsi.ServerItemServiceNowKey equals si.ServiceNowKey
+                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
                      join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                      where usert.UserId == userId
                      select fsi)
@@ -51,8 +51,8 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
         int? skip = null)
     {
         var query = (from fsi in this.Context.FileSystemItems
-                     join ci in this.Context.ConfigurationItems on fsi.ConfigurationItemId equals ci.Id
-                     join tenant in this.Context.Tenants on ci.TenantId equals tenant.Id
+                     join si in this.Context.ServerItems on fsi.ServerItemServiceNowKey equals si.ServiceNowKey
+                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
                      join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                      where usert.UserId == userId
                      select fsi)
