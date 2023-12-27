@@ -15,8 +15,8 @@ const data = {
       {
         label: 'Unused', // Outer ring
         data: [25, 0, 0], // Represents 25% of the ring 
-        backgroundColor: ['#D9D9D9'],
-        borderColor: ['#D9D9D9'],
+        backgroundColor: ['#8F8F8F'],
+        borderColor: ['#8F8F8F'],
         circumference: 90, // Quarter of the circle
       },
       {
@@ -29,8 +29,8 @@ const data = {
       {
         label: 'Allocated', // Inner ring
         data: [100, 0, 0], // Represents full 100% of the ring
-        backgroundColor: ['#FCBA19'],
-        borderColor: ['#FCBA19'],
+        backgroundColor: ['#DF9901'],
+        borderColor: ['#DF9901'],
         borderAlign: 'inner',
       },
     ],
