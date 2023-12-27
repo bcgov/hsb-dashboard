@@ -8,25 +8,23 @@ import { Chart as ChartJS, ArcElement, Tooltip } from 'chart.js';
 
 ChartJS.register(ArcElement, Tooltip);
 
-// Updated Data for the Donut Chart with specified colors
+// Data for the Donut Chart with specified colors
 const data = {
-    labels: ['Unused', 'Used', 'Allocated'], // Updated labels to match ring order
+    labels: ['Unused', 'Used', 'Allocated'], // Labels to match ring order
     datasets: [
       {
         label: 'Unused', // Outer ring
         data: [25, 0, 0], // Represents 25% of the ring 
         backgroundColor: ['#D9D9D9'],
         borderColor: ['#D9D9D9'],
-        // Add css style for a circular cutout in the middle
-        circumference: 60, // Full circle
+        circumference: 90, // Quarter of the circle
       },
       {
         label: 'Used', // Middle ring
         data: [75, 0, 0], // Represents 75% of the ring
         backgroundColor: ['#003366'],
         borderColor: ['#003366'],
-        // Adjust the circumference to represent 75%
-        circumference: 200, // Three quarters of the circle
+        circumference: 270, // Three quarters of the circle
       },
       {
         label: 'Allocated', // Inner ring
@@ -74,7 +72,7 @@ export const AllOrgDonutChart: React.FC = () => {
                 tooltip: {
                   callbacks: {
                     title: function() {
-                      return ''; // Return an empty string to remove the title
+                      return ''; // Return an empty string to remove the title for tooltips
                     },
                   }
                 }
