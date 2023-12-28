@@ -43,14 +43,14 @@ public class GroupController : ControllerBase
 
     #region Endpoints
     /// <summary>
-    ///
+    /// Find groups for the specified query filter.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "GetGroups-SystemAdmin")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<GroupModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Group" })]
-    public IActionResult Get()
+    public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);

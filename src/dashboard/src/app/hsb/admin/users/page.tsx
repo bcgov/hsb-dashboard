@@ -16,11 +16,14 @@ import {
 } from '@/components';
 import { IUserModel } from '@/hooks';
 import { useApiUsers } from '@/hooks/api/admin';
+import { useGroups, useUsers } from '@/hooks/data';
 import React from 'react';
 import { IUserForm } from './IUserForm';
 
 export default function Page() {
-  const api = useApiUsers();
+  const { isReady: isReadyUsers, users } = useUsers();
+  const { isReady: isReadyGroups, groups, options: groupOptions } = useGroups();
+  const { update: updateUser } = useApiUsers();
 
   const [loading, setLoading] = React.useState(true);
   const [records, setRecords] = React.useState<IUserForm[]>([]);
@@ -29,20 +32,23 @@ export default function Page() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   React.useEffect(() => {
+    setLoading(!isReadyUsers && !isReadyGroups);
+  }, [isReadyUsers, isReadyGroups]);
+
+  React.useEffect(() => {
     setItems(records);
   }, [records]);
 
   React.useEffect(() => {
-    api
-      .findUsers()
-      .then(async (response) => {
-        const data: IUserModel[] = await response.json();
-        setRecords(data.map((d) => ({ ...d, isDirty: false })));
-        setItems(data);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [api]);
+    setRecords((state) =>
+      users.map((user) => {
+        const value = state.find((s) => s.id === user.id);
+        if (value) ({ ...user, isDirty: value.isDirty });
+        return user;
+      }),
+    );
+    setItems(users);
+  }, [users]);
 
   const handleSearch = React.useCallback(() => {
     setItems(
@@ -61,7 +67,7 @@ export default function Page() {
     const update = records.map(async (user) => {
       if (user.isDirty) {
         try {
-          const res = await api.updateUser(user);
+          const res = await updateUser(user);
           const result: IUserModel = await res.json();
           return { ...result, isDirty: false };
         } catch (error) {
@@ -72,7 +78,7 @@ export default function Page() {
     });
     const results = await Promise.all(update);
     setRecords(results);
-  }, [api, records]);
+  }, [updateUser, records]);
 
   return (
     <Sheet>
@@ -134,7 +140,27 @@ export default function Page() {
                 />
               </div>
               <div>
-                <Select options={[]} placeholder="select" />
+                <Select
+                  options={groupOptions}
+                  placeholder="select"
+                  multiple
+                  value={data.groups?.map((g) => g.id.toString())}
+                  onChange={(values) => {
+                    if (Array.isArray(values)) {
+                      setRecords((users) =>
+                        users.map((u) =>
+                          u.id === data.id
+                            ? {
+                                ...u,
+                                groups: groups.filter((g) => values?.some((v) => v == g.id)),
+                                isDirty: true,
+                              }
+                            : u,
+                        ),
+                      );
+                    }
+                  }}
+                />
               </div>
             </>
           );

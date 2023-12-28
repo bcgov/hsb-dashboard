@@ -1,7 +1,7 @@
 import styles from './Select.module.scss';
 
 import { uniqueId } from 'lodash';
-import React, { ChangeEventHandler, FocusEventHandler } from 'react';
+import React, { FocusEventHandler } from 'react';
 import { FormError, IOption } from '..';
 import { generateKey } from './utils';
 
@@ -18,9 +18,12 @@ export interface ISelectProps<T> {
   disabled?: boolean;
   placeholder?: string;
   error?: React.ReactNode;
-  isMulti?: boolean;
+  multiple?: boolean;
   required?: boolean;
-  onChange?: ChangeEventHandler<HTMLSelectElement>;
+  onChange?: (
+    values: string | number | readonly string[] | undefined,
+    event?: React.FormEvent<HTMLSelectElement>,
+  ) => void;
   onBlur?: FocusEventHandler<HTMLSelectElement>;
 }
 
@@ -38,7 +41,7 @@ export const Select = <T extends unknown>({
   placeholder,
   required,
   error,
-  isMulti,
+  multiple,
   onChange,
   onBlur,
 }: ISelectProps<T>) => {
@@ -63,10 +66,24 @@ export const Select = <T extends unknown>({
         name={name}
         title={title}
         disabled={disabled}
-        value={options.find((o) => o.value == selected)?.value ?? ''}
+        multiple={multiple}
+        value={
+          !multiple
+            ? options.find((o) => o.value == selected)?.value ?? ''
+            : options.filter((o) => o.value == selected).map((o) => `${o.value}`)
+        }
         onChange={(e) => {
-          setSelected(e.target.value);
-          onChange?.(e);
+          if (!multiple) {
+            if (!onChange) setSelected(e.target.value);
+            onChange?.(e.target.value, e);
+          } else if (Array.isArray(selected)) {
+            const values =
+              selected.indexOf(e.target.value) === -1
+                ? [...selected, e.target.value]
+                : selected.filter((s) => s != e.target.value);
+            if (!onChange) setSelected(values);
+            onChange?.(values, e);
+          }
         }}
         onBlur={onBlur}
       >
@@ -77,7 +94,28 @@ export const Select = <T extends unknown>({
         )}
         {options.map((option) => {
           return (
-            <option key={generateKey(option.value)} value={option.value}>
+            <option
+              key={generateKey(option.value)}
+              value={option.value}
+              className={
+                (Array.isArray(selected) && selected.some((o) => o == option.value)) ||
+                selected === option.value
+                  ? styles.selected
+                  : ''
+              }
+              onClick={(e) => {
+                if (Array.isArray(selected) && selected.some((o) => o == option.value)) {
+                  // Remove selected value.
+                  const value = `${option.value}`;
+                  const values =
+                    selected.indexOf(value) === -1
+                      ? [...selected, value]
+                      : selected.filter((s) => s != value);
+                  if (!onChange) setSelected(values);
+                  onChange?.(values);
+                }
+              }}
+            >
               {option.label}
             </option>
           );

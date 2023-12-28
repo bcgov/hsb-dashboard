@@ -120,19 +120,20 @@ public class ServiceNowApiService : IServiceNowApiService
     }
 
     /// <summary>
-    /// Fetch all configuration items from service now.
+    /// Fetch all items from the service now API.
     /// </summary>
+    /// <param name="tableName"></param>
     /// <param name="limit"></param>
     /// <param name="offset"></param>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<ResultModel<ConfigurationItemModel>>> FetchConfigurationItemsAsync(int limit, int offset, string filter = "")
+    public async Task<IEnumerable<ResultModel<T>>> FetchTableItemsAsync<T>(string tableName, int limit, int offset, string filter = "")
     {
-        this.Logger.LogDebug("Service Now - Fetching configuration items");
+        this.Logger.LogDebug("Service Now - Fetching {tableName} items", tableName);
 
         var builder = new UriBuilder($"{this.SNClient.Client.BaseAddress}")
         {
-            Path = this.Options.Endpoints.TablePath.Replace("{name}", this.Options.TableNames.ConfigurationItem)
+            Path = this.Options.Endpoints.TablePath.Replace("{name}", tableName)
         };
         var query = HttpUtility.ParseQueryString(builder.Query);
         query.Add("sysparm_offset", $"{offset}");
@@ -144,127 +145,24 @@ public class ServiceNowApiService : IServiceNowApiService
         }
         builder.Query = query.ToString();
 
-        var result = await ServiceNowArraySendAsync<ConfigurationItemModel>(HttpMethod.Get, builder.Uri);
+        var result = await ServiceNowArraySendAsync<T>(HttpMethod.Get, builder.Uri);
         return result.ToArray();
     }
 
     /// <summary>
-    /// Fetch server items from service now.
+    /// Get the item for the specified 'tableName' and 'id'.
     /// </summary>
-    /// <param name="limit"></param>
-    /// <param name="offset"></param>
-    /// <param name="filter"></param>
-    /// <returns></returns>
-    public async Task<IEnumerable<ResultModel<ServerModel>>> FetchServerItemsAsync(int limit, int offset, string filter = "")
-    {
-        this.Logger.LogDebug("Service Now - Fetching server items");
-
-        var builder = new UriBuilder($"{this.SNClient.Client.BaseAddress}")
-        {
-            Path = this.Options.Endpoints.TablePath.Replace("{name}", this.Options.TableNames.Server)
-        };
-        var query = HttpUtility.ParseQueryString(builder.Query);
-        query.Add("sysparm_offset", $"{offset}");
-        query.Add("sysparm_limit", $"{limit}");
-        if (!String.IsNullOrWhiteSpace(filter))
-        {
-            var filterQuery = HttpUtility.ParseQueryString(filter);
-            query.Add(filterQuery);
-        }
-        builder.Query = query.ToString();
-
-        var result = await ServiceNowArraySendAsync<ServerModel>(HttpMethod.Get, builder.Uri);
-        return result.ToArray();
-    }
-
-    /// <summary>
-    /// Get the configuration item for the specified 'id'.
-    /// </summary>
+    /// <param name="tableName"></param>
     /// <param name="id"></param>
     /// <returns></returns>
-    public async Task<ResultModel<ConfigurationItemModel>?> GetConfigurationItemAsync(string id)
+    public async Task<ResultModel<T>?> GetTableItemAsync<T>(string tableName, string id)
     {
-        this.Logger.LogDebug("Service Now - Fetch operating system '{id}'", id);
+        this.Logger.LogDebug("Service Now - Fetch '{tableName}' item '{id}'", tableName, id);
         var builder = new UriBuilder($"{this.SNClient.Client.BaseAddress}")
         {
-            Path = this.Options.Endpoints.TablePath.Replace("{name}", $"{this.Options.TableNames.ConfigurationItem}/{id}")
+            Path = this.Options.Endpoints.TablePath.Replace("{name}", $"{tableName}/{id}")
         };
-        return await ServiceNowSendAsync<ConfigurationItemModel>(HttpMethod.Get, builder.Uri);
-    }
-
-    /// <summary>
-    /// Get the operating system for the specified 'id'.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    public async Task<ResultModel<OperatingSystemModel>?> GetOperatingSystemAsync(string id)
-    {
-        this.Logger.LogDebug("Service Now - Fetch operating system '{id}'", id);
-        var builder = new UriBuilder($"{this.SNClient.Client.BaseAddress}")
-        {
-            Path = this.Options.Endpoints.TablePath.Replace("{name}", $"{this.Options.TableNames.OperatingSystem}/{id}")
-        };
-        return await ServiceNowSendAsync<OperatingSystemModel>(HttpMethod.Get, builder.Uri);
-    }
-
-    /// <summary>
-    /// Get the client organization for the specified 'id'.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    public async Task<ResultModel<ClientOrganizationModel>?> GetClientOrganizationAsync(string id)
-    {
-        this.Logger.LogDebug("Service Now - Fetch client organization '{id}'", id);
-        var builder = new UriBuilder($"{this.SNClient.Client.BaseAddress}")
-        {
-            Path = this.Options.Endpoints.TablePath.Replace("{name}", $"{this.Options.TableNames.ClientOrganization}/{id}")
-        };
-        return await ServiceNowSendAsync<ClientOrganizationModel>(HttpMethod.Get, builder.Uri);
-    }
-
-    /// <summary>
-    /// Get the tenant for the specified 'id'.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    public async Task<ResultModel<TenantModel>?> GetTenantAsync(string id)
-    {
-        this.Logger.LogDebug("Service Now - Fetch tenant '{id}'", id);
-        var builder = new UriBuilder($"{this.SNClient.Client.BaseAddress}")
-        {
-            Path = this.Options.Endpoints.TablePath.Replace("{name}", $"{this.Options.TableNames.Tenant}/{id}")
-        };
-        return await ServiceNowSendAsync<TenantModel>(HttpMethod.Get, builder.Uri);
-    }
-
-    /// <summary>
-    /// Get the server for the specified 'id'.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    public async Task<ResultModel<ServerModel>?> GetServerAsync(string id)
-    {
-        this.Logger.LogDebug("Service Now - Fetch server '{id}'", id);
-        var builder = new UriBuilder($"{this.SNClient.Client.BaseAddress}")
-        {
-            Path = this.Options.Endpoints.TablePath.Replace("{name}", $"{this.Options.TableNames.Server}/{id}")
-        };
-        return await ServiceNowSendAsync<ServerModel>(HttpMethod.Get, builder.Uri);
-    }
-
-    /// <summary>
-    /// Get the file system for the specified 'id'.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    public async Task<ResultModel<FileSystemModel>?> GetFileSystemAsync(string id)
-    {
-        this.Logger.LogDebug("Service Now - Fetch file system '{id}'", id);
-        var builder = new UriBuilder($"{this.SNClient.Client.BaseAddress}")
-        {
-            Path = this.Options.Endpoints.TablePath.Replace("{name}", $"{this.Options.TableNames.FileSystem}/{id}")
-        };
-        return await ServiceNowSendAsync<FileSystemModel>(HttpMethod.Get, builder.Uri);
+        return await ServiceNowSendAsync<T>(HttpMethod.Get, builder.Uri);
     }
     #endregion
 

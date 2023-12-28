@@ -10,9 +10,7 @@ import { IFileSystemItemFilter } from './interfaces';
 export const useApiFileSystemItems = () => {
   return React.useMemo(
     () => ({
-      findFileSystemItems: async (
-        filter: IFileSystemItemFilter | undefined = {},
-      ): Promise<Response> => {
+      find: async (filter: IFileSystemItemFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/dashboard/file-system-items?${toQueryString(filter)}`);
       },
     }),

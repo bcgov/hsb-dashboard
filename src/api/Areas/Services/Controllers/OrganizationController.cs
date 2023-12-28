@@ -44,11 +44,11 @@ public class OrganizationController : ControllerBase
     ///
     /// </summary>
     /// <returns></returns>
-    [HttpGet(Name = "GetOrganizations-Services")]
+    [HttpGet(Name = "FindOrganizations-Services")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OrganizationModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Organization" })]
-    public IActionResult Get()
+    public IActionResult Find()
     {
         var organizations = _service.Find(o => true);
         return new JsonResult(organizations.Select(ci => new OrganizationModel(ci)));

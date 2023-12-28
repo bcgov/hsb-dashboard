@@ -42,9 +42,9 @@ public class TenantFilter : PageFilter
         if (this.IsEnabled != null)
             predicate = predicate.And((u) => u.IsEnabled == this.IsEnabled);
         if (this.StartDate != null)
-            predicate = predicate.And((u) => u.CreatedOn >= this.StartDate);
+            predicate = predicate.And((u) => u.CreatedOn >= this.StartDate.Value.ToUniversalTime());
         if (this.EndDate != null)
-            predicate = predicate.And((u) => u.CreatedOn <= this.EndDate);
+            predicate = predicate.And((u) => u.CreatedOn <= this.EndDate.Value.ToUniversalTime());
 
         if (!predicate.IsStarted) return predicate.And((u) => true);
         return predicate;

@@ -4,23 +4,27 @@ import { IOperatingSystemItemModel, useApiOperatingSystemItems, useAuth } from '
 
 export const useOperatingSystemItems = () => {
   const { status } = useAuth();
-  const { findOperatingSystemItems } = useApiOperatingSystemItems();
+  const { find } = useApiOperatingSystemItems();
   const operatingSystemItems = useApp((state) => state.operatingSystemItems);
   const setOperatingSystemItems = useApp((state) => state.setOperatingSystemItems);
+
+  const [isReady, setIsReady] = React.useState(false);
 
   React.useEffect(() => {
     // Get an array of operatingSystemItems.
     if (status === 'authenticated' && !operatingSystemItems.length) {
-      findOperatingSystemItems()
+      setIsReady(false);
+      find()
         .then(async (res) => {
           const operatingSystemItems: IOperatingSystemItemModel[] = await res.json();
           setOperatingSystemItems(operatingSystemItems);
         })
         .catch((error) => {
           console.error(error);
-        });
-    }
-  }, [findOperatingSystemItems, setOperatingSystemItems, status, operatingSystemItems.length]);
+        })
+        .finally(() => setIsReady(true));
+    } else if (operatingSystemItems.length) setIsReady(true);
+  }, [find, setOperatingSystemItems, status, operatingSystemItems.length]);
 
-  return operatingSystemItems;
+  return { isReady, operatingSystemItems };
 };

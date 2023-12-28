@@ -10,7 +10,7 @@ import { IServerItemFilter } from './interfaces';
 export const useApiServerItems = () => {
   return React.useMemo(
     () => ({
-      findServerItems: async (filter: IServerItemFilter | undefined = {}): Promise<Response> => {
+      find: async (filter: IServerItemFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/dashboard/server-items?${toQueryString(filter)}`);
       },
     }),

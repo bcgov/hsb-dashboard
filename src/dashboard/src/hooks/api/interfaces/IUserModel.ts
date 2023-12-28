@@ -17,6 +17,6 @@ export interface IUserModel {
   lastLoginOn?: string;
   note: string;
   preferences: any;
-  groups: IGroupModel[];
-  tenants: ITenantModel[];
+  groups?: IGroupModel[];
+  tenants?: ITenantModel[];
 }

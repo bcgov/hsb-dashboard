@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 public class ServerItemFilter : PageFilter
 {
     #region Properties
-    public bool? Distinct { get; set; }
     public string? Name { get; set; }
     public string? ServiceNowKey { get; set; }
     public int? TenantId { get; set; }
@@ -26,7 +25,6 @@ public class ServerItemFilter : PageFilter
     {
         var filter = new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>(queryParams, StringComparer.OrdinalIgnoreCase);
 
-        this.Distinct = filter.GetBoolNullValue(nameof(this.Distinct));
         this.Name = filter.GetStringValue(nameof(this.Name));
         this.ServiceNowKey = filter.GetStringValue(nameof(this.ServiceNowKey));
         this.TenantId = filter.GetIntNullValue(nameof(this.TenantId));
@@ -48,15 +46,15 @@ public class ServerItemFilter : PageFilter
         if (this.ServiceNowKey != null)
             predicate = predicate.And((u) => EF.Functions.Like(u.ServiceNowKey, this.ServiceNowKey));
         if (this.TenantId != null)
-            predicate = predicate.And((u) => u.ConfigurationItem!.TenantId == this.TenantId);
+            predicate = predicate.And((u) => u.TenantId == this.TenantId || u.Organization!.TenantsManyToMany.Any(t => t.TenantId == this.TenantId));
         if (this.OrganizationId != null)
-            predicate = predicate.And((u) => u.ConfigurationItem!.OrganizationId == this.OrganizationId);
+            predicate = predicate.And((u) => u.OrganizationId == this.OrganizationId);
         if (this.OperatingSystemItemId != null)
             predicate = predicate.And((u) => u.OperatingSystemItemId == this.OperatingSystemItemId);
         if (this.StartDate != null)
-            predicate = predicate.And((u) => u.CreatedOn >= this.StartDate);
+            predicate = predicate.And((u) => u.CreatedOn >= this.StartDate.Value.ToUniversalTime());
         if (this.EndDate != null)
-            predicate = predicate.And((u) => u.CreatedOn <= this.EndDate);
+            predicate = predicate.And((u) => u.CreatedOn <= this.EndDate.Value.ToUniversalTime());
 
         if (!predicate.IsStarted) return predicate.And((u) => true);
         return predicate;

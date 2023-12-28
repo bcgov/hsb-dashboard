@@ -43,9 +43,23 @@ public class DataSyncController : ControllerBase
     /// <summary>
     ///
     /// </summary>
+    /// <returns></returns>
+    [HttpGet(Name = "FindDataSync-Services")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<DataSyncModel>), (int)HttpStatusCode.OK)]
+    [SwaggerOperation(Tags = new[] { "DataSync" })]
+    public IActionResult Find()
+    {
+        var entities = _service.Find(o => true);
+        return new JsonResult(entities.Select(ci => new DataSyncModel(ci)));
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    [HttpGet("{name:alpha}", Name = "GetDataSync-Services-Name")]
+    [HttpGet("{name}", Name = "GetDataSync-Services-Name")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(DataSyncModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]

@@ -4,7 +4,7 @@ export interface IFileSystemItemFilter {
   tenantId?: number;
   organizationId?: number;
   operatingSystemItemId?: number;
-  serverItemId?: number;
+  serverItemServiceNowKey?: string;
   category?: string;
   subCategory?: string;
   className?: string;

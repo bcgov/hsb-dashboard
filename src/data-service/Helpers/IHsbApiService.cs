@@ -9,18 +9,24 @@ public interface IHsbApiService
 {
     #region Data Sync
     /// <summary>
+    /// Fetch all data sync configuration items.
+    /// </summary>
+    /// <returns></returns>
+    public Task<IEnumerable<DataSyncModel>> FetchDataSyncAsync();
+
+    /// <summary>
     /// Get the data sync for the specified name.
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public Task<DataSyncModel?> GetDataSync(string name);
+    public Task<DataSyncModel?> GetDataSyncAsync(string name);
 
     /// <summary>
     /// Update the data sync.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
-    public Task<DataSyncModel?> UpdateDataSync(DataSyncModel model);
+    public Task<DataSyncModel?> UpdateDataSyncAsync(DataSyncModel model);
     #endregion
 
     #region Operating System Items
@@ -109,6 +115,13 @@ public interface IHsbApiService
     /// <param name="model"></param>
     /// <returns></returns>
     public Task<ServerItemModel?> UpdateServerItemAsync(ServerItemModel model);
+
+    /// <summary>
+    /// Add server history item to HSB.
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    public Task<ServerHistoryItemModel?> AddServerHistoryItemAsync(ServerHistoryItemModel model);
     #endregion
 
     #region File System Items
@@ -117,6 +130,13 @@ public interface IHsbApiService
     /// </summary>
     /// <returns></returns>
     public Task<IEnumerable<FileSystemItemModel>> FetchFileSystemItemsAsync();
+
+    /// <summary>
+    /// Get the file system item from HSB for the specified 'id'.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public Task<FileSystemItemModel?> GetFileSystemItemAsync(string id);
 
     /// <summary>
     /// Add file system item to HSB.
@@ -131,14 +151,12 @@ public interface IHsbApiService
     /// <param name="model"></param>
     /// <returns></returns>
     public Task<FileSystemItemModel?> UpdateFileSystemItemAsync(FileSystemItemModel model);
-    #endregion
 
-    #region Configuration Items
     /// <summary>
-    /// Add configuration item to HSB.
+    /// Add file system history item to HSB.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
-    public Task<ConfigurationItemModel?> AddConfigurationItemAsync(ConfigurationItemModel model);
+    public Task<FileSystemHistoryItemModel?> AddFileSystemHistoryItemAsync(FileSystemHistoryItemModel model);
     #endregion
 }

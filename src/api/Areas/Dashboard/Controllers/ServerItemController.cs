@@ -73,7 +73,7 @@ public class ServerItemController : ControllerBase
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
         {
-            var result = _service.Find(filter.GeneratePredicate(), filter.Sort);
+            var result = _service.Find(filter);
             return new JsonResult(result.Select(si => new ServerItemModel(si)));
         }
         else
@@ -82,7 +82,7 @@ public class ServerItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var result = _service.FindForUser(filter.Distinct ?? false, user.Id, filter.GeneratePredicate(), filter.Sort);
+            var result = _service.FindForUser(user.Id, filter);
             return new JsonResult(result.Select(si => new ServerItemModel(si)));
         }
     }
@@ -113,7 +113,7 @@ public class ServerItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var entity = _service.FindForUser(false, user.Id, (t) => t.Id == id, si => si.Id).FirstOrDefault();
+            var entity = _service.FindForId(id, user.Id);
             if (entity == null) return Forbid();
             return new JsonResult(new ServerItemModel(entity));
         }

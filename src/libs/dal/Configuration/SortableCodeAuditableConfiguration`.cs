@@ -9,7 +9,7 @@ public class SortableCodeAuditableConfiguration<TEntity, TKey> : SortableAuditab
 {
     public override void Configure(EntityTypeBuilder<TEntity> builder)
     {
-        builder.Property(m => m.Code).IsRequired().HasMaxLength(10);
+        builder.Property(m => m.Code).IsRequired().HasMaxLength(100);
 
         base.Configure(builder);
     }

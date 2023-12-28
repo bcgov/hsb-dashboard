@@ -44,11 +44,11 @@ public class TenantController : ControllerBase
     ///
     /// </summary>
     /// <returns></returns>
-    [HttpGet(Name = "GetTenants-Services")]
+    [HttpGet(Name = "FindTenants-Services")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<TenantModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Tenant" })]
-    public IActionResult Get()
+    public IActionResult Find()
     {
         var tenants = _service.Find(o => true);
         return new JsonResult(tenants.Select(ci => new TenantModel(ci)));

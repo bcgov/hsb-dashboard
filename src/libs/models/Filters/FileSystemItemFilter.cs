@@ -10,13 +10,13 @@ public class FileSystemItemFilter : PageFilter
     public string? Name { get; set; }
     public string? ServiceNowKey { get; set; }
     public string? Category { get; set; }
-    public string? SubCategory { get; set; }
+    public string? Subcategory { get; set; }
     public string? ClassName { get; set; }
 
     public int? TenantId { get; set; }
     public int? OrganizationId { get; set; }
     public int? OperatingSystemItemId { get; set; }
-    public int? ServerItemId { get; set; }
+    public string? ServerItemServiceNowKey { get; set; }
 
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
@@ -35,11 +35,11 @@ public class FileSystemItemFilter : PageFilter
         this.ClassName = filter.GetStringValue(nameof(this.ClassName));
         this.ServiceNowKey = filter.GetStringValue(nameof(this.ServiceNowKey));
         this.Category = filter.GetStringValue(nameof(this.Category));
-        this.SubCategory = filter.GetStringValue(nameof(this.SubCategory));
+        this.Subcategory = filter.GetStringValue(nameof(this.Subcategory));
         this.TenantId = filter.GetIntNullValue(nameof(this.TenantId));
         this.OrganizationId = filter.GetIntNullValue(nameof(this.OrganizationId));
         this.OperatingSystemItemId = filter.GetIntNullValue(nameof(this.OperatingSystemItemId));
-        this.ServerItemId = filter.GetIntNullValue(nameof(this.ServerItemId));
+        this.ServerItemServiceNowKey = filter.GetStringValue(nameof(this.ServerItemServiceNowKey));
         this.StartDate = filter.GetDateTimeNullValue(nameof(this.StartDate));
         this.EndDate = filter.GetDateTimeNullValue(nameof(this.EndDate));
 
@@ -59,20 +59,20 @@ public class FileSystemItemFilter : PageFilter
             predicate = predicate.And((u) => EF.Functions.Like(u.ServiceNowKey, this.ServiceNowKey));
         if (this.Category != null)
             predicate = predicate.And((u) => EF.Functions.Like(u.Category, this.Category));
-        if (this.SubCategory != null)
-            predicate = predicate.And((u) => EF.Functions.Like(u.SubCategory, this.SubCategory));
+        if (this.Subcategory != null)
+            predicate = predicate.And((u) => EF.Functions.Like(u.Subcategory, this.Subcategory));
         if (this.TenantId != null)
-            predicate = predicate.And((u) => u.ConfigurationItem!.TenantId == this.TenantId);
+            predicate = predicate.And((u) => u.ServerItem!.TenantId == this.TenantId);
         if (this.OrganizationId != null)
-            predicate = predicate.And((u) => u.ConfigurationItem!.OrganizationId == this.OrganizationId);
+            predicate = predicate.And((u) => u.ServerItem!.OrganizationId == this.OrganizationId);
         if (this.OperatingSystemItemId != null)
-            predicate = predicate.And((u) => u.ConfigurationItem!.ServerItems.Any(si => si.OperatingSystemItemId == this.OperatingSystemItemId));
-        if (this.ServerItemId != null)
-            predicate = predicate.And((u) => u.ConfigurationItem!.ServerItems.Any(si => si.Id == this.ServerItemId));
+            predicate = predicate.And((u) => u.ServerItem!.OperatingSystemItemId == this.OperatingSystemItemId);
+        if (this.ServerItemServiceNowKey != null)
+            predicate = predicate.And((u) => EF.Functions.Like(u.ServerItemServiceNowKey, this.ServerItemServiceNowKey));
         if (this.StartDate != null)
-            predicate = predicate.And((u) => u.CreatedOn >= this.StartDate);
+            predicate = predicate.And((u) => u.CreatedOn >= this.StartDate.Value.ToUniversalTime());
         if (this.EndDate != null)
-            predicate = predicate.And((u) => u.CreatedOn <= this.EndDate);
+            predicate = predicate.And((u) => u.CreatedOn <= this.EndDate.Value.ToUniversalTime());
 
         if (!predicate.IsStarted) return predicate.And((u) => true);
         return predicate;

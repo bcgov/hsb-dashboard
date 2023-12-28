@@ -26,7 +26,15 @@ public abstract class SortableAuditable<TKey> : CommonAuditable<TKey>
     /// <param name="name"></param>
     public SortableAuditable(string name) : base(name)
     {
+    }
 
+    /// <summary>
+    /// Creates a new instance of a SortableAuditable object, initializes with specified parameters.
+    /// </summary>
+    /// <param name="name"></param>
+    public SortableAuditable(SortableAuditable<TKey> entity) : base(entity)
+    {
+        this.SortOrder = entity.SortOrder;
     }
     #endregion
 }

@@ -4,23 +4,27 @@ import { IOrganizationModel, useApiOrganizations, useAuth } from '..';
 
 export const useOrganizations = () => {
   const { status } = useAuth();
-  const { findOrganizations } = useApiOrganizations();
+  const { find } = useApiOrganizations();
   const organizations = useApp((state) => state.organizations);
   const setOrganizations = useApp((state) => state.setOrganizations);
+
+  const [isReady, setIsReady] = React.useState(false);
 
   React.useEffect(() => {
     // Get an array of organizations.
     if (status === 'authenticated' && !organizations.length) {
-      findOrganizations()
+      setIsReady(false);
+      find()
         .then(async (res) => {
           const organizations: IOrganizationModel[] = await res.json();
           setOrganizations(organizations);
         })
         .catch((error) => {
           console.error(error);
-        });
-    }
-  }, [findOrganizations, setOrganizations, status, organizations.length]);
+        })
+        .finally(() => setIsReady(true));
+    } else if (organizations.length) setIsReady(true);
+  }, [find, setOrganizations, status, organizations.length]);
 
-  return organizations;
+  return { isReady, organizations };
 };

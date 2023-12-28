@@ -43,14 +43,14 @@ public class TenantController : ControllerBase
 
     #region Endpoints
     /// <summary>
-    ///
+    /// Find tenants for the provided query filter.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "GetTenants-SystemAdmin")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<TenantModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Tenant" })]
-    public IActionResult Get()
+    public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);

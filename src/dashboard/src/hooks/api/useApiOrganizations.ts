@@ -10,7 +10,7 @@ import { ITenantFilter } from './interfaces';
 export const useApiOrganizations = () => {
   return React.useMemo(
     () => ({
-      findOrganizations: async (filter: ITenantFilter | undefined = {}): Promise<Response> => {
+      find: async (filter: ITenantFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/dashboard/organizations?${toQueryString(filter)}`);
       },
     }),

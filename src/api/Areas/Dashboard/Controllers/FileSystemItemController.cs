@@ -98,7 +98,7 @@ public class FileSystemItemController : ControllerBase
     [ProducesResponseType(typeof(FileSystemItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [SwaggerOperation(Tags = new[] { "File System Item" })]
-    public IActionResult GetForId(int id)
+    public IActionResult GetForId(string id)
     {
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
@@ -109,11 +109,11 @@ public class FileSystemItemController : ControllerBase
         }
         else
         {
-            // Only return tenants this user belongs to.
+            // Only return file systems items this user has access to.
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var entity = _service.FindForUser(user.Id, (t) => t.Id == id, fsi => fsi.Id).FirstOrDefault();
+            var entity = _service.FindForUser(user.Id, (t) => t.ServiceNowKey == id, fsi => fsi.ServiceNowKey).FirstOrDefault();
             if (entity == null) return Forbid();
             return new JsonResult(new FileSystemItemModel(entity));
         }

@@ -1,5 +1,4 @@
 import {
-  IConfigurationItemModel,
   IFileSystemItemModel,
   IOperatingSystemItemModel,
   IOrganizationModel,
@@ -10,7 +9,7 @@ import { create } from 'zustand';
 
 export interface IFilteredState {
   // Date Range
-  dateRange?: string[];
+  dateRange: string[];
   setDateRange: (value?: string[]) => void;
 
   // Tenants
@@ -42,16 +41,11 @@ export interface IFilteredState {
   setFileSystemItem: (value?: IFileSystemItemModel) => void;
   fileSystemItems: IFileSystemItemModel[];
   setFileSystemItems: (values: IFileSystemItemModel[]) => void;
-
-  // Configuration Items
-  configurationItem?: IConfigurationItemModel;
-  setConfigurationItem: (value?: IConfigurationItemModel) => void;
-  configurationItems: IConfigurationItemModel[];
-  setConfigurationItems: (values: IConfigurationItemModel[]) => void;
 }
 
 export const useFiltered = create<IFilteredState>((set) => ({
   // Date Range
+  dateRange: [],
   setDateRange: (values) => set((state) => ({ dateRange: values })),
 
   // Tenants
@@ -78,9 +72,4 @@ export const useFiltered = create<IFilteredState>((set) => ({
   setFileSystemItem: (value) => set((state) => ({ fileSystemItem: value })),
   fileSystemItems: [],
   setFileSystemItems: (values) => set((state) => ({ fileSystemItems: values })),
-
-  // Configuration Items
-  setConfigurationItem: (value) => set((state) => ({ configurationItem: value })),
-  configurationItems: [],
-  setConfigurationItems: (values) => set((state) => ({ configurationItems: values })),
 }));

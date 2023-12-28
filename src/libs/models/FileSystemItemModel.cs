@@ -5,21 +5,20 @@ namespace HSB.Models;
 public class FileSystemItemModel : AuditableModel
 {
     #region Properties
-    public int Id { get; set; }
-    public long ConfigurationItemId { get; set; }
-    public JsonDocument? RawData { get; set; }
-
+    public string ServiceNowKey { get; set; } = "";
+    public string ServerItemServiceNowKey { get; set; } = "";
 
     #region ServiceNow Properties
-    public string ServiceNowKey { get; set; } = "";
+    public JsonDocument RawData { get; set; } = JsonDocument.Parse("{}");
+    public JsonDocument RawDataCI { get; set; } = JsonDocument.Parse("{}");
+    public string ClassName { get; set; } = "";
     public string Name { get; set; } = "";
     public string Label { get; set; } = "";
     public string Category { get; set; } = "";
-    public string SubCategory { get; set; } = "";
+    public string Subcategory { get; set; } = "";
     public string StorageType { get; set; } = "";
     public string MediaType { get; set; } = "";
     public string VolumeId { get; set; } = "";
-    public string ClassName { get; set; } = "";
     public string Capacity { get; set; } = "";
     public string DiskSpace { get; set; } = "";
     public string Size { get; set; } = "";
@@ -36,19 +35,19 @@ public class FileSystemItemModel : AuditableModel
 
     public FileSystemItemModel(FileSystemItem entity) : base(entity)
     {
-        this.Id = entity.Id;
-        this.ConfigurationItemId = entity.ConfigurationItemId;
+        this.ServiceNowKey = entity.ServiceNowKey;
+        this.ServerItemServiceNowKey = entity.ServerItemServiceNowKey;
+
         this.RawData = entity.RawData;
 
-        this.ServiceNowKey = entity.ServiceNowKey;
+        this.ClassName = entity.ClassName;
         this.Name = entity.Name;
         this.Label = entity.Label;
         this.Category = entity.Category;
-        this.SubCategory = entity.SubCategory;
+        this.Subcategory = entity.Subcategory;
         this.StorageType = entity.StorageType;
         this.MediaType = entity.MediaType;
         this.VolumeId = entity.VolumeId;
-        this.ClassName = entity.ClassName;
         this.Capacity = entity.Capacity;
         this.DiskSpace = entity.DiskSpace;
         this.Size = entity.Size;
@@ -59,30 +58,35 @@ public class FileSystemItemModel : AuditableModel
         this.FreeSpaceBytes = entity.FreeSpaceBytes;
     }
 
-    public FileSystemItemModel(ServiceNow.ResultModel<ServiceNow.FileSystemModel> model, long configurationItemId)
+    public FileSystemItemModel(string serverItemServiceNowKey
+    , ServiceNow.ResultModel<ServiceNow.FileSystemModel> fileSystemItemModel
+    , ServiceNow.ResultModel<ServiceNow.ConfigurationItemModel> configurationItemModel)
     {
-        if (model.Data == null) throw new InvalidOperationException("File System Item data cannot be null");
+        if (fileSystemItemModel.Data == null) throw new InvalidOperationException("File System Item data cannot be null");
+        if (configurationItemModel.Data == null) throw new InvalidOperationException("Configuration item data cannot be null");
 
-        this.ConfigurationItemId = configurationItemId;
-        this.RawData = model.RawData;
+        this.ServiceNowKey = fileSystemItemModel.Data.Id;
+        this.ServerItemServiceNowKey = serverItemServiceNowKey;
 
-        this.ServiceNowKey = model.Data.Id;
-        this.Name = model.Data.Name ?? "";
-        this.Label = model.Data.Label ?? "";
-        this.Category = model.Data.Category ?? "";
-        this.SubCategory = model.Data.SubCategory ?? "";
-        this.StorageType = model.Data.StorageType ?? "";
-        this.MediaType = model.Data.MediaType ?? "";
-        this.VolumeId = model.Data.VolumeId ?? "";
-        this.ClassName = model.Data.ClassName ?? "";
-        this.Capacity = model.Data.Capacity ?? "";
-        this.DiskSpace = model.Data.DiskSpace ?? "";
-        this.Size = model.Data.Size ?? "";
-        this.SizeBytes = model.Data.SizeBytes ?? "";
-        this.UsedSizeBytes = model.Data.UsedSizeBytes ?? "";
-        this.AvailableSpace = model.Data.AvailableSpace ?? "";
-        this.FreeSpace = model.Data.FreeSpace ?? "";
-        this.FreeSpaceBytes = model.Data.FreeSpaceBytes ?? "";
+        this.RawData = fileSystemItemModel.RawData;
+        this.RawDataCI = configurationItemModel.RawData;
+
+        this.ClassName = fileSystemItemModel.Data.ClassName ?? "";
+        this.Name = fileSystemItemModel.Data.Name ?? "";
+        this.Label = fileSystemItemModel.Data.Label ?? "";
+        this.Category = fileSystemItemModel.Data.Category ?? "";
+        this.Subcategory = fileSystemItemModel.Data.Subcategory ?? "";
+        this.StorageType = fileSystemItemModel.Data.StorageType ?? "";
+        this.MediaType = fileSystemItemModel.Data.MediaType ?? "";
+        this.VolumeId = fileSystemItemModel.Data.VolumeId ?? "";
+        this.Capacity = fileSystemItemModel.Data.Capacity ?? "";
+        this.DiskSpace = fileSystemItemModel.Data.DiskSpace ?? "";
+        this.Size = fileSystemItemModel.Data.Size ?? "";
+        this.SizeBytes = fileSystemItemModel.Data.SizeBytes ?? "";
+        this.UsedSizeBytes = fileSystemItemModel.Data.UsedSizeBytes ?? "";
+        this.AvailableSpace = fileSystemItemModel.Data.AvailableSpace ?? "";
+        this.FreeSpace = fileSystemItemModel.Data.FreeSpace ?? "";
+        this.FreeSpaceBytes = fileSystemItemModel.Data.FreeSpaceBytes ?? "";
     }
     #endregion
 
@@ -96,9 +100,25 @@ public class FileSystemItemModel : AuditableModel
     {
         if (model.RawData == null) throw new InvalidOperationException("Property 'RawData' is required.");
 
-        return new FileSystemItem(model.ConfigurationItemId, model.RawData)
+        return new FileSystemItem(model.ServerItemServiceNowKey, model.RawData, model.RawDataCI)
         {
-            Id = model.Id,
+            ServiceNowKey = model.ServiceNowKey,
+            ClassName = model.ClassName,
+            Name = model.Name,
+            Label = model.Label,
+            Category = model.Category,
+            Subcategory = model.Subcategory,
+            StorageType = model.StorageType,
+            MediaType = model.MediaType,
+            VolumeId = model.VolumeId,
+            Capacity = model.Capacity,
+            DiskSpace = model.DiskSpace,
+            Size = model.Size,
+            SizeBytes = model.SizeBytes,
+            UsedSizeBytes = model.UsedSizeBytes,
+            AvailableSpace = model.AvailableSpace,
+            FreeSpace = model.FreeSpace,
+            FreeSpaceBytes = model.FreeSpaceBytes,
             CreatedOn = model.CreatedOn,
             CreatedBy = model.CreatedBy,
             UpdatedOn = model.UpdatedOn,

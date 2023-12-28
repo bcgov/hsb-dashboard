@@ -4,18 +4,18 @@ import React from 'react';
 import { IOrganizationFilter, IOrganizationModel, useApiOrganizations } from '..';
 
 export const useFilteredOrganizations = () => {
-  const { findOrganizations } = useApiOrganizations();
+  const { find } = useApiOrganizations();
   const organizations = useFiltered((state) => state.organizations);
   const setOrganizations = useFiltered((state) => state.setOrganizations);
 
   const fetch = React.useCallback(
     async (filter: IOrganizationFilter) => {
-      const res = await findOrganizations(filter);
+      const res = await find(filter);
       const organizations: IOrganizationModel[] = await res.json();
       setOrganizations(organizations);
       return organizations;
     },
-    [findOrganizations, setOrganizations],
+    [find, setOrganizations],
   );
 
   const options = React.useMemo(
@@ -24,6 +24,7 @@ export const useFilteredOrganizations = () => {
         label: t.name,
         value: t.id,
         data: t,
+        disabled: t.isEnabled,
       })),
     [organizations],
   );

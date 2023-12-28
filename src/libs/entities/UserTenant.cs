@@ -9,7 +9,7 @@ public class UserTenant : Auditable
     /// <summary>
     ///
     /// </summary>
-    public long UserId { get; set; }
+    public int UserId { get; set; }
 
     /// <summary>
     ///
@@ -47,7 +47,7 @@ public class UserTenant : Auditable
     /// </summary>
     /// <param name="userId"></param>
     /// <param name="tenantId"></param>
-    public UserTenant(long userId, int tenantId)
+    public UserTenant(int userId, int tenantId)
     {
         this.UserId = userId;
         this.TenantId = tenantId;

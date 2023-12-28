@@ -1,10 +1,12 @@
 import {
-  IConfigurationItemModel,
   IFileSystemItemModel,
+  IGroupModel,
   IOperatingSystemItemModel,
   IOrganizationModel,
+  IRoleModel,
   IServerItemModel,
   ITenantModel,
+  IUserModel,
 } from '@/hooks/api';
 import { create } from 'zustand';
 
@@ -12,6 +14,18 @@ export interface IAppState {
   // User
   userinfo?: any; // TODO: Replace with interface.
   setUserinfo: (value: any) => void;
+
+  // Roles
+  roles: IRoleModel[];
+  setRoles: (values: IRoleModel[]) => void;
+
+  // Groups
+  groups: IGroupModel[];
+  setGroups: (values: IGroupModel[]) => void;
+
+  // Users
+  users: IUserModel[];
+  setUsers: (values: IUserModel[]) => void;
 
   // Tenants
   tenants: ITenantModel[];
@@ -32,16 +46,24 @@ export interface IAppState {
   // File System Items
   fileSystemItems: IFileSystemItemModel[];
   setFileSystemItems: (values: IFileSystemItemModel[]) => void;
-
-  // Configuration Items
-  configurationItems: IConfigurationItemModel[];
-  setConfigurationItems: (values: IConfigurationItemModel[]) => void;
 }
 
 export const useApp = create<IAppState>((set) => ({
   // User
   userinfo: undefined,
   setUserinfo: (value) => set((state) => ({ userinfo: value })),
+
+  // Roles
+  roles: [],
+  setRoles: (values) => set((state) => ({ roles: values })),
+
+  // Groups
+  groups: [],
+  setGroups: (values) => set((state) => ({ groups: values })),
+
+  // Users
+  users: [],
+  setUsers: (values) => set((state) => ({ users: values })),
 
   // Tenants
   tenants: [],
@@ -62,10 +84,6 @@ export const useApp = create<IAppState>((set) => ({
   // File System Items
   fileSystemItems: [],
   setFileSystemItems: (values) => set((state) => ({ fileSystemItems: values })),
-
-  // Configuration Items
-  configurationItems: [],
-  setConfigurationItems: (values) => set((state) => ({ configurationItems: values })),
 }));
 
 // export const useApp2 = create(

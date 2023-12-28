@@ -19,6 +19,6 @@ public class ServiceOptions
     /// <summary>
     /// get/set - An array of data sync configuration items to run in this service.
     /// </summary>
-    public DataSyncOptions[] DataSync { get; set; } = Array.Empty<DataSyncOptions>();
+    public Models.DataSyncModel[] DataSync { get; set; } = Array.Empty<Models.DataSyncModel>();
     #endregion
 }

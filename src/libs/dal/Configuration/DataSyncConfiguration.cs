@@ -12,6 +12,7 @@ public class DataSyncConfiguration : CommonAuditableConfiguration<DataSync, int>
         builder.HasKey(m => m.Id);
         builder.Property(m => m.Id).IsRequired().ValueGeneratedOnAdd();
         builder.Property(m => m.Offset).IsRequired();
+        builder.Property(m => m.IsActive).IsRequired();
         builder.Property(m => m.Query).IsRequired().HasColumnType("text");
 
         builder.HasIndex(m => new { m.IsEnabled }, "IX_DataSync");

@@ -34,11 +34,21 @@ public class HsbApiEndpointOptions
     /// <summary>
     /// get/set -
     /// </summary>
+    public string ServerItems { get; set; } = "/v1/services/server-items";
+
+    /// <summary>
+    /// get/set -
+    /// </summary>
+    public string ServerHistoryItems { get; set; } = "/v1/services/server-items/history";
+
+    /// <summary>
+    /// get/set -
+    /// </summary>
     public string FileSystemItems { get; set; } = "/v1/services/file-system-items";
 
     /// <summary>
     /// get/set -
     /// </summary>
-    public string ServerItems { get; set; } = "/v1/services/server-items";
+    public string FileSystemHistoryItems { get; set; } = "/v1/services/file-system-items/history";
     #endregion
 }

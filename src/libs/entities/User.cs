@@ -11,7 +11,7 @@ public class User : Auditable
     /// <summary>
     /// get/set - Primary key (Identity seed).
     /// </summary>
-    public long Id { get; set; }
+    public int Id { get; set; }
 
     /// <summary>
     /// get/set - Unique username to identify the user.

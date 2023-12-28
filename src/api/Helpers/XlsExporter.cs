@@ -40,23 +40,6 @@ public class XlsExporter : IXlsExporter
     /// <param name="items"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public XSSFWorkbook GenerateExcel(string sheetName, IEnumerable<Entities.ConfigurationItem> items)
-    {
-        if (items == null) throw new ArgumentNullException(nameof(items));
-
-        var workbook = new XSSFWorkbook();
-        var sheet = (XSSFSheet)workbook.CreateSheet(sheetName);
-
-        return workbook;
-    }
-
-    /// <summary>
-    ///
-    /// </summary>
-    /// <param name="sheetName"></param>
-    /// <param name="items"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
     public XSSFWorkbook GenerateExcel(string sheetName, IEnumerable<Entities.FileSystemItem> items)
     {
         if (items == null) throw new ArgumentNullException(nameof(items));

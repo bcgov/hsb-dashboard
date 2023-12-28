@@ -3,14 +3,9 @@ namespace HSB.Entities;
 /// <summary>
 /// DataSync class, provides an entity to map to the database table.
 /// </summary>
-public class DataSync : CommonAuditable<int>
+public class DataSync : SortableAuditable<int>
 {
     #region Properties
-    /// <summary>
-    /// get/set - The service now data type.
-    /// </summary>
-    public ServiceNowDataType DataType { get; set; }
-
     /// <summary>
     /// get/set - The offset to start importing data.
     /// </summary>
@@ -20,6 +15,12 @@ public class DataSync : CommonAuditable<int>
     /// get/set - The query to filter which items will be imported.
     /// </summary>
     public string Query { get; set; } = "";
+
+    /// <summary>
+    /// get/set - Whether this data sync is currently active.
+    /// A failed data sync will remain active until it is completed.
+    /// </summary>
+    public bool IsActive { get; set; }
     #endregion
 
     #region Constructors
@@ -32,11 +33,9 @@ public class DataSync : CommonAuditable<int>
     /// Creates new instance of a DataSync object, initializes with specified parameters.
     /// </summary>
     /// <param name="name"></param>
-    /// <param name="type"></param>
     /// <param name="query"></param>
-    public DataSync(string name, ServiceNowDataType type, string query) : base(name)
+    public DataSync(string name, string query) : base(name)
     {
-        this.DataType = type;
         this.Query = query;
     }
     #endregion

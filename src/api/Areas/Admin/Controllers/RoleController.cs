@@ -43,14 +43,14 @@ public class RoleController : ControllerBase
 
     #region Endpoints
     /// <summary>
-    ///
+    /// Find roles for the specified query filter.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "GetRoles-SystemAdmin")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<RoleModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Role" })]
-    public IActionResult Get()
+    public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);

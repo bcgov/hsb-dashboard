@@ -4,7 +4,7 @@ INSERT INTO public."FileSystemItem" (
   , "Name"
   , "Label"
   , "Category"
-  , "SubCategory"
+  , "Subcategory"
   , "StorageType"
   , "MediaType"
   , "SysClassName"
@@ -26,7 +26,7 @@ INSERT INTO public."FileSystemItem" (
   , 'D' -- Name
   , '' -- Label
   , 'Resource' -- Category
-  , 'File Share' -- SubCategory
+  , 'File Share' -- Subcategory
   , 'logical' -- StorageType
   , 'cd' -- MediaType
   , 'cmdb_ci_file_system' -- SysClassName
@@ -216,7 +216,7 @@ INSERT INTO public."FileSystemItem" (
   , 'E' -- Name
   , '' -- Label
   , 'Resource' -- Category
-  , 'File Share' -- SubCategory
+  , 'File Share' -- Subcategory
   , 'logical' -- StorageType
   , 'cd' -- MediaType
   , 'cmdb_ci_file_system' -- SysClassName

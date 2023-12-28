@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using HSB.DAL.Extensions;
 using HSB.Entities;
+using HSB.Models.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -16,66 +17,57 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
     #endregion
 
     #region Methods
-    public IEnumerable<ServerItem> FindForUser<T>(
-        bool distinct,
-        long userId,
-        System.Linq.Expressions.Expression<Func<ServerItem, bool>> predicate,
-        System.Linq.Expressions.Expression<Func<ServerItem, T>>? sort = null,
-        int? take = null,
-        int? skip = null)
+
+    public IEnumerable<ServerItem> Find(ServerItemFilter filter)
     {
-        var query = (from si in this.Context.ServerItems
-                     join ci in this.Context.ConfigurationItems on si.ConfigurationItemId equals ci.Id
-                     join tenant in this.Context.Tenants on ci.TenantId equals tenant.Id
-                     join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
-                     where usert.UserId == userId
-                     select si)
-            .Where(predicate);
+        var query = this.Context.ServerItems
+            .AsNoTracking()
+            .Where(filter.GeneratePredicate());
 
-        if (distinct)
-            query = query.Distinct();
-
-        if (sort != null)
-            query = query.OrderBy(sort);
-        if (take.HasValue)
-            query = query.Take(take.Value);
-        if (skip.HasValue)
-            query = query.Skip(skip.Value);
+        if (filter.Sort?.Any() == true)
+            query = query.OrderByProperty(filter.Sort);
+        else query = query.OrderBy(si => si.Name);
+        if (filter.Quantity.HasValue)
+            query = query.Take(filter.Quantity.Value);
+        if (filter.Page.HasValue && filter.Quantity.HasValue && filter.Page > 1)
+            query = query.Skip(filter.Page.Value * filter.Quantity.Value);
 
         return query
-            .AsNoTracking()
             .ToArray();
     }
 
-    public IEnumerable<ServerItem> FindForUser(
-        bool distinct,
-        long userId,
-        System.Linq.Expressions.Expression<Func<ServerItem, bool>> predicate,
-        string[] sort,
-        int? take = null,
-        int? skip = null)
+    public IEnumerable<ServerItem> FindForUser(long userId, ServerItemFilter filter)
     {
         var query = (from si in this.Context.ServerItems
-                     join ci in this.Context.ConfigurationItems on si.ConfigurationItemId equals ci.Id
-                     join tenant in this.Context.Tenants on ci.TenantId equals tenant.Id
+                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
                      join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                      where usert.UserId == userId
                      select si)
-            .Where(predicate);
+            .AsNoTracking()
+            .Where(filter.GeneratePredicate());
 
-        if (distinct)
-            query = query.Distinct();
-
-        if (sort?.Any() == true)
-            query = query.OrderByProperty(sort);
-        if (take.HasValue)
-            query = query.Take(take.Value);
-        if (skip.HasValue)
-            query = query.Skip(skip.Value);
+        if (filter.Sort?.Any() == true)
+            query = query.OrderByProperty(filter.Sort);
+        else query = query.OrderBy(si => si.Name);
+        if (filter.Quantity.HasValue)
+            query = query.Take(filter.Quantity.Value);
+        if (filter.Page.HasValue && filter.Quantity.HasValue && filter.Page > 1)
+            query = query.Skip(filter.Page.Value * filter.Quantity.Value);
 
         return query
-            .AsNoTracking()
             .ToArray();
+    }
+
+    public ServerItem? FindForId(string key, long userId)
+    {
+        var query = from si in this.Context.ServerItems
+                    join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
+                    join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
+                    where si.ServiceNowKey == key
+                       && usert.UserId == userId
+                    select si;
+
+        return query.FirstOrDefault();
     }
     #endregion
 }

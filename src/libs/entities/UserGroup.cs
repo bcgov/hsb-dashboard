@@ -9,7 +9,7 @@ public class UserGroup : Auditable
     /// <summary>
     ///
     /// </summary>
-    public long UserId { get; set; }
+    public int UserId { get; set; }
 
     /// <summary>
     ///
@@ -47,7 +47,7 @@ public class UserGroup : Auditable
     /// </summary>
     /// <param name="userId"></param>
     /// <param name="groupId"></param>
-    public UserGroup(long userId, int groupId)
+    public UserGroup(int userId, int groupId)
     {
         this.UserId = userId;
         this.GroupId = groupId;
