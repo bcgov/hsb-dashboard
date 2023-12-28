@@ -31,7 +31,6 @@ const data = {
         data: [100, 0, 0], // Represents full 100% of the ring
         backgroundColor: ['#DF9901'],
         borderColor: ['#DF9901'],
-        borderAlign: 'inner',
       },
     ],
 };
