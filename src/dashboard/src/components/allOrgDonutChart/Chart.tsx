@@ -15,8 +15,8 @@ const data = {
       {
         label: 'Unused', // Outer ring
         data: [25, 0, 0], // Represents 25% of the ring 
-        backgroundColor: ['#8F8F8F'],
-        borderColor: ['#8F8F8F'],
+        backgroundColor: ['#C4C7CA'],
+        borderColor: ['#C4C7CA'],
         circumference: 90, // Quarter of the circle
       },
       {
