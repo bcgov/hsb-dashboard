@@ -9,8 +9,8 @@ import styles from './StyleGuide.module.scss';
 
 export default function Page() {
   return (
-    <div className={`dashboardContainer ${styles.styleGuide}`}>
-      <div className={`panel ${styles.panel}`}>
+    <div className={styles.styleGuide}>
+      <div className={styles.panel}>
         <h1 className={styles.heading}>Welcome to the Storage Dashboard Style Guide</h1>
         <div>
           <h2 className={styles.heading}>Colours</h2>

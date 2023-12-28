@@ -1,0 +1,19 @@
+@import '@/styles/utils.scss';
+
+.lineChart {
+    button {
+        @include export-btn;
+    }
+}
+
+.panel {
+    @include panel-style(370px, unset, unset, 638px);
+}
+
+.panelLarge {
+    @include panel-style(560px, unset, unset, 1310px);
+
+    .chartContainer {
+        min-height: 500px;
+    }
+}
