@@ -140,7 +140,27 @@ export default function Page() {
                 />
               </div>
               <div>
-                <Select options={groupOptions} placeholder="select" />
+                <Select
+                  options={groupOptions}
+                  placeholder="select"
+                  multiple
+                  value={data.groups?.map((g) => g.id.toString())}
+                  onChange={(values) => {
+                    if (Array.isArray(values)) {
+                      setRecords((users) =>
+                        users.map((u) =>
+                          u.id === data.id
+                            ? {
+                                ...u,
+                                groups: groups.filter((g) => values?.some((v) => v == g.id)),
+                                isDirty: true,
+                              }
+                            : u,
+                        ),
+                      );
+                    }
+                  }}
+                />
               </div>
             </>
           );

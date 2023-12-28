@@ -10,7 +10,7 @@ import {
   useFilteredServerItems,
   useFilteredTenants,
 } from '@/hooks/filter';
-import { useApp, useFiltered } from '@/store';
+import { useFiltered } from '@/store';
 import moment from 'moment';
 import React from 'react';
 import styles from './Filter.module.scss';
@@ -19,8 +19,6 @@ export const Filter: React.FC = () => {
   const { tenants } = useTenants();
   const { organizations } = useOrganizations();
   const { operatingSystemItems } = useOperatingSystemItems();
-
-  const serverItems = useApp((state) => state.serverItems);
 
   const dateRange = useFiltered((state) => state.dateRange);
   const setDateRange = useFiltered((state) => state.setDateRange);
@@ -43,6 +41,7 @@ export const Filter: React.FC = () => {
 
   const serverItem = useFiltered((state) => state.serverItem);
   const setServerItem = useFiltered((state) => state.setServerItem);
+  const serverItems = useFiltered((state) => state.serverItems);
   const setServerItems = useFiltered((state) => state.setServerItems);
   const { options: filteredServerItemOptions, findServerItems } = useFilteredServerItems();
 
@@ -91,17 +90,17 @@ export const Filter: React.FC = () => {
     <div className={styles.filter}>
       <h1>Filter</h1>
       <Select
+        label="Tenant"
         variant="filter"
         options={filteredTenantOptions}
-        label="Tenant"
         placeholder="Select tenant"
         value={tenant?.id ?? ''}
-        onChange={async (e) => {
-          const tenant = tenants.find((t) => t.id === +e.target.value);
+        onChange={async (value) => {
+          const tenant = tenants.find((t) => t.id == value);
           setTenant(tenant);
           setOrganization();
           setOperatingSystemItem();
-          setServerItem(undefined);
+          setServerItem();
 
           if (tenant) {
             const organizations = await findOrganizations({ tenantId: tenant.id });
@@ -123,21 +122,21 @@ export const Filter: React.FC = () => {
           } else {
             setOrganizations(organizations);
             setOperatingSystemItems(operatingSystemItems);
-            setServerItems(serverItems);
+            await handleFindServerItems(dateRange, tenant);
           }
         }}
       />
       <Select
+        label="Organization"
         variant="filter"
         options={filteredOrganizationOptions}
-        label="Organization"
         placeholder="Select organization"
         value={organization?.id ?? ''}
-        onChange={async (e) => {
-          const organization = organizations.find((o) => o.id === +e.target.value);
+        onChange={async (value) => {
+          const organization = organizations.find((o) => o.id == value);
           setOrganization(organization);
           setOperatingSystemItem();
-          setServerItem(undefined);
+          setServerItem();
 
           if (organization) {
             const operatingSystems = await findOperatingSystemItems({
@@ -155,18 +154,18 @@ export const Filter: React.FC = () => {
             if (serverItems.length === 1) setServerItem(serverItems[0]);
           } else {
             setOperatingSystemItems(operatingSystemItems);
-            setServerItems(serverItems);
+            await handleFindServerItems(dateRange, tenant, organization);
           }
         }}
       />
       <Select
+        label="Operating system"
         variant="filter"
         options={filteredOperatingSystemItemOptions}
-        label="Operating system"
         placeholder="Select OS"
         value={operatingSystemItem?.id ?? ''}
-        onChange={async (e) => {
-          const operatingSystemItem = operatingSystemItems.find((o) => o.id === +e.target.value);
+        onChange={async (value) => {
+          const operatingSystemItem = operatingSystemItems.find((o) => o.id == value);
           setOperatingSystemItem(operatingSystemItem);
           setServerItem();
 
@@ -179,18 +178,18 @@ export const Filter: React.FC = () => {
             );
             if (serverItems.length === 1) setServerItem(serverItems[0]);
           } else {
-            setServerItems(serverItems);
+            await handleFindServerItems(dateRange, tenant, organization, operatingSystemItem);
           }
         }}
       />
       <Select
+        label="Server"
         variant="filter"
         options={filteredServerItemOptions}
-        label="Server"
         placeholder="Select server"
         value={serverItem?.serviceNowKey ?? ''}
-        onChange={async (e) => {
-          const server = serverItems.find((o) => o.serviceNowKey === e.target.value);
+        onChange={async (value) => {
+          const server = serverItems.find((o) => o.serviceNowKey == value);
           setServerItem(server);
         }}
       />

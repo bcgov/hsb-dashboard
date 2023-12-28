@@ -101,8 +101,14 @@
       font-size: $font-size-small;
     }
 
-    option {
+    >option {
       font-family: $bc-sans;
     }
   }
+}
+
+
+.selected {
+  background-color: $bc-blue;
+  color: $white;
 }
