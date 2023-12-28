@@ -37,7 +37,7 @@ export const Header: React.FC = () => {
 
   return (
     <>
-      <header className={`${style.header} ${isClient && isDashboardView && style.filterPadding}`}>
+      <header className={`${style.header} ${isDashboardView && style.filterPadding}`}>
         <div className={style.container}>
           <div
             className={`${

@@ -1,7 +1,10 @@
-'use client';
-
-import { Sheet } from '@/components';
+import { AllOrgDonutChart } from '@/components/allOrgDonutChart';
 
 export default function Page() {
-  return <Sheet></Sheet>;
+  return (
+    <>
+      HSB Dashboard
+      <AllOrgDonutChart />
+    </>
+  );
 }

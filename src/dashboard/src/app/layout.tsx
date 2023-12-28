@@ -18,7 +18,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </head>
         <body className="bg-gray">
           <Header />
-          {children}
+          <div className="dashboardContainer">
+            {children}
+          </div>
           <Footer />
         </body>
       </SessionProviderWrapper>

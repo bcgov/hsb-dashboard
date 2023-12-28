@@ -31,20 +31,20 @@ html {
 }
 
 body {
-  font-size: 1em; // Equals the font-size defined on html element (16px)
+  font-size: 1rem; // Equals the font-size defined on html element (16px)
   font-family: "BCSans";
 }
 
 h1 {
-  font-size: 1.25em;
+  font-size: 1.25rem;
   font-weight: bold;
 }
 
 h2 {
-  font-size: 1em;
+  font-size: 1rem;
   font-weight: bold;
 }
 
 p {
-  font-size: 1em; // Equals the font-size of body (16px if base is 16px)
+  font-size: 1rem; // Equals the font-size of body (16px if base is 16px)
 }
