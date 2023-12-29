@@ -19,7 +19,11 @@ export const BarChart: React.FC<BarChartProps> = ({ percentUsed, totalStorage })
         <div
           className={styles.percentage}
           style={{ width: `${validPercentage}%` }} // Use inline style to set width
-        ></div>
+        >
+          <div className={styles.tooltip}>
+            <p>{validPercentage}% used</p>
+          </div>
+        </div>
       </div>
       <p>{usedStorage.toFixed(2)} TB of {totalStorage} TB Used</p>
     </div>

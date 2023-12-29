@@ -11,9 +11,9 @@
 }
 
 .panelLarge {
-    @include panel-style(560px, unset, unset, 1310px);
+    @include panel-style(480px, unset, unset, 1310px);
 
     .chartContainer {
-        min-height: 500px;
+        min-height: 420px;
     }
 }

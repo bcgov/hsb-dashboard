@@ -30,7 +30,6 @@
     scrollbar-color: $chart-gray $light-gray;
 
     &::-webkit-scrollbar-track {
-        background-color: $light-gray;
         border-radius: 10px;
       }
 
@@ -78,6 +77,21 @@
     background-color: $chart-gray;
     border-radius: 10px;
     margin-top: 12px;
+
+    &:hover {
+        background-color: $dark-gray;
+        transition: background-color, .4s;
+
+        .percentage {
+            background-color: $bc-blue;
+            transition: background-color, .4s;
+
+            .tooltip {
+                opacity: .85;
+                transition: opacity, .4s;
+            }
+        }
+    }
 }
 
 .percentage {
@@ -85,6 +99,38 @@
     width: 50%;
     background-color: $chart-blue;
     border-radius: 10px;
+    position: relative;
+}
+
+.tooltip {
+    opacity: 0;
+    background-color: $bc-black;
+    height: 25px;
+    width: 100px;
+    position: absolute;
+    top: -30px;
+    right: 0;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+
+    &::after {
+        content: "";
+        height: 8px;
+        width: 8px;
+        display: inline-block;
+        background-color: #313132;
+        transform: rotate(135deg);
+        position: absolute;
+        bottom: -4px;
+    }
+
+    p {
+        color: $white;
+        position: unset;
+    }
 }
 
 .footer {
