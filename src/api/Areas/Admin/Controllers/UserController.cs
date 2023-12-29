@@ -27,6 +27,7 @@ public class UserController : ControllerBase
 {
     #region Variables
     private readonly IUserService _userService;
+    private readonly IGroupService _groupService;
     private readonly ICssHelper _cssHelper;
     private readonly JsonSerializerOptions _serializerOptions;
     #endregion
@@ -36,14 +37,17 @@ public class UserController : ControllerBase
     /// Creates a new instance of a UserController object, initializes with specified parameters.
     /// </summary>
     /// <param name="userService"></param>
+    /// <param name="groupService"></param>
     /// <param name="cssHelper"></param>
     /// <param name="serializerOptions"></param>
     public UserController(
         IUserService userService,
+        IGroupService groupService,
         ICssHelper cssHelper,
         IOptions<JsonSerializerOptions> serializerOptions)
     {
         _userService = userService;
+        _groupService = groupService;
         _cssHelper = cssHelper;
         _serializerOptions = serializerOptions.Value;
     }
@@ -63,7 +67,7 @@ public class UserController : ControllerBase
         var uri = new Uri(this.Request.GetDisplayUrl());
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
         var filter = new HSB.Models.Filters.UserFilter(query);
-        var result = _userService.Find(filter.GeneratePredicate(), filter.Sort);
+        var result = _userService.Find(filter);
         return new JsonResult(result.Select(u => new UserModel(u)).ToArray());
     }
 
@@ -80,9 +84,7 @@ public class UserController : ControllerBase
     public IActionResult GetForId(int id)
     {
         var result = _userService.FindForId(id);
-
         if (result == null) return new NoContentResult();
-
         return new JsonResult(new UserModel(result));
     }
 
@@ -120,9 +122,18 @@ public class UserController : ControllerBase
     public async Task<IActionResult> UpdateAsync(UserModel model)
     {
         var entry = _userService.Update((Entities.User)model);
-        var roles = entry.Entity.Groups.SelectMany(g => g.Roles.Select(r => r.Name)).Distinct().ToArray();
 
-        await _cssHelper.UpdateUserRolesAsync(model.Key.ToString(), roles);
+        // Fetch groups from database to get roles associated with them.
+        var roles = new List<string>();
+        foreach (var group in entry.Entity.GroupsManyToMany)
+        {
+            var entity = _groupService.FindForId(group.GroupId);
+            if (entity != null)
+                roles.AddRange(entity.RolesManyToMany.Select(r => r.Role!.Name));
+        }
+        roles = roles.Distinct().ToList();
+
+        await _cssHelper.UpdateUserRolesAsync(model.Key.ToString(), roles.ToArray());
         _userService.CommitTransaction();
         return new JsonResult(new UserModel(entry.Entity));
     }

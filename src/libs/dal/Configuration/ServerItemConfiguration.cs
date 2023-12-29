@@ -27,6 +27,10 @@ public class ServerItemConfiguration : AuditableConfiguration<ServerItem>
         builder.Property(m => m.Platform).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
         builder.Property(m => m.IPAddress).IsRequired().HasMaxLength(50).HasDefaultValueSql("''");
         builder.Property(m => m.FQDN).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
+        builder.Property(m => m.DiskSpace);
+
+        builder.Property(m => m.Capacity);
+        builder.Property(m => m.AvailableSpace);
 
         builder.HasOne(m => m.Tenant).WithMany(m => m.ServerItems).HasForeignKey(m => m.TenantId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(m => m.Organization).WithMany(m => m.ServerItems).HasForeignKey(m => m.OrganizationId).OnDelete(DeleteBehavior.Cascade);

@@ -6,14 +6,15 @@ import {
   IRoleModel,
   IServerItemModel,
   ITenantModel,
+  IUserInfoModel,
   IUserModel,
 } from '@/hooks/api';
 import { create } from 'zustand';
 
 export interface IAppState {
   // User
-  userinfo?: any; // TODO: Replace with interface.
-  setUserinfo: (value: any) => void;
+  userinfo?: IUserInfoModel; // TODO: Replace with interface.
+  setUserinfo: (value: IUserInfoModel) => void;
 
   // Roles
   roles: IRoleModel[];

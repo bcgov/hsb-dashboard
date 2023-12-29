@@ -21,7 +21,7 @@ import React from 'react';
 import { IUserForm } from './IUserForm';
 
 export default function Page() {
-  const { isReady: isReadyUsers, users } = useUsers();
+  const { isReady: isReadyUsers, users } = useUsers({ includeGroups: true });
   const { isReady: isReadyGroups, groups, options: groupOptions } = useGroups();
   const { update: updateUser } = useApiUsers();
 

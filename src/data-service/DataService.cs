@@ -387,14 +387,14 @@ public class DataService : IDataService
             fileSystemItem.StorageType = fileSystemItemSN.Data.StorageType ?? "";
             fileSystemItem.MediaType = fileSystemItemSN.Data.MediaType ?? "";
             fileSystemItem.VolumeId = fileSystemItemSN.Data.VolumeId ?? "";
-            fileSystemItem.Capacity = fileSystemItemSN.Data.Capacity ?? "";
-            fileSystemItem.DiskSpace = fileSystemItemSN.Data.DiskSpace ?? "";
+            fileSystemItem.Capacity = !String.IsNullOrWhiteSpace(fileSystemItemSN.Data.Capacity) ? Int32.Parse(fileSystemItemSN.Data.Capacity) : 0;
+            fileSystemItem.DiskSpace = !String.IsNullOrWhiteSpace(fileSystemItemSN.Data.DiskSpace) ? float.Parse(fileSystemItemSN.Data.DiskSpace) : 0;
             fileSystemItem.Size = fileSystemItemSN.Data.Size ?? "";
-            fileSystemItem.SizeBytes = fileSystemItemSN.Data.SizeBytes ?? "";
-            fileSystemItem.UsedSizeBytes = fileSystemItemSN.Data.UsedSizeBytes ?? "";
-            fileSystemItem.AvailableSpace = fileSystemItemSN.Data.AvailableSpace ?? "";
+            fileSystemItem.SizeBytes = !String.IsNullOrWhiteSpace(fileSystemItemSN.Data.SizeBytes) ? long.Parse(fileSystemItemSN.Data.SizeBytes) : 0;
+            fileSystemItem.UsedSizeBytes = !String.IsNullOrWhiteSpace(fileSystemItemSN.Data.UsedSizeBytes) ? long.Parse(fileSystemItemSN.Data.UsedSizeBytes) : 0;
+            fileSystemItem.AvailableSpace = !String.IsNullOrWhiteSpace(fileSystemItemSN.Data.AvailableSpace) ? Int32.Parse(fileSystemItemSN.Data.AvailableSpace) : 0;
             fileSystemItem.FreeSpace = fileSystemItemSN.Data.FreeSpace ?? "";
-            fileSystemItem.FreeSpaceBytes = fileSystemItemSN.Data.FreeSpaceBytes ?? "";
+            fileSystemItem.FreeSpaceBytes = !String.IsNullOrWhiteSpace(fileSystemItemSN.Data.FreeSpaceBytes) ? long.Parse(fileSystemItemSN.Data.FreeSpaceBytes) : 0;
 
             fileSystemItem = await this.HsbApi.UpdateFileSystemItemAsync(fileSystemItem);
         }

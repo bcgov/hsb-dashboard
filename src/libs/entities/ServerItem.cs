@@ -52,6 +52,12 @@ public class ServerItem : Auditable
     public string Platform { get; set; } = "";
     public string IPAddress { get; set; } = "";
     public string FQDN { get; set; } = "";
+    public float? DiskSpace { get; set; }
+    #endregion
+
+    #region ServiceNow File System Item Summary Properties
+    public float? Capacity { get; set; }
+    public float? AvailableSpace { get; set; }
     #endregion
 
     /// <summary>
@@ -94,6 +100,7 @@ public class ServerItem : Auditable
         this.Platform = serverData.GetElementValue<string>(".u_platform") ?? "";
         this.IPAddress = serverData.GetElementValue<string>(".ip_address") ?? "";
         this.FQDN = serverData.GetElementValue<string>(".fqdn") ?? "";
+        this.DiskSpace = serverData.GetElementValue<float?>(".disk_space");
     }
     #endregion
 }

@@ -23,12 +23,15 @@ export interface IServerItemModel extends IAuditableModel {
   name: string;
   category: string;
   subCategory: string;
-  diskSpace: string;
   dnsDomain: string;
   className: string;
   platform: string;
   ipAddress: string;
   fqdn: string;
+  diskSpace?: string;
+
+  capacity?: number;
+  availableSpace?: number;
 
   // Collections
   fileSystemItems: IFileSystemItemModel[];
