@@ -85,7 +85,12 @@ public static class JsonElementExtensions
         return node.ValueKind switch
         {
             JsonValueKind.String => !typeof(T).IsEnum ?
-                (T)Convert.ChangeType($"{node.GetString()}".Trim(), typeof(T)) :
+                (typeof(T) == typeof(string) ?
+                    (T)Convert.ChangeType($"{node.GetString()}".Trim(), typeof(T)) :
+                    (!String.IsNullOrWhiteSpace(node.GetString()) ?
+                        Converter.ChangeType<T>($"{node.GetString()}") :
+                        default
+                        )) :
                 (T)Enum.Parse(typeof(T), node.GetString() ?? ""),
             JsonValueKind.Null or JsonValueKind.Undefined => defaultValue,
             JsonValueKind.Number => node.ConvertNumberTo<T>(),

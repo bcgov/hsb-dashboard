@@ -31,14 +31,14 @@ public class FileSystemItem : Auditable
     public string MediaType { get; set; } = "";
     public string VolumeId { get; set; } = "";
     public string ClassName { get; set; } = "";
-    public string Capacity { get; set; } = "";
-    public string DiskSpace { get; set; } = "";
+    public int Capacity { get; set; }
+    public float DiskSpace { get; set; }
     public string Size { get; set; } = "";
-    public string SizeBytes { get; set; } = "";
-    public string UsedSizeBytes { get; set; } = "";
-    public string AvailableSpace { get; set; } = "";
+    public long SizeBytes { get; set; }
+    public long? UsedSizeBytes { get; set; }
+    public int AvailableSpace { get; set; }
     public string FreeSpace { get; set; } = "";
-    public string FreeSpaceBytes { get; set; } = "";
+    public long FreeSpaceBytes { get; set; }
     #endregion
 
     /// <summary>
@@ -72,14 +72,14 @@ public class FileSystemItem : Auditable
         this.StorageType = fileSystemItemData.GetElementValue<string>(".u_platform") ?? "";
         this.MediaType = fileSystemItemData.GetElementValue<string>(".dns_domain") ?? "";
         this.VolumeId = fileSystemItemData.GetElementValue<string>(".volume_id") ?? "";
-        this.Capacity = fileSystemItemData.GetElementValue<string>(".capacity") ?? "";
-        this.DiskSpace = fileSystemItemData.GetElementValue<string>(".disk_space") ?? "";
+        this.Capacity = fileSystemItemData.GetElementValue<int>(".capacity");
+        this.DiskSpace = fileSystemItemData.GetElementValue<float>(".disk_space");
         this.Size = fileSystemItemData.GetElementValue<string>(".size") ?? "";
-        this.SizeBytes = fileSystemItemData.GetElementValue<string>(".size_bytes") ?? "";
-        this.UsedSizeBytes = fileSystemItemData.GetElementValue<string>(".used_size_bytes") ?? "";
-        this.AvailableSpace = fileSystemItemData.GetElementValue<string>(".available_space") ?? "";
+        this.SizeBytes = fileSystemItemData.GetElementValue<long>(".size_bytes");
+        this.UsedSizeBytes = fileSystemItemData.GetElementValue<long>(".used_size_bytes");
+        this.AvailableSpace = fileSystemItemData.GetElementValue<int>(".available_space");
         this.FreeSpace = fileSystemItemData.GetElementValue<string>(".free_space") ?? "";
-        this.FreeSpaceBytes = fileSystemItemData.GetElementValue<string>(".free_space_bytes") ?? "";
+        this.FreeSpaceBytes = fileSystemItemData.GetElementValue<long>(".free_space_bytes");
     }
     #endregion
 }

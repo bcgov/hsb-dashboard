@@ -13,6 +13,9 @@ export const useApiUsers = () => {
       find: async (filter: IUserFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/admin/users?${toQueryString(filter)}`);
       },
+      get: async (id: number): Promise<Response> => {
+        return await dispatch(`/api/admin/users/${id}`);
+      },
       update: async (model: IUserModel): Promise<Response> => {
         const url = `/api/admin/users/${model.id}`;
         const res = await dispatch(url, {

@@ -2,7 +2,12 @@
 
 import { Button, DateRangePicker, Select } from '@/components';
 import { IOperatingSystemItemModel, IOrganizationModel, ITenantModel } from '@/hooks';
-import { useOperatingSystemItems, useOrganizations, useTenants } from '@/hooks/data';
+import {
+  useOperatingSystemItems,
+  useOrganizations,
+  useServerItems,
+  useTenants,
+} from '@/hooks/data';
 import {
   useFilteredFileSystemItems,
   useFilteredOperatingSystemItems,
@@ -19,6 +24,7 @@ export const Filter: React.FC = () => {
   const { tenants } = useTenants();
   const { organizations } = useOrganizations();
   const { operatingSystemItems } = useOperatingSystemItems();
+  const { serverItems } = useServerItems();
 
   const dateRange = useFiltered((state) => state.dateRange);
   const setDateRange = useFiltered((state) => state.setDateRange);
@@ -41,7 +47,6 @@ export const Filter: React.FC = () => {
 
   const serverItem = useFiltered((state) => state.serverItem);
   const setServerItem = useFiltered((state) => state.setServerItem);
-  const serverItems = useFiltered((state) => state.serverItems);
   const setServerItems = useFiltered((state) => state.setServerItems);
   const { options: filteredServerItemOptions, findServerItems } = useFilteredServerItems();
 
@@ -58,6 +63,10 @@ export const Filter: React.FC = () => {
   React.useEffect(() => {
     setOperatingSystemItems(operatingSystemItems);
   }, [setOperatingSystemItems, operatingSystemItems]);
+
+  React.useEffect(() => {
+    setServerItems(serverItems);
+  }, [setServerItems, serverItems]);
 
   React.useEffect(() => {
     if (!dateRange[0]) {
@@ -191,6 +200,8 @@ export const Filter: React.FC = () => {
         onChange={async (value) => {
           const server = serverItems.find((o) => o.serviceNowKey == value);
           setServerItem(server);
+          if (server) setServerItems([server]);
+          else setServerItems(serverItems);
         }}
       />
       <DateRangePicker

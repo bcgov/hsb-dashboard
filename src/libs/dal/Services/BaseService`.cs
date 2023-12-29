@@ -112,7 +112,9 @@ public abstract class BaseService<TEntity> : BaseService, IBaseService<TEntity>
     /// <returns></returns>
     public virtual Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<TEntity> Add(TEntity entity)
     {
-        return this.Context.Add(entity);
+        var entry = this.Context.Entry(entity);
+        entry.State = EntityState.Added;
+        return entry;
     }
 
     /// <summary>
@@ -122,7 +124,9 @@ public abstract class BaseService<TEntity> : BaseService, IBaseService<TEntity>
     /// <returns></returns>
     public virtual Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<TEntity> Update(TEntity entity)
     {
-        return this.Context.Update(entity);
+        var entry = this.Context.Entry(entity);
+        entry.State = EntityState.Modified;
+        return entry;
     }
 
     /// <summary>
@@ -132,7 +136,9 @@ public abstract class BaseService<TEntity> : BaseService, IBaseService<TEntity>
     /// <returns></returns>
     public virtual Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<TEntity> Remove(TEntity entity)
     {
-        return this.Context.Remove(entity);
+        var entry = this.Context.Entry(entity);
+        entry.State = EntityState.Deleted;
+        return entry;
     }
     #endregion
 }

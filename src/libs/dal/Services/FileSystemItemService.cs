@@ -2,6 +2,7 @@ using System.Security.Claims;
 using HSB.DAL.Extensions;
 using HSB.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 
 namespace HSB.DAL.Services;
@@ -68,6 +69,46 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
         return query
             .AsNoTracking()
             .ToArray();
+    }
+
+    /// <summary>
+    /// Add a new file system item record to the database.
+    /// Update the owning server with the volume space information.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    public override EntityEntry<FileSystemItem> Add(FileSystemItem entity)
+    {
+        // Sum up all file system items for the server and update the server.
+        var server = this.Context.ServerItems.FirstOrDefault(si => si.ServiceNowKey == entity.ServerItemServiceNowKey);
+        if (server != null)
+        {
+            var volumes = this.Context.FileSystemItems.Where(fsi => fsi.ServerItemServiceNowKey == entity.ServerItemServiceNowKey).ToArray();
+            server.Capacity = volumes.Sum(v => v.Capacity);
+            server.AvailableSpace = volumes.Sum(v => v.AvailableSpace);
+            this.Context.Entry(server).State = EntityState.Modified;
+        }
+        return base.Add(entity);
+    }
+
+    /// <summary>
+    /// Update the file system item record in the database.
+    /// Update the owning server with the volume space information.
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <returns></returns>
+    public override EntityEntry<FileSystemItem> Update(FileSystemItem entity)
+    {
+        // Sum up all file system items for the server and update the server.
+        var server = this.Context.ServerItems.FirstOrDefault(si => si.ServiceNowKey == entity.ServerItemServiceNowKey);
+        if (server != null)
+        {
+            var volumes = this.Context.FileSystemItems.Where(fsi => fsi.ServerItemServiceNowKey == entity.ServerItemServiceNowKey).ToArray();
+            server.Capacity = volumes.Sum(v => v.Capacity);
+            server.AvailableSpace = volumes.Sum(v => v.AvailableSpace);
+            this.Context.Entry(server).State = EntityState.Modified;
+        }
+        return base.Update(entity);
     }
     #endregion
 }

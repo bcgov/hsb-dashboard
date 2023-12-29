@@ -1,7 +1,8 @@
+import { IAuditableModel } from '.';
 import { IGroupModel } from './IGroupModel';
 import { ITenantModel } from './ITenantModel';
 
-export interface IUserModel {
+export interface IUserModel extends IAuditableModel {
   id: number;
   username: string;
   email: string;

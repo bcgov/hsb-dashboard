@@ -14,7 +14,7 @@ public class PrincipalModel
     /// <summary>
     /// get/set - Primary key to identify user.
     /// </summary>
-    public long Id { get; set; }
+    public int Id { get; set; }
 
     /// <summary>
     /// get/set - Unique key to link to Keycloak.
@@ -76,6 +76,10 @@ public class PrincipalModel
     /// </summary>
     public JsonDocument Preferences { get; set; } = JsonDocument.Parse("{}");
 
+    /// <summary>
+    /// get/set - The current row version.
+    /// </summary>
+    public long? Version { get; set; }
     #endregion
 
     #region Constructors
@@ -89,9 +93,8 @@ public class PrincipalModel
     /// </summary>
     /// <param name="principal"></param>
     /// <param name="user"></param>
-    /// <param name="options"></param>
 
-    public PrincipalModel(ClaimsPrincipal principal, User? user, JsonSerializerOptions options)
+    public PrincipalModel(ClaimsPrincipal principal, User? user)
     {
         this.Id = user?.Id ?? 0;
         this.Key = principal.GetKey();
@@ -105,6 +108,7 @@ public class PrincipalModel
         this.Preferences = user?.Preferences ?? JsonDocument.Parse("{}");
         this.Groups = user?.Groups.Select(g => g.Name).Distinct() ?? Array.Empty<string>();
         this.Roles = user?.Groups.SelectMany(g => g.Roles).Select(r => r.Name).Distinct() ?? principal.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
+        this.Version = user?.Version;
     }
     #endregion
 }

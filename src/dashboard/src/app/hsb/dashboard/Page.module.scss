@@ -1,0 +1,11 @@
+@import '@/styles/utils.scss';
+
+.page {
+  >div:first-child {
+    gap: 2rem;
+
+    >div {
+      flex: 1;
+    }
+  }
+}

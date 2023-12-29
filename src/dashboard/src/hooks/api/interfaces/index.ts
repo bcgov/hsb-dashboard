@@ -19,4 +19,5 @@ export * from './ISortableModel';
 export * from './ITenantFilter';
 export * from './ITenantModel';
 export * from './IUserFilter';
+export * from './IUserInfoModel';
 export * from './IUserModel';

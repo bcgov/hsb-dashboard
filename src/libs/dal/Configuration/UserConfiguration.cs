@@ -24,7 +24,6 @@ public class UserConfiguration : AuditableConfiguration<User>
         builder.Property(m => m.IsEnabled).IsRequired();
         builder.Property(m => m.Note).IsRequired().HasColumnType("text").HasDefaultValueSql("''");
         builder.Property(m => m.Preferences).IsRequired().HasColumnType("jsonb").HasDefaultValueSql("'{}'::jsonb");
-        builder.Property(m => m.FailedLogins).IsRequired().HasDefaultValueSql("0");
         builder.Property(m => m.LastLoginOn);
 
         builder.HasMany(m => m.Groups).WithMany(m => m.Users).UsingEntity<UserGroup>();

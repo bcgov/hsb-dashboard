@@ -24,7 +24,6 @@ public class AuthController : ControllerBase
 {
     #region Variables
     private readonly ICssHelper _cssHelper;
-    private readonly JsonSerializerOptions _serializerOptions;
     #endregion
 
     #region Constructors
@@ -32,11 +31,9 @@ public class AuthController : ControllerBase
     /// Creates a new instance of a AuthController object, initializes with specified parameters.
     /// </summary>
     /// <param name="cssHelper"></param>
-    /// <param name="serializerOptions"></param>
-    public AuthController(ICssHelper cssHelper, IOptions<JsonSerializerOptions> serializerOptions)
+    public AuthController(ICssHelper cssHelper)
     {
         _cssHelper = cssHelper;
-        _serializerOptions = serializerOptions.Value;
     }
     #endregion
 
@@ -54,7 +51,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> UserInfoAsync()
     {
         var user = await _cssHelper.ActivateAsync(this.User);
-        return new JsonResult(new PrincipalModel(this.User, user, _serializerOptions));
+        return new JsonResult(new PrincipalModel(this.User, user));
     }
     #endregion
 }

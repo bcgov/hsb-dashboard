@@ -19,14 +19,14 @@ public class FileSystemItemModel : AuditableModel
     public string StorageType { get; set; } = "";
     public string MediaType { get; set; } = "";
     public string VolumeId { get; set; } = "";
-    public string Capacity { get; set; } = "";
-    public string DiskSpace { get; set; } = "";
+    public int Capacity { get; set; }
+    public float DiskSpace { get; set; }
     public string Size { get; set; } = "";
-    public string SizeBytes { get; set; } = "";
-    public string UsedSizeBytes { get; set; } = "";
-    public string AvailableSpace { get; set; } = "";
+    public long SizeBytes { get; set; }
+    public long? UsedSizeBytes { get; set; }
+    public int AvailableSpace { get; set; }
     public string FreeSpace { get; set; } = "";
-    public string FreeSpaceBytes { get; set; } = "";
+    public long FreeSpaceBytes { get; set; }
     #endregion
     #endregion
 
@@ -79,14 +79,14 @@ public class FileSystemItemModel : AuditableModel
         this.StorageType = fileSystemItemModel.Data.StorageType ?? "";
         this.MediaType = fileSystemItemModel.Data.MediaType ?? "";
         this.VolumeId = fileSystemItemModel.Data.VolumeId ?? "";
-        this.Capacity = fileSystemItemModel.Data.Capacity ?? "";
-        this.DiskSpace = fileSystemItemModel.Data.DiskSpace ?? "";
+        this.Capacity = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.Capacity) ? Int32.Parse(fileSystemItemModel.Data.Capacity) : 0;
+        this.DiskSpace = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.DiskSpace) ? float.Parse(fileSystemItemModel.Data.DiskSpace) : 0;
         this.Size = fileSystemItemModel.Data.Size ?? "";
-        this.SizeBytes = fileSystemItemModel.Data.SizeBytes ?? "";
-        this.UsedSizeBytes = fileSystemItemModel.Data.UsedSizeBytes ?? "";
-        this.AvailableSpace = fileSystemItemModel.Data.AvailableSpace ?? "";
+        this.SizeBytes = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.SizeBytes) ? long.Parse(fileSystemItemModel.Data.SizeBytes) : 0;
+        this.UsedSizeBytes = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.UsedSizeBytes) ? long.Parse(fileSystemItemModel.Data.UsedSizeBytes) : null;
+        this.AvailableSpace = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.AvailableSpace) ? Int32.Parse(fileSystemItemModel.Data.AvailableSpace) : 0;
         this.FreeSpace = fileSystemItemModel.Data.FreeSpace ?? "";
-        this.FreeSpaceBytes = fileSystemItemModel.Data.FreeSpaceBytes ?? "";
+        this.FreeSpaceBytes = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.FreeSpaceBytes) ? long.Parse(fileSystemItemModel.Data.FreeSpaceBytes) : 0;
     }
     #endregion
 

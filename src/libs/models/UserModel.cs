@@ -66,11 +66,6 @@ public class UserModel : AuditableModel
     public bool IsEnabled { get; set; }
 
     /// <summary>
-    /// get/set - Number of failed login attempts.
-    /// </summary>
-    public int FailedLogins { get; set; }
-
-    /// <summary>
     /// get/set - Last time user logged in.
     /// </summary>
     public DateTime? LastLoginOn { get; set; }
@@ -108,7 +103,6 @@ public class UserModel : AuditableModel
         this.Email = user.Email;
         this.EmailVerified = user.EmailVerified;
         this.EmailVerifiedOn = user.EmailVerifiedOn;
-        this.FailedLogins = user.FailedLogins;
         this.FirstName = user.FirstName;
         this.MiddleName = user.MiddleName;
         this.LastName = user.LastName;
@@ -117,6 +111,10 @@ public class UserModel : AuditableModel
         this.Note = user.Note;
         this.Phone = user.Phone;
         this.Preferences = user.Preferences;
+        this.Groups = user.GroupsManyToMany.Any() ? user.GroupsManyToMany.Where(g => g.Group != null).Select(g => new GroupModel(g.Group!)) : this.Groups;
+        this.Groups = user.Groups.Any() ? user.Groups.Select(g => new GroupModel(g)) : this.Groups;
+        this.Tenants = user.TenantsManyToMany.Any() ? user.TenantsManyToMany.Where(t => t.Tenant != null).Select(t => new TenantModel(t.Tenant!)) : this.Tenants;
+        this.Tenants = user.Tenants.Any() ? user.Tenants.Select(t => new TenantModel(t)) : this.Tenants;
     }
     #endregion
 
@@ -134,7 +132,6 @@ public class UserModel : AuditableModel
             DisplayName = model.DisplayName,
             EmailVerified = model.EmailVerified,
             EmailVerifiedOn = model.EmailVerifiedOn,
-            FailedLogins = model.FailedLogins,
             FirstName = model.FirstName,
             MiddleName = model.MiddleName,
             LastName = model.LastName,

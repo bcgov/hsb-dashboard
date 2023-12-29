@@ -69,11 +69,6 @@ public class User : Auditable
     public bool IsEnabled { get; set; }
 
     /// <summary>
-    /// get/set - Number of failed login attempts.
-    /// </summary>
-    public int FailedLogins { get; set; }
-
-    /// <summary>
     /// get/set - Last time user logged in.
     /// </summary>
     public DateTime? LastLoginOn { get; set; }
