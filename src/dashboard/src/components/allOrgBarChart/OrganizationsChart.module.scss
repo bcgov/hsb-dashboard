@@ -1,0 +1,146 @@
+@import '@/styles/utils.scss';
+
+.panel {
+    @include panel-style(560px, 560px, unset, 1310px);
+
+    >button {
+        @include export-btn;
+    }
+}
+
+.sort {
+    display: flex;
+    align-items: center;
+    margin: 15px 0;
+
+    select {
+        min-width: 233px;
+    }
+
+    input {
+        margin-left: 18px;
+    }
+}
+
+.chartContainer {
+    max-height: 345px;
+    overflow-y: scroll;
+    padding-right: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: $chart-gray $light-gray;
+
+    &::-webkit-scrollbar-track {
+        background-color: $light-gray;
+        border-radius: 10px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: $chart-gray;
+        border-radius: 10px;
+      }
+
+      &::-webkit-scrollbar-thumb:hover {
+        background-color: $medium-gray;
+      }
+
+      &::-webkit-scrollbar-thumb:active {
+        background-color: $medium-gray;
+      }
+
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+}
+
+.barChart {
+    position: relative;
+    margin: 12px 0 12px;
+
+    a {
+        color: $bc-black;
+        font-weight: bold;
+        text-decoration: underline;
+        margin-left: 5px;
+    }
+
+    p {
+        position: absolute;
+        right: 8px;
+        top: 10px;
+        font-size: $font-size-12;
+        color: $info-gray;
+    }
+}
+
+.barLine {
+    height: 18px;
+    width: 100%;
+    background-color: $chart-gray;
+    border-radius: 10px;
+    margin-top: 12px;
+}
+
+.percentage {
+    height: 100%;
+    width: 50%;
+    background-color: $chart-blue;
+    border-radius: 10px;
+}
+
+.footer {
+    display: flex;
+    position: absolute;
+    bottom: 28px;
+    left: 0;
+    padding-left: 22px;
+    background-color: $white;
+    width: 100%;
+
+    p {
+        display: flex;
+        margin-right: 35px;
+
+        &::before {
+            content: '';
+            display: inline-block;
+            height: 22px;
+            width: 22px;
+            background-color: $chart-blue;
+            border-radius: 10px;
+            margin-right: 15px;
+        }
+
+        &:last-child::before {
+            background-color: $chart-gray;
+        }
+    }
+}
+
+.linesContainer {
+    height: 100%;
+    max-height: 380px;
+    position: absolute;
+    width: 100%;
+    max-width: calc(100% - 57px);
+}
+
+.percentageLine {
+    position: absolute;
+    bottom: 0;
+    height: 100%;
+    
+    .line {
+      width: 1px;
+      height: 92%;
+      background-color: $light-gray;
+    }
+    
+    .label {
+      position: absolute;
+      bottom: 5px;
+      left: 5px;
+      transform: translateX(-50%);
+      font-size: $font-size-small;
+      color: $chart-gray;
+    }
+  }
