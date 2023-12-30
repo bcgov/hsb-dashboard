@@ -200,8 +200,6 @@ export const Filter: React.FC = () => {
         onChange={async (value) => {
           const server = serverItems.find((o) => o.serviceNowKey == value);
           setServerItem(server);
-          if (server) setServerItems([server]);
-          else setServerItems(serverItems);
         }}
       />
       <DateRangePicker
