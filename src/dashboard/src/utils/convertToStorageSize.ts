@@ -40,6 +40,22 @@ export const convertToStorageSize = (
     else if (output === 'MB') result = value / Math.pow(1024, 2);
     else if (output === 'KB') result = value / 1024;
   }
+  if (result < 1) {
+    // Downsize to the smaller type.
+    if (output === 'TB') {
+      output = 'GB';
+      result *= 1024;
+    } else if (output === 'GB') {
+      output = 'MB';
+      result *= 1024;
+    } else if (output === 'MB') {
+      output = 'KB';
+      result *= 1024;
+    } else if (output === 'KB') {
+      output = '';
+      result *= 1024;
+    }
+  }
   return `${(options?.formula(result) ?? result).toLocaleString(
     locales,
     options,

@@ -2,93 +2,18 @@
 
 import { Button } from '@/components/buttons';
 import { useFiltered } from '@/store';
-import { convertToStorageSize } from '@/utils';
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js';
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import styles from './AllOrgDonutChart.module.scss';
-import { IStats } from './IStats';
+import { useDonutChart } from './useDonutChart';
 
 ChartJS.register(ArcElement, Tooltip);
-
-// Data for the Donut Chart with specified colors
-
-const defaultData = {
-  space: '0 TB',
-  used: '0 TB',
-  available: '0 TB',
-  chart: {
-    labels: ['Unused', 'Used', 'Allocated'], // Labels to match ring order
-    datasets: [
-      {
-        label: 'Unused', // Outer ring
-        data: [0, 0, 0], // Represents 25% of the ring
-        backgroundColor: ['#C4C7CA'],
-        borderColor: ['#C4C7CA'],
-        circumference: 360, // Quarter of the circle
-      },
-      {
-        label: 'Used', // Middle ring
-        data: [0, 0, 0], // Represents 75% of the ring
-        backgroundColor: ['#003366'],
-        borderColor: ['#003366'],
-        circumference: 360, // Three quarters of the circle
-      },
-      {
-        label: 'Allocated', // Inner ring
-        data: [0, 0, 0], // Represents full 100% of the ring
-        backgroundColor: ['#DF9901'],
-        borderColor: ['#DF9901'],
-      },
-    ],
-  },
-};
 
 export const AllOrgDonutChart: React.FC = () => {
   const organization = useFiltered((state) => state.organization);
   const organizations = useFiltered((state) => state.organizations);
-  const servers = useFiltered((state) => state.serverItems);
-
-  const [data, setData] = React.useState<IStats>(defaultData);
-
-  React.useEffect(() => {
-    if (servers.length) {
-      const space = servers.map((si) => si.capacity!).reduce((a, b) => (a ?? 0) + (b ?? 0));
-      const available = servers
-        .map((si) => si.availableSpace!)
-        .reduce((a, b) => (a ?? 0) + (b ?? 0));
-      const used = space - available;
-      const usedPer = (used / space) * 100;
-      const availablePer = (available / space) * 100;
-      setData((data) => ({
-        space: convertToStorageSize(space, 'MB', 'TB', navigator.language, { formula: Math.trunc }),
-        used: convertToStorageSize(used, 'MB', 'TB', navigator.language, {
-          formula: Math.trunc,
-        }),
-        available: convertToStorageSize(available, 'MB', 'TB', navigator.language, {
-          formula: Math.trunc,
-        }),
-        chart: {
-          ...data.chart,
-          datasets: [
-            {
-              ...data.chart.datasets[0],
-              data: [usedPer, 0, 0],
-              circumference: (360 * usedPer) / 100,
-            },
-            {
-              ...data.chart.datasets[1],
-              data: [availablePer, 0, 0],
-              circumference: (360 * availablePer) / 100,
-            },
-            { ...data.chart.datasets[2], data: [100, 0, 0] },
-          ],
-        },
-      }));
-    } else {
-      setData(defaultData);
-    }
-  }, [servers]);
+  const data = useDonutChart();
 
   return (
     <div className={styles.panel}>
