@@ -36,6 +36,7 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
+    "@types/chart.js": "^2.9.41",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/jwk-to-pem": "^2.0.3",
     "@types/jws": "^3.2.9",
