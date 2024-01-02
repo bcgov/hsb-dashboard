@@ -1,11 +1,10 @@
 @import '@/styles/utils.scss';
 
 .styleGuide {
-  margin: 34px auto;
+  width: 100%;
 
   >.panel {
-    margin: 0 auto;
-    max-width: $desktop;
+    @include panel-style;
 
     >div {
       margin: 20px 0;
@@ -41,6 +40,7 @@ h1.heading {
   font-size: $font-size-large;
   position: relative;
   display: inline-block;
+  margin-bottom: 50px;
 
   &::after {
     content: '';

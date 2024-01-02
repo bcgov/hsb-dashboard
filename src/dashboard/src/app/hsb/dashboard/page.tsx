@@ -1,19 +1,17 @@
-import { Col, Row } from '@/components';
 import {
   AllOrgDonutChart,
-  AllocationByStorageVolumeChart,
-  UnusedSpaceChart,
+  AllocationByStorageVolume,
+  LineChart,
 } from '@/components/charts';
-import styles from './Page.module.scss';
 
 export default function Page() {
   return (
-    <Col className={styles.page}>
-      <Row>
-        <AllOrgDonutChart />
-        <UnusedSpaceChart />
-      </Row>
-      <AllocationByStorageVolumeChart />
-    </Col>
+    <>
+      {/* HSB Dashboard */}
+      <AllOrgDonutChart />
+      <LineChart />
+      <AllocationByStorageVolume />
+      {/* <LineChart large='true' /> */}
+    </>
   );
 }

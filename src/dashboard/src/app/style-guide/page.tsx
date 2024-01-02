@@ -9,8 +9,8 @@ import styles from './StyleGuide.module.scss';
 
 export default function Page() {
   return (
-    <div className={`dashboardContainer ${styles.styleGuide}`}>
-      <div className={`panel ${styles.panel}`}>
+    <div className={styles.styleGuide}>
+      <div className={styles.panel}>
         <h1 className={styles.heading}>Welcome to the Storage Dashboard Style Guide</h1>
         <div>
           <h2 className={styles.heading}>Colours</h2>
@@ -65,8 +65,9 @@ export default function Page() {
           <Toggle></Toggle>
         </div>
         <div>
-          <h2 className={styles.heading}>Filter Select Dropdown</h2>
+          <h2 className={styles.heading}>Select Dropdown</h2>
           <Select
+            variant="filter"
             title="filter dropdown example"
             options={[]}
             label="Filter dropdown"
