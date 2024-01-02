@@ -33,7 +33,7 @@ export const OrganizationsChart: React.FC = () => {
           options={[]}
           placeholder="Highest unused space"
         />
-        <Text placeholder="Search icon" iconType={'search'}></Text>
+        <Text placeholder="Search" iconType={'search'}></Text>
         <Button variant="secondary">Search</Button>
       </div>
       <div className={styles.chartContainer}>
