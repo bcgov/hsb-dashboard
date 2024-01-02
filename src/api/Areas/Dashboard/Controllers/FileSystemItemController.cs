@@ -28,7 +28,8 @@ public class FileSystemItemController : ControllerBase
 {
     #region Variables
     private readonly ILogger _logger;
-    private readonly IFileSystemItemService _service;
+    private readonly IFileSystemItemService _fileSystemItemService;
+    private readonly IFileSystemHistoryItemService _fileSystemHistoryItemService;
     private readonly IAuthorizationHelper _authorization;
     private readonly IXlsExporter _exporter;
     #endregion
@@ -37,17 +38,20 @@ public class FileSystemItemController : ControllerBase
     /// <summary>
     /// Creates a new instance of a FileSystemItemController.
     /// </summary>
-    /// <param name="service"></param>
+    /// <param name="fileSystemItemService"></param>
+    /// <param name="fileSystemHistoryItemService"></param>
     /// <param name="authorization"></param>
     /// <param name="exporter"></param>
     /// <param name="logger"></param>
     public FileSystemItemController(
-        IFileSystemItemService service,
+        IFileSystemItemService fileSystemItemService,
+        IFileSystemHistoryItemService fileSystemHistoryItemService,
         IAuthorizationHelper authorization,
         IXlsExporter exporter,
         ILogger<FileSystemItemController> logger)
     {
-        _service = service;
+        _fileSystemItemService = fileSystemItemService;
+        _fileSystemHistoryItemService = fileSystemHistoryItemService;
         _authorization = authorization;
         _exporter = exporter;
         _logger = logger;
@@ -55,7 +59,6 @@ public class FileSystemItemController : ControllerBase
     #endregion
 
     #region Endpoints
-    // TODO: Limit based on role and tenant.
     /// <summary>
     ///
     /// </summary>
@@ -73,7 +76,7 @@ public class FileSystemItemController : ControllerBase
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
         {
-            var result = _service.Find(filter.GeneratePredicate(), filter.Sort);
+            var result = _fileSystemItemService.Find(filter.GeneratePredicate(), filter.Sort);
             return new JsonResult(result.Select(fsi => new FileSystemItemModel(fsi)));
         }
         else
@@ -82,12 +85,11 @@ public class FileSystemItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var result = _service.FindForUser(user.Id, filter.GeneratePredicate(), filter.Sort);
+            var result = _fileSystemItemService.FindForUser(user.Id, filter);
             return new JsonResult(result.Select(fsi => new FileSystemItemModel(fsi)));
         }
     }
 
-    // TODO: Limit based on role and tenant.
     /// <summary>
     ///
     /// </summary>
@@ -103,7 +105,7 @@ public class FileSystemItemController : ControllerBase
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
         {
-            var entity = _service.FindForId(id);
+            var entity = _fileSystemItemService.FindForId(id);
             if (entity == null) return new NoContentResult();
             return new JsonResult(new FileSystemItemModel(entity));
         }
@@ -113,9 +115,41 @@ public class FileSystemItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var entity = _service.FindForUser(user.Id, (t) => t.ServiceNowKey == id, fsi => fsi.ServiceNowKey).FirstOrDefault();
+            var entity = _fileSystemItemService.FindForId(id, user.Id);
             if (entity == null) return Forbid();
             return new JsonResult(new FileSystemItemModel(entity));
+        }
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("history", Name = "GetFileSystemHistoryItems-Dashboard")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<FileSystemHistoryItemModel>), (int)HttpStatusCode.OK)]
+    [SwaggerOperation(Tags = new[] { "File System Item" })]
+    public IActionResult FindHistory()
+    {
+        var uri = new Uri(this.Request.GetDisplayUrl());
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        var filter = new HSB.Models.Filters.FileSystemHistoryItemFilter(query);
+
+        var isHSB = this.User.HasClientRole(ClientRole.HSB);
+        if (isHSB)
+        {
+            var result = _fileSystemHistoryItemService.FindHistoryByMonth(filter.StartDate ?? DateTime.UtcNow.AddYears(-1), filter.EndDate, filter.TenantId, filter.OrganizationId, filter.OperatingSystemItemId, filter.ServerItemServiceNowKey);
+            return new JsonResult(result.Select(fsi => new FileSystemHistoryItemModel(fsi)));
+        }
+        else
+        {
+            // Only return server items this user has access to.
+            var user = _authorization.GetUser();
+            if (user == null) return Forbid();
+
+            var result = _fileSystemHistoryItemService.FindHistoryByMonth(filter.StartDate ?? DateTime.UtcNow.AddYears(-1), filter.EndDate, filter.TenantId, filter.OrganizationId, filter.OperatingSystemItemId, filter.ServerItemServiceNowKey);
+            // var result = _fileSystemHistoryItemService.FindForUser(user.Id, filter);
+            return new JsonResult(result.Select(fsi => new FileSystemHistoryItemModel(fsi)));
         }
     }
 
@@ -137,7 +171,7 @@ public class FileSystemItemController : ControllerBase
     {
         if (format == "excel")
         {
-            var items = _service.Find(a => true);
+            var items = _fileSystemItemService.Find(a => true);
             var workbook = _exporter.GenerateExcel(name, items);
 
             using var stream = new MemoryStream();

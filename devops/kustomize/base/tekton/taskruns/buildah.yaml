@@ -4,10 +4,10 @@ metadata:
   generateName: example-buildah-run-
   # name: example-buildah-run
   labels:
-    name: db-migration
+    name: build-image
     part-of: hsb
     version: 1.0.0
-    component: database
+    component: api
     managed-by: kustomize
     created-by: jeremy.foster
 

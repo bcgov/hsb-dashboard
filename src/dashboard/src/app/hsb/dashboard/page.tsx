@@ -1,7 +1,7 @@
 import {
   AllOrgDonutChart,
   AllocationByStorageVolume,
-  LineChart,
+  StorageTrendsChart,
 } from '@/components/charts';
 
 export default function Page() {
@@ -9,7 +9,7 @@ export default function Page() {
     <>
       {/* HSB Dashboard */}
       <AllOrgDonutChart />
-      <LineChart />
+      <StorageTrendsChart large={false} />
       <AllocationByStorageVolume />
       {/* <LineChart large='true' /> */}
     </>

@@ -131,7 +131,7 @@ INSERT INTO public."DataSync" (
   , '' -- UpdatedBy
   , NOW() -- UpdatedOn
 ),(
-  'FileSystem' -- Name
+  'cmdb_ci_file_system' -- Name
   , '' -- Description
   , true -- IsEnabled
   , 0 -- Offset
