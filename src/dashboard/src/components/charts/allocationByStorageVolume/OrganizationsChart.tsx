@@ -22,7 +22,7 @@ const PercentageLines = () => {
   );
 };
 
-export const OrganizationsChart: React.FC = () => {
+export const AllocationByStorageVolume: React.FC = () => {
   return (
     <div className={styles.panel}>
       <h1>Allocation by Storage Volume - All Organizations</h1>

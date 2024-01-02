@@ -1,6 +1,8 @@
-import { AllOrgDonutChart } from '@/components/allOrgDonutChart';
-import { LineChart } from '@/components/lineChart';
-import { OrganizationsChart } from '@/components/allOrgBarChart';
+import {
+  AllOrgDonutChart,
+  AllocationByStorageVolume,
+  LineChart,
+} from '@/components/charts';
 
 export default function Page() {
   return (
@@ -8,8 +10,8 @@ export default function Page() {
       {/* HSB Dashboard */}
       <AllOrgDonutChart />
       <LineChart />
-      <OrganizationsChart />
-      <LineChart large='true' />
+      <AllocationByStorageVolume />
+      {/* <LineChart large='true' /> */}
     </>
   );
 }

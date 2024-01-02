@@ -42,7 +42,7 @@ export const AllOrgDonutChart: React.FC = () => {
             data={data.chart}
             options={{
               rotation: 180, // Start the chart at the top
-              cutout: '70%', // Adjust the cutout size to show the rings as desired
+              cutout: '75%', // Adjust the cutout size to show the rings as desired
               plugins: {
                 legend: {
                   display: false, // Hide the legend
