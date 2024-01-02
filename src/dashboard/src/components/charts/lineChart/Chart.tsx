@@ -59,7 +59,7 @@ export const LineChart: React.FC<LineChartProps> = ({ large }) => {
     plugins: {
       legend: {
         position: 'bottom' as const,
-        align: 'start',
+        align: 'start' as const,
         labels: {
           boxWidth: 18,
           padding: 20,
