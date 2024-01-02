@@ -58,7 +58,7 @@ export const LineChart: React.FC<LineChartProps> = ({ large }) => {
     maintainAspectRatio: large ? false : true,
     plugins: {
       legend: {
-        position: 'bottom',
+        position: 'bottom' as const,
         align: 'start',
         labels: {
           boxWidth: 18,
