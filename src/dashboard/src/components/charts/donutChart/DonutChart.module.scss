@@ -1,0 +1,45 @@
+@import '@/styles/utils.scss';
+
+.panel {
+    @include panel-style(297px, -height, -width, 330px);
+}
+
+.chart {
+    padding: 20px;
+}
+
+.total {
+    position: absolute;
+    top: 47%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+
+    span {
+        display: block;
+        font-size: $font-size-32;
+    }
+}
+
+.footer {
+    display: flex;
+    margin-top: 10px;
+
+    p::before {
+        content: '';
+        height: 14px;
+        width: 14px;
+        background-color: $medium-yellow;
+        display: inline-block;
+        margin-right: 10px;
+        border-radius: 50%;
+    }
+
+    p:last-child {
+        margin-left: 20px;
+
+        &::before {
+            opacity: .4;
+        }
+    }
+}

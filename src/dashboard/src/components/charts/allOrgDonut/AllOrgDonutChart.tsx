@@ -7,13 +7,14 @@ import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import styles from './AllOrgDonutChart.module.scss';
 import { useDonutChart } from './useDonutChart';
+import { defaultData } from './defaultData';
 
 ChartJS.register(ArcElement, Tooltip);
 
 export const AllOrgDonutChart: React.FC = () => {
   const organization = useFiltered((state) => state.organization);
   const organizations = useFiltered((state) => state.organizations);
-  const data = useDonutChart();
+  const data = defaultData;
 
   return (
     <div className={styles.panel}>

@@ -2,6 +2,7 @@ import {
   AllOrgDonutChart,
   AllocationByStorageVolume,
   StorageTrendsChart,
+  DonutChart,
 } from '@/components/charts';
 
 export default function Page() {
@@ -11,6 +12,7 @@ export default function Page() {
       <AllOrgDonutChart />
       <StorageTrendsChart large={false} />
       <AllocationByStorageVolume />
+      <DonutChart />
       {/* <LineChart large='true' /> */}
     </>
   );
