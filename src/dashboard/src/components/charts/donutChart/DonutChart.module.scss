@@ -1,16 +1,19 @@
 @import '@/styles/utils.scss';
 
 .panel {
-    @include panel-style(297px, -height, -width, 330px);
+    @include panel-style(330px, unset, unset, 297px);
 }
 
 .chart {
-    padding: 20px;
+    max-height: 215px;
+    display: flex;
+    justify-content: center;
+    padding: 15px;
 }
 
-.total {
+.percentage {
     position: absolute;
-    top: 47%;
+    top: 46%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
@@ -21,9 +24,18 @@
     }
 }
 
+.total {
+    font-size: $font-size-small;
+}
+
 .footer {
     display: flex;
     margin-top: 10px;
+    font-size: $font-size-small;
+
+    p {
+        font-size: $font-size-small;
+    }
 
     p::before {
         content: '';
@@ -36,7 +48,7 @@
     }
 
     p:last-child {
-        margin-left: 20px;
+        margin-left: 25px;
 
         &::before {
             opacity: .4;
