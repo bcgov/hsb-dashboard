@@ -3,6 +3,7 @@ import {
   AllocationByStorageVolume,
   StorageTrendsChart,
   DonutChart,
+  SmallBarChart,
 } from '@/components/charts';
 
 export default function Page() {
@@ -13,6 +14,7 @@ export default function Page() {
       <StorageTrendsChart large={false} />
       <AllocationByStorageVolume />
       <DonutChart />
+      <SmallBarChart title="Allocation by OS" />
       {/* <LineChart large='true' /> */}
     </>
   );
