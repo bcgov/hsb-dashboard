@@ -14,7 +14,7 @@ ChartJS.register(ArcElement, Tooltip);
 export const AllOrgDonutChart: React.FC = () => {
   const organization = useFiltered((state) => state.organization);
   const organizations = useFiltered((state) => state.organizations);
-  const data = defaultData;
+  const data = useDonutChart();
 
   return (
     <div className={styles.panel}>

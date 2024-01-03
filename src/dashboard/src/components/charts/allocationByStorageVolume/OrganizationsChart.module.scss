@@ -34,13 +34,21 @@
 
 .barChart {
     position: relative;
-    margin: 12px 0 12px;
+    padding: 5px 0 12px;
+
+    &:hover {
+        background-color: $light-gray;
+    }
 
     a {
         color: $bc-black;
         font-weight: bold;
         text-decoration: underline;
         margin-left: 5px;
+
+        &:hover {
+            opacity: 0.8;
+        }
     }
 
     p {
@@ -133,7 +141,7 @@
             height: 22px;
             width: 22px;
             background-color: $chart-blue;
-            border-radius: 10px;
+            border-radius: 50%;
             margin-right: 15px;
         }
 
@@ -168,6 +176,6 @@
       left: 5px;
       transform: translateX(-50%);
       font-size: $font-size-small;
-      color: $chart-gray;
+      color: $info-gray;
     }
   }

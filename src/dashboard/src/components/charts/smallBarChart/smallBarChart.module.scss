@@ -49,7 +49,7 @@
         }
 
         .bar {
-            background-color: rgba($bc-blue, 0.5);
+            background-color: rgba($bc-blue, 0.4);
         }
     }
     
@@ -59,7 +59,7 @@
         }
 
         .bar {
-            background-color: rgba($medium-yellow, 0.5);
+            background-color: rgba($medium-yellow, 0.4);
         }
     }
     
@@ -69,7 +69,7 @@
         }
 
         .bar {
-            background-color: rgba($bar-chart-gray, 0.5);
+            background-color: rgba($bar-chart-gray, 0.4);
         }
     }
 }
@@ -85,7 +85,7 @@
         width: 21%;
 
         &:first-child {
-            width: 37%;
+            width: 38%;
             margin-left: 10px;
         }
 
@@ -95,7 +95,7 @@
     }
 
     a {
-        width: 37%;
+        width: 38%;
         margin-left: 10px;
         text-decoration: underline;
         font-weight: bold;
@@ -114,13 +114,13 @@
 .bar {
     height: 20px;
     width: 100%;
-    border-radius: 5px;
+    border-radius: 10px;
     margin-top: 5px;
 
     .percentage {
         height: 20px;
         width: 60%;
-        border-radius: 5px 0 0 5px;
+        border-radius: 10px 0 0 10px;
     }
 }
 

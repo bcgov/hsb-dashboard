@@ -1,8 +1,11 @@
+@import './utils';
+
 body {
   background-color: #f2f2f2;
   margin: 0;
   font-family: "BCSans";
   box-sizing: border-box;
+  color: $bc-black;
 }
 
 div {

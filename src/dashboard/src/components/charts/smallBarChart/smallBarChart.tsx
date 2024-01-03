@@ -25,10 +25,8 @@ export const SmallBarChart: React.FC<SmallBarChartProps> = ({ title }) => {
               key={index}
               operatingSystem={data.operatingSystem}
               drive={data.drive}
-              allocated={data.allocated}
               used={data.used}
               unused={data.unused}
-              percentageUsed={data.percentageUsed}
             />
           ))}
         </div>
