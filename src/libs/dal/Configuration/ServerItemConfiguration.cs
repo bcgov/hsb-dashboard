@@ -15,6 +15,7 @@ public class ServerItemConfiguration : AuditableConfiguration<ServerItem>
         builder.Property(m => m.TenantId);
         builder.Property(m => m.OrganizationId);
         builder.Property(m => m.OperatingSystemItemId);
+        builder.Property(m => m.HistoryKey);
 
         builder.Property(m => m.RawData).IsRequired().HasColumnType("jsonb").HasDefaultValueSql("'{}'::jsonb");
         builder.Property(m => m.RawDataCI).IsRequired().HasColumnType("jsonb").HasDefaultValueSql("'{}'::jsonb");

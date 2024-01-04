@@ -19,14 +19,14 @@ public class FileSystemHistoryItemModel : AuditableModel
     public string StorageType { get; set; } = "";
     public string MediaType { get; set; } = "";
     public string VolumeId { get; set; } = "";
-    public string Capacity { get; set; } = "";
-    public string DiskSpace { get; set; } = "";
+    public int Capacity { get; set; }
+    public float DiskSpace { get; set; }
     public string Size { get; set; } = "";
-    public string SizeBytes { get; set; } = "";
-    public string UsedSizeBytes { get; set; } = "";
-    public string AvailableSpace { get; set; } = "";
+    public long SizeBytes { get; set; }
+    public long? UsedSizeBytes { get; set; }
+    public int AvailableSpace { get; set; }
     public string FreeSpace { get; set; } = "";
-    public string FreeSpaceBytes { get; set; } = "";
+    public long FreeSpaceBytes { get; set; }
     #endregion
     #endregion
 
@@ -59,32 +59,33 @@ public class FileSystemHistoryItemModel : AuditableModel
     }
 
     public FileSystemHistoryItemModel(
-        ServiceNow.ResultModel<ServiceNow.FileSystemModel> model,
+        ServiceNow.ResultModel<ServiceNow.FileSystemModel> fileSystemItemModel,
         ServiceNow.ResultModel<ServiceNow.ConfigurationItemModel> configurationItemModel)
     {
-        if (model.Data == null) throw new InvalidOperationException("File System Item data cannot be null");
+        if (fileSystemItemModel.Data == null) throw new InvalidOperationException("File System Item data cannot be null");
         if (configurationItemModel.Data == null) throw new InvalidOperationException("Configuration item data cannot be null");
 
-        this.RawData = model.RawData;
+        this.RawData = fileSystemItemModel.RawData;
         this.RawDataCI = configurationItemModel.RawData;
 
-        this.ServiceNowKey = model.Data.Id;
-        this.ClassName = model.Data.ClassName ?? "";
-        this.Name = model.Data.Name ?? "";
-        this.Label = model.Data.Label ?? "";
-        this.Category = model.Data.Category ?? "";
-        this.Subcategory = model.Data.Subcategory ?? "";
-        this.StorageType = model.Data.StorageType ?? "";
-        this.MediaType = model.Data.MediaType ?? "";
-        this.VolumeId = model.Data.VolumeId ?? "";
-        this.Capacity = model.Data.Capacity ?? "";
-        this.DiskSpace = model.Data.DiskSpace ?? "";
-        this.Size = model.Data.Size ?? "";
-        this.SizeBytes = model.Data.SizeBytes ?? "";
-        this.UsedSizeBytes = model.Data.UsedSizeBytes ?? "";
-        this.AvailableSpace = model.Data.AvailableSpace ?? "";
-        this.FreeSpace = model.Data.FreeSpace ?? "";
-        this.FreeSpaceBytes = model.Data.FreeSpaceBytes ?? "";
+        this.ServiceNowKey = fileSystemItemModel.Data.Id;
+
+        this.ClassName = fileSystemItemModel.Data.ClassName ?? "";
+        this.Name = fileSystemItemModel.Data.Name ?? "";
+        this.Label = fileSystemItemModel.Data.Label ?? "";
+        this.Category = fileSystemItemModel.Data.Category ?? "";
+        this.Subcategory = fileSystemItemModel.Data.Subcategory ?? "";
+        this.StorageType = fileSystemItemModel.Data.StorageType ?? "";
+        this.MediaType = fileSystemItemModel.Data.MediaType ?? "";
+        this.VolumeId = fileSystemItemModel.Data.VolumeId ?? "";
+        this.Capacity = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.Capacity) ? Int32.Parse(fileSystemItemModel.Data.Capacity) : 0;
+        this.DiskSpace = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.DiskSpace) ? float.Parse(fileSystemItemModel.Data.DiskSpace) : 0;
+        this.Size = fileSystemItemModel.Data.Size ?? "";
+        this.SizeBytes = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.SizeBytes) ? long.Parse(fileSystemItemModel.Data.SizeBytes) : 0;
+        this.UsedSizeBytes = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.UsedSizeBytes) ? long.Parse(fileSystemItemModel.Data.UsedSizeBytes) : null;
+        this.AvailableSpace = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.AvailableSpace) ? Int32.Parse(fileSystemItemModel.Data.AvailableSpace) : 0;
+        this.FreeSpace = fileSystemItemModel.Data.FreeSpace ?? "";
+        this.FreeSpaceBytes = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.FreeSpaceBytes) ? long.Parse(fileSystemItemModel.Data.FreeSpaceBytes) : 0;
     }
     #endregion
 

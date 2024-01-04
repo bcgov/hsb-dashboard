@@ -115,13 +115,6 @@ public interface IHsbApiService
     /// <param name="model"></param>
     /// <returns></returns>
     public Task<ServerItemModel?> UpdateServerItemAsync(ServerItemModel model);
-
-    /// <summary>
-    /// Add server history item to HSB.
-    /// </summary>
-    /// <param name="model"></param>
-    /// <returns></returns>
-    public Task<ServerHistoryItemModel?> AddServerHistoryItemAsync(ServerHistoryItemModel model);
     #endregion
 
     #region File System Items
@@ -151,12 +144,5 @@ public interface IHsbApiService
     /// <param name="model"></param>
     /// <returns></returns>
     public Task<FileSystemItemModel?> UpdateFileSystemItemAsync(FileSystemItemModel model);
-
-    /// <summary>
-    /// Add file system history item to HSB.
-    /// </summary>
-    /// <param name="model"></param>
-    /// <returns></returns>
-    public Task<FileSystemHistoryItemModel?> AddFileSystemHistoryItemAsync(FileSystemHistoryItemModel model);
     #endregion
 }

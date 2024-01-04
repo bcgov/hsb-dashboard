@@ -41,6 +41,12 @@ public class ServerItem : Auditable
     /// </summary>
     public OperatingSystemItem? OperatingSystemItem { get; set; }
 
+    /// <summary>
+    /// get/set - This key provides a way to map to the matching record in the history table.
+    /// This is required to update the calculated values.
+    /// </summary>
+    public Guid? HistoryKey { get; set; }
+
     #region ServiceNow Properties
     public JsonDocument RawData { get; set; } = JsonDocument.Parse("{}");
     public JsonDocument RawDataCI { get; set; } = JsonDocument.Parse("{}");

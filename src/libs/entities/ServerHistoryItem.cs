@@ -17,6 +17,12 @@ public class ServerHistoryItem : Auditable
     public string ServiceNowKey { get; set; } = "";
     public ServerItem? ServerItem { get; set; }
 
+    /// <summary>
+    /// get/set - This key provides a way to map to the matching record in the history table.
+    /// This is required to update the calculated values.
+    /// </summary>
+    public Guid? HistoryKey { get; set; }
+
     #region ServiceNow Properties
     public JsonDocument RawData { get; set; } = JsonDocument.Parse("{}");
     public JsonDocument RawDataCI { get; set; } = JsonDocument.Parse("{}");
@@ -28,6 +34,12 @@ public class ServerHistoryItem : Auditable
     public string Platform { get; set; } = "";
     public string IPAddress { get; set; } = "";
     public string FQDN { get; set; } = "";
+    public float? DiskSpace { get; set; }
+    #endregion
+
+    #region ServiceNow File System Item Summary Properties
+    public float? Capacity { get; set; }
+    public float? AvailableSpace { get; set; }
     #endregion
     #endregion
 
@@ -60,6 +72,33 @@ public class ServerHistoryItem : Auditable
         this.Platform = serverData.GetElementValue<string>(".u_platform") ?? "";
         this.IPAddress = serverData.GetElementValue<string>(".ip_address") ?? "";
         this.FQDN = serverData.GetElementValue<string>(".fqdn") ?? "";
+        this.DiskSpace = serverData.GetElementValue<float?>(".disk_space");
+    }
+
+    public ServerHistoryItem(ServerItem entity)
+    {
+        this.ServiceNowKey = entity.ServiceNowKey;
+        this.HistoryKey = entity.HistoryKey;
+
+        this.TenantId = entity.TenantId;
+        this.OrganizationId = entity.OrganizationId;
+        this.OperatingSystemItemId = entity.OperatingSystemItemId;
+
+        this.RawData = entity.RawData;
+        this.RawDataCI = entity.RawDataCI;
+
+        this.ClassName = entity.ClassName;
+        this.Name = entity.Name;
+        this.Category = entity.Category;
+        this.Subcategory = entity.Subcategory;
+        this.DnsDomain = entity.DnsDomain;
+        this.Platform = entity.Platform;
+        this.IPAddress = entity.IPAddress;
+        this.FQDN = entity.FQDN;
+        this.DiskSpace = entity.DiskSpace;
+
+        this.Capacity = entity.Capacity;
+        this.AvailableSpace = entity.AvailableSpace;
     }
     #endregion
 }

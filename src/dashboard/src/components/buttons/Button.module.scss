@@ -1,54 +1,70 @@
 @import '@/styles/utils.scss';
 
 .btn {
-    padding: 10px 16px;
-    border-radius: 3px;
-    font-size: 1em;
-    font-weight: bold;
-    border: 0;
-    cursor: pointer;
-    position: relative;
+  padding: 10px 16px;
+  border-radius: 3px;
+  font-size: 1em;
+  font-weight: bold;
+  border: 0;
+  cursor: pointer;
+  position: relative;
 }
 
 .primary {
-    background-color: $bc-blue;
-    color: $white;
+  background-color: $bc-blue;
+  color: $white;
 
-    &:hover {
-        background-color: $chart-blue;
-    }
+  &:hover {
+    background-color: $chart-blue;
+  }
 }
 
 .secondary {
-    background-color: $white;
-    color: $bc-black;
-    border: 1px solid $dark-gray;
+  background-color: $white;
+  color: $bc-black;
+  border: 1px solid $dark-gray;
 
-    &:hover {
-        background-color: $light-gray;
-    }
+  &:hover {
+    background-color: $light-gray;
+  }
 }
 
 .disabled {
+  background-color: $light-gray;
+  color: $dark-gray;
+  border: 1px solid $dark-gray;
+  pointer-events: none;
+
+  &:hover {
     background-color: $light-gray;
-    color: $dark-gray;
-    border: 1px solid $dark-gray;
-    pointer-events: none;
+  }
 
-    &:hover {
-        background-color: $light-gray;
-    }
-
-    .buttonIcon {
-        opacity: 0.5;
-    }
+  .buttonIcon {
+    opacity: 0.5;
+  }
 }
 
 .buttonIcon {
-    position: absolute;
-    left: 16px;
+  position: absolute;
+  left: 16px;
 }
 
 .btnWithIcon {
-    padding-left: 42px;
+  padding-left: 42px;
+}
+
+.spinner {
+  top: 0;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  margin-top: calc(height / 2);
+  margin-right: 17px;
+
+  >div {
+    width: 20px;
+    height: 20px;
+    border: 2px solid $bc-blue;
+    border-color: $bc-blue transparent transparent transparent;
+  }
 }

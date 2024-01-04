@@ -333,22 +333,6 @@ public class HsbApiService : IHsbApiService
         var results = await HsbSendAsync<ServerItemModel>(HttpMethod.Put, builder.Uri, JsonContent.Create(model));
         return results;
     }
-
-    /// <summary>
-    /// Add server history item to HSB.
-    /// </summary>
-    /// <param name="model"></param>
-    /// <returns></returns>
-    public async Task<ServerHistoryItemModel?> AddServerHistoryItemAsync(ServerHistoryItemModel model)
-    {
-        this.Logger.LogDebug("HSB - Add server history item");
-        var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
-        {
-            Path = this.Options.Endpoints.ServerHistoryItems
-        };
-        var results = await HsbSendAsync<ServerHistoryItemModel>(HttpMethod.Post, builder.Uri, JsonContent.Create(model));
-        return results;
-    }
     #endregion
 
     #region File System Items
@@ -412,22 +396,6 @@ public class HsbApiService : IHsbApiService
             Path = $"{this.Options.Endpoints.FileSystemItems}/{model.ServiceNowKey}"
         };
         var results = await HsbSendAsync<FileSystemItemModel>(HttpMethod.Put, builder.Uri, JsonContent.Create(model));
-        return results;
-    }
-
-    /// <summary>
-    /// Add configuration history item to HSB.
-    /// </summary>
-    /// <param name="model"></param>
-    /// <returns></returns>
-    public async Task<FileSystemHistoryItemModel?> AddFileSystemHistoryItemAsync(FileSystemHistoryItemModel model)
-    {
-        this.Logger.LogDebug("HSB - Add file system history item");
-        var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
-        {
-            Path = this.Options.Endpoints.FileSystemHistoryItems
-        };
-        var results = await HsbSendAsync<FileSystemHistoryItemModel>(HttpMethod.Post, builder.Uri, JsonContent.Create(model));
         return results;
     }
     #endregion

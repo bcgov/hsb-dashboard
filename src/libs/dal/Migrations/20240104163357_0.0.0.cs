@@ -226,6 +226,7 @@ namespace HSB.DAL.Migrations
                     TenantId = table.Column<int>(type: "integer", nullable: true),
                     OrganizationId = table.Column<int>(type: "integer", nullable: false),
                     OperatingSystemItemId = table.Column<int>(type: "integer", nullable: true),
+                    HistoryKey = table.Column<Guid>(type: "uuid", nullable: true),
                     RawData = table.Column<JsonDocument>(type: "jsonb", nullable: false, defaultValueSql: "'{}'::jsonb"),
                     RawDataCI = table.Column<JsonDocument>(type: "jsonb", nullable: false, defaultValueSql: "'{}'::jsonb"),
                     ClassName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
@@ -406,6 +407,7 @@ namespace HSB.DAL.Migrations
                     OrganizationId = table.Column<int>(type: "integer", nullable: false),
                     OperatingSystemItemId = table.Column<int>(type: "integer", nullable: true),
                     ServiceNowKey = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    HistoryKey = table.Column<Guid>(type: "uuid", nullable: true),
                     RawData = table.Column<JsonDocument>(type: "jsonb", nullable: false, defaultValueSql: "'{}'::jsonb"),
                     RawDataCI = table.Column<JsonDocument>(type: "jsonb", nullable: false, defaultValueSql: "'{}'::jsonb"),
                     ClassName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
@@ -416,6 +418,9 @@ namespace HSB.DAL.Migrations
                     Platform = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
                     IPAddress = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValueSql: "''"),
                     FQDN = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
+                    DiskSpace = table.Column<float>(type: "real", nullable: true),
+                    Capacity = table.Column<float>(type: "real", nullable: true),
+                    AvailableSpace = table.Column<float>(type: "real", nullable: true),
                     CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     CreatedBy = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     UpdatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
@@ -468,14 +473,14 @@ namespace HSB.DAL.Migrations
                     MediaType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
                     VolumeId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
                     ClassName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false, defaultValueSql: "''"),
-                    Capacity = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValueSql: "''"),
-                    DiskSpace = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValueSql: "''"),
+                    Capacity = table.Column<int>(type: "integer", nullable: false),
+                    DiskSpace = table.Column<float>(type: "real", nullable: false),
                     Size = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValueSql: "''"),
-                    SizeBytes = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValueSql: "''"),
-                    UsedSizeBytes = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValueSql: "''"),
-                    AvailableSpace = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValueSql: "''"),
+                    SizeBytes = table.Column<long>(type: "bigint", nullable: false),
+                    UsedSizeBytes = table.Column<long>(type: "bigint", nullable: true),
+                    AvailableSpace = table.Column<int>(type: "integer", nullable: false),
                     FreeSpace = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValueSql: "''"),
-                    FreeSpaceBytes = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false, defaultValueSql: "''"),
+                    FreeSpaceBytes = table.Column<long>(type: "bigint", nullable: false),
                     CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     CreatedBy = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     UpdatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
@@ -508,11 +513,6 @@ namespace HSB.DAL.Migrations
                 name: "IX_FileSystemHistoryItem_CreatedOn",
                 table: "FileSystemHistoryItem",
                 column: "CreatedOn");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FileSystemHistoryItem_Name",
-                table: "FileSystemHistoryItem",
-                column: "Name");
 
             migrationBuilder.CreateIndex(
                 name: "IX_FileSystemHistoryItem_ServiceNowKey",
@@ -608,9 +608,9 @@ namespace HSB.DAL.Migrations
                 column: "CreatedOn");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ServerHistoryItem_Name",
+                name: "IX_ServerHistoryItem_HistoryKey",
                 table: "ServerHistoryItem",
-                column: "Name");
+                column: "HistoryKey");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ServerHistoryItem_OperatingSystemItemId",

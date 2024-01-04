@@ -1,5 +1,5 @@
 import { IOption } from '@/components';
-import { useApp, useFiltered } from '@/store';
+import { useFiltered } from '@/store';
 import React from 'react';
 import { IServerItemFilter, IServerItemModel, useApiServerItems } from '..';
 
@@ -7,7 +7,6 @@ export const useFilteredServerItems = () => {
   const { find } = useApiServerItems();
   const serverItems = useFiltered((state) => state.serverItems);
   const setFilteredServerItems = useFiltered((state) => state.setServerItems);
-  const setServerItems = useApp((state) => state.setServerItems);
 
   const fetch = React.useCallback(
     async (filter: IServerItemFilter) => {

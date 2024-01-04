@@ -2,6 +2,7 @@
 using HSB.Core.Extensions;
 
 namespace HSB.Entities;
+
 public class FileSystemItem : Auditable
 {
     #region Properties

@@ -1,6 +1,5 @@
 'use client';
 
-import { useFiltered } from '@/store';
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -13,7 +12,7 @@ import {
 } from 'chart.js';
 import React from 'react';
 import { LineChart } from '../lineChart';
-import { defaultData } from './defaultData';
+import { useStorageTrends } from './useStorageTrends';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -22,9 +21,7 @@ interface LineChartProps {
 }
 
 export const StorageTrendsChart: React.FC<LineChartProps> = ({ large }) => {
-  const fileSystemItems = useFiltered((state) => state.fileSystemItems);
+  const data = useStorageTrends(12);
 
-  return (
-    <LineChart data={defaultData} label="Storage Trends" large={large} showExport exportDisabled />
-  );
+  return <LineChart data={data} label="Storage Trends" large={large} showExport exportDisabled />;
 };

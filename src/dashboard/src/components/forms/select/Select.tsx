@@ -1,5 +1,6 @@
 import styles from './Select.module.scss';
 
+import { Spinner } from '@/components';
 import { uniqueId } from 'lodash';
 import React, { FocusEventHandler } from 'react';
 import { FormError, IOption } from '..';
@@ -19,6 +20,7 @@ export interface ISelectProps<T> {
   error?: React.ReactNode;
   multiple?: boolean;
   required?: boolean;
+  loading?: boolean;
   onChange?: (
     values: string | number | readonly string[] | undefined,
     event?: React.FormEvent<HTMLSelectElement>,
@@ -40,6 +42,7 @@ export const Select = <T extends unknown>({
   required,
   error,
   multiple,
+  loading,
   onChange,
   onBlur,
 }: ISelectProps<T>) => {
@@ -47,16 +50,16 @@ export const Select = <T extends unknown>({
     value,
   );
 
-  const selectClasses =
-    variant === 'filter' ? `${styles.dropdown} ${className}` : styles.simpleDropdown;
+  const variantClassName = variant === 'filter' ? styles.dropdown : styles.simpleDropdown;
 
   React.useEffect(() => {
     setSelected(value);
   }, [value]);
 
   return (
-    <div className={selectClasses}>
+    <div className={`${variantClassName} ${className}`}>
       {label && <label htmlFor={id}>{label}</label>}
+      {loading && <Spinner className={styles.spinner} />}
       <select
         id={id}
         name={name}

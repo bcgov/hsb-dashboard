@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/buttons';
-import { useFiltered } from '@/store';
+import { useDashboard } from '@/store';
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js';
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
@@ -12,8 +12,7 @@ import { defaultData } from './defaultData';
 ChartJS.register(ArcElement, Tooltip);
 
 export const AllOrgDonutChart: React.FC = () => {
-  const organization = useFiltered((state) => state.organization);
-  const organizations = useFiltered((state) => state.organizations);
+  const organizations = useDashboard((state) => state.organizations);
   const data = useDonutChart();
 
   return (
@@ -21,7 +20,7 @@ export const AllOrgDonutChart: React.FC = () => {
       <h1>All Organizations</h1>
       <div className={styles.chartContainer}>
         <div className={styles.info}>
-          <h2>Totals for {organization ? 1 : organizations.length} organizations</h2>
+          <h2>Totals for {organizations.length} organizations</h2>
           <div>
             <p>
               Allocated <span>{data.space}</span>

@@ -25,19 +25,19 @@ public class FileSystemHistoryItemConfiguration : AuditableConfiguration<FileSys
         builder.Property(m => m.StorageType).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
         builder.Property(m => m.MediaType).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
         builder.Property(m => m.VolumeId).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
-        builder.Property(m => m.Capacity).IsRequired().HasMaxLength(50).HasDefaultValueSql("''");
-        builder.Property(m => m.DiskSpace).IsRequired().HasMaxLength(50).HasDefaultValueSql("''");
+        builder.Property(m => m.Capacity).IsRequired();
+        builder.Property(m => m.DiskSpace).IsRequired();
         builder.Property(m => m.Size).IsRequired().HasMaxLength(50).HasDefaultValueSql("''");
-        builder.Property(m => m.SizeBytes).IsRequired().HasMaxLength(50).HasDefaultValueSql("''");
-        builder.Property(m => m.UsedSizeBytes).IsRequired().HasMaxLength(50).HasDefaultValueSql("''");
-        builder.Property(m => m.AvailableSpace).IsRequired().HasMaxLength(50).HasDefaultValueSql("''");
+        builder.Property(m => m.SizeBytes).IsRequired();
+        builder.Property(m => m.UsedSizeBytes);
+        builder.Property(m => m.AvailableSpace).IsRequired();
         builder.Property(m => m.FreeSpace).IsRequired().HasMaxLength(50).HasDefaultValueSql("''");
-        builder.Property(m => m.FreeSpaceBytes).IsRequired().HasMaxLength(50).HasDefaultValueSql("''");
+        builder.Property(m => m.FreeSpaceBytes).IsRequired();
 
         builder.HasOne(m => m.FileSystemItem).WithMany(m => m.History).HasForeignKey(m => m.ServiceNowKey).OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(m => new { m.CreatedOn }, "IX_FileSystemHistoryItem_CreatedOn");
-        builder.HasIndex(m => new { m.Name }, "IX_FileSystemHistoryItem_Name");
+        builder.HasIndex(m => new { m.ServiceNowKey }, "IX_FileSystemHistoryItem_ServiceNowKey");
 
 
         base.Configure(builder);

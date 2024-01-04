@@ -90,8 +90,22 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
             server.Capacity = volumes.Sum(v => v.Capacity);
             server.AvailableSpace = volumes.Sum(v => v.AvailableSpace);
             this.Context.Entry(server).State = EntityState.Modified;
+
+            // Update current historical record too.
+            var history = this.Context.ServerHistoryItems.FirstOrDefault(shi => shi.ServiceNowKey == server.ServiceNowKey && shi.HistoryKey == server.HistoryKey);
+            if (history != null)
+            {
+                history.Capacity = volumes.Sum(v => v.Capacity);
+                history.AvailableSpace = volumes.Sum(v => v.AvailableSpace);
+                this.Context.Entry(history).State = EntityState.Modified;
+            }
         }
-        return base.Add(entity);
+        var result = base.Add(entity);
+
+        // Add item to history.
+        this.Context.FileSystemHistoryItems.Add(new FileSystemHistoryItem(entity));
+
+        return result;
     }
 
     /// <summary>
@@ -110,7 +124,22 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
             server.Capacity = volumes.Sum(v => v.Capacity);
             server.AvailableSpace = volumes.Sum(v => v.AvailableSpace);
             this.Context.Entry(server).State = EntityState.Modified;
+
+            // Update current historical record too.
+            var history = this.Context.ServerHistoryItems.FirstOrDefault(shi => shi.ServiceNowKey == server.ServiceNowKey && shi.HistoryKey == server.HistoryKey);
+            if (history != null)
+            {
+                history.Capacity = volumes.Sum(v => v.Capacity);
+                history.AvailableSpace = volumes.Sum(v => v.AvailableSpace);
+                this.Context.Entry(history).State = EntityState.Modified;
+            }
         }
+
+        // Add original item to history before making updates.
+        var original = this.Context.FileSystemItems.AsNoTracking().FirstOrDefault(fsi => fsi.ServiceNowKey == entity.ServiceNowKey);
+        if (original != null)
+            this.Context.FileSystemHistoryItems.Add(new FileSystemHistoryItem(original));
+
         return base.Update(entity);
     }
     #endregion

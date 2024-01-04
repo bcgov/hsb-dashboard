@@ -101,19 +101,11 @@ namespace HSB.DAL.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<string>("AvailableSpace")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasDefaultValueSql("''");
+                    b.Property<int>("AvailableSpace")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Capacity")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasDefaultValueSql("''");
+                    b.Property<int>("Capacity")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -139,12 +131,8 @@ namespace HSB.DAL.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("DiskSpace")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasDefaultValueSql("''");
+                    b.Property<float>("DiskSpace")
+                        .HasColumnType("real");
 
                     b.Property<string>("FreeSpace")
                         .IsRequired()
@@ -153,12 +141,8 @@ namespace HSB.DAL.Migrations
                         .HasColumnType("character varying(50)")
                         .HasDefaultValueSql("''");
 
-                    b.Property<string>("FreeSpaceBytes")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasDefaultValueSql("''");
+                    b.Property<long>("FreeSpaceBytes")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Label")
                         .IsRequired()
@@ -201,12 +185,8 @@ namespace HSB.DAL.Migrations
                         .HasColumnType("character varying(50)")
                         .HasDefaultValueSql("''");
 
-                    b.Property<string>("SizeBytes")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasDefaultValueSql("''");
+                    b.Property<long>("SizeBytes")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("StorageType")
                         .IsRequired()
@@ -232,12 +212,8 @@ namespace HSB.DAL.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<string>("UsedSizeBytes")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasDefaultValueSql("''");
+                    b.Property<long?>("UsedSizeBytes")
+                        .HasColumnType("bigint");
 
                     b.Property<long>("Version")
                         .IsConcurrencyToken()
@@ -254,11 +230,9 @@ namespace HSB.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ServiceNowKey");
-
                     b.HasIndex(new[] { "CreatedOn" }, "IX_FileSystemHistoryItem_CreatedOn");
 
-                    b.HasIndex(new[] { "Name" }, "IX_FileSystemHistoryItem_Name");
+                    b.HasIndex(new[] { "ServiceNowKey" }, "IX_FileSystemHistoryItem_ServiceNowKey");
 
                     b.ToTable("FileSystemHistoryItem", (string)null);
                 });
@@ -734,6 +708,12 @@ namespace HSB.DAL.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<float?>("AvailableSpace")
+                        .HasColumnType("real");
+
+                    b.Property<float?>("Capacity")
+                        .HasColumnType("real");
+
                     b.Property<string>("Category")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -758,6 +738,9 @@ namespace HSB.DAL.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
+                    b.Property<float?>("DiskSpace")
+                        .HasColumnType("real");
+
                     b.Property<string>("DnsDomain")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -771,6 +754,9 @@ namespace HSB.DAL.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasDefaultValueSql("''");
+
+                    b.Property<Guid?>("HistoryKey")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IPAddress")
                         .IsRequired()
@@ -846,13 +832,13 @@ namespace HSB.DAL.Migrations
 
                     b.HasIndex("OrganizationId");
 
-                    b.HasIndex("ServiceNowKey");
-
                     b.HasIndex("TenantId");
 
                     b.HasIndex(new[] { "CreatedOn" }, "IX_ServerHistoryItem_CreatedOn");
 
-                    b.HasIndex(new[] { "Name" }, "IX_ServerHistoryItem_Name");
+                    b.HasIndex(new[] { "HistoryKey" }, "IX_ServerHistoryItem_HistoryKey");
+
+                    b.HasIndex(new[] { "ServiceNowKey" }, "IX_ServerHistoryItem_ServiceNowKey");
 
                     b.ToTable("ServerHistoryItem", (string)null);
                 });
@@ -909,6 +895,9 @@ namespace HSB.DAL.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasDefaultValueSql("''");
+
+                    b.Property<Guid?>("HistoryKey")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IPAddress")
                         .IsRequired()

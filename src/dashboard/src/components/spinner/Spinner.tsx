@@ -1,8 +1,12 @@
 import styles from './Spinner.module.scss';
 
-export const Spinner = () => {
+export interface ISpinnerProps {
+  className?: string;
+}
+
+export const Spinner = ({ className = 'spinner' }: ISpinnerProps) => {
   return (
-    <div className={styles.spinner}>
+    <div className={`${styles.spinner} ${className}`}>
       <div></div>
       <div></div>
       <div></div>
