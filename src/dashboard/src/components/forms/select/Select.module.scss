@@ -112,3 +112,19 @@
   background-color: $bc-blue;
   color: $white;
 }
+
+.spinner {
+  top: 0;
+  right: 0;
+  width: 22px;
+  height: 22px;
+  margin-top: calc(height / 2);
+  margin-right: 17px;
+
+  >div {
+    width: 20px;
+    height: 20px;
+    border: 2px solid $bc-black;
+    border-color: $bc-black transparent transparent transparent;
+  }
+}

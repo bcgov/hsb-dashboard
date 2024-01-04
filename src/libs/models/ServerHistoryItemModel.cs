@@ -30,6 +30,12 @@ public class ServerHistoryItemModel : AuditableModel
 
     [JsonPropertyName("fqdn")]
     public string FQDN { get; set; } = "";
+    public float? DiskSpace { get; set; }
+    #endregion
+
+    #region ServiceNow File System Item Summary Properties
+    public float? Capacity { get; set; }
+    public float? AvailableSpace { get; set; }
     #endregion
     #endregion
 
@@ -56,6 +62,10 @@ public class ServerHistoryItemModel : AuditableModel
         this.Platform = entity.Platform;
         this.IPAddress = entity.IPAddress;
         this.FQDN = entity.FQDN;
+        this.DiskSpace = entity.DiskSpace;
+
+        this.Capacity = entity.Capacity;
+        this.AvailableSpace = entity.AvailableSpace;
     }
 
     public ServerHistoryItemModel(
@@ -84,6 +94,7 @@ public class ServerHistoryItemModel : AuditableModel
         this.Platform = serverModel.Data.Platform ?? "";
         this.IPAddress = serverModel.Data.IPAddress ?? "";
         this.FQDN = serverModel.Data.FQDN ?? "";
+        this.DiskSpace = !String.IsNullOrWhiteSpace(serverModel.Data.DiskSpace) ? float.Parse(serverModel.Data.DiskSpace) : null;
     }
     #endregion
 
@@ -109,6 +120,9 @@ public class ServerHistoryItemModel : AuditableModel
             Platform = model.Platform,
             IPAddress = model.IPAddress,
             FQDN = model.FQDN,
+            DiskSpace = model.DiskSpace,
+            Capacity = model.Capacity,
+            AvailableSpace = model.AvailableSpace,
             CreatedOn = model.CreatedOn,
             CreatedBy = model.CreatedBy,
             UpdatedOn = model.UpdatedOn,

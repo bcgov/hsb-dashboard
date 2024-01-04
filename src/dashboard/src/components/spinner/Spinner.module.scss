@@ -2,17 +2,17 @@
 
 .spinner {
   display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
+  position: absolute;
+  // width: 80px;
+  // height: 80px;
 }
 
 .spinner div {
   box-sizing: border-box;
   display: block;
   position: absolute;
-  width: 64px;
-  height: 64px;
+  // width: 64px;
+  // height: 64px;
   margin: 8px;
   border: 8px solid $white;
   border-radius: 50%;

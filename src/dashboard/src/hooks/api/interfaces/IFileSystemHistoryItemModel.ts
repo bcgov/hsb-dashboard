@@ -17,12 +17,12 @@ export interface IFileSystemHistoryItemModel extends IAuditableModel {
   storageType: string;
   mediaType: string;
   volumeId: string;
-  capacity: string;
-  diskSpace: string;
+  capacity: number;
+  diskSpace: number;
   size: string;
-  sizeBytes: string;
-  usedSizeBytes: string;
-  availableSpace: string;
+  sizeBytes: number;
+  usedSizeBytes?: number;
+  availableSpace: number;
   freeSpace: string;
-  freeSpaceBytes: string;
+  freeSpaceBytes: number;
 }

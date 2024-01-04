@@ -16,6 +16,8 @@ export interface IServerItemModel extends IAuditableModel {
   operatingSystemItemId?: number;
   operatingSystemItem?: IOperatingSystemItemModel;
 
+  historyKey?: string;
+
   // ServiceNow data
   rawData?: any;
   rawDataCI?: any;

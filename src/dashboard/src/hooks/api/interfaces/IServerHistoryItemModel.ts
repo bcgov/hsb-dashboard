@@ -9,6 +9,8 @@ export interface IServerHistoryItemModel extends IAuditableModel {
   operatingSystemItemId?: number;
   operatingSystemItem?: IOperatingSystemItemModel;
 
+  historyKey?: string;
+
   // ServiceNow data
   rawData?: any;
   rawDataCI?: any;
@@ -17,10 +19,13 @@ export interface IServerHistoryItemModel extends IAuditableModel {
   name: string;
   category: string;
   subCategory: string;
-  diskSpace: string;
   dnsDomain: string;
   className: string;
   platform: string;
   ipAddress: string;
   fqdn: string;
+  diskSpace?: string;
+
+  capacity?: number;
+  availableSpace?: number;
 }

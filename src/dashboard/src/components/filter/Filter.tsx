@@ -2,6 +2,7 @@
 
 import { Button, DateRangePicker, Select } from '@/components';
 import { IOperatingSystemItemModel, IOrganizationModel, ITenantModel } from '@/hooks';
+import { useDashboardServerHistoryItems } from '@/hooks/dashboard';
 import {
   useOperatingSystemItems,
   useOrganizations,
@@ -9,22 +10,21 @@ import {
   useTenants,
 } from '@/hooks/data';
 import {
-  useFilteredFileSystemItems,
   useFilteredOperatingSystemItems,
   useFilteredOrganizations,
   useFilteredServerItems,
   useFilteredTenants,
 } from '@/hooks/filter';
-import { useFiltered } from '@/store';
+import { useDashboard, useFiltered } from '@/store';
 import moment from 'moment';
 import React from 'react';
 import styles from './Filter.module.scss';
 
 export const Filter: React.FC = () => {
-  const { tenants } = useTenants();
-  const { organizations } = useOrganizations();
-  const { operatingSystemItems } = useOperatingSystemItems();
-  const { serverItems } = useServerItems();
+  const { isReady: tenantsReady, tenants } = useTenants();
+  const { isReady: organizationsReady, organizations } = useOrganizations();
+  const { isReady: operatingSystemItemsReady, operatingSystemItems } = useOperatingSystemItems();
+  const { isReady: serverItemsReady, serverItems } = useServerItems();
 
   const dateRange = useFiltered((state) => state.dateRange);
   const setDateRange = useFiltered((state) => state.setDateRange);
@@ -37,7 +37,11 @@ export const Filter: React.FC = () => {
   const organization = useFiltered((state) => state.organization);
   const setOrganization = useFiltered((state) => state.setOrganization);
   const setOrganizations = useFiltered((state) => state.setOrganizations);
-  const { options: filteredOrganizationOptions, findOrganizations } = useFilteredOrganizations();
+  const {
+    options: filteredOrganizationOptions,
+    findOrganizations,
+    organizations: filteredOrganizations,
+  } = useFilteredOrganizations();
 
   const operatingSystemItem = useFiltered((state) => state.operatingSystemItem);
   const setOperatingSystemItem = useFiltered((state) => state.setOperatingSystemItem);
@@ -50,7 +54,11 @@ export const Filter: React.FC = () => {
   const setServerItems = useFiltered((state) => state.setServerItems);
   const { options: filteredServerItemOptions, findServerItems } = useFilteredServerItems();
 
-  const { findFileSystemItems } = useFilteredFileSystemItems();
+  const filteredServerItems = useFiltered((state) => state.serverItems);
+  const setDashboardOrganizations = useDashboard((state) => state.setOrganizations);
+  const setDashboardServerItems = useDashboard((state) => state.setServerItems);
+  const { isReady: serverHistoryItemsReady, findServerHistoryItems } =
+    useDashboardServerHistoryItems();
 
   React.useEffect(() => {
     setTenants(tenants);
@@ -101,6 +109,8 @@ export const Filter: React.FC = () => {
         options={filteredTenantOptions}
         placeholder="Select tenant"
         value={tenant?.id ?? ''}
+        disabled={!tenantsReady}
+        loading={!tenantsReady}
         onChange={async (value) => {
           const tenant = tenants.find((t) => t.id == value);
           setTenant(tenant);
@@ -137,6 +147,8 @@ export const Filter: React.FC = () => {
         options={filteredOrganizationOptions}
         placeholder="Select organization"
         value={organization?.id ?? ''}
+        disabled={!organizationsReady}
+        loading={!organizationsReady}
         onChange={async (value) => {
           const organization = organizations.find((o) => o.id == value);
           setOrganization(organization);
@@ -168,6 +180,8 @@ export const Filter: React.FC = () => {
         options={filteredOperatingSystemItemOptions}
         placeholder="Select OS"
         value={operatingSystemItem?.id ?? ''}
+        disabled={!operatingSystemItemsReady}
+        loading={!operatingSystemItemsReady}
         onChange={async (value) => {
           const operatingSystemItem = operatingSystemItems.find((o) => o.id == value);
           setOperatingSystemItem(operatingSystemItem);
@@ -191,6 +205,8 @@ export const Filter: React.FC = () => {
         options={filteredServerItemOptions}
         placeholder="Select server"
         value={serverItem?.serviceNowKey ?? ''}
+        disabled={!serverItemsReady}
+        loading={!serverItemsReady}
         onChange={async (value) => {
           const server = serverItems.find((o) => o.serviceNowKey == value);
           setServerItem(server);
@@ -211,14 +227,28 @@ export const Filter: React.FC = () => {
 
       <Button
         variant="primary"
+        disabled={
+          !tenantsReady ||
+          !organizationsReady ||
+          !operatingSystemItemsReady ||
+          !serverItemsReady ||
+          !serverHistoryItemsReady
+        }
+        loading={!serverHistoryItemsReady}
         onClick={async () => {
-          await findFileSystemItems({
+          if (organization) setDashboardOrganizations([organization]);
+          else setDashboardOrganizations(filteredOrganizations);
+
+          if (serverItem) setDashboardServerItems([serverItem]);
+          else setDashboardServerItems(filteredServerItems);
+
+          await findServerHistoryItems({
             startDate: dateRange[0] ? dateRange[0] : undefined,
             endDate: dateRange[1] ? dateRange[1] : undefined,
             tenantId: tenant?.id,
             organizationId: organization?.id,
             operatingSystemItemId: operatingSystemItem?.id,
-            serverItemServiceNowKey: serverItem?.serviceNowKey,
+            serviceNowKey: serverItem?.serviceNowKey,
           });
         }}
       >

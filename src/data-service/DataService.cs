@@ -262,7 +262,7 @@ public class DataService : IDataService
             }
             _serverItems.Add(serverItem.ServiceNowKey, serverItem);
         }
-        else if (serverItem.UpdatedOn.AddDays(1) < DateTime.UtcNow)
+        else if (serverItem.UpdatedOn.AddDays(1) < DateTime.UtcNow) // Don't update records less than a day old.
         {
             // Update the server item in HSB.
             this.Logger.LogDebug("Update Server Item: '{id}'", configurationItemSN.Data?.Id);
@@ -290,10 +290,6 @@ public class DataService : IDataService
             }
             _serverItems[serverItem.ServiceNowKey] = serverItem;
         }
-
-        // Add the server history item to HSB.
-        this.Logger.LogDebug("Add Server History Item: '{id}'", configurationItemSN.Data?.Id);
-        await this.HsbApi.AddServerHistoryItemAsync(new Hsb.ServerHistoryItemModel(tenant?.Id, organization.Id, operatingSystem?.Id, serverItemSN, configurationItemSN));
 
         return serverItem;
     }
@@ -369,7 +365,7 @@ public class DataService : IDataService
             this.Logger.LogDebug("Add File System Item: '{id}'", configurationItemSN.Data?.Id);
             fileSystemItem = await this.HsbApi.AddFileSystemItemAsync(new Hsb.FileSystemItemModel(serverItem.ServiceNowKey, fileSystemItemSN, configurationItemSN));
         }
-        else if (fileSystemItem.UpdatedOn.AddDays(1) < DateTime.UtcNow)
+        else if (fileSystemItem.UpdatedOn.AddDays(1) < DateTime.UtcNow) // Don't update records less than a day old.
         {
             // Update the server item to HSB.
             this.Logger.LogDebug("Update File System Item: '{id}'", configurationItemSN.Data?.Id);
@@ -398,10 +394,6 @@ public class DataService : IDataService
 
             fileSystemItem = await this.HsbApi.UpdateFileSystemItemAsync(fileSystemItem);
         }
-
-        // Add the server history item to HSB.
-        this.Logger.LogDebug("Add File System History Item: '{id}'", configurationItemSN.Data?.Id);
-        await this.HsbApi.AddFileSystemHistoryItemAsync(new Hsb.FileSystemHistoryItemModel(fileSystemItemSN, configurationItemSN));
 
         return fileSystemItem;
     }

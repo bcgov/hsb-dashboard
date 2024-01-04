@@ -13,13 +13,13 @@ export const updateData = (
   const availableCir = availablePercent ? (360 * availablePercent) / 100 : 0;
 
   return {
-    space: convertToStorageSize(space, 'MB', 'TB', navigator.language, {
+    space: convertToStorageSize<string>(space, 'MB', 'TB', {
       formula: Math.trunc,
     }),
-    used: convertToStorageSize(used, 'MB', 'TB', navigator.language, {
+    used: convertToStorageSize<string>(used, 'MB', 'TB', {
       formula: Math.trunc,
     }),
-    available: convertToStorageSize(available, 'MB', 'TB', navigator.language, {
+    available: convertToStorageSize<string>(available, 'MB', 'TB', {
       formula: Math.trunc,
     }),
     chart: {
