@@ -1,7 +1,7 @@
 @import '@/styles/utils.scss';
 
 .panel {
-    @include panel-style(730px, unset, unset, 1310px);
+    @include panel-style(unset, unset, 1080px, 1310px);
 
     >button {
         @include export-btn;
@@ -18,7 +18,7 @@
 
 .header {
     height: 35px;
-    background-color: $medium-gray;
+    background-color: $light-gray;
     font-weight: bold;
     color: $info-gray;
     padding: 6px 14px;
@@ -28,6 +28,14 @@
 .sortDropdown {
     width: fit-content;
     cursor: pointer;
+
+    &:first-child {
+        width: 18%;
+    }
+
+    &:nth-child(2) {
+        width: 25%;
+    }
 
     p {
       position: relative;
@@ -96,5 +104,94 @@
     p::after {
         transform: rotate(225deg);
         bottom: 5px;
+    }
+}
+
+.chart {
+    max-height: 470px;
+    overflow-y: scroll;
+    padding-right: 10px;
+
+    @include scrollBar;
+}
+
+.row {
+    display: flex;
+    padding: 13px 0;
+    position: relative;
+    border-bottom: 1px solid $medium-gray;
+}
+
+.info, .barChart {
+    display: flex;
+}
+
+.info {
+    width: 72%;
+
+    a {
+        width: 24%;
+        margin-left: 10px;
+        text-decoration: underline;
+        font-weight: bold;
+        color: $bc-black;
+        @include ellipsis;
+
+        &:hover {
+            opacity: 0.8;
+        }
+    }
+
+    p {
+        width: 21%;
+        @include ellipsis;
+
+        &:first-of-type {
+            width: 34%;
+            margin-left: 10px;
+        }
+
+        &:last-child {
+            width: unset;
+        }
+    }
+}
+
+.barChart {
+    width: 28%;
+}
+
+.bar {
+    height: 13px;
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 12px;
+    background-color: $medium-gray;
+
+    .percentage {
+        height: 13px;
+        width: 60%;
+        border-radius: 10px 0 0 10px;
+        background-color: $chart-blue;
+    }
+}
+
+.used {
+    position: absolute;
+    right: 0;
+    top: 5px;
+    font-size: $font-size-12;
+    color: $info-gray;
+}
+
+.hasTenant {
+    .sortDropdown {
+        &:first-child {
+            width: 15%;
+        }
+
+        &:nth-child(2) {
+            width: 15%;
+        }
     }
 }
