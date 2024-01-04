@@ -1,6 +1,6 @@
 import { dispatch, toQueryString } from '@/utils';
 import React from 'react';
-import { IServerItemFilter } from './interfaces';
+import { IServerHistoryItemFilter, IServerItemFilter } from './interfaces';
 
 /**
  * Provides a simple way to manage all the API endpoints.
@@ -12,6 +12,9 @@ export const useApiServerItems = () => {
     () => ({
       find: async (filter: IServerItemFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/dashboard/server-items?${toQueryString(filter)}`);
+      },
+      history: async (filter: IServerHistoryItemFilter | undefined = {}): Promise<Response> => {
+        return await dispatch(`/api/dashboard/server-items/history?${toQueryString(filter)}`);
       },
     }),
     [],

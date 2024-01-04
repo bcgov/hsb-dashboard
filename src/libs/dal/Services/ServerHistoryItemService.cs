@@ -17,5 +17,50 @@ public class ServerHistoryItemService : BaseService<ServerHistoryItem>, IServerH
     #endregion
 
     #region Methods
+
+    public IEnumerable<ServerHistoryItem> Find(ServerHistoryItemFilter filter)
+    {
+        var query = this.Context.ServerHistoryItems
+            .AsNoTracking()
+            .Where(filter.GeneratePredicate());
+
+        if (filter.Sort?.Any() == true)
+            query = query.OrderByProperty(filter.Sort);
+        else query = query.OrderBy(si => si.Name);
+        if (filter.Quantity.HasValue)
+            query = query.Take(filter.Quantity.Value);
+        if (filter.Page.HasValue && filter.Quantity.HasValue && filter.Page > 1)
+            query = query.Skip(filter.Page.Value * filter.Quantity.Value);
+
+        return query
+            .ToArray();
+    }
+
+    public IEnumerable<ServerHistoryItem> FindForUser(long userId, ServerHistoryItemFilter filter)
+    {
+        var query = (from si in this.Context.ServerHistoryItems
+                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
+                     join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
+                     where usert.UserId == userId
+                     select si)
+            .AsNoTracking()
+            .Where(filter.GeneratePredicate());
+
+        if (filter.Sort?.Any() == true)
+            query = query.OrderByProperty(filter.Sort);
+        else query = query.OrderBy(si => si.Name);
+        if (filter.Quantity.HasValue)
+            query = query.Take(filter.Quantity.Value);
+        if (filter.Page.HasValue && filter.Quantity.HasValue && filter.Page > 1)
+            query = query.Skip(filter.Page.Value * filter.Quantity.Value);
+
+        return query
+            .ToArray();
+    }
+
+    public IEnumerable<ServerHistoryItem> FindHistoryByMonth(DateTime start, DateTime? end, int? tenantId, int? organizationId, int? operatingSystemId, string? serviceKeyNow)
+    {
+        return this.Context.FindServerHistoryItemsByMonth(start.ToUniversalTime(), end?.ToUniversalTime(), tenantId, organizationId, operatingSystemId, serviceKeyNow).ToArray();
+    }
     #endregion
 }

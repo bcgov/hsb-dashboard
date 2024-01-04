@@ -1,20 +1,13 @@
 using HSB.Entities;
+using HSB.Models.Filters;
 
 namespace HSB.DAL.Services;
 
 public interface IFileSystemItemService : IBaseService<FileSystemItem>
 {
-    IEnumerable<FileSystemItem> FindForUser<T>(
-        long userId,
-        System.Linq.Expressions.Expression<Func<FileSystemItem, bool>> predicate,
-        System.Linq.Expressions.Expression<Func<FileSystemItem, T>>? sort = null,
-        int? take = null,
-        int? skip = null);
+    IEnumerable<FileSystemItem> Find(FileSystemItemFilter filter);
 
-    public IEnumerable<FileSystemItem> FindForUser(
-        long userId,
-        System.Linq.Expressions.Expression<Func<FileSystemItem, bool>> predicate,
-        string[] sort,
-        int? take = null,
-        int? skip = null);
+    IEnumerable<FileSystemItem> FindForUser(long userId, FileSystemItemFilter filter);
+
+    FileSystemItem? FindForId(string key, long userId);
 }

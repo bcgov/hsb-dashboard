@@ -79,14 +79,11 @@ export const Filter: React.FC = () => {
 
   const handleFindServerItems = React.useCallback(
     async (
-      dateRange: string[],
       tenant?: ITenantModel,
       organization?: IOrganizationModel,
       operatingSystemItem?: IOperatingSystemItemModel,
     ) => {
       return await findServerItems({
-        startDate: dateRange[0] ? dateRange[0] : undefined,
-        endDate: dateRange[1] ? dateRange[1] : undefined,
         tenantId: tenant?.id,
         organizationId: organization?.id,
         operatingSystemItemId: operatingSystemItem?.id,
@@ -122,7 +119,6 @@ export const Filter: React.FC = () => {
             if (operatingSystems.length === 1) setOperatingSystemItem(operatingSystems[0]);
 
             const serverItems = await handleFindServerItems(
-              dateRange,
               tenant,
               organization,
               operatingSystemItem,
@@ -131,7 +127,7 @@ export const Filter: React.FC = () => {
           } else {
             setOrganizations(organizations);
             setOperatingSystemItems(operatingSystemItems);
-            await handleFindServerItems(dateRange, tenant);
+            await handleFindServerItems(tenant);
           }
         }}
       />
@@ -155,7 +151,6 @@ export const Filter: React.FC = () => {
             if (operatingSystems.length === 1) setOperatingSystemItem(operatingSystems[0]);
 
             const serverItems = await handleFindServerItems(
-              dateRange,
               tenant,
               organization,
               operatingSystemItem,
@@ -163,7 +158,7 @@ export const Filter: React.FC = () => {
             if (serverItems.length === 1) setServerItem(serverItems[0]);
           } else {
             setOperatingSystemItems(operatingSystemItems);
-            await handleFindServerItems(dateRange, tenant, organization);
+            await handleFindServerItems(tenant, organization);
           }
         }}
       />
@@ -180,14 +175,13 @@ export const Filter: React.FC = () => {
 
           if (operatingSystemItem) {
             const serverItems = await handleFindServerItems(
-              dateRange,
               tenant,
               organization,
               operatingSystemItem,
             );
             if (serverItems.length === 1) setServerItem(serverItems[0]);
           } else {
-            await handleFindServerItems(dateRange, tenant, organization, operatingSystemItem);
+            await handleFindServerItems(tenant, organization, operatingSystemItem);
           }
         }}
       />
@@ -207,7 +201,6 @@ export const Filter: React.FC = () => {
         onChange={async (values, e) => {
           setDateRange(values);
           const serverItems = await handleFindServerItems(
-            values,
             tenant,
             organization,
             operatingSystemItem,

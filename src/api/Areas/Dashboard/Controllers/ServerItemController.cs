@@ -28,7 +28,8 @@ public class ServerItemController : ControllerBase
 {
     #region Variables
     private readonly ILogger _logger;
-    private readonly IServerItemService _service;
+    private readonly IServerItemService _serverItemService;
+    private readonly IServerHistoryItemService _serverHistoryItemService;
     private readonly IAuthorizationHelper _authorization;
     private readonly IXlsExporter _exporter;
     #endregion
@@ -37,17 +38,20 @@ public class ServerItemController : ControllerBase
     /// <summary>
     /// Creates a new instance of a ServerItemController.
     /// </summary>
-    /// <param name="service"></param>
+    /// <param name="serverItemService"></param>
+    /// <param name="serverHistoryItemService"></param>
     /// <param name="authorization"></param>
     /// <param name="exporter"></param>
     /// <param name="logger"></param>
     public ServerItemController(
-        IServerItemService service,
+        IServerItemService serverItemService,
+        IServerHistoryItemService serverHistoryItemService,
         IAuthorizationHelper authorization,
         IXlsExporter exporter,
         ILogger<ServerItemController> logger)
     {
-        _service = service;
+        _serverItemService = serverItemService;
+        _serverHistoryItemService = serverHistoryItemService;
         _authorization = authorization;
         _exporter = exporter;
         _logger = logger;
@@ -55,7 +59,6 @@ public class ServerItemController : ControllerBase
     #endregion
 
     #region Endpoints
-    // TODO: Limit based on role and tenant.
     /// <summary>
     ///
     /// </summary>
@@ -73,7 +76,7 @@ public class ServerItemController : ControllerBase
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
         {
-            var result = _service.Find(filter);
+            var result = _serverItemService.Find(filter);
             return new JsonResult(result.Select(si => new ServerItemModel(si)));
         }
         else
@@ -82,12 +85,11 @@ public class ServerItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var result = _service.FindForUser(user.Id, filter);
+            var result = _serverItemService.FindForUser(user.Id, filter);
             return new JsonResult(result.Select(si => new ServerItemModel(si)));
         }
     }
 
-    // TODO: Limit based on role and tenant.
     /// <summary>
     ///
     /// </summary>
@@ -103,7 +105,7 @@ public class ServerItemController : ControllerBase
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
         {
-            var entity = _service.FindForId(id);
+            var entity = _serverItemService.FindForId(id);
             if (entity == null) return new NoContentResult();
             return new JsonResult(new ServerItemModel(entity));
         }
@@ -113,9 +115,42 @@ public class ServerItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var entity = _service.FindForId(id, user.Id);
+            var entity = _serverItemService.FindForId(id, user.Id);
             if (entity == null) return Forbid();
             return new JsonResult(new ServerItemModel(entity));
+        }
+    }
+
+    // TODO: Limit based on role and tenant.
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("history", Name = "GetServerHistoryItems-Dashboard")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<ServerItemModel>), (int)HttpStatusCode.OK)]
+    [SwaggerOperation(Tags = new[] { "Server Item" })]
+    public IActionResult FindHistory()
+    {
+        var uri = new Uri(this.Request.GetDisplayUrl());
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        var filter = new HSB.Models.Filters.ServerHistoryItemFilter(query);
+
+        var isHSB = this.User.HasClientRole(ClientRole.HSB);
+        if (isHSB)
+        {
+            var result = _serverHistoryItemService.FindHistoryByMonth(filter.StartDate ?? DateTime.UtcNow.AddYears(-1), filter.EndDate, filter.TenantId, filter.OrganizationId, filter.OperatingSystemItemId, filter.ServiceNowKey);
+            return new JsonResult(result.Select(si => new ServerHistoryItemModel(si)));
+        }
+        else
+        {
+            // Only return server items this user has access to.
+            var user = _authorization.GetUser();
+            if (user == null) return Forbid();
+
+            var result = _serverHistoryItemService.FindHistoryByMonth(filter.StartDate ?? DateTime.UtcNow.AddYears(-1), filter.EndDate, filter.TenantId, filter.OrganizationId, filter.OperatingSystemItemId, filter.ServiceNowKey);
+            // var result = _serverHistoryItemService.FindForUser(user.Id, filter);
+            return new JsonResult(result.Select(si => new ServerHistoryItemModel(si)));
         }
     }
 
@@ -137,7 +172,7 @@ public class ServerItemController : ControllerBase
     {
         if (format == "excel")
         {
-            var items = _service.Find(a => true);
+            var items = _serverItemService.Find(a => true);
             var workbook = _exporter.GenerateExcel(name, items);
 
             using var stream = new MemoryStream();

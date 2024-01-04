@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using HSB.DAL.Extensions;
 using HSB.Entities;
+using HSB.Models.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
@@ -17,27 +18,21 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
     #endregion
 
     #region Methods
-    public IEnumerable<FileSystemItem> FindForUser<T>(
-        long userId,
-        System.Linq.Expressions.Expression<Func<FileSystemItem, bool>> predicate,
-        System.Linq.Expressions.Expression<Func<FileSystemItem, T>>? sort = null,
-        int? take = null,
-        int? skip = null)
+    public IEnumerable<FileSystemItem> Find(FileSystemItemFilter filter)
     {
         var query = (from fsi in this.Context.FileSystemItems
                      join si in this.Context.ServerItems on fsi.ServerItemServiceNowKey equals si.ServiceNowKey
                      join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
                      join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
-                     where usert.UserId == userId
                      select fsi)
-            .Where(predicate);
+            .Where(filter.GeneratePredicate());
 
-        if (sort != null)
-            query = query.OrderBy(sort);
-        if (take.HasValue)
-            query = query.Take(take.Value);
-        if (skip.HasValue)
-            query = query.Skip(skip.Value);
+        if (filter.Sort != null)
+            query = query.OrderByProperty(filter.Sort);
+        if (filter.Quantity.HasValue)
+            query = query.Take(filter.Quantity.Value);
+        if (filter.Page.HasValue && filter.Page > 1 && filter.Quantity.HasValue)
+            query = query.Skip(filter.Page.Value * filter.Quantity.Value);
 
         return query
             .AsNoTracking()
@@ -46,10 +41,7 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
 
     public IEnumerable<FileSystemItem> FindForUser(
         long userId,
-        System.Linq.Expressions.Expression<Func<FileSystemItem, bool>> predicate,
-        string[] sort,
-        int? take = null,
-        int? skip = null)
+        FileSystemItemFilter filter)
     {
         var query = (from fsi in this.Context.FileSystemItems
                      join si in this.Context.ServerItems on fsi.ServerItemServiceNowKey equals si.ServiceNowKey
@@ -57,18 +49,29 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
                      join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                      where usert.UserId == userId
                      select fsi)
-            .Where(predicate);
+            .Where(filter.GeneratePredicate());
 
-        if (sort?.Any() == true)
-            query = query.OrderByProperty(sort);
-        if (take.HasValue)
-            query = query.Take(take.Value);
-        if (skip.HasValue)
-            query = query.Skip(skip.Value);
+        if (filter.Sort != null)
+            query = query.OrderByProperty(filter.Sort);
+        if (filter.Quantity.HasValue)
+            query = query.Take(filter.Quantity.Value);
+        if (filter.Page.HasValue && filter.Page > 1 && filter.Quantity.HasValue)
+            query = query.Skip(filter.Page.Value * filter.Quantity.Value);
 
         return query
             .AsNoTracking()
             .ToArray();
+    }
+
+    public FileSystemItem? FindForId(string key, long userId)
+    {
+        return (from fsi in this.Context.FileSystemItems
+                join si in this.Context.ServerItems on fsi.ServerItemServiceNowKey equals si.ServiceNowKey
+                join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
+                join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
+                where usert.UserId == userId
+                   && fsi.ServiceNowKey == key
+                select fsi).FirstOrDefault();
     }
 
     /// <summary>
@@ -83,7 +86,7 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
         var server = this.Context.ServerItems.FirstOrDefault(si => si.ServiceNowKey == entity.ServerItemServiceNowKey);
         if (server != null)
         {
-            var volumes = this.Context.FileSystemItems.Where(fsi => fsi.ServerItemServiceNowKey == entity.ServerItemServiceNowKey).ToArray();
+            var volumes = this.Context.FileSystemItems.AsNoTracking().Where(fsi => fsi.ServerItemServiceNowKey == entity.ServerItemServiceNowKey).ToArray();
             server.Capacity = volumes.Sum(v => v.Capacity);
             server.AvailableSpace = volumes.Sum(v => v.AvailableSpace);
             this.Context.Entry(server).State = EntityState.Modified;
@@ -103,7 +106,7 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
         var server = this.Context.ServerItems.FirstOrDefault(si => si.ServiceNowKey == entity.ServerItemServiceNowKey);
         if (server != null)
         {
-            var volumes = this.Context.FileSystemItems.Where(fsi => fsi.ServerItemServiceNowKey == entity.ServerItemServiceNowKey).ToArray();
+            var volumes = this.Context.FileSystemItems.AsNoTracking().Where(fsi => fsi.ServerItemServiceNowKey == entity.ServerItemServiceNowKey).ToArray();
             server.Capacity = volumes.Sum(v => v.Capacity);
             server.AvailableSpace = volumes.Sum(v => v.AvailableSpace);
             this.Context.Entry(server).State = EntityState.Modified;

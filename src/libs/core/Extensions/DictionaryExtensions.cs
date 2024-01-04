@@ -245,6 +245,30 @@ public static class DictionaryExtensions
     }
 
     /// <summary>
+    /// Get the value from the dictionary for the specified 'key' and return it as an DateTimeOffset.
+    /// </summary>
+    /// <param name="dict"></param>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public static DateTimeOffset? GetDateTimeOffsetNullValue(this IDictionary<string, Microsoft.Extensions.Primitives.StringValues> dict, string key, DateTimeOffset? defaultValue = null)
+    {
+        return dict.TryGetValue(key, out Microsoft.Extensions.Primitives.StringValues dValue) && DateTimeOffset.TryParse(dValue, out DateTimeOffset value) ? value : defaultValue;
+    }
+
+    /// <summary>
+    /// Get the value from the dictionary for the specified 'key' and return it as an DateTimeOffset.
+    /// </summary>
+    /// <param name="dict"></param>
+    /// <param name="key"></param>
+    /// <param name="defaultValue"></param>
+    /// <returns></returns>
+    public static DateTimeOffset GetDateTimeOffsetValue(this IDictionary<string, Microsoft.Extensions.Primitives.StringValues> dict, string key, DateTimeOffset defaultValue = default)
+    {
+        return dict.TryGetValue(key, out Microsoft.Extensions.Primitives.StringValues dValue) && DateTimeOffset.TryParse(dValue, out DateTimeOffset value) ? value : defaultValue;
+    }
+
+    /// <summary>
     /// Get the value from the dictionary for the specified 'key' and return it as an DateTime.
     /// </summary>
     /// <param name="dict"></param>

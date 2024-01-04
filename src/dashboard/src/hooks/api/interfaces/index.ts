@@ -1,5 +1,6 @@
 export * from './IAuditableModel';
 export * from './ICommonModel';
+export * from './IFileSystemHistoryItemFilter';
 export * from './IFileSystemHistoryItemModel';
 export * from './IFileSystemItemFilter';
 export * from './IFileSystemItemModel';
@@ -11,6 +12,7 @@ export * from './IOrganizationFilter';
 export * from './IOrganizationModel';
 export * from './IRoleFilter';
 export * from './IRoleModel';
+export * from './IServerHistoryItemFilter';
 export * from './IServerHistoryItemModel';
 export * from './IServerItemFilter';
 export * from './IServerItemModel';

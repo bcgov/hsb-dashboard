@@ -13,7 +13,6 @@ export interface ISelectProps<T> {
   id?: string;
   name?: string;
   value?: string | number | readonly string[];
-  defaultValue?: string | number | readonly string[];
   className?: string;
   disabled?: boolean;
   placeholder?: string;
@@ -35,7 +34,6 @@ export const Select = <T extends unknown>({
   id = uniqueId(),
   name,
   value,
-  defaultValue,
   className = '',
   disabled,
   placeholder,
@@ -45,8 +43,6 @@ export const Select = <T extends unknown>({
   onChange,
   onBlur,
 }: ISelectProps<T>) => {
-  const initValue = value ?? defaultValue ?? (placeholder ? '' : undefined);
-
   const [selected, setSelected] = React.useState<string | number | readonly string[] | undefined>(
     value,
   );

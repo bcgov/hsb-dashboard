@@ -8,7 +8,7 @@ ENV MIGRATION=
 
 # Switch to root for package installs
 USER 0
-RUN dotnet tool install --global dotnet-ef --version 7.0.0
+RUN dotnet tool install --global dotnet-ef --version 7.0.14
 
 WORKDIR /src
 COPY . .

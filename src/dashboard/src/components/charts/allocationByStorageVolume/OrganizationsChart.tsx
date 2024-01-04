@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
-import styles from './OrganizationsChart.module.scss';
 import { Button } from '@/components/buttons';
 import { Select } from '@/components/forms/select';
 import { Text } from '@/components/forms/text';
+import React from 'react';
 import { BarChart } from './BarChart';
+import styles from './OrganizationsChart.module.scss';
 
 const PercentageLines = () => {
   const percentages = Array.from({ length: 11 }, (_, index) => index * 10);
@@ -28,6 +28,7 @@ export const AllocationByStorageVolume: React.FC = () => {
       <h1>Allocation by Storage Volume - All Organizations</h1>
       <div className={styles.sort}>
         <Select
+          id="allocation"
           variant="primary"
           title="Sort options"
           options={[]}
@@ -38,14 +39,14 @@ export const AllocationByStorageVolume: React.FC = () => {
       </div>
       <div className={styles.chartContainer}>
         <PercentageLines />
-        <BarChart percentUsed={30} totalStorage={500}/>
-        <BarChart percentUsed={40} totalStorage={400}/>
-        <BarChart percentUsed={50} totalStorage={300}/>
-        <BarChart percentUsed={60} totalStorage={200}/>
-        <BarChart percentUsed={70} totalStorage={100}/>
-        <BarChart percentUsed={80} totalStorage={50}/>
-        <BarChart percentUsed={90} totalStorage={500}/>
-        <BarChart percentUsed={95} totalStorage={200}/>
+        <BarChart percentUsed={30} totalStorage={500} />
+        <BarChart percentUsed={40} totalStorage={400} />
+        <BarChart percentUsed={50} totalStorage={300} />
+        <BarChart percentUsed={60} totalStorage={200} />
+        <BarChart percentUsed={70} totalStorage={100} />
+        <BarChart percentUsed={80} totalStorage={50} />
+        <BarChart percentUsed={90} totalStorage={500} />
+        <BarChart percentUsed={95} totalStorage={200} />
       </div>
       <div className={styles.footer}>
         <p>Used</p>
