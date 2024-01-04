@@ -7,6 +7,7 @@ import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import styles from './AllOrgDonutChart.module.scss';
 import { useDonutChart } from './useDonutChart';
+import { defaultData } from './defaultData';
 
 ChartJS.register(ArcElement, Tooltip);
 

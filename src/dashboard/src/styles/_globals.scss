@@ -57,6 +57,29 @@
   }
 }
 
+@mixin scrollBar {
+  &::-webkit-scrollbar-track {
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $chart-gray;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: $medium-gray;
+  }
+
+  &::-webkit-scrollbar-thumb:active {
+    background-color: $medium-gray;
+  }
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+}
+
 .link {
   color: $bc-blue;
   text-decoration: underline;

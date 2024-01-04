@@ -1,0 +1,133 @@
+@import '@/styles/utils.scss';
+
+.panel {
+    @include panel-style(330px, unset, unset, 980px);
+
+    button {
+        @include export-btn;
+    }
+}
+
+.headings {
+    display: flex;
+    font-weight: bold;
+    margin-top: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid $medium-gray;
+
+    p {
+        width: 12%;
+
+        &:first-child {
+            width: 22%;
+            margin-left: 10px;
+        }
+
+        &:last-child {
+            width: 42%;
+        }
+    }
+}
+
+.chart {
+    max-height: 200px;
+    overflow-y: scroll;
+    padding-right: 10px;
+
+    @include scrollBar;
+}
+
+.row {
+    display: flex;
+    padding: 20px 0;
+    position: relative;
+    border-bottom: 1px solid $medium-gray;
+
+    &:first-child, &:nth-child(3n+1) {
+        .percentage {
+            background-color: $bc-blue;
+        }
+
+        .bar {
+            background-color: rgba($bc-blue, 0.4);
+        }
+    }
+    
+    &:nth-child(3n+2) {
+        .percentage {
+            background-color: $medium-yellow;
+        }
+
+        .bar {
+            background-color: rgba($medium-yellow, 0.4);
+        }
+    }
+    
+    &:nth-child(3n+3) {
+        .percentage {
+            background-color: $bar-chart-gray;
+        }
+
+        .bar {
+            background-color: rgba($bar-chart-gray, 0.4);
+        }
+    }
+}
+
+.info, .barChart {
+    display: flex;
+}
+
+.info {
+    width: 58%;
+
+    p {
+        width: 21%;
+
+        &:first-child {
+            width: 38%;
+            margin-left: 10px;
+        }
+
+        &:last-child {
+            width: unset;
+        }
+    }
+
+    a {
+        width: 38%;
+        margin-left: 10px;
+        text-decoration: underline;
+        font-weight: bold;
+        color: $bc-black;
+
+        &:hover {
+            opacity: 0.8;
+        }
+    }
+}
+
+.barChart {
+    width: 42%;
+}
+
+.bar {
+    height: 20px;
+    width: 100%;
+    border-radius: 10px;
+    margin-top: 5px;
+
+    .percentage {
+        height: 20px;
+        width: 60%;
+        border-radius: 10px 0 0 10px;
+    }
+}
+
+.used {
+    position: absolute;
+    right: 0;
+    top: 5px;
+    font-size: $font-size-12;
+    color: $info-gray;
+}

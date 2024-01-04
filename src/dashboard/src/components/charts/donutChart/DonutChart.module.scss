@@ -1,0 +1,57 @@
+@import '@/styles/utils.scss';
+
+.panel {
+    @include panel-style(330px, unset, unset, 297px);
+}
+
+.chart {
+    max-height: 215px;
+    display: flex;
+    justify-content: center;
+    padding: 15px;
+}
+
+.percentage {
+    position: absolute;
+    top: 46%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+
+    span {
+        display: block;
+        font-size: $font-size-32;
+    }
+}
+
+.total {
+    font-size: $font-size-small;
+}
+
+.footer {
+    display: flex;
+    margin-top: 10px;
+    font-size: $font-size-small;
+
+    p {
+        font-size: $font-size-small;
+    }
+
+    p::before {
+        content: '';
+        height: 14px;
+        width: 14px;
+        background-color: $medium-yellow;
+        display: inline-block;
+        margin-right: 10px;
+        border-radius: 50%;
+    }
+
+    p:last-child {
+        margin-left: 25px;
+
+        &::before {
+            opacity: .4;
+        }
+    }
+}
