@@ -46,20 +46,13 @@ export const convertToStorageSize = <T extends string | number>(
     else if (output === 'MB') result = value / Math.pow(1024, 2);
     else if (output === 'KB') result = value / 1024;
   }
-  if (result < 1) {
+  if (result > 0 && (options?.type === 'string' || options?.type === undefined)) {
     // Downsize to the smaller type.
-    if (output === 'TB') {
-      output = 'GB';
-      result *= 1024;
-    } else if (output === 'GB') {
-      output = 'MB';
-      result *= 1024;
-    } else if (output === 'MB') {
-      output = 'KB';
-      result *= 1024;
-    } else if (output === 'KB') {
-      output = '';
-      result *= 1024;
+    console.debug(result, output);
+    while (result < 1 && output !== '') {
+      const values = reduceToType(result, output);
+      result = values.value;
+      output = values.type;
     }
   }
   result = options?.formula?.(result) ?? result;
@@ -72,4 +65,35 @@ export const convertToStorageSize = <T extends string | number>(
           options,
         )} ${output}`.trimEnd()
   ) as T;
+};
+
+export const reduceToType = (
+  value: number,
+  type: 'TB' | 'GB' | 'MB' | 'KB' | '' = '',
+): { value: number; type: 'TB' | 'GB' | 'MB' | 'KB' | '' } => {
+  if (value >= 1) return { value, type };
+  console.debug('test', value, type);
+  // Downsize to the smaller type.
+  if (type === 'TB') {
+    return {
+      value: value * 1024,
+      type: 'GB',
+    };
+  } else if (type === 'GB') {
+    return {
+      value: value * 1024,
+      type: 'MB',
+    };
+  } else if (type === 'MB') {
+    return {
+      value: value * 1024,
+      type: 'KB',
+    };
+  } else if (type === 'KB') {
+    return {
+      value: value * 1024,
+      type: '',
+    };
+  }
+  return { value, type };
 };
