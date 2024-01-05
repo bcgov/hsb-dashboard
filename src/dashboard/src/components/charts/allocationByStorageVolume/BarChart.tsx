@@ -1,20 +1,29 @@
-import styles from './OrganizationsChart.module.scss';
+import { convertToStorageSize } from '@/utils';
 import Link from 'next/link';
+import styles from './AllocationByStorageVolume.module.scss';
 
-type BarChartProps = {
-  percentUsed: number;
+export interface IBarChartProps {
+  label: string;
+  to?: string;
+  availableSpace: number;
   totalStorage: number;
-};
+}
 
-export const BarChart: React.FC<BarChartProps> = ({ percentUsed, totalStorage }) => {
+export const BarChart: React.FC<IBarChartProps> = ({ label, to, availableSpace, totalStorage }) => {
+  var validPercentage = totalStorage
+    ? Math.min(100, Math.max(0, Math.round(((totalStorage - availableSpace) / totalStorage) * 100)))
+    : 0;
+  const usedStorage = totalStorage - availableSpace;
+  const usedStorageLabel = convertToStorageSize(usedStorage, 'MB', 'TB', {
+    formula: (value) => Number(value.toFixed(2)),
+  });
+  const totalStorageLabel = convertToStorageSize(totalStorage, 'MB', 'TB', {
+    formula: (value) => Number(value.toFixed(2)),
+  });
 
-  const validPercentage = Math.min(100, Math.max(0, percentUsed));
-
-  const usedStorage = (validPercentage / 100) * totalStorage;
-  
   return (
     <div className={styles.barChart}>
-      <Link href="/">Organization Name</Link>
+      {to ? <Link href={to}>{label}</Link> : <label>{label}</label>}
       <div className={styles.barLine}>
         <div
           className={styles.percentage}
@@ -25,7 +34,9 @@ export const BarChart: React.FC<BarChartProps> = ({ percentUsed, totalStorage })
           </div>
         </div>
       </div>
-      <p>{usedStorage.toFixed(2)} TB of {totalStorage} TB Used</p>
+      <p>
+        {usedStorageLabel} of {totalStorageLabel} Used
+      </p>
     </div>
   );
 };

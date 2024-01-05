@@ -1,1 +1,1 @@
-export * from './OrganizationsChart';
+export * from './AllocationByStorageVolume';
