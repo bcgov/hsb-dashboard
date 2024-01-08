@@ -2,6 +2,7 @@
 
 .panel {
     @include panel-style(unset, unset, 1080px, 1310px);
+    padding-bottom: 34px;
 
     >button {
         @include export-btn;
@@ -148,7 +149,7 @@
         @include ellipsis;
 
         &:first-of-type {
-            width: 34%;
+            width: 34.5%;
             margin-left: 10px;
         }
 

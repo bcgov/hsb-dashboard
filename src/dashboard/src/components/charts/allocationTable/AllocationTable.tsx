@@ -68,9 +68,6 @@ export const AllocationTable: React.FC = () => {
           ))}
         </div>
       </div>
-      <div className={styles.footer}>
-        <p>pagination</p>
-      </div>
       <Button variant="secondary" iconPath="/images/download-icon.png">
         Export to Excel
       </Button>
