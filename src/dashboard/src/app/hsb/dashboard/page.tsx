@@ -4,6 +4,7 @@ import {
   SmallBarChart,
   StorageTrendsChart,
   TotalStorage,
+  AllocationTable
 } from '@/components/charts';
 
 export default function Page() {
@@ -14,6 +15,7 @@ export default function Page() {
       <AllocationByStorageVolume />
       <TotalStorage />
       <SmallBarChart title="Allocation by OS" />
+      <AllocationTable />
     </>
   );
 }

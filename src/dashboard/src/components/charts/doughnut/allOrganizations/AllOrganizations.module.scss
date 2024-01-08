@@ -1,7 +1,7 @@
 @import '@/styles/utils.scss';
 
 .panel {
-    @include panel-style(370px, -height, -width, 638px);
+    @include panel-style(370px, unset, unset, 638px);
 
     button {
         @include export-btn;

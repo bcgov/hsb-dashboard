@@ -80,6 +80,12 @@
   }
 }
 
+@mixin ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .link {
   color: $bc-blue;
   text-decoration: underline;
