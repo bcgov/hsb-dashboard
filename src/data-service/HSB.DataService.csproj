@@ -22,4 +22,10 @@
     <ProjectReference Include="..\libs\models\HSB.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

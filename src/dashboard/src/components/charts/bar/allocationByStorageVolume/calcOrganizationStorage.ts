@@ -22,7 +22,6 @@ export const calcOrganizationStorage = (
       const capacity = values.capacity;
       const availableSpace = values.availableSpace;
       const percentage = capacity ? Math.round(((capacity - availableSpace) / capacity) * 100) : 0;
-      if (availableSpace > capacity) console.debug(org.name, values, capacity, availableSpace);
       return { ...org, capacity, availableSpace, percentage };
     })
     .sort((a, b) => {

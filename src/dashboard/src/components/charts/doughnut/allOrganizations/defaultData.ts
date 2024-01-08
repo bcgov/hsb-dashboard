@@ -1,5 +1,7 @@
+import { IDoughnutStats } from './IDoughnutStats';
+
 // Data for the Donut Chart with specified colors
-export const defaultData = {
+export const defaultData: IDoughnutStats = {
   space: '0 TB',
   used: '0 TB',
   available: '0 TB',

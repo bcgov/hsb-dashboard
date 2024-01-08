@@ -10,4 +10,6 @@ public interface IFileSystemHistoryItemService : IBaseService<FileSystemHistoryI
     IEnumerable<FileSystemHistoryItem> FindForUser(long userId, FileSystemHistoryItemFilter filter);
 
     IEnumerable<FileSystemHistoryItem> FindHistoryByMonth(DateTime start, DateTime? end, int? tenantId, int? organizationId, int? operatingSystemId, string? serverServiceKeyNow);
+
+    IEnumerable<FileSystemHistoryItem> FindHistoryByMonthForUser(int userId, DateTime start, DateTime? end, int? tenantId, int? organizationId, int? operatingSystemId, string? serverServiceKeyNow);
 }

@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from 'chart.js';
 import React from 'react';
-import { LineChart } from '../lineChart';
+import { LineChart } from '../line';
 import { useStorageTrends } from './useStorageTrends';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);

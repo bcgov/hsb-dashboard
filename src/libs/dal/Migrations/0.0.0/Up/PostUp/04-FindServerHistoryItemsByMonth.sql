@@ -11,7 +11,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
   RETURN QUERY
-  SELECT
+  SELECT DISTINCT
     "Id"
     , "TenantId"
     , "OrganizationId"

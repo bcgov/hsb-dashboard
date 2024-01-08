@@ -1,13 +1,13 @@
 import { useDashboard } from '@/store';
 import React from 'react';
-import { IStats } from './IStats';
-import { defaultData } from './defaultData';
-import { updateData } from './updateData';
+import { IDoughnutStats } from '../doughnut/allOrganizations/IDoughnutStats';
+import { defaultData } from '../doughnut/allOrganizations/defaultData';
+import { generateDoughnutChart } from './generateDoughnutChart';
 
-export const useDonutChart = () => {
+export const useServerItemsDoughnutChart = () => {
   const serverItems = useDashboard((state) => state.serverItems);
 
-  const [data, setData] = React.useState<IStats>(defaultData);
+  const [data, setData] = React.useState<IDoughnutStats>(defaultData);
 
   React.useEffect(() => {
     if (serverItems.length) {
@@ -15,7 +15,7 @@ export const useDonutChart = () => {
       const available = serverItems
         .map((si) => si.availableSpace!)
         .reduce((a, b) => (a ?? 0) + (b ?? 0));
-      setData((data) => updateData(space, available, data));
+      setData((data) => generateDoughnutChart(space, available, data));
     } else {
       setData(defaultData);
     }

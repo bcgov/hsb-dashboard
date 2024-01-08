@@ -22,7 +22,8 @@ public class ServerHistoryItemService : BaseService<ServerHistoryItem>, IServerH
     {
         var query = this.Context.ServerHistoryItems
             .AsNoTracking()
-            .Where(filter.GeneratePredicate());
+            .Where(filter.GeneratePredicate())
+            .Distinct();
 
         if (filter.Sort?.Any() == true)
             query = query.OrderByProperty(filter.Sort);
@@ -36,15 +37,18 @@ public class ServerHistoryItemService : BaseService<ServerHistoryItem>, IServerH
             .ToArray();
     }
 
-    public IEnumerable<ServerHistoryItem> FindForUser(long userId, ServerHistoryItemFilter filter)
+    public IEnumerable<ServerHistoryItem> FindForUser(int userId, ServerHistoryItemFilter filter)
     {
         var query = (from si in this.Context.ServerHistoryItems
-                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
+                     join org in this.Context.Organizations on si.OrganizationId equals org.Id
+                     join tOrg in this.Context.TenantOrganizations on org.Id equals tOrg.OrganizationId
+                     join tenant in this.Context.Tenants on tOrg.TenantId equals tenant.Id
                      join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                      where usert.UserId == userId
                      select si)
             .AsNoTracking()
-            .Where(filter.GeneratePredicate());
+            .Where(filter.GeneratePredicate())
+            .Distinct();
 
         if (filter.Sort?.Any() == true)
             query = query.OrderByProperty(filter.Sort);
@@ -61,6 +65,11 @@ public class ServerHistoryItemService : BaseService<ServerHistoryItem>, IServerH
     public IEnumerable<ServerHistoryItem> FindHistoryByMonth(DateTime start, DateTime? end, int? tenantId, int? organizationId, int? operatingSystemId, string? serviceKeyNow)
     {
         return this.Context.FindServerHistoryItemsByMonth(start.ToUniversalTime(), end?.ToUniversalTime(), tenantId, organizationId, operatingSystemId, serviceKeyNow).ToArray();
+    }
+
+    public IEnumerable<ServerHistoryItem> FindHistoryByMonthForUser(int userId, DateTime start, DateTime? end, int? tenantId, int? organizationId, int? operatingSystemId, string? serviceKeyNow)
+    {
+        return this.Context.FindServerHistoryItemsByMonthForUser(userId, start.ToUniversalTime(), end?.ToUniversalTime(), tenantId, organizationId, operatingSystemId, serviceKeyNow).ToArray();
     }
     #endregion
 }

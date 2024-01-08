@@ -11,7 +11,6 @@ EXPOSE 443 8080
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 
 ENV PATH="$PATH:/root/.dotnet/tools"
-# RUN dotnet tool install --global dotnet-ef --version 8.0.0
 
 WORKDIR /src/data-service
 COPY src/data-service/ .
@@ -25,9 +24,9 @@ FROM base AS final
 
 WORKDIR /app
 COPY --from=build /app/publish .
-COPY src/api/entrypoint.sh .
+COPY --from=build src/data-service/entrypoint.sh .
 RUN chmod +x /app/entrypoint.sh
 
-# USER appuser
 USER 1001
 ENTRYPOINT ["/app/entrypoint.sh"]
+# ENTRYPOINT ["tail", "-f", "/dev/null"]

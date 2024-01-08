@@ -25,11 +25,14 @@ public class OperatingSystemItemService : BaseService<OperatingSystemItem>, IOpe
     {
         var query = (from osi in this.Context.OperatingSystemItems
                      join si in this.Context.ServerItems on osi.Id equals si.OperatingSystemItemId
-                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
+                     join org in this.Context.Organizations on si.OrganizationId equals org.Id
+                     join tOrg in this.Context.TenantOrganizations on org.Id equals tOrg.OrganizationId
+                     join tenant in this.Context.Tenants on tOrg.TenantId equals tenant.Id
                      join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                      where usert.UserId == userId
                      select osi)
-            .Where(predicate);
+            .Where(predicate)
+            .Distinct();
 
         if (sort != null)
             query = query.OrderBy(sort);
@@ -52,11 +55,14 @@ public class OperatingSystemItemService : BaseService<OperatingSystemItem>, IOpe
     {
         var query = (from osi in this.Context.OperatingSystemItems
                      join si in this.Context.ServerItems on osi.Id equals si.OperatingSystemItemId
-                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
+                     join org in this.Context.Organizations on si.OrganizationId equals org.Id
+                     join tOrg in this.Context.TenantOrganizations on org.Id equals tOrg.OrganizationId
+                     join tenant in this.Context.Tenants on tOrg.TenantId equals tenant.Id
                      join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                      where usert.UserId == userId
                      select osi)
-            .Where(predicate);
+            .Where(predicate)
+            .Distinct();
 
         if (sort?.Any() == true)
             query = query.OrderByProperty(sort);

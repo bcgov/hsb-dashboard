@@ -108,9 +108,21 @@ public class HSBContext : DbContext
 
         modelBuilder.HasDbFunction(typeof(HSBContext)
             .GetMethod(
+                nameof(FindServerHistoryItemsByMonthForUser),
+                new[] { typeof(int), typeof(DateTime), typeof(DateTime?), typeof(int?), typeof(int?), typeof(int?), typeof(string) })!
+            ).HasName("FindServerHistoryItemsByMonthForUser");
+
+        modelBuilder.HasDbFunction(typeof(HSBContext)
+            .GetMethod(
                 nameof(FindFileSystemHistoryItemsByMonth),
                 new[] { typeof(DateTime), typeof(DateTime?), typeof(int?), typeof(int?), typeof(int?), typeof(string) })!)
             .HasName("FindFileSystemHistoryItemsByMonth");
+
+        modelBuilder.HasDbFunction(typeof(HSBContext)
+            .GetMethod(
+                nameof(FindFileSystemHistoryItemsByMonthForUser),
+                new[] { typeof(int), typeof(DateTime), typeof(DateTime?), typeof(int?), typeof(int?), typeof(int?), typeof(string) })!)
+            .HasName("FindFileSystemHistoryItemsByMonthForUser");
     }
 
     /// <summary>
@@ -129,6 +141,22 @@ public class HSBContext : DbContext
         => FromExpression(() => FindServerHistoryItemsByMonth(startDate, endDate, tenantId, organizationId, operatingSystemItemId, serviceNowKey));
 
     /// <summary>
+    /// Function to find server history items by month.
+    /// This will only return a single row for each month.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="startDate"></param>
+    /// <param name="endDate"></param>
+    /// <param name="tenantId"></param>
+    /// <param name="organizationId"></param>
+    /// <param name="operatingSystemId"></param>
+    /// <param name="serviceKeyNow"></param>
+    /// <returns></returns>
+    /// <exception cref="NotSupportedException"></exception>
+    public IQueryable<ServerHistoryItem> FindServerHistoryItemsByMonthForUser(int userId, DateTime startDate, DateTime? endDate, int? tenantId, int? organizationId, int? operatingSystemItemId, string? serviceNowKey)
+        => FromExpression(() => FindServerHistoryItemsByMonthForUser(userId, startDate, endDate, tenantId, organizationId, operatingSystemItemId, serviceNowKey));
+
+    /// <summary>
     /// Function to find file system history items by month.
     /// This will only return a single row for each month.
     /// </summary>
@@ -142,6 +170,22 @@ public class HSBContext : DbContext
     /// <exception cref="NotSupportedException"></exception>
     public IQueryable<FileSystemHistoryItem> FindFileSystemHistoryItemsByMonth(DateTime startDate, DateTime? endDate, int? tenantId, int? organizationId, int? operatingSystemItemId, string? serverServiceNowKey)
         => FromExpression(() => FindFileSystemHistoryItemsByMonth(startDate, endDate, tenantId, organizationId, operatingSystemItemId, serverServiceNowKey));
+
+    /// <summary>
+    /// Function to find file system history items by month.
+    /// This will only return a single row for each month.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="startDate"></param>
+    /// <param name="endDate"></param>
+    /// <param name="tenantId"></param>
+    /// <param name="organizationId"></param>
+    /// <param name="operatingSystemId"></param>
+    /// <param name="serverServiceKeyNow"></param>
+    /// <returns></returns>
+    /// <exception cref="NotSupportedException"></exception>
+    public IQueryable<FileSystemHistoryItem> FindFileSystemHistoryItemsByMonthForUser(int userId, DateTime startDate, DateTime? endDate, int? tenantId, int? organizationId, int? operatingSystemItemId, string? serverServiceNowKey)
+        => FromExpression(() => FindFileSystemHistoryItemsByMonthForUser(userId, startDate, endDate, tenantId, organizationId, operatingSystemItemId, serverServiceNowKey));
 
     /// <summary>
     /// Save the entities with who created them or updated them.

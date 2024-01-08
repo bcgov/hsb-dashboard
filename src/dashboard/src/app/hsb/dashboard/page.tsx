@@ -1,18 +1,18 @@
 import {
-  AllOrgDonutChart,
+  AllOrganizations,
   AllocationByStorageVolume,
-  DonutChart,
   SmallBarChart,
   StorageTrendsChart,
+  TotalStorage,
 } from '@/components/charts';
 
 export default function Page() {
   return (
     <>
-      <AllOrgDonutChart />
+      <AllOrganizations />
       <StorageTrendsChart large={false} />
       <AllocationByStorageVolume />
-      <DonutChart />
+      <TotalStorage />
       <SmallBarChart title="Allocation by OS" />
     </>
   );

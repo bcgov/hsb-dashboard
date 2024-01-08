@@ -8,6 +8,7 @@
 . ./scripts/database.sh
 . ./scripts/oc.sh
 . ./scripts/npm.sh
+. ./scripts/services.sh
 
 action=${1-"help"}
 
@@ -73,6 +74,10 @@ elif [ "$action" = "oc-push" ]; then
   oc-push ${2-} ${3-}
 elif [ "$action" = "oc-deploy" ]; then
   oc-deploy ${2-} ${3-} ${4-} ${5-}
+
+# Services
+elif [ "$action" = "data-service" ]; then
+  data-service $@
 
 # NPM
 elif [ "$action" = "npm-install" ]; then

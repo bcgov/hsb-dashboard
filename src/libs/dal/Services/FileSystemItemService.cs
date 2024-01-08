@@ -22,10 +22,13 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
     {
         var query = (from fsi in this.Context.FileSystemItems
                      join si in this.Context.ServerItems on fsi.ServerItemServiceNowKey equals si.ServiceNowKey
-                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
+                     join org in this.Context.Organizations on si.OrganizationId equals org.Id
+                     join tOrg in this.Context.TenantOrganizations on org.Id equals tOrg.OrganizationId
+                     join tenant in this.Context.Tenants on tOrg.TenantId equals tenant.Id
                      join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                      select fsi)
-            .Where(filter.GeneratePredicate());
+            .Where(filter.GeneratePredicate())
+            .Distinct();
 
         if (filter.Sort != null)
             query = query.OrderByProperty(filter.Sort);
@@ -45,11 +48,14 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
     {
         var query = (from fsi in this.Context.FileSystemItems
                      join si in this.Context.ServerItems on fsi.ServerItemServiceNowKey equals si.ServiceNowKey
-                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
+                     join org in this.Context.Organizations on si.OrganizationId equals org.Id
+                     join tOrg in this.Context.TenantOrganizations on org.Id equals tOrg.OrganizationId
+                     join tenant in this.Context.Tenants on tOrg.TenantId equals tenant.Id
                      join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                      where usert.UserId == userId
                      select fsi)
-            .Where(filter.GeneratePredicate());
+            .Where(filter.GeneratePredicate())
+            .Distinct();
 
         if (filter.Sort != null)
             query = query.OrderByProperty(filter.Sort);
@@ -67,7 +73,9 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
     {
         return (from fsi in this.Context.FileSystemItems
                 join si in this.Context.ServerItems on fsi.ServerItemServiceNowKey equals si.ServiceNowKey
-                join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
+                join org in this.Context.Organizations on si.OrganizationId equals org.Id
+                join tOrg in this.Context.TenantOrganizations on org.Id equals tOrg.OrganizationId
+                join tenant in this.Context.Tenants on tOrg.TenantId equals tenant.Id
                 join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                 where usert.UserId == userId
                    && fsi.ServiceNowKey == key

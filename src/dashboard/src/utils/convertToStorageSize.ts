@@ -48,7 +48,6 @@ export const convertToStorageSize = <T extends string | number>(
   }
   if (result > 0 && (options?.type === 'string' || options?.type === undefined)) {
     // Downsize to the smaller type.
-    console.debug(result, output);
     while (result < 1 && output !== '') {
       const values = reduceToType(result, output);
       result = values.value;
@@ -72,7 +71,6 @@ export const reduceToType = (
   type: 'TB' | 'GB' | 'MB' | 'KB' | '' = '',
 ): { value: number; type: 'TB' | 'GB' | 'MB' | 'KB' | '' } => {
   if (value >= 1) return { value, type };
-  console.debug('test', value, type);
   // Downsize to the smaller type.
   if (type === 'TB') {
     return {

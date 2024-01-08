@@ -1,6 +1,6 @@
 import { ChartData } from 'chart.js';
 
-export interface IStats {
+export interface IDoughnutStats {
   space: string;
   used: string;
   available: string;

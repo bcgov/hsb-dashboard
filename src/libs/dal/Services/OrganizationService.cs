@@ -31,7 +31,8 @@ public class OrganizationService : BaseService<Organization>, IOrganizationServi
                      join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                      where usert.UserId == userId
                      select org)
-            .Where(predicate);
+            .Where(predicate)
+            .Distinct();
 
         if (sort != null)
             query = query.OrderBy(sort);
@@ -58,7 +59,8 @@ public class OrganizationService : BaseService<Organization>, IOrganizationServi
                      join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                      where usert.UserId == userId
                      select org)
-            .Where(predicate);
+            .Where(predicate)
+            .Distinct();
 
         if (sort?.Any() == true)
             query = query.OrderByProperty(sort);

@@ -7,7 +7,7 @@ export const useDashboardServerHistoryItems = () => {
   const serverHistoryItemsReady = useDashboard((state) => state.serverHistoryItemsReady);
   const setServerHistoryItemsReady = useDashboard((state) => state.setServerHistoryItemsReady);
   const serverHistoryItems = useDashboard((state) => state.serverHistoryItems);
-  const setFilteredServerHistoryItems = useDashboard((state) => state.setServerHistoryItems);
+  const setServerHistoryItems = useDashboard((state) => state.setServerHistoryItems);
 
   const fetch = React.useCallback(
     async (filter: IServerHistoryItemFilter) => {
@@ -15,7 +15,7 @@ export const useDashboardServerHistoryItems = () => {
         setServerHistoryItemsReady(false);
         const res = await history(filter);
         const serverHistoryItems: IServerHistoryItemModel[] = await res.json();
-        setFilteredServerHistoryItems(serverHistoryItems);
+        setServerHistoryItems(serverHistoryItems);
         return serverHistoryItems;
       } catch (error) {
         throw error;
@@ -23,7 +23,7 @@ export const useDashboardServerHistoryItems = () => {
         setServerHistoryItemsReady(true);
       }
     },
-    [history, setFilteredServerHistoryItems, setServerHistoryItemsReady],
+    [history, setServerHistoryItems, setServerHistoryItemsReady],
   );
 
   return React.useMemo(

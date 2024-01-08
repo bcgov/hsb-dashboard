@@ -25,5 +25,4 @@
     <ProjectReference Include="..\libs\dal\HSB.DAL.csproj" />
     <ProjectReference Include="..\libs\keycloak\HSB.Keycloak.csproj" />
   </ItemGroup>
-
 </Project>
