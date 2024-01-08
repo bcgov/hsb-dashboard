@@ -1,10 +1,12 @@
-import { IDoughnutStats } from './IDoughnutStats';
+import { IDoughnutStats } from '@/components';
 
 // Data for the Donut Chart with specified colors
 export const defaultData: IDoughnutStats = {
   space: '0 TB',
   used: '0 TB',
+  usedPercent: 0,
   available: '0 TB',
+  availablePercent: 0,
   chart: {
     labels: ['Unused', 'Used', 'Allocated'], // Labels to match ring order
     datasets: [

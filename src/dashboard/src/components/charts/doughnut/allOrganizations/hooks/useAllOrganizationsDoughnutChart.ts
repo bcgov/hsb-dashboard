@@ -1,10 +1,10 @@
 import { useDashboard } from '@/store';
 import React from 'react';
-import { IDoughnutStats } from '../doughnut/allOrganizations/IDoughnutStats';
-import { defaultData } from '../doughnut/allOrganizations/defaultData';
+import { IDoughnutStats } from '../..';
+import { defaultData } from '../defaultData';
 import { generateDoughnutChart } from './generateDoughnutChart';
 
-export const useServerItemsDoughnutChart = () => {
+export const useAllOrganizationsDoughnutChart = () => {
   const serverItems = useDashboard((state) => state.serverItems);
 
   const [data, setData] = React.useState<IDoughnutStats>(defaultData);

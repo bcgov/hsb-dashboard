@@ -4,5 +4,7 @@ export interface IDoughnutStats {
   space: string;
   used: string;
   available: string;
+  usedPercent: number;
+  availablePercent: number;
   chart: ChartData<'doughnut', number[], string>;
 }
