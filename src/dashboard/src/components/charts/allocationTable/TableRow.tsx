@@ -16,11 +16,11 @@ export const TableRow: React.FC<TableRowProps> = ({ server, tenant, os, allocate
   return (
     <div className={styles.row}>
       <div className={styles.info}>
-        <Link href={``}>{server}</Link>
-        <p>{os}</p>
-        {tenant ? <p>{tenant}</p> : ''}
-        <p>{allocated.toFixed(1)} TB</p>
-        <p>{unused.toFixed(1)} TB</p>
+        <Link href={``} title={server}>{server}</Link>
+        {tenant ? <p title={tenant}>{tenant}</p> : ''}
+        <p title={os}>{os}</p>
+        <p title={`${allocated.toFixed(1)} TB`}>{allocated.toFixed(1)} TB</p>
+        <p title={`${unused.toFixed(1)} TB`}>{unused.toFixed(1)} TB</p>
       </div>
       <div className={styles.barChart}>
         <div className={styles.bar}>

@@ -11,7 +11,12 @@ interface DropdownProps {
   toggleDropdown: (label: string) => void;
 }
 
-export const Dropdown: React.FC<DropdownProps> = ({ label, options, visibleDropdown, toggleDropdown }) => (
+export const Dropdown: React.FC<DropdownProps> = ({
+  label,
+  options,
+  visibleDropdown,
+  toggleDropdown,
+}) => (
   <div
     className={classNames(styles.sortDropdown, {
       [styles.visible]: visibleDropdown === label,

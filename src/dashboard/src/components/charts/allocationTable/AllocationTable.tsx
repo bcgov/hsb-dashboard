@@ -22,17 +22,17 @@ export const AllocationTable: React.FC = () => {
     setVisibleDropdown(null);
   }, []);
 
-  const hasTenant = defaultData.some(data => data.tenant);
+  const hasTenant = defaultData.some((data) => data.tenant);
 
   let dropdownConfigs = [
-    { label: "Server", options: ["A to Z", "Z to A"] },
-    { label: "OS Version", options: ["Latest", "Oldest"] },
-    { label: "Allocated Space", options: ["Ascending", "Descending"] },
-    { label: "Unused", options: ["Ascending", "Descending"] }
+    { label: 'Server', options: ['A to Z', 'Z to A'] },
+    { label: 'OS Version', options: ['Latest', 'Oldest'] },
+    { label: 'Allocated Space', options: ['Ascending', 'Descending'] },
+    { label: 'Unused', options: ['Ascending', 'Descending'] },
   ];
 
   if (hasTenant) {
-    dropdownConfigs.splice(1, 0, { label: "Tenant", options: ["A to Z", "Z to A"] });
+    dropdownConfigs.splice(1, 0, { label: 'Tenant', options: ['A to Z', 'Z to A'] });
   }
 
   return (
@@ -44,8 +44,7 @@ export const AllocationTable: React.FC = () => {
       </div>
       <div className={classNames(styles.tableContainer, { [styles.hasTenant]: hasTenant })}>
         <div className={styles.header} onBlur={onBlurHandler}>
-        {
-          dropdownConfigs.map(dropdown => (
+          {dropdownConfigs.map((dropdown) => (
             <Dropdown
               key={dropdown.label}
               label={dropdown.label}
@@ -53,8 +52,7 @@ export const AllocationTable: React.FC = () => {
               visibleDropdown={visibleDropdown}
               toggleDropdown={toggleDropdown}
             />
-          ))
-        }
+          ))}
           <p>Total</p>
         </div>
         <div className={styles.chart}>

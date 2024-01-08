@@ -13,7 +13,7 @@
 
     input {
         min-width: 344px;
-    };
+    }
 }
 
 .header {
@@ -38,10 +38,10 @@
     }
 
     p {
-      position: relative;
-      width: fit-content;
+        position: relative;
+        width: fit-content;
 
-      &::after {
+        &::after {
             content: "";
             height: 6px;
             width: 6px;
@@ -75,7 +75,7 @@
         height: auto;
         opacity: 1;
         visibility: visible;
-      }
+    }
 
     ul {
         padding: 0;
@@ -122,7 +122,8 @@
     border-bottom: 1px solid $medium-gray;
 }
 
-.info, .barChart {
+.info,
+.barChart {
     display: flex;
 }
 
@@ -192,6 +193,24 @@
 
         &:nth-child(2) {
             width: 15%;
+        }
+    }
+
+    .info {
+        a {
+            width: 20%;
+        }
+
+        p {
+            width: 20%;
+
+            &:first-of-type {
+                width: 21%;
+            }
+
+            &:last-child {
+                width: unset;
+            }
         }
     }
 }
