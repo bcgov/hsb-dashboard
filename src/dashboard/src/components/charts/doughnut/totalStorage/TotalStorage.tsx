@@ -1,15 +1,16 @@
 'use client';
 
+import { convertToStorageSize } from '@/utils';
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js';
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import styles from './TotalStorage.module.scss';
-import { defaultData } from './defaultData';
+import { useTotalStorageDoughnutChart } from './hooks';
 
 ChartJS.register(ArcElement, Tooltip);
 
 export const TotalStorage: React.FC = () => {
-  const data = defaultData;
+  const data = useTotalStorageDoughnutChart();
 
   return (
     <div className={styles.panel}>
@@ -17,7 +18,7 @@ export const TotalStorage: React.FC = () => {
       <div className={styles.chartContainer}>
         <div className={styles.chart}>
           <Doughnut
-            data={data}
+            data={data.chart}
             options={{
               rotation: 180,
               circumference: 360,
@@ -30,9 +31,9 @@ export const TotalStorage: React.FC = () => {
                   callbacks: {
                     label: function (context: { dataIndex: any; parsed: any }) {
                       let labelIndex = context.dataIndex;
-                      let label = data.labels[labelIndex] || '';
+                      let label = data.chart.labels?.[labelIndex] || '';
                       let value = context.parsed;
-                      return `${label}: ${value}GB`;
+                      return `${label}: ${convertToStorageSize(value, 'MB', 'TB')}`;
                     },
                     title: function () {
                       return ''; // Return an empty string to remove the title for tooltips
@@ -44,12 +45,12 @@ export const TotalStorage: React.FC = () => {
           />
         </div>
         <p className={styles.percentage}>
-          <span>{data.percentage.toFixed(0)}%</span>Used
+          <span>{data.usedPercent.toFixed(2)}%</span>Used
         </p>
-        <p className={styles.total}>Total: {data.space}GB</p>
+        <p className={styles.total}>Total: {data.space}</p>
         <div className={styles.footer}>
-          <p>Used: {data.used}GB</p>
-          <p>Unused: {data.available}GB</p>
+          <p>Used: {data.used.replace(' ', '')}</p>
+          <p>Unused: {data.available.replace(' ', '')}</p>
         </div>
       </div>
     </div>
