@@ -8,6 +8,10 @@ import {
 import { create } from 'zustand';
 
 export interface IDashboardState {
+  // Date Range
+  dateRange: string[];
+  setDateRange: (value?: string[]) => void;
+
   // Organizations
   organizations: IOrganizationModel[];
   setOrganizations: (values: IOrganizationModel[]) => void;
@@ -36,6 +40,10 @@ export interface IDashboardState {
 }
 
 export const useDashboard = create<IDashboardState>((set) => ({
+  // Date Range
+  dateRange: [],
+  setDateRange: (values) => set((state) => ({ dateRange: values })),
+
   // Organizations
   organizations: [],
   setOrganizations: (values) => set((state) => ({ organizations: values })),

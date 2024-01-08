@@ -148,8 +148,7 @@ public class ServerItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var result = _serverHistoryItemService.FindHistoryByMonth(filter.StartDate ?? DateTime.UtcNow.AddYears(-1), filter.EndDate, filter.TenantId, filter.OrganizationId, filter.OperatingSystemItemId, filter.ServiceNowKey);
-            // var result = _serverHistoryItemService.FindForUser(user.Id, filter);
+            var result = _serverHistoryItemService.FindHistoryByMonthForUser(user.Id, filter.StartDate ?? DateTime.UtcNow.AddYears(-1), filter.EndDate, filter.TenantId, filter.OrganizationId, filter.OperatingSystemItemId, filter.ServiceNowKey);
             return new JsonResult(result.Select(si => new ServerHistoryItemModel(si)));
         }
     }

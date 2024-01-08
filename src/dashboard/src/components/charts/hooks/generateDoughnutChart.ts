@@ -1,10 +1,10 @@
 import { convertToStorageSize } from '@/utils';
-import { IStats } from './IStats';
+import { IDoughnutStats } from '../doughnut/allOrganizations/IDoughnutStats';
 
-export const updateData = (
+export const generateDoughnutChart = (
   space: number | undefined = 0,
   available: number | undefined = 0,
-  data: IStats,
+  data: IDoughnutStats,
 ) => {
   const used = space - available;
   const usedPercent = space ? (used / space) * 100 : 0;

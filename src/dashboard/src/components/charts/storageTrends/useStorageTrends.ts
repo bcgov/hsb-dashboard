@@ -1,5 +1,5 @@
 import { IServerHistoryItemModel } from '@/hooks';
-import { useDashboard, useFiltered } from '@/store';
+import { useDashboard } from '@/store';
 import { calcMonthsBetween, convertToStorageSize } from '@/utils';
 import { ChartData } from 'chart.js';
 import moment from 'moment';
@@ -10,7 +10,7 @@ import moment from 'moment';
  * @returns Line chart data.
  */
 export const useStorageTrends = (minColumns: number = 12): ChartData<'line', number[], string> => {
-  const dateRange = useFiltered((state) => state.dateRange);
+  const dateRange = useDashboard((state) => state.dateRange);
   const serverHistoryItems = useDashboard((state) => state.serverHistoryItems);
 
   const now = moment();

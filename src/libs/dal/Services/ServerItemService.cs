@@ -23,7 +23,8 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
     {
         var query = this.Context.ServerItems
             .AsNoTracking()
-            .Where(filter.GeneratePredicate());
+            .Where(filter.GeneratePredicate())
+            .Distinct();
 
         if (filter.Sort?.Any() == true)
             query = query.OrderByProperty(filter.Sort);
@@ -40,12 +41,15 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
     public IEnumerable<ServerItem> FindForUser(long userId, ServerItemFilter filter)
     {
         var query = (from si in this.Context.ServerItems
-                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
+                     join org in this.Context.Organizations on si.OrganizationId equals org.Id
+                     join tOrg in this.Context.TenantOrganizations on org.Id equals tOrg.OrganizationId
+                     join tenant in this.Context.Tenants on tOrg.TenantId equals tenant.Id
                      join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                      where usert.UserId == userId
                      select si)
             .AsNoTracking()
-            .Where(filter.GeneratePredicate());
+            .Where(filter.GeneratePredicate())
+            .Distinct();
 
         if (filter.Sort?.Any() == true)
             query = query.OrderByProperty(filter.Sort);
@@ -62,7 +66,9 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
     public ServerItem? FindForId(string key, long userId)
     {
         var query = from si in this.Context.ServerItems
-                    join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
+                    join org in this.Context.Organizations on si.OrganizationId equals org.Id
+                    join tOrg in this.Context.TenantOrganizations on org.Id equals tOrg.OrganizationId
+                    join tenant in this.Context.Tenants on tOrg.TenantId equals tenant.Id
                     join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                     where si.ServiceNowKey == key
                        && usert.UserId == userId

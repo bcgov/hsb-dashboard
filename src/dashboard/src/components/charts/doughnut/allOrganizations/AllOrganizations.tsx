@@ -1,19 +1,19 @@
 'use client';
 
+import styles from './AllOrganizations.module.scss';
+
 import { Button } from '@/components/buttons';
+import { useServerItemsDoughnutChart } from '@/components/charts/hooks/useServerItemsDoughnutChart';
 import { useDashboard } from '@/store';
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js';
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import styles from './AllOrgDonutChart.module.scss';
-import { useDonutChart } from './useDonutChart';
-import { defaultData } from './defaultData';
 
 ChartJS.register(ArcElement, Tooltip);
 
-export const AllOrgDonutChart: React.FC = () => {
+export const AllOrganizations: React.FC = () => {
   const organizations = useDashboard((state) => state.organizations);
-  const data = useDonutChart();
+  const data = useServerItemsDoughnutChart();
 
   return (
     <div className={styles.panel}>

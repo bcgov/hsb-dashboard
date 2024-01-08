@@ -1,5 +1,6 @@
-CREATE OR REPLACE FUNCTION "FindFileSystemHistoryItemsByMonth"(
-  "startDate" TIMESTAMPTZ
+CREATE OR REPLACE FUNCTION "FindFileSystemHistoryItemsByMonthForUser"(
+  "userId" INT
+  , "startDate" TIMESTAMPTZ
   , "endDate" TIMESTAMPTZ DEFAULT NULL
   , "tenantId" INT DEFAULT NULL
   , "organizationId" INT DEFAULT NULL
@@ -43,16 +44,21 @@ BEGIN
     FROM public."FileSystemHistoryItem" AS fshi
     JOIN public."FileSystemItem" AS fsi ON fshi."ServiceNowKey" = fsi."ServiceNowKey"
     JOIN public."ServerItem" AS si ON fsi."ServerItemServiceNowKey" = si."ServiceNowKey"
-    WHERE fshi."CreatedOn" >= $1
-      AND ($2 IS NULL OR fshi."CreatedOn" <= $2)
-      AND ($3 IS NULL OR si."TenantId" = $3)
-      AND ($4 IS NULL OR si."OrganizationId" = $4)
-      AND ($5 IS NULL OR si."OperatingSystemItemId" = $5)
-      AND ($6 IS NULL OR fsi."ServerItemServiceNowKey" = $6)
+    JOIN public."Organization" o ON si."OrganizationId" = o."Id"
+    JOIN public."TenantOrganization" ot ON o."Id" = ot."OrganizationId"
+    JOIN public."Tenant" t ON ot."TenantId" = t."Id"
+    JOIN public."UserTenant" ut ON t."Id" = ut."TenantId"
+    WHERE fshi."CreatedOn" >= $2
+      AND ($3 IS NULL OR fshi."CreatedOn" <= $3)
+      AND ($4 IS NULL OR si."TenantId" = $4)
+      AND ($5 IS NULL OR si."OrganizationId" = $5)
+      AND ($6 IS NULL OR si."OperatingSystemItemId" = $6)
+      AND ($7 IS NULL OR fsi."ServerItemServiceNowKey" = $7)
+      AND ut."UserId" = $1
   ) AS "sub"
   WHERE "rn" = 1
   ORDER BY "ServiceNowKey", "CreatedOn";
 END;$$
 
 -- Use by calling
--- select * from public."FindFileSystemHistoryItemsByMonth"('2023-12-01');
+-- select * from public."FindFileSystemHistoryItemsByMonthForUser"(1, '2023-12-01');
