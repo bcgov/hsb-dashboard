@@ -20,12 +20,14 @@ export const useFilteredTenants = () => {
 
   const options = React.useMemo(
     () =>
-      tenants.map<IOption<ITenantModel>>((t) => ({
-        label: t.name,
-        value: t.id,
-        data: t,
-        disabled: t.isEnabled,
-      })),
+      tenants
+        .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+        .map<IOption<ITenantModel>>((t) => ({
+          label: t.name,
+          value: t.id,
+          data: t,
+          disabled: t.isEnabled,
+        })),
     [tenants],
   );
 

@@ -44,9 +44,7 @@ BEGIN
     FROM public."FileSystemHistoryItem" AS fshi
     JOIN public."FileSystemItem" AS fsi ON fshi."ServiceNowKey" = fsi."ServiceNowKey"
     JOIN public."ServerItem" AS si ON fsi."ServerItemServiceNowKey" = si."ServiceNowKey"
-    JOIN public."Organization" o ON si."OrganizationId" = o."Id"
-    JOIN public."TenantOrganization" ot ON o."Id" = ot."OrganizationId"
-    JOIN public."Tenant" t ON ot."TenantId" = t."Id"
+    JOIN public."Tenant" t ON si."TenantId" = t."Id"
     JOIN public."UserTenant" ut ON t."Id" = ut."TenantId"
     WHERE fshi."CreatedOn" >= $2
       AND ($3 IS NULL OR fshi."CreatedOn" <= $3)

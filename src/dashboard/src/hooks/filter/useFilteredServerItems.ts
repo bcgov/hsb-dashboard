@@ -20,11 +20,13 @@ export const useFilteredServerItems = () => {
 
   const options = React.useMemo(
     () =>
-      serverItems.map<IOption<IServerItemModel>>((t) => ({
-        label: t.name ? `${t.name}` : '[NO NAME PROVIDED]',
-        value: t.serviceNowKey,
-        data: t,
-      })),
+      serverItems
+        .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+        .map<IOption<IServerItemModel>>((t) => ({
+          label: t.name ? `${t.name}` : '[NO NAME PROVIDED]',
+          value: t.serviceNowKey,
+          data: t,
+        })),
     [serverItems],
   );
 

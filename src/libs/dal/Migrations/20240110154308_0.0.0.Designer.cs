@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HSB.DAL.Migrations
 {
     [DbContext(typeof(HSBContext))]
-    [Migration("20240104163357_0.0.0")]
+    [Migration("20240110154308_0.0.0")]
     partial class _000
     {
         /// <inheritdoc />
@@ -1265,6 +1265,47 @@ namespace HSB.DAL.Migrations
                     b.ToTable("UserGroup", (string)null);
                 });
 
+            modelBuilder.Entity("HSB.Entities.UserOrganization", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.Property<DateTimeOffset>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.Property<DateTimeOffset>("UpdatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<long>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValueSql("0");
+
+                    b.HasKey("UserId", "OrganizationId");
+
+                    b.HasIndex("OrganizationId");
+
+                    b.ToTable("UserOrganization", (string)null);
+                });
+
             modelBuilder.Entity("HSB.Entities.UserTenant", b =>
                 {
                     b.Property<int>("UserId")
@@ -1453,6 +1494,25 @@ namespace HSB.DAL.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("HSB.Entities.UserOrganization", b =>
+                {
+                    b.HasOne("HSB.Entities.Organization", "Organization")
+                        .WithMany("UsersManyToMany")
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HSB.Entities.User", "User")
+                        .WithMany("OrganizationsManyToMany")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("HSB.Entities.UserTenant", b =>
                 {
                     b.HasOne("HSB.Entities.Tenant", "Tenant")
@@ -1496,6 +1556,8 @@ namespace HSB.DAL.Migrations
                     b.Navigation("ServerItems");
 
                     b.Navigation("TenantsManyToMany");
+
+                    b.Navigation("UsersManyToMany");
                 });
 
             modelBuilder.Entity("HSB.Entities.Role", b =>
@@ -1522,6 +1584,8 @@ namespace HSB.DAL.Migrations
             modelBuilder.Entity("HSB.Entities.User", b =>
                 {
                     b.Navigation("GroupsManyToMany");
+
+                    b.Navigation("OrganizationsManyToMany");
 
                     b.Navigation("TenantsManyToMany");
                 });
