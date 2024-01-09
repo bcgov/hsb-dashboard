@@ -28,6 +28,6 @@ COPY --from=build src/data-service/entrypoint.sh .
 RUN chmod +x /app/entrypoint.sh
 
 USER 1001
-# ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
 ENTRYPOINT ["dotnet", "HSB.DataService.dll"]
