@@ -2,8 +2,8 @@ export const defaultData = (numDrives: number, labelsArray: string[]) => {
   const datasets = [];
   // Define color pairs for used and unused space
   const colorPairs = [
-    ['#003366', '#519CE8'],
-    ['#DF9901', '#FFC342'],
+    ['#4D7194', '#86BAEF'],
+    ['#E9B84E', '#FFD57B'],
     ['#A9A9A9', '#D7D7D7'],
   ];
 
@@ -17,14 +17,14 @@ export const defaultData = (numDrives: number, labelsArray: string[]) => {
     const colors = colorPairs[(drive - 1) % colorPairs.length];
 
     datasets.push({
-      label: `Used Space Drive ${drive} (GB)`,
+      label: `Used Drive ${drive} (GB)`,
       data: usedSpaceData,
       backgroundColor: colors[0],
       stack: `Stack ${drive - 1}`,
     });
 
     datasets.push({
-      label: `Unused Space Drive ${drive} (GB)`,
+      label: `Unused Drive ${drive} (GB)`,
       data: unusedSpaceData,
       backgroundColor: colors[1],
       stack: `Stack ${drive - 1}`,
