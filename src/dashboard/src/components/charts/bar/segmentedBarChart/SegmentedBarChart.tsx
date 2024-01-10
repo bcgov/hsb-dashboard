@@ -17,20 +17,35 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export const SegmentedBarChart: React.FC = () => {
-
- const data = defaultData(); 
-
-  const options = {
-    scales: {
-      x: {
-        stacked: true,
-      },
-      y: {
-        stacked: true,
-      },
+const options = {
+  scales: {
+    x: {
+      stacked: true,
     },
-  };
+    y: {
+      stacked: true,
+    },
+  },
+};
+
+export const SegmentedBarChart: React.FC = () => {
+  const numDrives = 3;
+  const labelsArray = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
+  const data = defaultData(numDrives, labelsArray);
 
   return (
     <div className={styles.panel}>
