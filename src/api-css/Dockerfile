@@ -26,5 +26,4 @@ COPY --from=build /app/publish .
 
 # USER appuser
 ENTRYPOINT ["dotnet", "HSB.CSS.API.dll"]
-
 # ENTRYPOINT ["tail", "-f", "/dev/null"]

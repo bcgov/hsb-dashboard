@@ -2,9 +2,9 @@
 
 import { Button } from '@/components/buttons';
 import { Text } from '@/components/forms/text';
-import React, { useState, useCallback } from 'react';
-import styles from './AllocationTable.module.scss';
 import classNames from 'classnames';
+import React, { useCallback, useState } from 'react';
+import styles from './AllocationTable.module.scss';
 import { Dropdown } from './Dropdown';
 import { TableRow } from './TableRow';
 import defaultData from './defaultData';

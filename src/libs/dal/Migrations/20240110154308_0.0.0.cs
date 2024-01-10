@@ -328,6 +328,35 @@ namespace HSB.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserOrganization",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    OrganizationId = table.Column<int>(type: "integer", nullable: false),
+                    CreatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    CreatedBy = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    UpdatedOn = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    UpdatedBy = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    Version = table.Column<long>(type: "bigint", nullable: false, defaultValueSql: "0")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserOrganization", x => new { x.UserId, x.OrganizationId });
+                    table.ForeignKey(
+                        name: "FK_UserOrganization_Organization_OrganizationId",
+                        column: x => x.OrganizationId,
+                        principalTable: "Organization",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserOrganization_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserTenant",
                 columns: table => new
                 {
@@ -704,6 +733,11 @@ namespace HSB.DAL.Migrations
                 column: "GroupId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserOrganization_OrganizationId",
+                table: "UserOrganization",
+                column: "OrganizationId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserTenant_TenantId",
                 table: "UserTenant",
                 column: "TenantId");
@@ -731,6 +765,9 @@ namespace HSB.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserGroup");
+
+            migrationBuilder.DropTable(
+                name: "UserOrganization");
 
             migrationBuilder.DropTable(
                 name: "UserTenant");

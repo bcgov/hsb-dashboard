@@ -102,6 +102,16 @@ public class User : Auditable
     /// get/set - A collection of tenants this user belongs to (many-to-many).
     /// </summary>
     public List<UserTenant> TenantsManyToMany { get; } = new List<UserTenant>();
+
+    /// <summary>
+    /// get/set - A collection of organizations this user belongs to.
+    /// </summary>
+    public List<Organization> Organizations { get; } = new List<Organization>();
+
+    /// <summary>
+    /// get/set - A collection of organizations this user belongs to (many-to-many).
+    /// </summary>
+    public List<UserOrganization> OrganizationsManyToMany { get; } = new List<UserOrganization>();
     #endregion
 
     #region Constructors

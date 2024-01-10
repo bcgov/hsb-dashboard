@@ -20,12 +20,14 @@ export const useFilteredOrganizations = () => {
 
   const options = React.useMemo(
     () =>
-      organizations.map<IOption<IOrganizationModel>>((t) => ({
-        label: t.name,
-        value: t.id,
-        data: t,
-        disabled: t.isEnabled,
-      })),
+      organizations
+        .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+        .map<IOption<IOrganizationModel>>((t) => ({
+          label: t.name,
+          value: t.id,
+          data: t,
+          disabled: t.isEnabled,
+        })),
     [organizations],
   );
 

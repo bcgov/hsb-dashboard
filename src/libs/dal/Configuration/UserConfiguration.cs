@@ -28,6 +28,7 @@ public class UserConfiguration : AuditableConfiguration<User>
 
         builder.HasMany(m => m.Groups).WithMany(m => m.Users).UsingEntity<UserGroup>();
         builder.HasMany(m => m.Tenants).WithMany(m => m.Users).UsingEntity<UserTenant>();
+        builder.HasMany(m => m.Organizations).WithMany(m => m.Users).UsingEntity<UserOrganization>();
 
         builder.HasIndex(m => m.Username, "IX_user_username").IsUnique();
         builder.HasIndex(m => m.DisplayName, "IX_user_display_name").IsUnique();

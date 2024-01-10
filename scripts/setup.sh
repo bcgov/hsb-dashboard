@@ -15,12 +15,13 @@ gen_env () {
     if [ -f "nginx/.env" ]; then mv nginx/.env nginx/.bak.env 2>/dev/null; true; fi
   fi
 
-  if [[ -z "$dbUser" ]]
-  then
-      echo 'Enter a username for the database.'
-      read -p 'Username: ' dbUser
-      export dbUser
-  fi
+  dbUser=admin
+  # if [[ -z "$dbUser" ]]
+  # then
+  #     echo 'Enter a username for the database.'
+  #     read -p 'Username: ' dbUser
+  #     export dbUser
+  # fi
 
   if [[ -z "$dbPassword" ]]
   then
@@ -247,8 +248,8 @@ Service__ApiUrl=http://host.docker.internal:$portApiHttp
 
 Keycloak__RequireHttpsMetadata=false
 Keycloak__Authority=http://host.docker.internal:$portKeycloakHttp/auth/realms/hsb
-Keycloak__Audience=hsb-app,hsb-service-account
-Keycloak__Issuer=hsb-app,hsb-service-account
+Keycloak__Audience=hsb-app
+Keycloak__Issuer=hsb-app
 Keycloak__Secret={GET FROM KEYCLOAK}" >> ./src/data-service/.env
     echo "./src/data-service/.env created"
   fi

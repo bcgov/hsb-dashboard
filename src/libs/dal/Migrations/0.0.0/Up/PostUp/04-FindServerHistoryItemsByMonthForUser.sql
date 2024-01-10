@@ -42,9 +42,7 @@ BEGIN
       , ROW_NUMBER() OVER (PARTITION BY shi."ServiceNowKey", EXTRACT(YEAR FROM shi."CreatedOn"), EXTRACT(MONTH FROM shi."CreatedOn") ORDER BY shi."CreatedOn") AS "rn"
     FROM public."ServerHistoryItem" shi
     JOIN public."ServerItem" si ON shi."ServiceNowKey" = si."ServiceNowKey"
-    JOIN public."Organization" o ON si."OrganizationId" = o."Id"
-    JOIN public."TenantOrganization" ot ON o."Id" = ot."OrganizationId"
-    JOIN public."Tenant" t ON ot."TenantId" = t."Id"
+    JOIN public."Tenant" t ON si."TenantId" = t."Id"
     JOIN public."UserTenant" ut ON t."Id" = ut."TenantId"
     WHERE shi."CreatedOn" >= $2
       AND ($3 IS NULL OR shi."CreatedOn" <= $3)

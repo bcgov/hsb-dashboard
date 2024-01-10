@@ -15,7 +15,7 @@ public class Organization : SortableCodeAuditable<int>
 
     #region ServiceNow Properties
     /// <summary>
-    /// get/set - The ServiceNow tenant key.
+    /// get/set - The ServiceNow organization key.
     /// </summary>
     public string ServiceNowKey { get; set; } = "";
     #endregion
@@ -39,6 +39,16 @@ public class Organization : SortableCodeAuditable<int>
     /// get - Tenants that belong to this organization. (many-to-many).
     /// </summary>
     public List<TenantOrganization> TenantsManyToMany { get; } = new List<TenantOrganization>();
+
+    /// <summary>
+    /// get - Users that belong to this organization.
+    /// </summary>
+    public List<User> Users { get; } = new List<User>();
+
+    /// <summary>
+    /// get - Users that belong to this organization. (many-to-many).
+    /// </summary>
+    public List<UserOrganization> UsersManyToMany { get; } = new List<UserOrganization>();
     #endregion
 
     #region Constructors

@@ -40,9 +40,7 @@ public class ServerHistoryItemService : BaseService<ServerHistoryItem>, IServerH
     public IEnumerable<ServerHistoryItem> FindForUser(int userId, ServerHistoryItemFilter filter)
     {
         var query = (from si in this.Context.ServerHistoryItems
-                     join org in this.Context.Organizations on si.OrganizationId equals org.Id
-                     join tOrg in this.Context.TenantOrganizations on org.Id equals tOrg.OrganizationId
-                     join tenant in this.Context.Tenants on tOrg.TenantId equals tenant.Id
+                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
                      join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                      where usert.UserId == userId
                      select si)

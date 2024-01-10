@@ -24,11 +24,13 @@ export const useFilteredOperatingSystemItems = () => {
 
   const options = React.useMemo(
     () =>
-      operatingSystemItems.map<IOption<IOperatingSystemItemModel>>((t) => ({
-        label: t.name,
-        value: t.id,
-        data: t,
-      })),
+      operatingSystemItems
+        .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+        .map<IOption<IOperatingSystemItemModel>>((t) => ({
+          label: t.name,
+          value: t.id,
+          data: t,
+        })),
     [operatingSystemItems],
   );
 

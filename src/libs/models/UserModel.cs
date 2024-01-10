@@ -89,6 +89,11 @@ public class UserModel : AuditableModel
     /// get/set - A collection of tenants this user belongs to.
     /// </summary>
     public IEnumerable<TenantModel> Tenants { get; set; } = Array.Empty<TenantModel>();
+
+    /// <summary>
+    /// get/set - A collection of organizations this user belongs to.
+    /// </summary>
+    public IEnumerable<OrganizationModel> Organizations { get; set; } = Array.Empty<OrganizationModel>();
     #endregion
 
     #region Constructors
@@ -115,6 +120,8 @@ public class UserModel : AuditableModel
         this.Groups = user.Groups.Any() ? user.Groups.Select(g => new GroupModel(g)) : this.Groups;
         this.Tenants = user.TenantsManyToMany.Any() ? user.TenantsManyToMany.Where(t => t.Tenant != null).Select(t => new TenantModel(t.Tenant!)) : this.Tenants;
         this.Tenants = user.Tenants.Any() ? user.Tenants.Select(t => new TenantModel(t)) : this.Tenants;
+        this.Organizations = user.OrganizationsManyToMany.Any() ? user.OrganizationsManyToMany.Where(o => o.Organization != null).Select(o => new OrganizationModel(o.Organization!)) : this.Organizations;
+        this.Organizations = user.Organizations.Any() ? user.Organizations.Select(o => new OrganizationModel(o)) : this.Organizations;
     }
     #endregion
 
@@ -144,6 +151,7 @@ public class UserModel : AuditableModel
         };
         user.GroupsManyToMany.AddRange(model.Groups.Select(g => new UserGroup(user.Id, g.Id)));
         user.TenantsManyToMany.AddRange(model.Tenants.Select(t => new UserTenant(user.Id, t.Id)));
+        user.OrganizationsManyToMany.AddRange(model.Organizations.Select(o => new UserOrganization(user.Id, o.Id)));
 
         return user;
     }
