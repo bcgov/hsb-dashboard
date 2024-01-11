@@ -26,6 +26,11 @@ const options = {
       stacked: true,
     },
   },
+  plugins: {
+    legend: {
+      display: false
+    }
+  },
 };
 
 export const SegmentedBarChart: React.FC = () => {
@@ -47,9 +52,24 @@ export const SegmentedBarChart: React.FC = () => {
 
   const data = defaultData(numDrives, labelsArray);
 
+  const CustomLegend = () => (
+    <div className={styles.customLegend}>
+      {data.datasets.filter((_, i) => i % 2 === 0).map((dataset, index) => (
+        <div key={index}>
+          <div className={styles.legendColors}>
+            <span style={{ backgroundColor: dataset.backgroundColor }} />
+            <span style={{ backgroundColor: data.datasets[index * 2 + 1].backgroundColor }} />
+          </div>
+          <p className={styles.legendLabel}>{`Drive ${index + 1}`}</p>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <div className={styles.panel}>
-      <h1>Storage Trends - Server 1 Drive Storage</h1>
+      <h1>Storage Trends - Drive Storage</h1>
+      <CustomLegend />
       <div className={styles.chartContainer}>
         <Bar data={data} options={options} />
       </div>
