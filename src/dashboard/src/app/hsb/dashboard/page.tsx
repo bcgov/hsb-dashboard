@@ -5,6 +5,7 @@ import {
   AllocationTable,
   StorageTrendsChart,
   TotalStorage,
+  SegmentedBarChart
 } from '@/components/charts';
 import { OperatingSystems } from '@/components/charts/allocationTable/constants';
 
@@ -17,6 +18,7 @@ export default function Page() {
       <TotalStorage />
       <AllocationByOS />
       <AllocationTable operatingSystem={OperatingSystems.Windows} />
+      <SegmentedBarChart />
     </>
   );
 }
