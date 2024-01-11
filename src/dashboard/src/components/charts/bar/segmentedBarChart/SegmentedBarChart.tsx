@@ -8,14 +8,13 @@ import { defaultData } from './defaultData';
 import {
   CategoryScale,
   Chart as ChartJS,
-  LinearScale,
   BarElement,
   Title,
   Tooltip,
   Legend,
 } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, BarElement, Title, Tooltip, Legend);
 
 const options = {
   scales: {
