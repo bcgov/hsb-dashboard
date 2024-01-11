@@ -8,5 +8,3 @@ RUN chmod 777 /var/run/postgresql
 USER admin
 
 COPY ./scripts /docker-entrypoint-initdb.d/
-
-RUN echo $(ls /docker-entrypoint-initdb.d/)

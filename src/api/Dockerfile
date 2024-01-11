@@ -31,4 +31,4 @@ RUN chmod +x /app/entrypoint.sh
 # USER appuser
 USER 1001
 # ENTRYPOINT ["/app/entrypoint.sh"]
-ENTRYPOINT ["dotnet","HSB.API.dll"]
+ENTRYPOINT ["dotnet", "HSB.API.dll"]

@@ -5,7 +5,6 @@ import {
   AllocationTable,
   StorageTrendsChart,
   TotalStorage,
-  SmallBarChart,
   SegmentedBarChart
 } from '@/components/charts';
 import { OperatingSystems } from '@/components/charts/allocationTable/constants';
