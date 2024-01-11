@@ -9,7 +9,7 @@ import moment from 'moment';
  * @param minColumns Minimum number of columns in the line chard (default = 12).
  * @returns Line chart data.
  */
-export const useStorageTrends = (minColumns: number = 12): ChartData<'line', number[], string> => {
+export const useStorageTrends = (minColumns: number = 1): ChartData<'line', number[], string> => {
   const dateRange = useDashboard((state) => state.dateRange);
   const serverHistoryItems = useDashboard((state) => state.serverHistoryItems);
 

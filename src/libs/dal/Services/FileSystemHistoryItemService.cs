@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Security.Claims;
 using HSB.DAL.Extensions;
 using HSB.Entities;
@@ -37,14 +38,19 @@ public class FileSystemHistoryItemService : BaseService<FileSystemHistoryItem>, 
     }
 
     public IEnumerable<FileSystemHistoryItem> FindForUser(
-        long userId,
+        int userId,
         FileSystemHistoryItemFilter filter)
     {
+        var userOrganizationQuery = from uo in this.Context.UserOrganizations
+                                    where uo.UserId == userId
+                                    select uo.OrganizationId;
+        var userTenants = from ut in this.Context.UserTenants
+                          where ut.UserId == userId
+                          select ut.TenantId;
+
         var query = (from fsi in this.Context.FileSystemHistoryItems
                      join si in this.Context.ServerItems on fsi.FileSystemItem!.ServerItemServiceNowKey equals si.ServiceNowKey
-                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
-                     join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
-                     where usert.UserId == userId
+                     where userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
                      select fsi)
             .Where(filter.GeneratePredicate())
             .Distinct();

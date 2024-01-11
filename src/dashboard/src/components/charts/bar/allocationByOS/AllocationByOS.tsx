@@ -1,14 +1,13 @@
 'use client';
 
-import { useOperatingSystemItems } from '@/hooks/data';
-import { useDashboard } from '@/store';
+import { useOperatingSystemItems, useServerItems } from '@/hooks/data';
 import Link from 'next/link';
 import { BarRow, SmallBarChart } from '../smallBar';
 import defaultData from './defaultData';
-import { groupByOS } from './groupByOs';
+import { groupByOS } from './utils';
 
 export const AllocationByOS: React.FC = () => {
-  const { serverItems } = useDashboard();
+  const { serverItems } = useServerItems();
   const { operatingSystemItems } = useOperatingSystemItems();
 
   return (
@@ -21,10 +20,9 @@ export const AllocationByOS: React.FC = () => {
       {(data) => {
         return data.datasets.map((os) => (
           <BarRow
-            key={os.label?.toString()}
+            key={os.key}
             label={<Link href="">{os.label}</Link>}
             capacity={os.capacity}
-            used={os.used}
             available={os.available}
           />
         ));

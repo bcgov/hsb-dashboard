@@ -3,7 +3,7 @@
 import styles from './AllOrganizations.module.scss';
 
 import { Button } from '@/components/buttons';
-import { useDashboard } from '@/store';
+import { useOrganizations } from '@/hooks/data';
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js';
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
@@ -12,7 +12,7 @@ import { useAllOrganizationsDoughnutChart } from './hooks';
 ChartJS.register(ArcElement, Tooltip);
 
 export const AllOrganizations: React.FC = () => {
-  const organizations = useDashboard((state) => state.organizations);
+  const { organizations } = useOrganizations();
   const data = useAllOrganizationsDoughnutChart();
 
   return (

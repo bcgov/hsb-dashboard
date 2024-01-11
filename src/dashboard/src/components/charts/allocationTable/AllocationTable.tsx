@@ -2,73 +2,98 @@
 
 import { Button } from '@/components/buttons';
 import { Text } from '@/components/forms/text';
+import { useServerItems } from '@/hooks/data';
 import classNames from 'classnames';
-import React, { useCallback, useState } from 'react';
+import { debounce } from 'lodash';
+import React from 'react';
 import styles from './AllocationTable.module.scss';
 import { Dropdown } from './Dropdown';
+import { ITableRowData } from './ITableRowData';
 import { TableRow } from './TableRow';
-import defaultData from './defaultData';
+import { OperatingSystems } from './constants';
+import { useAllocationByOS } from './hooks';
+import { getColumns, getLabel } from './utils';
 
-const operatingSystem = 'Windows';
+export interface IAllocationTableProps {
+  /** Filter servers by their OS */
+  operatingSystem: OperatingSystems;
+}
 
-export const AllocationTable: React.FC = () => {
-  const [visibleDropdown, setVisibleDropdown] = useState<string | null>(null);
+export const AllocationTable = ({ operatingSystem }: IAllocationTableProps) => {
+  const { serverItems } = useServerItems();
+  const getServerItems = useAllocationByOS(operatingSystem);
 
-  const toggleDropdown = useCallback((label: string) => {
-    setVisibleDropdown((prevVisibleDropdown) => (prevVisibleDropdown === label ? null : label));
-  }, []);
+  const [keyword, setKeyword] = React.useState('');
+  const [filter, setFilter] = React.useState(keyword);
+  const [sort, setSort] = React.useState<string>('server:asc');
+  const [rows, setRows] = React.useState<ITableRowData[]>([]);
 
-  const onBlurHandler = useCallback(() => {
-    setVisibleDropdown(null);
-  }, []);
+  React.useEffect(() => {
+    const sorting = sort.split(':');
+    const rows = getServerItems(
+      serverItems,
+      (si) =>
+        !filter ||
+        si.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase()) ||
+        (!!si.operatingSystemItem &&
+          si.operatingSystemItem.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())),
+      sorting[0] as keyof ITableRowData,
+      sorting[1] as any,
+    );
+    setRows(rows);
+  }, [serverItems, filter, getServerItems, sort]);
 
-  const hasTenant = defaultData.some((data) => data.tenant);
+  const showTenants = React.useMemo(() => rows.some((data) => data.tenant), [rows]);
+  const columns = React.useMemo(() => getColumns(showTenants), [showTenants]);
 
-  let dropdownConfigs = [
-    { label: 'Server', options: ['A to Z', 'Z to A'] },
-    { label: 'OS Version', options: ['Latest', 'Oldest'] },
-    { label: 'Allocated Space', options: ['Ascending', 'Descending'] },
-    { label: 'Unused', options: ['Ascending', 'Descending'] },
-  ];
-
-  if (hasTenant) {
-    dropdownConfigs.splice(1, 0, { label: 'Tenant', options: ['A to Z', 'Z to A'] });
-  }
+  const debounceChange = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => debounce(() => setKeyword(e.target.value), 500),
+    [],
+  );
 
   return (
     <div className={styles.panel}>
-      <h1>Allocation by Storage Volume - All {operatingSystem} Servers</h1>
+      <h1>Allocation by Storage Volume - All {getLabel(operatingSystem)}</h1>
       <div className={styles.filter}>
-        <Text placeholder="Filter by server name, OS version" iconType={'filter'} />
-        <Button variant="secondary">Apply</Button>
+        <Text
+          placeholder="Filter by server name, OS version"
+          iconType={'filter'}
+          onChange={(e) => debounceChange(e)()}
+          onKeyDown={(e) => {
+            if (e.code === 'Enter') setFilter(keyword);
+          }}
+        />
+        <Button variant="secondary" onClick={() => setFilter(keyword)}>
+          Apply
+        </Button>
       </div>
-      <div className={classNames(styles.tableContainer, { [styles.hasTenant]: hasTenant })}>
-        <div className={styles.header} onBlur={onBlurHandler}>
-          {dropdownConfigs.map((dropdown) => (
+      <div className={classNames(styles.tableContainer, { [styles.hasTenant]: showTenants })}>
+        <div className={styles.header}>
+          {columns.map((dropdown) => (
             <Dropdown
               key={dropdown.label}
               label={dropdown.label}
               options={dropdown.options}
-              visibleDropdown={visibleDropdown}
-              toggleDropdown={toggleDropdown}
+              onChange={(option) => setSort(`${dropdown.sort}:${option.value}`)}
             />
           ))}
           <p>Total</p>
         </div>
         <div className={styles.chart}>
-          {defaultData.map((data, index) => (
+          {rows.map((data, index) => (
             <TableRow
               key={index}
               server={data.server}
               tenant={data.tenant}
               os={data.os}
-              allocated={data.allocated}
-              unused={data.unused}
+              capacity={data.capacity}
+              available={data.available}
+              showTenant={showTenants}
             />
           ))}
         </div>
       </div>
-      <Button variant="secondary" iconPath="/images/download-icon.png">
+      <Button variant="secondary" iconPath="/images/download-icon.png" disabled>
         Export to Excel
       </Button>
     </div>

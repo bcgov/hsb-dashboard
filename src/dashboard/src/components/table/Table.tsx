@@ -1,17 +1,7 @@
+import { ITableFooterProps } from './ITableFooterProps';
+import { ITableHeaderProps } from './ITableHeaderProps';
+import { ITableRowProps } from './ITableRowProps';
 import styles from './Table.module.scss';
-
-export interface ITableHeaderProps<T> {
-  data: T[];
-}
-
-export interface ITableRowProps<T> {
-  data: T;
-  index: number;
-}
-
-export interface ITableFooterProps<T> {
-  data: T[];
-}
 
 export interface ITableProps<T> {
   data: T[];

@@ -1,26 +1,39 @@
 import Link from 'next/link';
 import React from 'react';
+import { convertToStorageSize } from './../../../utils/convertToStorageSize';
 import styles from './AllocationTable.module.scss';
 
 interface TableRowProps {
   server: string;
   tenant: string;
   os: string;
-  allocated: number;
-  unused: number;
+  capacity: number;
+  available: number;
+  showTenant?: boolean;
 }
 
-export const TableRow: React.FC<TableRowProps> = ({ server, tenant, os, allocated, unused }) => {
-  const percentageUsed = Math.round(((allocated - unused) / allocated) * 100);
+export const TableRow: React.FC<TableRowProps> = ({
+  server,
+  tenant,
+  os,
+  capacity,
+  available,
+  showTenant,
+}) => {
+  const percentageUsed = capacity ? Math.round(((capacity - available) / capacity) * 100) : 0;
+  const capacityValue = convertToStorageSize<string>(capacity, 'MB', 'TB');
+  const availableValue = convertToStorageSize<string>(available, 'MB', 'TB');
 
   return (
     <div className={styles.row}>
       <div className={styles.info}>
-        <Link href={``} title={server}>{server}</Link>
-        {tenant ? <p title={tenant}>{tenant}</p> : ''}
+        <Link href={``} title={server}>
+          {server}
+        </Link>
+        {showTenant ? <p title={tenant}>{tenant}</p> : ''}
         <p title={os}>{os}</p>
-        <p title={`${allocated.toFixed(1)} TB`}>{allocated.toFixed(1)} TB</p>
-        <p title={`${unused.toFixed(1)} TB`}>{unused.toFixed(1)} TB</p>
+        <p title={capacityValue}>{capacityValue}</p>
+        <p title={availableValue}>{availableValue}</p>
       </div>
       <div className={styles.barChart}>
         <div className={styles.bar}>
@@ -29,7 +42,7 @@ export const TableRow: React.FC<TableRowProps> = ({ server, tenant, os, allocate
         </div>
       </div>
       <p className={styles.used}>
-        {percentageUsed}% of {allocated.toFixed(1)} TB Used
+        {percentageUsed}% of {capacityValue} Used
       </p>
     </div>
   );

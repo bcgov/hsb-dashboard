@@ -1,4 +1,4 @@
-import { ChangeEventHandler, FocusEventHandler, KeyboardEventHandler } from 'react';
+import React, { ChangeEventHandler, FocusEventHandler, KeyboardEventHandler } from 'react';
 import styles from './Text.module.scss';
 
 interface TextProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -32,8 +32,16 @@ export const Text: React.FC<TextProps> = ({
   iconType,
   className = '',
   disabled,
+  onChange,
+  value: initValue = '',
   ...rest
 }) => {
+  const [value, setValue] = React.useState(initValue);
+
+  React.useEffect(() => {
+    setValue(initValue);
+  }, [initValue]);
+
   // Determine the appropriate class based on iconType
   let iconClass = '';
   if (iconType === 'search') {
@@ -51,6 +59,11 @@ export const Text: React.FC<TextProps> = ({
         placeholder={placeholder}
         disabled={disabled}
         className={`${styles.textInput} ${iconClass} ${className}`}
+        value={value}
+        onChange={(e) => {
+          setValue(e.target.value);
+          onChange?.(e);
+        }}
         {...rest}
       />
     </>

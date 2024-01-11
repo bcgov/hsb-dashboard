@@ -21,7 +21,7 @@ interface LineChartProps {
 }
 
 export const StorageTrendsChart: React.FC<LineChartProps> = ({ large }) => {
-  const data = useStorageTrends(12);
+  const data = useStorageTrends();
 
   return <LineChart data={data} label="Storage Trends" large={large} showExport exportDisabled />;
 };

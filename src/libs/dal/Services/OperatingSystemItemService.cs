@@ -23,11 +23,16 @@ public class OperatingSystemItemService : BaseService<OperatingSystemItem>, IOpe
         int? take = null,
         int? skip = null)
     {
+        var userOrganizationQuery = from uo in this.Context.UserOrganizations
+                                    where uo.UserId == userId
+                                    select uo.OrganizationId;
+        var userTenants = from ut in this.Context.UserTenants
+                          where ut.UserId == userId
+                          select ut.TenantId;
+
         var query = (from osi in this.Context.OperatingSystemItems
                      join si in this.Context.ServerItems on osi.Id equals si.OperatingSystemItemId
-                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
-                     join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
-                     where usert.UserId == userId
+                     where userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
                      select osi)
             .Where(predicate)
             .Distinct();
@@ -51,11 +56,16 @@ public class OperatingSystemItemService : BaseService<OperatingSystemItem>, IOpe
         int? take = null,
         int? skip = null)
     {
+        var userOrganizationQuery = from uo in this.Context.UserOrganizations
+                                    where uo.UserId == userId
+                                    select uo.OrganizationId;
+        var userTenants = from ut in this.Context.UserTenants
+                          where ut.UserId == userId
+                          select ut.TenantId;
+
         var query = (from osi in this.Context.OperatingSystemItems
                      join si in this.Context.ServerItems on osi.Id equals si.OperatingSystemItemId
-                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
-                     join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
-                     where usert.UserId == userId
+                     where userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
                      select osi)
             .Where(predicate)
             .Distinct();
