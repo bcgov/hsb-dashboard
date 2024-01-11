@@ -45,7 +45,6 @@ export const SmallBarChart = <T extends IBarChartRowData>({
                     label={row.label}
                     capacity={row.capacity}
                     available={row.available}
-                    used={row.used}
                   />
                 );
               })}

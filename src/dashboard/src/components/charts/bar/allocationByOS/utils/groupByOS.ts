@@ -1,6 +1,6 @@
 import { IOperatingSystemItemModel, IServerItemModel } from '@/hooks';
 import { groupBy } from '@/utils';
-import { IBarChartRowData } from '../smallBar/IBarChartRowData';
+import { IBarChartRowData } from '../../smallBar/IBarChartRowData';
 
 export const groupByOS = (
   serverItems: IServerItemModel[],
@@ -11,10 +11,10 @@ export const groupByOS = (
     (item) => `${item.operatingSystemItemId ?? 'NA'}`,
     (item) => {
       return {
-        label: item.name,
+        key: `${item.operatingSystemItemId ?? 'NA'}`,
+        label: item.name.trim(),
         capacity: item.capacity ?? 0,
         available: item.availableSpace ?? 0,
-        used: (item.capacity ?? 0) - (item.availableSpace ?? 0),
       };
     },
   );
@@ -24,11 +24,10 @@ export const groupByOS = (
       const items = groups[key];
       const capacity = items.reduce((result, item) => result + item.capacity, 0);
       const available = items.reduce((result, item) => result + item.available, 0);
-      const used = items.reduce((result, item) => result + item.used, 0);
       const label =
         key === 'NA' ? 'NA' : operatingSystemItems.find((os) => os.id === +key)?.name ?? 'NA';
 
-      return { label, capacity, available, used };
+      return { key, label, capacity, available };
     })
     .sort((a, b) => (a.label < b.label ? -1 : a.label > b.label ? 1 : 0));
 

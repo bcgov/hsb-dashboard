@@ -44,15 +44,14 @@ BEGIN
     FROM public."FileSystemHistoryItem" AS fshi
     JOIN public."FileSystemItem" AS fsi ON fshi."ServiceNowKey" = fsi."ServiceNowKey"
     JOIN public."ServerItem" AS si ON fsi."ServerItemServiceNowKey" = si."ServiceNowKey"
-    JOIN public."Tenant" t ON si."TenantId" = t."Id"
-    JOIN public."UserTenant" ut ON t."Id" = ut."TenantId"
     WHERE fshi."CreatedOn" >= $2
       AND ($3 IS NULL OR fshi."CreatedOn" <= $3)
       AND ($4 IS NULL OR si."TenantId" = $4)
       AND ($5 IS NULL OR si."OrganizationId" = $5)
       AND ($6 IS NULL OR si."OperatingSystemItemId" = $6)
       AND ($7 IS NULL OR fsi."ServerItemServiceNowKey" = $7)
-      AND ut."UserId" = $1
+      AND (si."TenantId" IN (SELECT "TenantId" FROM public."UserTenant" WHERE "UserId" = $1)
+        OR si."OrganizationId" IN (SELECT "OrganizationId" FROM public."UserOrganization" WHERE "UserId" = $1))
   ) AS "sub"
   WHERE "rn" = 1
   ORDER BY "ServiceNowKey", "CreatedOn";

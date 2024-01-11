@@ -32,6 +32,7 @@ public class HSBContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<UserGroup> UserGroups => Set<UserGroup>();
     public DbSet<UserTenant> UserTenants => Set<UserTenant>();
+    public DbSet<UserOrganization> UserOrganizations => Set<UserOrganization>();
     public DbSet<Group> Groups => Set<Group>();
     public DbSet<GroupRole> GroupRoles => Set<GroupRole>();
     public DbSet<Role> Roles => Set<Role>();

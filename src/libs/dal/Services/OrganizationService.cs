@@ -26,10 +26,8 @@ public class OrganizationService : BaseService<Organization>, IOrganizationServi
         int? skip = null)
     {
         var query = (from org in this.Context.Organizations
-                     join torg in this.Context.TenantOrganizations on org.Id equals torg.OrganizationId
-                     join tenant in this.Context.Tenants on torg.TenantId equals tenant.Id
-                     join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
-                     where usert.UserId == userId
+                     join uo in this.Context.UserOrganizations on org.Id equals uo.OrganizationId
+                     where uo.UserId == userId
                      select org)
             .Where(predicate)
             .Distinct();
@@ -53,11 +51,10 @@ public class OrganizationService : BaseService<Organization>, IOrganizationServi
         int? take = null,
         int? skip = null)
     {
+
         var query = (from org in this.Context.Organizations
-                     join torg in this.Context.TenantOrganizations on org.Id equals torg.OrganizationId
-                     join tenant in this.Context.Tenants on torg.TenantId equals tenant.Id
-                     join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
-                     where usert.UserId == userId
+                     join uo in this.Context.UserOrganizations on org.Id equals uo.OrganizationId
+                     where uo.UserId == userId
                      select org)
             .Where(predicate)
             .Distinct();

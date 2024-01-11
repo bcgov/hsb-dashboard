@@ -16,6 +16,8 @@ export const Button: React.FC<IButtonProps> = ({
   iconPath,
   disabled,
   loading,
+  onKeyDown,
+  onClick,
   ...rest
 }) => {
   // Determine the button's className based on the 'variant' prop and whether iconPath is provided.
@@ -36,7 +38,18 @@ export const Button: React.FC<IButtonProps> = ({
   };
 
   return (
-    <button className={getButtonClassName()} disabled={disabled} {...rest}>
+    <button
+      className={getButtonClassName()}
+      disabled={disabled}
+      onKeyDown={(e) => {
+        if (e.code === 'Space') onClick?.(e as any);
+        onKeyDown?.(e);
+      }}
+      onClick={(e) => {
+        onClick?.(e);
+      }}
+      {...rest}
+    >
       {iconPath && (
         <Image src={iconPath} alt="icon" width={17} height={17} className={styles.buttonIcon} />
       )}
