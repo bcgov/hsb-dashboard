@@ -64,6 +64,7 @@ public class OperatingSystemItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OperatingSystemItemModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Operating System Item" })]
+    [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 43200)]
     public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());

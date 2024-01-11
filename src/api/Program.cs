@@ -72,7 +72,8 @@ public class Program
                         .AllowAnyMethod(); ;
                     });
                 }
-            });
+            })
+            .AddResponseCaching();
 
         var app = builder.Build();
 
@@ -93,6 +94,7 @@ public class Program
         app.UseCors("CorsPolicy");
 
         app.UseMiddleware(typeof(LogRequestMiddleware));
+        app.UseResponseCaching();
 
         app.UseAuthentication();
         app.UseAuthorization();
