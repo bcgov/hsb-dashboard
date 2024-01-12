@@ -67,6 +67,7 @@ public class ServerItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<ServerItemModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Server Item" })]
+    [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
     public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());

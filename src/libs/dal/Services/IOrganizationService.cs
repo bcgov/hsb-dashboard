@@ -4,17 +4,10 @@ namespace HSB.DAL.Services;
 
 public interface IOrganizationService : IBaseService<Organization>
 {
-    IEnumerable<Organization> FindForUser<T>(
-        long userId,
-        System.Linq.Expressions.Expression<Func<Organization, bool>> predicate,
-        System.Linq.Expressions.Expression<Func<Organization, T>>? sort = null,
-        int? take = null,
-        int? skip = null);
+    IEnumerable<Organization> Find(
+        Models.Filters.OrganizationFilter filter);
 
-    public IEnumerable<Organization> FindForUser(
+    IEnumerable<Organization> FindForUser(
         long userId,
-        System.Linq.Expressions.Expression<Func<Organization, bool>> predicate,
-        string[] sort,
-        int? take = null,
-        int? skip = null);
+        Models.Filters.OrganizationFilter filter);
 }

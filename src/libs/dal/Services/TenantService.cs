@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using HSB.DAL.Extensions;
-using System.Linq.Expressions;
 
 namespace HSB.DAL.Services;
 
@@ -27,8 +26,8 @@ public class TenantService : BaseService<Tenant>, ITenantService
         int? skip = null)
     {
         var query = (from t in this.Context.Tenants
-                     join usert in this.Context.UserTenants on t.Id equals usert.TenantId
-                     where usert.UserId == userId
+                     join ut in this.Context.UserTenants on t.Id equals ut.TenantId
+                     where ut.UserId == userId
                      select t)
             .Where(predicate);
 
@@ -52,8 +51,8 @@ public class TenantService : BaseService<Tenant>, ITenantService
         int? skip = null)
     {
         var query = (from t in this.Context.Tenants
-                     join usert in this.Context.UserTenants on t.Id equals usert.TenantId
-                     where usert.UserId == userId
+                     join ut in this.Context.UserTenants on t.Id equals ut.TenantId
+                     where ut.UserId == userId
                      select t)
             .Where(predicate);
 

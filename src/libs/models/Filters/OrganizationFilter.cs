@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 public class OrganizationFilter : PageFilter
 {
     #region Properties
+    public int? Id { get; set; }
     public string? Name { get; set; }
 
     public bool? IsEnabled { get; set; }
@@ -29,6 +30,7 @@ public class OrganizationFilter : PageFilter
     {
         var filter = new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>(queryParams, StringComparer.OrdinalIgnoreCase);
 
+        this.Id = filter.GetIntNullValue(nameof(this.Id));
         this.Name = filter.GetStringValue(nameof(this.Name));
         this.IsEnabled = filter.GetBoolNullValue(nameof(this.IsEnabled));
         this.ServiceNowKey = filter.GetStringValue(nameof(this.ServiceNowKey));
@@ -45,6 +47,8 @@ public class OrganizationFilter : PageFilter
     public ExpressionStarter<Entities.Organization> GeneratePredicate()
     {
         var predicate = PredicateBuilder.New<Entities.Organization>();
+        if (this.Id != null)
+            predicate = predicate.And((u) => u.Id == this.Id);
         if (this.Name != null)
             predicate = predicate.And((u) => EF.Functions.Like(u.Name, $"%{this.Name}%"));
         if (this.IsEnabled != null)

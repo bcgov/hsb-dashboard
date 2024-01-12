@@ -55,7 +55,6 @@ public class OperatingSystemItemController : ControllerBase
     #endregion
 
     #region Endpoints
-    // TODO: Limit based on role and tenant.
     /// <summary>
     ///
     /// </summary>
@@ -64,6 +63,7 @@ public class OperatingSystemItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OperatingSystemItemModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Operating System Item" })]
+    [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
     public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -87,7 +87,6 @@ public class OperatingSystemItemController : ControllerBase
         }
     }
 
-    // TODO: Limit based on role and tenant.
     /// <summary>
     ///
     /// </summary>
