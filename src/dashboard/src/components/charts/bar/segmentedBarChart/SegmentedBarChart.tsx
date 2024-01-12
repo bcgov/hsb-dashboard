@@ -1,76 +1,73 @@
 'use client';
 
 import { Button } from '@/components/buttons';
-import styles from './SegmentedBarChart.module.scss';
 import { Bar } from 'react-chartjs-2';
-import { defaultData } from './defaultData';
+import styles from './SegmentedBarChart.module.scss';
 
-import {
-  CategoryScale,
-  Chart as ChartJS,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
+import { useDashboardFileSystemHistoryItems } from '@/hooks/dashboard';
+import { useFiltered } from '@/store';
+import { BarElement, CategoryScale, Chart as ChartJS, Legend, Title, Tooltip } from 'chart.js';
+import React from 'react';
+import { defaultOptions } from './defaultOptions';
+import { useStorageTrends } from './useStorageTrends';
+import { extractVolumeName } from './utils';
 
 ChartJS.register(CategoryScale, BarElement, Title, Tooltip, Legend);
 
-const options = {
-  scales: {
-    x: {
-      stacked: true,
-    },
-    y: {
-      stacked: true,
-    },
-  },
-  plugins: {
-    legend: {
-      display: false
+export interface ISegmentedBarChart {
+  maxVolumes?: number;
+}
+
+export const SegmentedBarChart = ({ maxVolumes = 4 }: ISegmentedBarChart) => {
+  const serverItem = useFiltered((state) => state.serverItem);
+  const { findFileSystemHistoryItems } = useDashboardFileSystemHistoryItems();
+
+  const data = useStorageTrends(1, maxVolumes);
+
+  React.useEffect(() => {
+    if (serverItem) {
+      // A single server was selected, fetch the history for this server.
+      findFileSystemHistoryItems({ serverItemServiceNowKey: serverItem.serviceNowKey }).catch(
+        () => {},
+      );
     }
-  },
-};
+  }, [findFileSystemHistoryItems, serverItem]);
 
-export const SegmentedBarChart: React.FC = () => {
-  const numDrives = 3;
-  const labelsArray = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
-
-  const data = defaultData(numDrives, labelsArray);
-
-  const CustomLegend = () => (
-    <div className={styles.customLegend}>
-      {data.datasets.filter((_, i) => i % 2 === 0).map((dataset, index) => (
-        <div key={index}>
-          <div className={styles.legendColors}>
-            <span style={{ backgroundColor: dataset.backgroundColor }} />
-            <span style={{ backgroundColor: data.datasets[index * 2 + 1].backgroundColor }} />
+  const CustomLegend = React.useMemo(
+    () => (
+      <div className={styles.customLegend}>
+        {data.datasets
+          .filter((_, i) => i % 2 === 0)
+          .map((dataset, index) => (
+            <div key={index} className={styles.legend}>
+              <div className={styles.legendColors}>
+                <span style={{ backgroundColor: `${dataset.backgroundColor}` }} />
+                <span
+                  style={{ backgroundColor: `${data.datasets[index * 2 + 1].backgroundColor}` }}
+                />
+              </div>
+              <div className={styles.legendLabel}>
+                <p>{extractVolumeName((dataset as any).name)}</p>
+                <p>{(dataset as any).capacity}</p>
+              </div>
+            </div>
+          ))}
+        {data.volumes.length * 2 > data.datasets.length && (
+          <div>
+            <div className={styles.legendColors}>{data.volumes.length} volumes</div>
           </div>
-          <p className={styles.legendLabel}>{`Drive ${index + 1}`}</p>
-        </div>
-      ))}
-    </div>
+        )}
+      </div>
+    ),
+    [data.datasets, data.volumes.length],
   );
 
   return (
     <div className={styles.panel}>
-      <h1>Storage Trends - Drive Storage</h1>
-      <CustomLegend />
+      <h1>Storage Trends - {serverItem?.name ?? 'Drive'} Storage</h1>
+      {CustomLegend}
       <div className={styles.chartContainer}>
-        <Bar data={data} options={options} />
+        <Bar data={data} options={defaultOptions} />
       </div>
       <Button variant="secondary" iconPath="/images/download-icon.png" disabled>
         Export to Excel

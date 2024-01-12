@@ -147,8 +147,7 @@ public class FileSystemItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var result = _fileSystemHistoryItemService.FindHistoryByMonth(filter.StartDate ?? DateTime.UtcNow.AddYears(-1), filter.EndDate, filter.TenantId, filter.OrganizationId, filter.OperatingSystemItemId, filter.ServerItemServiceNowKey);
-            // var result = _fileSystemHistoryItemService.FindForUser(user.Id, filter);
+            var result = _fileSystemHistoryItemService.FindHistoryByMonthForUser(user.Id, filter.StartDate ?? DateTime.UtcNow.AddYears(-1), filter.EndDate, filter.TenantId, filter.OrganizationId, filter.OperatingSystemItemId, filter.ServerItemServiceNowKey);
             return new JsonResult(result.Select(fsi => new FileSystemHistoryItemModel(fsi)));
         }
     }

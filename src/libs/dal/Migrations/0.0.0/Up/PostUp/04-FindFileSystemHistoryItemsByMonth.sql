@@ -56,3 +56,4 @@ END;$$
 
 -- Use by calling
 -- select * from public."FindFileSystemHistoryItemsByMonth"('2023-12-01');
+-- select * from public."FindFileSystemHistoryItemsByMonth"('2023-12-01', null, null, null, null, '194b0f6edb3adf405d8e90f9db961953');
