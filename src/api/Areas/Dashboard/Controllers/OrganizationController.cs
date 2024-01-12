@@ -51,16 +51,16 @@ public class OrganizationController : ControllerBase
     #endregion
 
     #region Endpoints
-    // TODO: Limit based on role and tenant.
     /// <summary>
-    ///
+    /// Find all organizations that match the specified query filter.
+    /// Only returns organizations the current user has access to.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "GetOrganizations-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OrganizationModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Organization" })]
-    [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 43200)]
+    [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
     public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -70,7 +70,7 @@ public class OrganizationController : ControllerBase
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
         {
-            var result = _service.Find(filter.GeneratePredicate(), filter.Sort);
+            var result = _service.Find(filter);
             return new JsonResult(result.Select(o => new OrganizationModel(o)));
         }
         else
@@ -79,14 +79,13 @@ public class OrganizationController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var result = _service.FindForUser(user.Id, filter.GeneratePredicate(), filter.Sort);
+            var result = _service.FindForUser(user.Id, filter);
             return new JsonResult(result.Select(o => new OrganizationModel(o)));
         }
     }
 
-    // TODO: Limit based on role and tenant.
     /// <summary>
-    ///
+    /// Get the organization for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -110,7 +109,7 @@ public class OrganizationController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var entity = _service.FindForUser(user.Id, (o) => o.Id == id, o => o.Id).FirstOrDefault();
+            var entity = _service.FindForUser(user.Id, new HSB.Models.Filters.OrganizationFilter() { Id = id }).FirstOrDefault();
             if (entity == null) return Forbid();
             return new JsonResult(new OrganizationModel(entity));
         }

@@ -51,7 +51,6 @@ public class TenantController : ControllerBase
     #endregion
 
     #region Endpoints
-    // TODO: Limit based on role and tenant.
     /// <summary>
     ///
     /// </summary>
@@ -60,7 +59,7 @@ public class TenantController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<TenantModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Tenant" })]
-    [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 43200)]
+    [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
     public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -84,7 +83,6 @@ public class TenantController : ControllerBase
         }
     }
 
-    // TODO: Limit based on role and tenant.
     /// <summary>
     ///
     /// </summary>
