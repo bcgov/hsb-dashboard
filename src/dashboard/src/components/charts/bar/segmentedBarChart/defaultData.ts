@@ -1,11 +1,29 @@
-export const defaultData = (numDrives: number, labelsArray: string[]) => {
+import { ChartData } from 'chart.js';
+
+// Define color pairs for used and unused space
+const colorPairs = [
+  ['#4D7194', '#86BAEF'],
+  ['#E9B84E', '#FFD57B'],
+  ['#A9A9A9', '#D7D7D7'],
+];
+
+const labelsArray = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
+export const defaultData = (numDrives: number): ChartData<'bar', number[], string> => {
   const datasets = [];
-  // Define color pairs for used and unused space
-  const colorPairs = [
-    ['#4D7194', '#86BAEF'],
-    ['#E9B84E', '#FFD57B'],
-    ['#A9A9A9', '#D7D7D7'],
-  ];
 
   for (let drive = 1; drive <= numDrives; drive++) {
     // Generate random data for the example

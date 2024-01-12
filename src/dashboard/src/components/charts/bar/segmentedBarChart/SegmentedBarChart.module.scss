@@ -1,49 +1,54 @@
 @import '@/styles/utils.scss';
 
 .panel {
-    @include panel-style(250px, unset, unset, 1310px);
+  @include panel-style(250px, unset, unset, 1310px);
 
-    button {
-        @include export-btn;
-    }
+  button {
+    @include export-btn;
+  }
 }
 
 .customLegend {
-    margin: 20px 0;
-    display: flex;
-    justify-content: space-evenly;
+  margin: 20px 0;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.legend {
+  display: flex;
+  flex-direction: row;
 }
 
 .legendColors {
+  display: inline-block;
+
+  span {
     display: inline-block;
+    height: 20px;
+    width: 55px;
+    position: relative;
 
-    span {
-        display: inline-block;
-        height: 20px;
-        width: 55px;
-        position: relative;
-
-        &::after {
-            position: absolute;
-            top: 23px;
-            font-size: $font-size-small;
-            color: $info-gray;
-        }
-
-        &:first-of-type::after {
-            content: 'Used';
-        }
-
-        &:last-of-type::after {
-            content: 'Unused';
-        }
+    &::after {
+      position: absolute;
+      top: 23px;
+      font-size: $font-size-small;
+      color: $info-gray;
     }
+
+    &:first-of-type::after {
+      content: 'Used';
+    }
+
+    &:last-of-type::after {
+      content: 'Unused';
+    }
+  }
 }
 
 .legendLabel {
-    display: inline;
-    margin-left: 10px;
-    font-weight: bold;
-    position: relative;
-    bottom: 4px;
+  display: inline;
+  margin-left: 10px;
+  font-weight: bold;
+  position: relative;
+  bottom: 4px;
 }

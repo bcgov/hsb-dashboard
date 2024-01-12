@@ -9,7 +9,9 @@ import {
 export const useDashboardFileSystemHistoryItems = () => {
   const { history } = useApiFileSystemItems();
   const fileSystemHistoryItemsReady = useDashboard((state) => state.fileSystemHistoryItemsReady);
-  const setServerHistoryItemsReady = useDashboard((state) => state.setServerHistoryItemsReady);
+  const setFileSystemHistoryItemsReady = useDashboard(
+    (state) => state.setFileSystemHistoryItemsReady,
+  );
   const fileSystemHistoryItems = useDashboard((state) => state.fileSystemHistoryItems);
   const setFilteredFileSystemHistoryItems = useDashboard(
     (state) => state.setFileSystemHistoryItems,
@@ -18,7 +20,7 @@ export const useDashboardFileSystemHistoryItems = () => {
   const fetch = React.useCallback(
     async (filter: IFileSystemHistoryItemFilter) => {
       try {
-        setServerHistoryItemsReady(false);
+        setFileSystemHistoryItemsReady(false);
         const res = await history(filter);
         const fileSystemHistoryItems: IFileSystemHistoryItemModel[] = await res.json();
         setFilteredFileSystemHistoryItems(fileSystemHistoryItems);
@@ -26,10 +28,10 @@ export const useDashboardFileSystemHistoryItems = () => {
       } catch (error) {
         throw error;
       } finally {
-        setServerHistoryItemsReady(true);
+        setFileSystemHistoryItemsReady(true);
       }
     },
-    [history, setFilteredFileSystemHistoryItems, setServerHistoryItemsReady],
+    [history, setFilteredFileSystemHistoryItems, setFileSystemHistoryItemsReady],
   );
 
   return React.useMemo(
