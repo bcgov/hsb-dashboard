@@ -81,7 +81,8 @@ export default function Page() {
   }, [updateUser, records]);
 
   return (
-    <Sheet>
+    <Sheet >
+      <div className={styles.container}>
       {loading && (
         <Overlay>
           <Spinner />
@@ -107,6 +108,7 @@ export default function Page() {
           </Button>
         </div>
       </div>
+      <div className={styles.table}>
       <Table
         data={items}
         header={
@@ -114,7 +116,7 @@ export default function Page() {
             <div>Username</div>
             <div>Email</div>
             <div>Name</div>
-            <div>Enabled</div>
+            <div className={styles.tableHeader}>Enabled</div>
             <div>Groups</div>
           </>
         }
@@ -143,7 +145,7 @@ export default function Page() {
                 <Select
                   options={groupOptions}
                   className={styles.multiSelect}
-                  placeholder="Select"
+                  placeholder="Select one or more"
                   multiple
                   value={data.groups?.map((g) => g.id.toString())}
                   onChange={(values) => {
@@ -167,6 +169,7 @@ export default function Page() {
           );
         }}
       </Table>
+      </div>
       <div className={styles.footer}>
         <Button
           onClick={async () => await handleUpdate()}
@@ -174,6 +177,7 @@ export default function Page() {
         >
           Save
         </Button>
+      </div>
       </div>
     </Sheet>
   );

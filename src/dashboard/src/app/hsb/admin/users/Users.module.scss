@@ -13,9 +13,10 @@
     top: -8px;
 }
 
-.groupsSelect > div {
+.groupsSelect >div {
     width: 100%;
     max-width: 230px;
+    max-width: -webkit-fill-available;
 
     select {
         width: 100%;
@@ -28,4 +29,22 @@
     gap: 1rem;
     justify-content: flex-end;
     padding: 1rem;
-  }
+}
+
+.container .table>div {
+    .tableHeader {
+        flex: 0.5;
+
+        &+div {
+            flex: 1.5;
+        }
+    }
+
+    .checkbox {
+        flex: 0.5;
+    }
+
+    .groupsSelect {
+        flex: 1.5;
+    }
+}

@@ -143,7 +143,7 @@
 
 .multiSelect {
   position: absolute;
-  top: 8px;
+  top: -22px;
 
   &::after {
     display: none;
@@ -151,7 +151,7 @@
 
   &:focus-within {
     &::before {
-      content: "Select";
+      content: "Select one or more";
       height: 43px;
       width: 100%;
       display: block;

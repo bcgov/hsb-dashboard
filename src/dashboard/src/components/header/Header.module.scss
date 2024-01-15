@@ -19,7 +19,6 @@
   color: $white;
   border-bottom: 2px solid $bc-yellow;
   margin-bottom: 48px;
-  min-height: 260px;
 
   .container {
     max-width: 1440px;
@@ -36,7 +35,10 @@
 
   &.filterPadding {
     margin-bottom: 88px;
-    min-height: unset;
+  }
+
+  &.adminPadding {
+    min-height: 260px;
   }
 }
 
