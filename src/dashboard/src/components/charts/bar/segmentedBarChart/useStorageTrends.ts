@@ -107,13 +107,13 @@ export const useStorageTrends = (
           const groupData = groups.map((group) => {
             const items = group.items.filter((i) => i.serviceNowKey === volume.serviceNowKey);
             const capacity = convertToStorageSize<number>(
-              items[items.length - 1].capacity,
+              items.length ? items[items.length - 1].capacity : 0,
               'MB',
               'GB',
               { type: 'number' },
             );
             const available = convertToStorageSize<number>(
-              items[items.length - 1].availableSpace,
+              items.length ? items[items.length - 1].availableSpace : 0,
               'MB',
               'GB',
               { type: 'number' },
