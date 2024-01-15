@@ -128,3 +128,116 @@
     border-color: $bc-black transparent transparent transparent;
   }
 }
+
+%arrow-style {
+  content: '';
+  height: 8px;
+  width: 8px;
+  border-right: 1px solid $bc-black;
+  border-bottom: 1px solid $bc-black;
+  display: block;
+  position: absolute;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.multiSelect {
+  position: absolute;
+  top: 8px;
+
+  &::after {
+    display: none;
+  }
+
+  &:focus-within {
+    &::before {
+      content: "Select";
+      height: 43px;
+      width: 100%;
+      display: block;
+      position: absolute;
+      background: $white;
+      z-index: 3;
+      padding: 10px;
+      color: $dark-gray;
+      box-sizing: border-box;
+      border-radius: 3px;
+      border-bottom: 1px solid;
+      transform: rotate(0);
+      top: 0;
+      left: 0;
+    }
+
+    &::after {
+      @extend %arrow-style;
+      right: 16px;
+      top: 15px;
+      z-index: 3;
+    }
+  }
+
+  select {
+    padding: 0;
+    @include scrollBar;
+    height: 43px;
+    position: relative;
+    overflow: hidden;
+
+    &:focus {
+      height: 250px;
+      overflow: scroll;
+      overflow-x: hidden;
+      z-index: 2;
+    }
+  }
+
+  option {
+    border-bottom: 1px solid $chart-gray;
+    padding: 10px 0 10px 50px;
+    position: relative;
+
+    &:hover {
+      background-color: $light-gray;
+    }
+
+    &::before {
+      content: '';
+      height: 20px;
+      width: 20px;
+      display: block;
+      border: 1px solid $medium-gray;
+      border-radius: 3px;
+      position: absolute;
+      left: 10px;
+      top: 10px;
+    }
+
+    &.selected::before {
+      content: '\2713';
+      font-weight: bold;
+      text-align: center;
+      line-height: 1.2;
+      background-color: $bc-blue;
+    }
+
+    &.selected {
+      background-color: $chart-blue;
+    }
+
+    &:first-of-type {
+      padding: 10px;
+      color: $dark-gray;
+      pointer-events: none;
+
+      &::before {
+        display: none;
+      }
+
+      &::after {
+        @extend %arrow-style;
+        right: 16px;
+        top: 15px;
+      }
+    }
+  }
+}

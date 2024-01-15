@@ -51,13 +51,29 @@ export const Select = <T extends unknown>({
   );
 
   const variantClassName = variant === 'filter' ? styles.dropdown : styles.simpleDropdown;
+  const multiSelectClassName = multiple === true ? styles.multiSelect : '';
+  const selectRef = React.useRef<HTMLSelectElement>(null);
 
   React.useEffect(() => {
     setSelected(value);
   }, [value]);
 
+  React.useEffect(() => {
+    if (multiple && selectRef.current) {
+      selectRef.current.scrollTop = 0;
+    }
+  }, [multiple, options.length]);
+
+  const handleBlur: FocusEventHandler<HTMLSelectElement> = (e) => {
+    onBlur?.(e);
+
+    if (multiple && selectRef.current) {
+      selectRef.current.scrollTop = 0;
+    }
+  };
+
   return (
-    <div className={`${variantClassName} ${className}`}>
+    <div className={`${variantClassName} ${multiSelectClassName} ${className}`}>
       {label && <label htmlFor={id}>{label}</label>}
       {loading && <Spinner className={styles.spinner} />}
       <select
@@ -66,6 +82,7 @@ export const Select = <T extends unknown>({
         title={title}
         disabled={disabled}
         multiple={multiple}
+        ref={selectRef}
         value={
           !multiple
             ? options.find((o) => o.value == selected)?.value ?? ''
@@ -84,7 +101,7 @@ export const Select = <T extends unknown>({
             onChange?.(values, e);
           }
         }}
-        onBlur={onBlur}
+        onBlur={handleBlur}
       >
         {placeholder && (
           <option className="placeholder" value="" disabled={required}>
