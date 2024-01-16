@@ -1,9 +1,11 @@
 import {
   IFileSystemHistoryItemModel,
   IFileSystemItemModel,
+  IOperatingSystemItemModel,
   IOrganizationModel,
   IServerHistoryItemModel,
   IServerItemModel,
+  ITenantModel,
 } from '@/hooks/api';
 import { create } from 'zustand';
 
@@ -12,9 +14,17 @@ export interface IDashboardState {
   dateRange: string[];
   setDateRange: (value?: string[]) => void;
 
+  // Tenants
+  tenants: ITenantModel[];
+  setTenants: (values: ITenantModel[]) => void;
+
   // Organizations
   organizations: IOrganizationModel[];
   setOrganizations: (values: IOrganizationModel[]) => void;
+
+  // Operating System Items
+  operatingSystemItems: IOperatingSystemItemModel[];
+  setOperatingSystemItems: (values: IOperatingSystemItemModel[]) => void;
 
   // Server Items
   serverItemsReady?: boolean;
@@ -44,9 +54,17 @@ export const useDashboard = create<IDashboardState>((set) => ({
   dateRange: [],
   setDateRange: (values) => set((state) => ({ dateRange: values })),
 
+  // Tenants
+  tenants: [],
+  setTenants: (values) => set((state) => ({ tenants: values })),
+
   // Organizations
   organizations: [],
   setOrganizations: (values) => set((state) => ({ organizations: values })),
+
+  // Operating System Items
+  operatingSystemItems: [],
+  setOperatingSystemItems: (values) => set((state) => ({ operatingSystemItems: values })),
 
   // Server Items
   serverItemsReady: true,

@@ -4,7 +4,6 @@ import { Button } from '@/components/buttons';
 import { Select } from '@/components/forms/select';
 import { Text } from '@/components/forms/text';
 import { IOrganizationModel, IServerItemModel } from '@/hooks';
-import { useOrganizations, useServerItems } from '@/hooks/data';
 import React from 'react';
 import styles from './AllocationByStorageVolume.module.scss';
 import { BarChart } from './BarChart';
@@ -13,12 +12,17 @@ import { PercentageLines } from './PercentageLines';
 import { calcOrganizationStorage } from './calcOrganizationStorage';
 import { SortOptions, sortOptions } from './sortOptions';
 
-export interface IAllocationByStorageVolumeProps {}
+export interface IAllocationByStorageVolumeProps {
+  organizations: IOrganizationModel[];
+  serverItems: IServerItemModel[];
+  loading?: boolean;
+}
 
-export const AllocationByStorageVolume: React.FC = () => {
-  const { isReady: organizationsReady, organizations } = useOrganizations();
-  const { isReady: serverItemsReady, serverItems } = useServerItems();
-
+export const AllocationByStorageVolume = ({
+  organizations,
+  serverItems,
+  loading,
+}: IAllocationByStorageVolumeProps) => {
   const [sortOption, setSortOption] = React.useState<number>(0);
   const [search, setSearch] = React.useState('');
   const [items, setItems] = React.useState<IOrganizationStorageModel[]>(
@@ -26,10 +30,8 @@ export const AllocationByStorageVolume: React.FC = () => {
   );
 
   React.useEffect(() => {
-    if (organizationsReady && serverItemsReady) {
-      setItems(calcOrganizationStorage(organizations, serverItems, sortOption));
-    }
-  }, [organizations, organizationsReady, serverItems, serverItemsReady, sortOption]);
+    setItems(calcOrganizationStorage(organizations, serverItems, sortOption));
+  }, [organizations, serverItems, sortOption]);
 
   const filterOrganizations = React.useCallback(
     (

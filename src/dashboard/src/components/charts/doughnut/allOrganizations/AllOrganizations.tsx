@@ -3,17 +3,25 @@
 import styles from './AllOrganizations.module.scss';
 
 import { Button } from '@/components/buttons';
-import { useOrganizations } from '@/hooks/data';
+import { IOrganizationModel, IServerItemModel } from '@/hooks';
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js';
-import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { useAllOrganizationsDoughnutChart } from './hooks';
 
 ChartJS.register(ArcElement, Tooltip);
 
-export const AllOrganizations: React.FC = () => {
-  const { organizations } = useOrganizations();
-  const data = useAllOrganizationsDoughnutChart();
+export interface IAllOrganizationsProps {
+  organizations: IOrganizationModel[];
+  serverItems: IServerItemModel[];
+  loading?: boolean;
+}
+
+export const AllOrganizations = ({
+  organizations,
+  serverItems,
+  loading,
+}: IAllOrganizationsProps) => {
+  const data = useAllOrganizationsDoughnutChart(serverItems);
 
   return (
     <div className={styles.panel}>

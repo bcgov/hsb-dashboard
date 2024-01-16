@@ -4,8 +4,8 @@ import { Button } from '@/components/buttons';
 import { Bar } from 'react-chartjs-2';
 import styles from './SegmentedBarChart.module.scss';
 
+import { IServerItemModel } from '@/hooks';
 import { useDashboardFileSystemHistoryItems } from '@/hooks/dashboard';
-import { useFiltered } from '@/store';
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, Title, Tooltip } from 'chart.js';
 import React from 'react';
 import { defaultOptions } from './defaultOptions';
@@ -15,11 +15,12 @@ import { extractVolumeName } from './utils';
 ChartJS.register(CategoryScale, BarElement, Title, Tooltip, Legend);
 
 export interface ISegmentedBarChart {
+  serverItem: IServerItemModel;
   maxVolumes?: number;
+  loading?: boolean;
 }
 
-export const SegmentedBarChart = ({ maxVolumes = 4 }: ISegmentedBarChart) => {
-  const serverItem = useFiltered((state) => state.serverItem);
+export const SegmentedBarChart = ({ serverItem, maxVolumes = 4, loading }: ISegmentedBarChart) => {
   const { findFileSystemHistoryItems } = useDashboardFileSystemHistoryItems();
 
   const data = useStorageTrends(1, maxVolumes);

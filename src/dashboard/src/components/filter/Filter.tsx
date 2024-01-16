@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, DateRangePicker, Select } from '@/components';
-import { IOperatingSystemItemModel, IOrganizationModel, ITenantModel } from '@/hooks';
+import { IOperatingSystemItemModel, IOrganizationModel, ITenantModel, useAuth } from '@/hooks';
 import { useDashboardServerHistoryItems } from '@/hooks/dashboard';
 import {
   useOperatingSystemItems,
@@ -10,6 +10,7 @@ import {
   useTenants,
 } from '@/hooks/data';
 import {
+  useFilteredFileSystemItems,
   useFilteredOperatingSystemItems,
   useFilteredOrganizations,
   useFilteredServerItems,
@@ -21,6 +22,7 @@ import React from 'react';
 import styles from './Filter.module.scss';
 
 export const Filter: React.FC = () => {
+  const { isHSB } = useAuth();
   const { isReady: tenantsReady, tenants } = useTenants();
   const { isReady: organizationsReady, organizations } = useOrganizations();
   const { isReady: operatingSystemItemsReady, operatingSystemItems } = useOperatingSystemItems();
@@ -32,7 +34,7 @@ export const Filter: React.FC = () => {
   const filteredTenant = useFiltered((state) => state.tenant);
   const setFilteredTenant = useFiltered((state) => state.setTenant);
   const setFilteredTenants = useFiltered((state) => state.setTenants);
-  const { options: filteredTenantOptions } = useFilteredTenants();
+  const { options: filteredTenantOptions, tenants: filteredTenants } = useFilteredTenants();
 
   const filteredOrganization = useFiltered((state) => state.organization);
   const setFilteredOrganization = useFiltered((state) => state.setOrganization);
@@ -46,8 +48,11 @@ export const Filter: React.FC = () => {
   const filteredOperatingSystemItem = useFiltered((state) => state.operatingSystemItem);
   const setFilteredOperatingSystemItem = useFiltered((state) => state.setOperatingSystemItem);
   const setFilteredOperatingSystemItems = useFiltered((state) => state.setOperatingSystemItems);
-  const { options: filteredOperatingSystemItemOptions, findOperatingSystemItems } =
-    useFilteredOperatingSystemItems();
+  const {
+    options: filteredOperatingSystemItemOptions,
+    findOperatingSystemItems,
+    operatingSystemItems: filteredOperatingSystemItems,
+  } = useFilteredOperatingSystemItems();
 
   const filteredServerItem = useFiltered((state) => state.serverItem);
   const filteredServerItems = useFiltered((state) => state.serverItems);
@@ -56,18 +61,26 @@ export const Filter: React.FC = () => {
   const { options: filteredServerItemOptions, findServerItems } = useFilteredServerItems();
 
   const setDashboardDateRange = useDashboard((state) => state.setDateRange);
+  const setDashboardTenants = useDashboard((state) => state.setTenants);
   const setDashboardOrganizations = useDashboard((state) => state.setOrganizations);
+  const setDashboardOperatingSystemItems = useDashboard((state) => state.setOperatingSystemItems);
   const setDashboardServerItems = useDashboard((state) => state.setServerItems);
   const { isReady: serverHistoryItemsReady, findServerHistoryItems } =
     useDashboardServerHistoryItems();
+  const { findFileSystemItems } = useFilteredFileSystemItems();
+
+  const enableTenants = isHSB || tenants.length > 1;
+  const enableOrganizations = isHSB || organizations.length > 1;
 
   React.useEffect(() => {
+    if (tenants.length === 1) setFilteredTenant(tenants[0]);
     setFilteredTenants(tenants);
-  }, [setFilteredTenants, tenants]);
+  }, [setFilteredTenant, setFilteredTenants, tenants]);
 
   React.useEffect(() => {
+    if (organizations.length === 1) setFilteredOrganization(organizations[0]);
     setFilteredOrganizations(organizations);
-  }, [setFilteredOrganizations, organizations]);
+  }, [setFilteredOrganizations, organizations, setFilteredOrganization]);
 
   React.useEffect(() => {
     setFilteredOperatingSystemItems(operatingSystemItems);
@@ -110,7 +123,7 @@ export const Filter: React.FC = () => {
         options={filteredTenantOptions}
         placeholder="Select tenant"
         value={filteredTenant?.id ?? ''}
-        disabled={!tenantsReady}
+        disabled={!tenantsReady || !enableTenants || !serverItemsReady}
         loading={!tenantsReady}
         onChange={async (value) => {
           const tenant = tenants.find((t) => t.id == value);
@@ -148,7 +161,7 @@ export const Filter: React.FC = () => {
         options={filteredOrganizationOptions}
         placeholder="Select organization"
         value={filteredOrganization?.id ?? ''}
-        disabled={!organizationsReady}
+        disabled={!organizationsReady || !enableOrganizations || !serverItemsReady}
         loading={!organizationsReady}
         onChange={async (value) => {
           const organization = organizations.find((o) => o.id == value);
@@ -181,7 +194,7 @@ export const Filter: React.FC = () => {
         options={filteredOperatingSystemItemOptions}
         placeholder="Select OS"
         value={filteredOperatingSystemItem?.id ?? ''}
-        disabled={!operatingSystemItemsReady}
+        disabled={!operatingSystemItemsReady || !serverItemsReady}
         loading={!operatingSystemItemsReady}
         onChange={async (value) => {
           const operatingSystemItem = operatingSystemItems.find((o) => o.id == value);
@@ -237,13 +250,25 @@ export const Filter: React.FC = () => {
         }
         loading={!serverHistoryItemsReady}
         onClick={async () => {
+          if (filteredTenant) setDashboardTenants([filteredTenant]);
+          else setDashboardTenants(filteredTenants);
+
           if (filteredOrganization) setDashboardOrganizations([filteredOrganization]);
           else setDashboardOrganizations(filteredOrganizations);
+
+          if (filteredOperatingSystemItem)
+            setDashboardOperatingSystemItems([filteredOperatingSystemItem]);
+          else setDashboardOperatingSystemItems(filteredOperatingSystemItems);
 
           if (filteredServerItem) setDashboardServerItems([filteredServerItem]);
           else setDashboardServerItems(filteredServerItems);
 
           setDashboardDateRange(filteredDateRange);
+
+          if (filteredServerItem)
+            await findFileSystemItems({
+              serverItemServiceNowKey: filteredServerItem.serviceNowKey,
+            });
 
           await findServerHistoryItems({
             startDate: filteredDateRange[0] ? filteredDateRange[0] : undefined,
