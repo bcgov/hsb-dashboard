@@ -1,6 +1,6 @@
 'use client';
 
-import styles from '@/components/sheet/Sheet.module.scss';
+import styles from './Users.module.scss';
 
 import {
   Button,
@@ -81,7 +81,8 @@ export default function Page() {
   }, [updateUser, records]);
 
   return (
-    <Sheet>
+    <Sheet >
+      <div className={styles.container}>
       {loading && (
         <Overlay>
           <Spinner />
@@ -92,7 +93,7 @@ export default function Page() {
           Find a user by name, username, or email. Click checkbox to enable user access to dashboard
           for selected group(s).
         </Info>
-        <Row>
+        <div className={styles.search}>
           <Text
             name="search"
             placeholder="Search"
@@ -105,8 +106,9 @@ export default function Page() {
           <Button variant="secondary" onClick={() => handleSearch()}>
             Search
           </Button>
-        </Row>
+        </div>
       </div>
+      <div className={styles.table}>
       <Table
         data={items}
         header={
@@ -114,7 +116,7 @@ export default function Page() {
             <div>Username</div>
             <div>Email</div>
             <div>Name</div>
-            <div>Enabled</div>
+            <div className={styles.tableHeader}>Enabled</div>
             <div>Groups</div>
           </>
         }
@@ -125,7 +127,7 @@ export default function Page() {
               <div>{data.username}</div>
               <div>{data.email}</div>
               <div>{data.displayName}</div>
-              <div>
+              <div className={styles.checkbox}>
                 <Checkbox
                   checked={data.isEnabled}
                   onChange={(e) => {
@@ -139,10 +141,11 @@ export default function Page() {
                   }}
                 />
               </div>
-              <div>
+              <div className={styles.groupsSelect}>
                 <Select
                   options={groupOptions}
-                  placeholder="select"
+                  className={styles.multiSelect}
+                  placeholder="Select one or more"
                   multiple
                   value={data.groups?.map((g) => g.id.toString())}
                   onChange={(values) => {
@@ -161,19 +164,21 @@ export default function Page() {
                     }
                   }}
                 />
-              </div>
+              </div> 
             </>
           );
         }}
       </Table>
-      <Row className={styles.footerActions}>
+      </div>
+      <div className={styles.footer}>
         <Button
           onClick={async () => await handleUpdate()}
           disabled={isSubmitting || !records.some((r) => r.isDirty)}
         >
           Save
         </Button>
-      </Row>
+      </div>
+      </div>
     </Sheet>
   );
 }

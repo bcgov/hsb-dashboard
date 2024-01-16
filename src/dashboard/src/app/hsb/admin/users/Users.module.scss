@@ -1,0 +1,50 @@
+@import '@/styles/utils.scss';
+
+.search {
+    margin-bottom: 34px;
+
+    input {
+        width: 100%;
+        max-width: 520px;
+    }
+}
+
+.checkbox label {
+    top: -8px;
+}
+
+.groupsSelect >div {
+    width: 100%;
+    max-width: 230px;
+    max-width: -webkit-fill-available;
+
+    select {
+        width: 100%;
+    }
+}
+
+.footer {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding: 1rem;
+}
+
+.container .table>div {
+    .tableHeader {
+        flex: 0.5;
+
+        &+div {
+            flex: 1.5;
+        }
+    }
+
+    .checkbox {
+        flex: 0.5;
+    }
+
+    .groupsSelect {
+        flex: 1.5;
+    }
+}
