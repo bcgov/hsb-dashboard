@@ -1,15 +1,22 @@
 'use client';
 
-import { useOperatingSystemItems, useServerItems } from '@/hooks/data';
+import { IOperatingSystemItemModel, IServerItemModel } from '@/hooks';
 import Link from 'next/link';
 import { BarRow, SmallBarChart } from '../smallBar';
 import defaultData from './defaultData';
 import { groupByOS } from './utils';
 
-export const AllocationByOS: React.FC = () => {
-  const { serverItems } = useServerItems();
-  const { operatingSystemItems } = useOperatingSystemItems();
+export interface IAllocationByOSProps {
+  serverItems: IServerItemModel[];
+  operatingSystemItems: IOperatingSystemItemModel[];
+  loading?: boolean;
+}
 
+export const AllocationByOS = ({
+  serverItems,
+  operatingSystemItems,
+  loading,
+}: IAllocationByOSProps) => {
   return (
     <SmallBarChart
       title="Allocation by OS"

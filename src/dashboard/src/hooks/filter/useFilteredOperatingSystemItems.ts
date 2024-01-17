@@ -9,6 +9,7 @@ import {
 
 export const useFilteredOperatingSystemItems = () => {
   const { find } = useApiOperatingSystemItems();
+  const operatingSystemItem = useFiltered((state) => state.operatingSystemItem);
   const operatingSystemItems = useFiltered((state) => state.operatingSystemItems);
   const setOperatingSystemItems = useFiltered((state) => state.setOperatingSystemItems);
 
@@ -39,7 +40,8 @@ export const useFilteredOperatingSystemItems = () => {
       findOperatingSystemItems: fetch,
       options,
       operatingSystemItems,
+      operatingSystemItem,
     }),
-    [operatingSystemItems, fetch, options],
+    [fetch, options, operatingSystemItems, operatingSystemItem],
   );
 };

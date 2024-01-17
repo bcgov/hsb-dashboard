@@ -2,14 +2,13 @@ import { IServerItemModel } from '@/hooks';
 import { useOperatingSystemItems, useTenants } from '@/hooks/data';
 import React from 'react';
 import { ITableRowData } from '../ITableRowData';
-import { OperatingSystems } from '../constants';
 
 /**
  * Provides a function to filter server items.
  * @param operatingSystem Operating system filter.
  * @returns Function to filter server items by operating system and predicate.
  */
-export const useAllocationByOS = (operatingSystem: OperatingSystems) => {
+export const useAllocationByOS = (operatingSystem?: string) => {
   const { operatingSystemItems } = useOperatingSystemItems();
   const { tenants } = useTenants();
 
@@ -28,11 +27,11 @@ export const useAllocationByOS = (operatingSystem: OperatingSystems) => {
         }))
         .filter((si) => {
           const className = si.operatingSystemItem?.rawData.u_class;
-          return className === operatingSystem && filter(si);
+          return (!operatingSystem || className === operatingSystem) && filter(si);
         })
         .map<ITableRowData>((si) => {
           return {
-            server: si.name,
+            server: si.name.length ? si.name : '[NO NAME]',
             os: si.operatingSystemItem?.name ?? '',
             tenant: si.tenant?.name ?? '',
             capacity: si.capacity ?? 0,
@@ -52,7 +51,7 @@ export const useAllocationByOS = (operatingSystem: OperatingSystems) => {
           } else if (sort === 'available') {
             return (a.available < b.available ? -1 : a.available > b.available ? 1 : 0) * order;
           }
-          return a.server < b.server ? -1 : a.server > b.server ? 1 : 0;
+          return a.server < b.server ? -1 : a.server > b.server ? 1 : 0 * order;
         });
 
       return data;

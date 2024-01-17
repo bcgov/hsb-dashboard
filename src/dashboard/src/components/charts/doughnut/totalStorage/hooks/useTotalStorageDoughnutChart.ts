@@ -1,12 +1,10 @@
-import { useDashboard } from '@/store';
+import { IServerItemModel } from '@/hooks';
 import React from 'react';
 import { IDoughnutStats } from '../..';
 import { defaultData } from '../defaultData';
 import { generateDoughnutChart } from './generateDoughnutChart';
 
-export const useTotalStorageDoughnutChart = () => {
-  const serverItems = useDashboard((state) => state.serverItems);
-
+export const useTotalStorageDoughnutChart = (serverItems: IServerItemModel[]) => {
   const [data, setData] = React.useState<IDoughnutStats>(defaultData);
 
   React.useEffect(() => {

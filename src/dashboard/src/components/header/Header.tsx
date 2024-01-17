@@ -32,12 +32,16 @@ export const Header: React.FC = () => {
   const isLogin = path.includes('/login');
   const rootPath = isHSB ? 'hsb' : 'client';
   const infoIcon = false;
-  const isDashboardView = path.includes('/dashboard');  
+  const isDashboardView = path.includes('/dashboard');
   const isAdminView = path.includes('/admin');
 
   return (
     <>
-      <header className={`${style.header} ${isDashboardView && style.filterPadding} ${isAdminView && style.adminPadding}`}>
+      <header
+        className={`${style.header} ${isDashboardView && style.filterPadding} ${
+          isAdminView && style.adminPadding
+        }`}
+      >
         <div className={style.container}>
           <div
             className={`${
@@ -88,7 +92,7 @@ export const Header: React.FC = () => {
                           )}
                         </nav>
                         {isDashboardView && (
-                          <Link href="/client/dashboard" className={style.allServers}>
+                          <Link href={`/${rootPath}/servers`} className={style.allServers}>
                             See all servers
                           </Link>
                         )}

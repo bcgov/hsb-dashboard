@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/buttons';
 import { Text } from '@/components/forms/text';
-import { useServerItems } from '@/hooks/data';
+import { IServerItemModel } from '@/hooks';
 import classNames from 'classnames';
 import { debounce } from 'lodash';
 import React from 'react';
@@ -10,17 +10,21 @@ import styles from './AllocationTable.module.scss';
 import { Dropdown } from './Dropdown';
 import { ITableRowData } from './ITableRowData';
 import { TableRow } from './TableRow';
-import { OperatingSystems } from './constants';
 import { useAllocationByOS } from './hooks';
 import { getColumns, getLabel } from './utils';
 
 export interface IAllocationTableProps {
   /** Filter servers by their OS */
-  operatingSystem: OperatingSystems;
+  operatingSystem?: string;
+  serverItems: IServerItemModel[];
+  loading?: boolean;
 }
 
-export const AllocationTable = ({ operatingSystem }: IAllocationTableProps) => {
-  const { serverItems } = useServerItems();
+export const AllocationTable = ({
+  operatingSystem,
+  serverItems,
+  loading,
+}: IAllocationTableProps) => {
   const getServerItems = useAllocationByOS(operatingSystem);
 
   const [keyword, setKeyword] = React.useState('');
@@ -34,7 +38,9 @@ export const AllocationTable = ({ operatingSystem }: IAllocationTableProps) => {
       serverItems,
       (si) =>
         !filter ||
-        si.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase()) ||
+        (si.name.length
+          ? si.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+          : '[NO NAME]'.toLocaleLowerCase().includes(filter.toLocaleLowerCase())) ||
         (!!si.operatingSystemItem &&
           si.operatingSystemItem.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())),
       sorting[0] as keyof ITableRowData,
@@ -53,7 +59,11 @@ export const AllocationTable = ({ operatingSystem }: IAllocationTableProps) => {
 
   return (
     <div className={styles.panel}>
-      <h1>Allocation by Storage Volume - All {getLabel(operatingSystem)}</h1>
+      <h1>
+        {operatingSystem
+          ? `Allocation by Storage Volume - All ${getLabel(operatingSystem)}`
+          : 'All Servers'}
+      </h1>
       <div className={styles.filter}>
         <Text
           placeholder="Filter by server name, OS version"
