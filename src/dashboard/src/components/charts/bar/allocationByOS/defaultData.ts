@@ -1,7 +1,8 @@
+import { IOperatingSystemItemModel } from '@/hooks';
 import { IBarChartData } from '../smallBar/IBarChartData';
 import { IBarChartRowData } from '../smallBar/IBarChartRowData';
 
-const defaultData: IBarChartData<IBarChartRowData> = {
+const defaultData: IBarChartData<IBarChartRowData<IOperatingSystemItemModel>> = {
   labels: ['Operating System', 'Allocated', 'Used', 'Unused', 'Percentage Used'],
   datasets: [
     {

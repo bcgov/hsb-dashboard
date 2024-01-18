@@ -3,7 +3,7 @@ import { convertToStorageSize } from './../../../../utils/convertToStorageSize';
 import { IBarChartRowData } from './IBarChartRowData';
 import styles from './SmallBarChart.module.scss';
 
-interface IBarRowProps extends Omit<IBarChartRowData, 'label'> {
+interface IBarRowProps extends Omit<IBarChartRowData<unknown>, 'label'> {
   label: React.ReactNode;
 }
 

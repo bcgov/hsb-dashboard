@@ -1,6 +1,7 @@
+import { IServerItemModel } from '@/hooks';
 import { ITableRowData } from './ITableRowData';
 
-export const tableRowData: ITableRowData[] = [
+export const tableRowData: ITableRowData<IServerItemModel>[] = [
   {
     server: 'Server Alpha',
     tenant: '',

@@ -52,7 +52,7 @@
             background-color: rgba($bc-blue, 0.4);
         }
     }
-    
+
     &:nth-child(3n+2) {
         .percentage {
             background-color: $medium-yellow;
@@ -62,7 +62,7 @@
             background-color: rgba($medium-yellow, 0.4);
         }
     }
-    
+
     &:nth-child(3n+3) {
         .percentage {
             background-color: $bar-chart-gray;
@@ -130,4 +130,8 @@
     top: 5px;
     font-size: $font-size-12;
     color: $info-gray;
+}
+
+.link {
+  cursor: pointer;
 }

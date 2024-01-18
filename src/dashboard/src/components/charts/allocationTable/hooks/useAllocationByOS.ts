@@ -16,7 +16,7 @@ export const useAllocationByOS = (operatingSystem?: string) => {
     (
       serverItems: IServerItemModel[],
       filter: (serverItem: IServerItemModel) => boolean = () => true,
-      sort: keyof ITableRowData = 'server',
+      sort: keyof ITableRowData<IServerItemModel> = 'server',
       direction: 'asc' | 'desc' = 'asc',
     ) => {
       const data = serverItems
@@ -29,13 +29,14 @@ export const useAllocationByOS = (operatingSystem?: string) => {
           const className = si.operatingSystemItem?.rawData.u_class;
           return (!operatingSystem || className === operatingSystem) && filter(si);
         })
-        .map<ITableRowData>((si) => {
+        .map<ITableRowData<IServerItemModel>>((si) => {
           return {
             server: si.name.length ? si.name : '[NO NAME]',
             os: si.operatingSystemItem?.name ?? '',
             tenant: si.tenant?.name ?? '',
             capacity: si.capacity ?? 0,
             available: si.availableSpace ?? 0,
+            data: si,
           };
         })
         .sort((a, b) => {

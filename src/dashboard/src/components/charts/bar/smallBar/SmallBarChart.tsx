@@ -4,7 +4,7 @@ import { IBarChartData } from './IBarChartData';
 import { IBarChartRowData } from './IBarChartRowData';
 import styles from './SmallBarChart.module.scss';
 
-export interface ISmallBarChartProps<T extends IBarChartRowData> {
+export interface ISmallBarChartProps<T extends IBarChartRowData<unknown>> {
   /** Title header of the component */
   title?: string;
   /** Data to be displayed in the bar chart */
@@ -17,7 +17,7 @@ export interface ISmallBarChartProps<T extends IBarChartRowData> {
   children?: React.ReactNode | ((data: IBarChartData<T>) => React.ReactNode);
 }
 
-export const SmallBarChart = <T extends IBarChartRowData>({
+export const SmallBarChart = <T extends IBarChartRowData<unknown>>({
   title,
   data,
   children,

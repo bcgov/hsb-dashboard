@@ -7,9 +7,16 @@ export interface IBarChartProps {
   to?: string;
   availableSpace: number;
   totalStorage: number;
+  onClick?: (e: React.MouseEvent<HTMLLabelElement, MouseEvent>) => void;
 }
 
-export const BarChart: React.FC<IBarChartProps> = ({ label, to, availableSpace, totalStorage }) => {
+export const BarChart: React.FC<IBarChartProps> = ({
+  label,
+  to = '',
+  availableSpace,
+  totalStorage,
+  onClick,
+}) => {
   var validPercentage = totalStorage
     ? Math.min(100, Math.max(0, Math.round(((totalStorage - availableSpace) / totalStorage) * 100)))
     : 0;
@@ -23,7 +30,15 @@ export const BarChart: React.FC<IBarChartProps> = ({ label, to, availableSpace, 
 
   return (
     <div className={styles.barChart}>
-      {to ? <Link href={to}>{label}</Link> : <label>{label}</label>}
+      {to ? (
+        <Link href={to}>{label}</Link>
+      ) : onClick ? (
+        <label className={styles.link} onClick={(e) => onClick?.(e)}>
+          {label}
+        </label>
+      ) : (
+        <label>{label}</label>
+      )}
       <div className={styles.barLine}>
         <div
           className={styles.percentage}

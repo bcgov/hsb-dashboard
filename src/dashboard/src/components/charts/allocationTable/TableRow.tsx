@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import React from 'react';
 import { convertToStorageSize } from './../../../utils/convertToStorageSize';
 import styles from './AllocationTable.module.scss';
@@ -10,6 +9,7 @@ interface TableRowProps {
   capacity: number;
   available: number;
   showTenant?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLLabelElement, MouseEvent>) => void;
 }
 
 export const TableRow: React.FC<TableRowProps> = ({
@@ -19,6 +19,7 @@ export const TableRow: React.FC<TableRowProps> = ({
   capacity,
   available,
   showTenant,
+  onClick,
 }) => {
   const percentageUsed = capacity ? Math.round(((capacity - available) / capacity) * 100) : 0;
   const capacityValue = convertToStorageSize<string>(capacity, 'MB', 'TB');
@@ -27,9 +28,15 @@ export const TableRow: React.FC<TableRowProps> = ({
   return (
     <div className={styles.row}>
       <div className={styles.info}>
-        <Link href={``} title={server}>
-          {server}
-        </Link>
+        <p>
+          {onClick ? (
+            <label className={styles.link} onClick={(e) => onClick?.(e)}>
+              {server}
+            </label>
+          ) : (
+            <label>{server}</label>
+          )}
+        </p>
         {showTenant ? <p title={tenant}>{tenant}</p> : ''}
         <p title={os}>{os}</p>
         <p title={capacityValue}>{capacityValue}</p>

@@ -18,19 +18,21 @@ export interface IAllocationTableProps {
   operatingSystem?: string;
   serverItems: IServerItemModel[];
   loading?: boolean;
+  onClick?: (serverItem?: IServerItemModel) => void;
 }
 
 export const AllocationTable = ({
   operatingSystem,
   serverItems,
   loading,
+  onClick,
 }: IAllocationTableProps) => {
   const getServerItems = useAllocationByOS(operatingSystem);
 
   const [keyword, setKeyword] = React.useState('');
   const [filter, setFilter] = React.useState(keyword);
   const [sort, setSort] = React.useState<string>('server:asc');
-  const [rows, setRows] = React.useState<ITableRowData[]>([]);
+  const [rows, setRows] = React.useState<ITableRowData<IServerItemModel>[]>([]);
 
   React.useEffect(() => {
     const sorting = sort.split(':');
@@ -43,7 +45,7 @@ export const AllocationTable = ({
           : '[NO NAME]'.toLocaleLowerCase().includes(filter.toLocaleLowerCase())) ||
         (!!si.operatingSystemItem &&
           si.operatingSystemItem.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())),
-      sorting[0] as keyof ITableRowData,
+      sorting[0] as keyof ITableRowData<IServerItemModel>,
       sorting[1] as any,
     );
     setRows(rows);
@@ -90,15 +92,16 @@ export const AllocationTable = ({
           <p>Total</p>
         </div>
         <div className={styles.chart}>
-          {rows.map((data, index) => (
+          {rows.map((row, index) => (
             <TableRow
               key={index}
-              server={data.server}
-              tenant={data.tenant}
-              os={data.os}
-              capacity={data.capacity}
-              available={data.available}
+              server={row.server}
+              tenant={row.tenant}
+              os={row.os}
+              capacity={row.capacity}
+              available={row.available}
               showTenant={showTenants}
+              onClick={() => onClick?.(row.data)}
             />
           ))}
         </div>

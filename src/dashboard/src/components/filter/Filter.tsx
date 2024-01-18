@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, DateRangePicker, Select } from '@/components';
+import { Button, DateRangePicker, Select, useDashboardFilter } from '@/components';
 import { IOperatingSystemItemModel, IOrganizationModel, ITenantModel, useAuth } from '@/hooks';
 import { useDashboardServerHistoryItems } from '@/hooks/dashboard';
 import {
@@ -68,6 +68,8 @@ export const Filter: React.FC = () => {
   const { isReady: serverHistoryItemsReady, findServerHistoryItems } =
     useDashboardServerHistoryItems();
   const { findFileSystemItems } = useFilteredFileSystemItems();
+
+  const updateDashboard = useDashboardFilter();
 
   const enableTenants = isHSB || tenants.length > 1;
   const enableOrganizations = isHSB || organizations.length > 1;
@@ -250,34 +252,7 @@ export const Filter: React.FC = () => {
         }
         loading={!serverHistoryItemsReady}
         onClick={async () => {
-          if (filteredTenant) setDashboardTenants([filteredTenant]);
-          else setDashboardTenants(filteredTenants);
-
-          if (filteredOrganization) setDashboardOrganizations([filteredOrganization]);
-          else setDashboardOrganizations(filteredOrganizations);
-
-          if (filteredOperatingSystemItem)
-            setDashboardOperatingSystemItems([filteredOperatingSystemItem]);
-          else setDashboardOperatingSystemItems(filteredOperatingSystemItems);
-
-          if (filteredServerItem) setDashboardServerItems([filteredServerItem]);
-          else setDashboardServerItems(filteredServerItems);
-
-          setDashboardDateRange(filteredDateRange);
-
-          if (filteredServerItem)
-            await findFileSystemItems({
-              serverItemServiceNowKey: filteredServerItem.serviceNowKey,
-            });
-
-          await findServerHistoryItems({
-            startDate: filteredDateRange[0] ? filteredDateRange[0] : undefined,
-            endDate: filteredDateRange[1] ? filteredDateRange[1] : undefined,
-            tenantId: filteredTenant?.id,
-            organizationId: filteredOrganization?.id,
-            operatingSystemItemId: filteredOperatingSystemItem?.id,
-            serviceNowKey: filteredServerItem?.serviceNowKey,
-          });
+          await updateDashboard();
         }}
       >
         Update

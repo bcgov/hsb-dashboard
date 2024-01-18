@@ -16,12 +16,14 @@ export interface IAllocationByStorageVolumeProps {
   organizations: IOrganizationModel[];
   serverItems: IServerItemModel[];
   loading?: boolean;
+  onClick?: (organization: IOrganizationModel) => void;
 }
 
 export const AllocationByStorageVolume = ({
   organizations,
   serverItems,
   loading,
+  onClick,
 }: IAllocationByStorageVolumeProps) => {
   const [sortOption, setSortOption] = React.useState<number>(0);
   const [search, setSearch] = React.useState('');
@@ -87,10 +89,10 @@ export const AllocationByStorageVolume = ({
           return (
             <BarChart
               key={org.id}
-              to={`/hsb/dashboard/${org.id}`}
               label={org.name}
               availableSpace={org.availableSpace}
               totalStorage={org.capacity}
+              onClick={() => onClick?.(org)}
             />
           );
         })}
