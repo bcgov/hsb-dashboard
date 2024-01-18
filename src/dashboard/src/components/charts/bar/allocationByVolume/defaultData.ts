@@ -1,7 +1,8 @@
+import { IFileSystemItemModel } from '@/hooks';
 import { IBarChartData } from '../smallBar/IBarChartData';
 import { IBarChartRowData } from '../smallBar/IBarChartRowData';
 
-const defaultData: IBarChartData<IBarChartRowData> = {
+const defaultData: IBarChartData<IBarChartRowData<IFileSystemItemModel>> = {
   labels: ['Drive', 'Allocated', 'Used', 'Unused', 'Percentage Used'],
   datasets: [
     {

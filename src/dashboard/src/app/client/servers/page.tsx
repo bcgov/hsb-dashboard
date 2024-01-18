@@ -1,6 +1,6 @@
 'use client';
 
-import { AllocationByStorageVolume, Col } from '@/components';
+import { AllocationTable, Col } from '@/components';
 import { useSecureRoute } from '@/hooks';
 import { useFilteredOrganizations, useFilteredServerItems } from '@/hooks/filter';
 
@@ -12,8 +12,8 @@ export default function Page() {
 
   return (
     <Col>
-      <h1></h1>All Servers
-      <AllocationByStorageVolume organizations={organizations} serverItems={serverItems} />
+      <h1>All Servers</h1>
+      <AllocationTable operatingSystem={''} serverItems={serverItems} />
     </Col>
   );
 }

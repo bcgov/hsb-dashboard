@@ -17,6 +17,7 @@ import {
 } from '@/hooks/dashboard';
 import { useOperatingSystemItems, useOrganizations, useServerItems } from '@/hooks/data';
 import { useFilteredFileSystemItems } from '@/hooks/filter';
+import { useDashboardFilter } from '.';
 
 /**
  * Dashboard component displays different charts depending on what data has been stored in the dashboard state.
@@ -32,6 +33,8 @@ export const Dashboard = () => {
     useDashboardOperatingSystemItems();
   const { serverItems: dashboardServerItems } = useDashboardServerItems();
   const { fileSystemItems } = useFilteredFileSystemItems();
+
+  const updateDashboard = useDashboardFilter();
 
   const selectedOrganizations = dashboardOrganizations.length
     ? dashboardOrganizations
@@ -69,6 +72,9 @@ export const Dashboard = () => {
           operatingSystemItems={selectedOperatingSystemItems}
           serverItems={selectedServerItems}
           loading={!isReadyOperatingSystemItems || !isReadyServerItems}
+          onClick={async (operatingSystemItem) => {
+            await updateDashboard({ operatingSystemItem });
+          }}
         />
       )}
       {/* One Server Selected */}
@@ -95,6 +101,9 @@ export const Dashboard = () => {
           organizations={selectedOrganizations}
           serverItems={selectedServerItems}
           loading={!isReadyOrganizations || !isReadyServerItems}
+          onClick={async (organization) => {
+            await updateDashboard({ organization });
+          }}
         />
       )}
       {showAllocationTable && (
@@ -102,6 +111,10 @@ export const Dashboard = () => {
           operatingSystem={selectedServerItems[0].className}
           serverItems={selectedServerItems}
           loading={!isReadyServerItems || !isReadyOperatingSystemItems}
+          onClick={async (serverItem) => {
+            console.debug(serverItem);
+            await updateDashboard({ serverItem });
+          }}
         />
       )}
       {showSegmentedBarChart && (

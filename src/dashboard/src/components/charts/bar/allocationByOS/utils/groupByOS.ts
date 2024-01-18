@@ -6,7 +6,7 @@ export const groupByOS = (
   serverItems: IServerItemModel[],
   operatingSystemItems: IOperatingSystemItemModel[],
 ) => {
-  const groups = groupBy<IServerItemModel, IBarChartRowData>(
+  const groups = groupBy<IServerItemModel, any>(
     serverItems,
     (item) => `${item.operatingSystemItemId ?? 'NA'}`,
     (item) => {
@@ -20,14 +20,15 @@ export const groupByOS = (
   );
 
   const result = Object.keys(groups)
-    .map<IBarChartRowData>((key) => {
+    .map<IBarChartRowData<IOperatingSystemItemModel | undefined>>((key) => {
       const items = groups[key];
       const capacity = items.reduce((result, item) => result + item.capacity, 0);
       const available = items.reduce((result, item) => result + item.available, 0);
       const label =
         key === 'NA' ? 'NA' : operatingSystemItems.find((os) => os.id === +key)?.name ?? 'NA';
+      const os = operatingSystemItems.find((os) => os.id == +key);
 
-      return { key, label, capacity, available };
+      return { key, label, capacity, available, data: os };
     })
     .sort((a, b) => (a.label < b.label ? -1 : a.label > b.label ? 1 : 0));
 

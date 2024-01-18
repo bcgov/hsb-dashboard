@@ -1,8 +1,8 @@
 'use client';
 
 import { IOperatingSystemItemModel, IServerItemModel } from '@/hooks';
-import Link from 'next/link';
 import { BarRow, SmallBarChart } from '../smallBar';
+import styles from '../smallBar/SmallBarChart.module.scss';
 import defaultData from './defaultData';
 import { groupByOS } from './utils';
 
@@ -10,12 +10,14 @@ export interface IAllocationByOSProps {
   serverItems: IServerItemModel[];
   operatingSystemItems: IOperatingSystemItemModel[];
   loading?: boolean;
+  onClick?: (operatingSystemItem?: IOperatingSystemItemModel) => void;
 }
 
 export const AllocationByOS = ({
   serverItems,
   operatingSystemItems,
   loading,
+  onClick,
 }: IAllocationByOSProps) => {
   return (
     <SmallBarChart
@@ -28,7 +30,17 @@ export const AllocationByOS = ({
         return data.datasets.map((os) => (
           <BarRow
             key={os.key}
-            label={<Link href="">{os.label}</Link>}
+            label={
+              <p>
+                {onClick && os.data ? (
+                  <label className={styles.link} onClick={() => onClick?.(os.data)}>
+                    {os.label}
+                  </label>
+                ) : (
+                  <p>{os.label}</p>
+                )}
+              </p>
+            }
             capacity={os.capacity}
             available={os.available}
           />
