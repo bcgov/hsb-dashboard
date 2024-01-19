@@ -1,9 +1,14 @@
 'use client';
 
-import { useSecureRoute } from '@/hooks';
+import { useAuth } from '@/hooks';
+import { redirect } from 'next/navigation';
 
 export default function Page() {
-  useSecureRoute((state) => state.isOrganizationAdmin, '/');
+  const state = useAuth();
+
+  // Only allow Organization Admin role to view this page.
+  if (state.status === 'loading') return <div>Loading...</div>;
+  if (!state.isOrganizationAdmin) redirect('/');
 
   return <div>Client Admin</div>;
 }

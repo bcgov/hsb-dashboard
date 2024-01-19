@@ -1,9 +1,14 @@
 'use client';
 
-import { useSecureRoute } from '@/hooks';
+import { useAuth } from '@/hooks';
+import { redirect } from 'next/navigation';
 
 export default function Page() {
-  useSecureRoute((state) => state.isSystemAdmin, '/');
+  const state = useAuth();
+
+  // Only allow System Admin role to view this page.
+  if (state.status === 'loading') return <div>Loading...</div>;
+  if (!state.isSystemAdmin) redirect('/');
 
   return <div>HSB Organization Admin</div>;
 }

@@ -3,14 +3,15 @@
 import styles from './Users.module.scss';
 
 import { Button, Checkbox, Info, Overlay, Select, Sheet, Spinner, Table, Text } from '@/components';
-import { IUserModel, useSecureRoute } from '@/hooks';
+import { IUserModel, useAuth } from '@/hooks';
 import { useApiUsers } from '@/hooks/api/admin';
 import { useGroups, useUsers } from '@/hooks/data';
+import { redirect } from 'next/navigation';
 import React from 'react';
 import { IUserForm } from './IUserForm';
 
 export default function Page() {
-  useSecureRoute((state) => state.isSystemAdmin, '/');
+  const state = useAuth();
   const { isReady: isReadyUsers, users } = useUsers({ includeGroups: true });
   const { isReady: isReadyGroups, groups, options: groupOptions } = useGroups();
   const { update: updateUser } = useApiUsers();
@@ -69,6 +70,10 @@ export default function Page() {
     const results = await Promise.all(update);
     setRecords(results);
   }, [updateUser, records]);
+
+  // Only allow System Admin role to view this page.
+  if (state.status === 'loading') return <div>Loading...</div>;
+  if (!state.isSystemAdmin) redirect('/');
 
   return (
     <Sheet>
