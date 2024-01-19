@@ -59,28 +59,28 @@ export const useDashboardFilter = () => {
         filter?.operatingSystemItem ?? filteredOperatingSystemItem;
       const selectedServerItem = filter?.serverItem ?? filteredServerItem;
 
-      if (filter?.tenant) setFilteredTenant(filter?.tenant);
+      if (filter?.tenant) setFilteredTenant(filter.tenant);
       if (selectedTenant) setDashboardTenants([selectedTenant]);
       else setDashboardTenants(filteredTenants);
 
-      if (filter?.organization) setFilteredOrganization(filter?.organization);
+      if (filter?.organization) setFilteredOrganization(filter.organization);
       if (selectedOrganization) setDashboardOrganizations([selectedOrganization]);
       else setDashboardOrganizations(filteredOrganizations);
 
-      if (filter?.operatingSystemItem) setFilteredOperatingSystemItem(filter?.operatingSystemItem);
+      if (filter?.operatingSystemItem) setFilteredOperatingSystemItem(filter.operatingSystemItem);
       if (selectedOperatingSystemItem)
         setDashboardOperatingSystemItems([selectedOperatingSystemItem]);
       else setDashboardOperatingSystemItems(filteredOperatingSystemItems);
 
-      if (filter?.serverItem) setFilteredServerItem(filter?.serverItem);
+      if (filter?.serverItem) setFilteredServerItem(filter.serverItem);
       if (selectedServerItem) setDashboardServerItems([selectedServerItem]);
       else setDashboardServerItems(filteredServerItems);
 
       setDashboardDateRange(filteredDateRange);
 
-      if (filteredServerItem)
+      if (selectedServerItem)
         await findFileSystemItems({
-          serverItemServiceNowKey: filteredServerItem.serviceNowKey,
+          serverItemServiceNowKey: selectedServerItem.serviceNowKey,
         });
 
       await findServerHistoryItems({

@@ -1,10 +1,15 @@
 'use client';
 
 import { Dashboard } from '@/components';
-import { useSecureRoute } from '@/hooks';
+import { useAuth } from '@/hooks';
+import { redirect } from 'next/navigation';
 
 export default function Page() {
-  useSecureRoute((state) => state.isHSB, '/');
+  const state = useAuth();
+
+  // Only allow HSB role to view this page.
+  if (state.status === 'loading') return <div>Loading...</div>;
+  if (!state.isHSB) redirect('/');
 
   return <Dashboard />;
 }

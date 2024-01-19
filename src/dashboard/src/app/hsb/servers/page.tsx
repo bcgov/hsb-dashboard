@@ -1,19 +1,22 @@
 'use client';
 
 import { AllocationTable, Col } from '@/components';
-import { useSecureRoute } from '@/hooks';
-import { useFilteredOrganizations, useFilteredServerItems } from '@/hooks/filter';
+import { useAuth } from '@/hooks';
+import { useServerItems } from '@/hooks/data';
+import { redirect } from 'next/navigation';
 
 export default function Page() {
-  useSecureRoute((state) => state.isHSB, '/');
+  const state = useAuth();
+  const { isReady, serverItems } = useServerItems();
 
-  const { organizations } = useFilteredOrganizations();
-  const { serverItems } = useFilteredServerItems();
+  // Only allow HSB role to view this page.
+  if (state.status === 'loading') return <div>Loading...</div>;
+  if (!state.isHSB) redirect('/');
 
   return (
     <Col>
       <h1>All Servers</h1>
-      <AllocationTable operatingSystem={''} serverItems={serverItems} />
+      <AllocationTable serverItems={serverItems} loading={!isReady} />
     </Col>
   );
 }

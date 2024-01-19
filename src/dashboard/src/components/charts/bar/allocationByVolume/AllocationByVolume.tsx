@@ -22,13 +22,25 @@ export const AllocationByVolume = ({
       title="Drive Space"
       data={{
         ...defaultData,
-        datasets: fileSystemItems.map<IBarChartRowData<IFileSystemItemModel>>((fsi) => ({
-          key: fsi.name,
-          label: fsi.name,
-          capacity: fsi.capacity,
-          available: fsi.availableSpace,
-          data: fsi,
-        })),
+        datasets: fileSystemItems
+          .map<IBarChartRowData<IFileSystemItemModel>>((fsi) => ({
+            key: fsi.name,
+            label: fsi.name,
+            capacity: fsi.capacity,
+            available: fsi.availableSpace,
+            data: fsi,
+          }))
+          .sort((a, b) =>
+            a.capacity < b.capacity
+              ? 1
+              : a.capacity > b.capacity
+              ? -1
+              : a.label < b.label
+              ? -1
+              : a.label > b.label
+              ? 1
+              : 0,
+          ),
       }}
       exportDisabled={true}
       onExport={() => {}}
