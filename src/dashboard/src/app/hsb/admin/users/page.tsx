@@ -33,9 +33,11 @@ export default function Page() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const dialogRef = useRef(null);
   const [currentUsername, setCurrentUsername] = React.useState('');
+  const [currentEditContext, setCurrentEditContext] = React.useState('');
 
-  const handleEditClick = (username) => {
+  const handleEditClick = (username: string, context: string) => {
     setCurrentUsername(username);
+    setCurrentEditContext(context);
     if (dialogRef.current) {
       dialogRef.current.showModal();
     }
@@ -104,7 +106,7 @@ export default function Page() {
     
     <Sheet>
       <dialog ref={dialogRef} className={styles.popup}>
-        <p className={styles.popupTitle}>Editing data for {currentUsername}</p>
+        <p className={styles.popupTitle}>{currentEditContext} for {currentUsername}</p>
         <div className={styles.popupSearch}>
           <Text 
             name="search"
@@ -186,15 +188,15 @@ export default function Page() {
               <div className={styles.selectRow}>
                 <div>
                   <p><span>Roles: </span>role, role, role</p>
-                  <Button variant="secondary" onClick={() => handleEditClick(data.username)}>Edit</Button>
+                  <Button variant="secondary" onClick={() => handleEditClick(data.username, 'Editing roles')}>Edit</Button>
                 </div>
                 <div>
                   <p><span>Organizations: </span>Organization name, Organization name, Organization name</p>
-                  <Button variant="secondary" onClick={() => handleEditClick(data.username)}>Edit</Button>
+                  <Button variant="secondary" onClick={() => handleEditClick(data.username, 'Allow access to the following organizations')}>Edit</Button>
                 </div>
                 <div>
                   <p><span>Tenant: </span>Tenant name, Tenant name, Tenant name</p>
-                  <Button variant="secondary" onClick={() => handleEditClick(data.username)}>Edit</Button>
+                  <Button variant="secondary" onClick={() => handleEditClick(data.username, 'Allow access to the following tenants')}>Edit</Button>
                 </div>
               </div> 
             </>

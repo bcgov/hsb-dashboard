@@ -29,7 +29,7 @@
 
         >p {
             width: 100%;
-            margin: 0 10px;
+            margin: 0 5px;
             font-size: $font-size-small;
             color: $dark-gray;
 
@@ -111,6 +111,11 @@
         min-height: 65px;
         border-bottom: 1px solid $medium-gray;
         gap: 1rem;
+        padding-left: 16px;
+
+        &:hover {
+            background-color: $light-gray;
+        }
 
         label {
             top: -7px;

@@ -127,6 +127,7 @@ export const Header: React.FC = () => {
                         )}
                       </>
                     )}
+                    {/* No need for subnav for MVP */}
                     {/* {isSystemAdmin && path.startsWith('/hsb/admin/organizations') && (
                       <nav className={style.adminSubNav}>
                         <Link
