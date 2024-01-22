@@ -2,12 +2,22 @@
 
 import styles from './Users.module.scss';
 
-import { Button, Checkbox, Info, Overlay, Select, Sheet, Spinner, Table, Text } from '@/components';
+import {
+  Button,
+  Checkbox,
+  Info,
+  Overlay,
+  Select,
+  Sheet,
+  Spinner,
+  Table,
+  Text,
+} from '@/components';
 import { IUserModel, useAuth } from '@/hooks';
 import { useApiUsers } from '@/hooks/api/admin';
 import { useGroups, useUsers } from '@/hooks/data';
 import { redirect } from 'next/navigation';
-import React from 'react';
+import React, { useRef } from 'react';
 import { IUserForm } from './IUserForm';
 
 export default function Page() {
@@ -21,6 +31,21 @@ export default function Page() {
   const [items, setItems] = React.useState<IUserModel[]>([]);
   const [filter, setFilter] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const dialogRef = useRef(null);
+  const [currentUsername, setCurrentUsername] = React.useState('');
+
+  const handleEditClick = (username) => {
+    setCurrentUsername(username);
+    if (dialogRef.current) {
+      dialogRef.current.showModal();
+    }
+  };
+
+  const closeDialog = () => {
+    if (dialogRef.current) {
+      dialogRef.current.close();
+    }
+  };
 
   React.useEffect(() => {
     setLoading(!isReadyUsers && !isReadyGroups);
@@ -76,7 +101,28 @@ export default function Page() {
   if (!state.isSystemAdmin) redirect('/');
 
   return (
+    
     <Sheet>
+      <dialog ref={dialogRef} className={styles.popup}>
+        <p className={styles.popupTitle}>Editing data for {currentUsername}</p>
+        <div className={styles.popupSearch}>
+          <Text 
+            name="search"
+            placeholder="Search"
+            iconType="search"
+          />
+        </div>
+        <div className={styles.popupRows}>
+          <div className={styles.row}>
+            <Checkbox />
+            <p>placeholder</p>
+          </div>
+        </div>
+        <div className={styles.popupFooter}>
+          <Button variant="secondary" onClick={closeDialog}>Cancel</Button>
+          <Button>Save</Button>
+        </div>
+      </dialog>
       <div className={styles.container}>
         {loading && (
           <Overlay>
@@ -103,76 +149,66 @@ export default function Page() {
             </Button>
           </div>
         </div>
-        <div className={styles.table}>
-          <Table
-            data={items}
-            header={
-              <>
-                <div>Username</div>
-                <div>Email</div>
-                <div>Name</div>
-                <div className={styles.tableHeader}>Enabled</div>
-                <div>Groups</div>
-              </>
-            }
-          >
-            {({ data }) => {
-              return (
-                <>
-                  <div>{data.username}</div>
-                  <div>{data.email}</div>
-                  <div>{data.displayName}</div>
-                  <div className={styles.checkbox}>
-                    <Checkbox
-                      checked={data.isEnabled}
-                      onChange={(e) => {
-                        setRecords((records) =>
-                          records.map((r) =>
-                            r.id === data.id
-                              ? { ...data, isEnabled: e.target.checked, isDirty: true }
-                              : r,
-                          ),
-                        );
-                      }}
-                    />
-                  </div>
-                  <div className={styles.groupsSelect}>
-                    <Select
-                      options={groupOptions}
-                      className={styles.multiSelect}
-                      placeholder="Select one or more"
-                      multiple
-                      value={data.groups?.map((g) => g.id.toString())}
-                      onChange={(values) => {
-                        if (Array.isArray(values)) {
-                          setRecords((users) =>
-                            users.map((u) =>
-                              u.id === data.id
-                                ? {
-                                    ...u,
-                                    groups: groups.filter((g) => values?.some((v) => v == g.id)),
-                                    isDirty: true,
-                                  }
-                                : u,
-                            ),
-                          );
-                        }
-                      }}
-                    />
-                  </div>
-                </>
-              );
-            }}
-          </Table>
-        </div>
-        <div className={styles.footer}>
-          <Button
-            onClick={async () => await handleUpdate()}
-            disabled={isSubmitting || !records.some((r) => r.isDirty)}
-          >
-            Save
-          </Button>
-        </div>
+      </div>
+      <div className={styles.table}>
+      <Table
+        data={items}
+        header={
+          <>
+            <div>Username</div>
+            <div>Email</div>
+            <div>Name</div>
+            <div className={styles.tableHeader}>Enabled</div>
+            <div>Roles, Tenants, Organizations</div>
+          </>
+        }
+      >
+        {({ data }) => {
+          return (
+            <>
+              <div>{data.username}</div>
+              <div>{data.email}</div>
+              <div>{data.displayName}</div>
+              <div className={styles.checkbox}>
+                <Checkbox
+                  checked={data.isEnabled}
+                  onChange={(e) => {
+                    setRecords((records) =>
+                      records.map((r) =>
+                        r.id === data.id
+                          ? { ...data, isEnabled: e.target.checked, isDirty: true }
+                          : r,
+                      ),
+                    );
+                  }}
+                />
+              </div>
+              <div className={styles.selectRow}>
+                <div>
+                  <p><span>Roles: </span>role, role, role</p>
+                  <Button variant="secondary" onClick={() => handleEditClick(data.username)}>Edit</Button>
+                </div>
+                <div>
+                  <p><span>Organizations: </span>Organization name, Organization name, Organization name</p>
+                  <Button variant="secondary" onClick={() => handleEditClick(data.username)}>Edit</Button>
+                </div>
+                <div>
+                  <p><span>Tenant: </span>Tenant name, Tenant name, Tenant name</p>
+                  <Button variant="secondary" onClick={() => handleEditClick(data.username)}>Edit</Button>
+                </div>
+              </div> 
+            </>
+          );
+        }}
+      </Table>
+      </div>
+      <div className={styles.footer}>
+        <Button
+          onClick={async () => await handleUpdate()}
+          disabled={isSubmitting || !records.some((r) => r.isDirty)}
+        >
+          Save
+        </Button>
       </div>
     </Sheet>
   );

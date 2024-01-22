@@ -127,7 +127,7 @@ export const Header: React.FC = () => {
                         )}
                       </>
                     )}
-                    {isSystemAdmin && path.startsWith('/hsb/admin/organizations') && (
+                    {/* {isSystemAdmin && path.startsWith('/hsb/admin/organizations') && (
                       <nav className={style.adminSubNav}>
                         <Link
                           href="/hsb/admin/organizations"
@@ -154,7 +154,7 @@ export const Header: React.FC = () => {
                           Update Existing Organization
                         </Link>
                       </nav>
-                    )}
+                    )} */}
                   </>
                 )}
               </div>

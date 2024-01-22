@@ -1,0 +1,21 @@
+@import '@/styles/utils.scss';
+
+.search {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 10px;
+
+    select {
+        width: 100%;
+        max-width: 590px;
+    }
+
+    input {
+        margin-right: 0;
+    }
+}
+
+.checkbox {
+    top: -8px;
+}
