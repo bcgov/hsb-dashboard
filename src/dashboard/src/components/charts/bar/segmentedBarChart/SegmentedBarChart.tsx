@@ -7,6 +7,7 @@ import styles from './SegmentedBarChart.module.scss';
 import { IServerItemModel } from '@/hooks';
 import { useDashboardFileSystemHistoryItems } from '@/hooks/dashboard';
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, Title, Tooltip } from 'chart.js';
+import moment from 'moment';
 import React from 'react';
 import { defaultOptions } from './defaultOptions';
 import { useStorageTrends } from './useStorageTrends';
@@ -18,21 +19,35 @@ export interface ISegmentedBarChart {
   serverItem: IServerItemModel;
   maxVolumes?: number;
   loading?: boolean;
+  dateRange?: string[];
+  minColumns?: number;
 }
 
-export const SegmentedBarChart = ({ serverItem, maxVolumes = 4, loading }: ISegmentedBarChart) => {
+export const SegmentedBarChart = ({
+  serverItem,
+  maxVolumes = 4,
+  loading,
+  dateRange,
+  minColumns = 12,
+}: ISegmentedBarChart) => {
   const { findFileSystemHistoryItems } = useDashboardFileSystemHistoryItems();
 
-  const data = useStorageTrends(1, maxVolumes);
+  const data = useStorageTrends(1, maxVolumes, dateRange);
 
   React.useEffect(() => {
     if (serverItem) {
+      const now = moment();
+      const start = dateRange?.length
+        ? moment(dateRange[0])
+        : moment(new Date(now.year(), now.month(), 1)).add(-1 * minColumns, 'months');
       // A single server was selected, fetch the history for this server.
-      findFileSystemHistoryItems({ serverItemServiceNowKey: serverItem.serviceNowKey }).catch(
-        () => {},
-      );
+      findFileSystemHistoryItems({
+        serverItemServiceNowKey: serverItem.serviceNowKey,
+        startDate: start.format('yyyy-MM-DD'),
+        endDate: dateRange && dateRange.length > 1 ? dateRange?.[1] : undefined,
+      }).catch(() => {});
     }
-  }, [findFileSystemHistoryItems, serverItem]);
+  }, [findFileSystemHistoryItems, serverItem, dateRange, minColumns]);
 
   const CustomLegend = React.useMemo(
     () => (

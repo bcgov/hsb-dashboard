@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using HSB.DAL.Extensions;
 using HSB.Entities;
+using HSB.Models;
 using HSB.Models.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -22,7 +23,6 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
     public IEnumerable<ServerItem> Find(ServerItemFilter filter)
     {
         var query = this.Context.ServerItems
-            .AsNoTracking()
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -35,6 +35,8 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
             query = query.Skip(filter.Page.Value * filter.Quantity.Value);
 
         return query
+            .AsNoTracking()
+            .AsSingleQuery()
             .ToArray();
     }
 
@@ -50,7 +52,6 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
         var query = (from si in this.Context.ServerItems
                      where userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
                      select si)
-            .AsNoTracking()
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -63,10 +64,78 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
             query = query.Skip(filter.Page.Value * filter.Quantity.Value);
 
         return query
+            .AsNoTracking()
+            .AsSplitQuery()
             .ToArray();
     }
 
-    public ServerItem? FindForId(string key, long userId)
+    public IEnumerable<ServerItemSmallModel> FindSimple(ServerItemFilter filter)
+    {
+        var query = this.Context.ServerItems
+            .Where(filter.GeneratePredicate())
+            .Distinct();
+
+        if (filter.Sort?.Any() == true)
+            query = query.OrderByProperty(filter.Sort);
+        else query = query.OrderBy(si => si.Name);
+        if (filter.Quantity.HasValue)
+            query = query.Take(filter.Quantity.Value);
+        if (filter.Page.HasValue && filter.Quantity.HasValue && filter.Page > 1)
+            query = query.Skip(filter.Page.Value * filter.Quantity.Value);
+
+        return query
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Select(si => new ServerItemSmallModel(si))
+            .ToArray();
+    }
+
+    public IEnumerable<ServerItemSmallModel> FindSimpleForUser(long userId, ServerItemFilter filter)
+    {
+        var userOrganizationQuery = from uo in this.Context.UserOrganizations
+                                    where uo.UserId == userId
+                                    select uo.OrganizationId;
+        var userTenants = from ut in this.Context.UserTenants
+                          where ut.UserId == userId
+                          select ut.TenantId;
+
+        var query = (from si in this.Context.ServerItems
+                     where userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
+                     select si)
+            .Where(filter.GeneratePredicate())
+            .Distinct();
+
+        if (filter.Sort?.Any() == true)
+            query = query.OrderByProperty(filter.Sort);
+        else query = query.OrderBy(si => si.Name);
+        if (filter.Quantity.HasValue)
+            query = query.Take(filter.Quantity.Value);
+        if (filter.Page.HasValue && filter.Quantity.HasValue && filter.Page > 1)
+            query = query.Skip(filter.Page.Value * filter.Quantity.Value);
+
+        return query
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Select(si => new ServerItemSmallModel(si))
+            .ToArray();
+    }
+
+    public ServerItem? FindForId(string key, bool includeFileSystemItems = false)
+    {
+        var query = from si in this.Context.ServerItems
+                    join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
+                    where si.ServiceNowKey == key
+                    select si;
+
+        if (includeFileSystemItems)
+            query = query.Include(m => m.FileSystemItems);
+
+        return query
+            .AsSingleQuery()
+            .FirstOrDefault();
+    }
+
+    public ServerItem? FindForId(string key, long userId, bool includeFileSystemItems = false)
     {
         var query = from si in this.Context.ServerItems
                     join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
@@ -75,7 +144,12 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
                        && usert.UserId == userId
                     select si;
 
-        return query.FirstOrDefault();
+        if (includeFileSystemItems)
+            query = query.Include(m => m.FileSystemItems);
+
+        return query
+            .AsSingleQuery()
+            .FirstOrDefault();
     }
 
     public override EntityEntry<ServerItem> Add(ServerItem entity)

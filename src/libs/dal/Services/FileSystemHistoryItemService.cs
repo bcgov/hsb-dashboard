@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Security.Claims;
 using HSB.DAL.Extensions;
 using HSB.Entities;
@@ -34,6 +33,7 @@ public class FileSystemHistoryItemService : BaseService<FileSystemHistoryItem>, 
 
         return query
             .AsNoTracking()
+            .AsSingleQuery()
             .ToArray();
     }
 
@@ -64,6 +64,7 @@ public class FileSystemHistoryItemService : BaseService<FileSystemHistoryItem>, 
 
         return query
             .AsNoTracking()
+            .AsSplitQuery()
             .ToArray();
     }
 

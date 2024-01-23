@@ -36,6 +36,7 @@ public class OrganizationService : BaseService<Organization>, IOrganizationServi
 
         return query
             .AsNoTracking()
+            .AsSingleQuery()
             .ToArray();
     }
 
@@ -67,6 +68,7 @@ public class OrganizationService : BaseService<Organization>, IOrganizationServi
 
         return query
             .AsNoTracking()
+            .AsSplitQuery()
             .ToArray();
     }
 

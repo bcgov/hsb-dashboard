@@ -6,9 +6,10 @@ import { useApiUsers } from '../api/admin';
 
 interface IUserProps {
   includeGroups?: boolean;
+  init?: boolean;
 }
 
-export const useUsers = ({ includeGroups }: IUserProps) => {
+export const useUsers = ({ includeGroups, init }: IUserProps = {}) => {
   const { status } = useAuth();
   const { find, get } = useApiUsers();
   const userInfo = useApp((state) => state.userinfo);
@@ -16,10 +17,12 @@ export const useUsers = ({ includeGroups }: IUserProps) => {
   const setUsers = useApp((state) => state.setUsers);
 
   const [isReady, setIsReady] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
     // Get an array of all users.
-    if (status === 'authenticated' && !users.length) {
+    if (status === 'authenticated' && !users.length && !isLoading && !isReady && init) {
+      setIsLoading(true);
       setIsReady(false);
       find({ includeGroups })
         .then(async (res) => {
@@ -29,9 +32,12 @@ export const useUsers = ({ includeGroups }: IUserProps) => {
         .catch((error) => {
           console.error(error);
         })
-        .finally(() => setIsReady(true));
+        .finally(() => {
+          setIsReady(true);
+          setIsLoading(false);
+        });
     } else if (users.length) setIsReady(true);
-  }, [find, includeGroups, setUsers, status, users.length]);
+  }, [find, includeGroups, init, isLoading, isReady, setUsers, status, users.length]);
 
   React.useEffect(() => {
     // When a page is first loaded a request is made to activate the user.

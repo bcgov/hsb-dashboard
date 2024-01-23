@@ -86,18 +86,3 @@ export const useApp = create<IAppState>((set) => ({
   fileSystemItems: [],
   setFileSystemItems: (values) => set((state) => ({ fileSystemItems: values })),
 }));
-
-// export const useApp2 = create(
-//   persist(
-//     (set, get): IAppState => ({
-//       userinfo: undefined,
-//       setUserinfo: (value) => set((state: IAppState) => ({ userinfo: value })),
-//       tenants: [],
-//       setTenants: (tenants) => set((state: IAppState) => ({ tenants })),
-//     }),
-//     {
-//       name: 'test',
-//       storage: createJSONStorage(() => sessionStorage),
-//     },
-//   ),
-// );

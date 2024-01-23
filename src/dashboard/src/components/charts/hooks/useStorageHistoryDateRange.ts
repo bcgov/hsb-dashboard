@@ -1,4 +1,3 @@
-import { useDashboard } from '@/store';
 import { calcMonthsBetween } from '@/utils';
 import moment from 'moment';
 
@@ -16,9 +15,7 @@ export interface IDateRangeStorageHistoryData<T> {
  * @param minColumns Minimum number of columns
  * @returns An array of months to contain history for each month.
  */
-export const useStorageHistoryDateRange = <T>(minColumns: number = 1) => {
-  const dateRange = useDashboard((state) => state.dateRange);
-
+export const useStorageHistoryDateRange = <T>(minColumns: number = 1, dateRange: string[] = []) => {
   const now = moment();
   const start = dateRange[0]
     ? moment(dateRange[0])

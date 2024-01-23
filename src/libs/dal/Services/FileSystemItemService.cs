@@ -35,6 +35,7 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
 
         return query
             .AsNoTracking()
+            .AsSplitQuery()
             .ToArray();
     }
 
@@ -65,6 +66,7 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
 
         return query
             .AsNoTracking()
+            .AsSplitQuery()
             .ToArray();
     }
 
@@ -76,7 +78,9 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
                 join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                 where usert.UserId == userId
                    && fsi.ServiceNowKey == key
-                select fsi).FirstOrDefault();
+                select fsi)
+                    .AsSplitQuery()
+                    .FirstOrDefault();
     }
 
     /// <summary>

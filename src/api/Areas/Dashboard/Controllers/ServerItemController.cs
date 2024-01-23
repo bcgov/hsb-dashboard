@@ -94,19 +94,52 @@ public class ServerItemController : ControllerBase
     /// <summary>
     ///
     /// </summary>
-    /// <param name="id"></param>
     /// <returns></returns>
-    [HttpGet("{id}", Name = "GetServerItem-Dashboard")]
+    [HttpGet("simple", Name = "GetSimpleServerItems-Dashboard")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<ServerItemSmallModel>), (int)HttpStatusCode.OK)]
+    [SwaggerOperation(Tags = new[] { "Server Item" })]
+    [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
+    public IActionResult FindSimple()
+    {
+        var uri = new Uri(this.Request.GetDisplayUrl());
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        var filter = new HSB.Models.Filters.ServerItemFilter(query);
+
+        var isHSB = this.User.HasClientRole(ClientRole.HSB);
+        if (isHSB)
+        {
+            var result = _serverItemService.FindSimple(filter);
+            return new JsonResult(result);
+        }
+        else
+        {
+            // Only return server items this user has access to.
+            var user = _authorization.GetUser();
+            if (user == null) return Forbid();
+
+            var result = _serverItemService.FindSimpleForUser(user.Id, filter);
+            return new JsonResult(result);
+        }
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="serviceNowKey"></param>
+    /// <param name="includeFileSystemItems"></param>
+    /// <returns></returns>
+    [HttpGet("{serviceNowKey}", Name = "GetServerItem-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(ServerItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [SwaggerOperation(Tags = new[] { "Server Item" })]
-    public IActionResult GetForId(int id)
+    public IActionResult GetForId(string serviceNowKey, bool includeFileSystemItems = false)
     {
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
         {
-            var entity = _serverItemService.FindForId(id);
+            var entity = _serverItemService.FindForId(serviceNowKey, includeFileSystemItems);
             if (entity == null) return new NoContentResult();
             return new JsonResult(new ServerItemModel(entity));
         }
@@ -116,7 +149,7 @@ public class ServerItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var entity = _serverItemService.FindForId(id, user.Id);
+            var entity = _serverItemService.FindForId(serviceNowKey, user.Id, includeFileSystemItems);
             if (entity == null) return Forbid();
             return new JsonResult(new ServerItemModel(entity));
         }

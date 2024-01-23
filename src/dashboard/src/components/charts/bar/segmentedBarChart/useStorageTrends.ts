@@ -27,8 +27,9 @@ interface IStorageTrendsData extends ChartData<'bar', number[], string> {
 export const useStorageTrends = (
   minColumns: number = 1,
   maxVolumes: number = 4,
+  dateRange: string[] = [],
 ): IStorageTrendsData => {
-  const groups = useStorageHistoryDateRange<IFileSystemHistoryItemModel>(minColumns);
+  const groups = useStorageHistoryDateRange<IFileSystemHistoryItemModel>(minColumns, dateRange);
   const fileSystemHistoryItems = useDashboard((state) => state.fileSystemHistoryItems);
 
   return React.useMemo(() => {

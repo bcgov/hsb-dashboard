@@ -19,6 +19,7 @@ public class GroupService : BaseService<Group>, IGroupService
     {
         return this.Context.Groups
             .Include(m => m.RolesManyToMany).ThenInclude(m => m.Role)
+            .AsSingleQuery()
             .FirstOrDefault(g => g.Id == id);
     }
     #endregion

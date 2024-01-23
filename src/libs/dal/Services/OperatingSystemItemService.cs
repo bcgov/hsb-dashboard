@@ -35,6 +35,8 @@ public class OperatingSystemItemService : BaseService<OperatingSystemItem>, IOpe
                      where userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
                      select osi)
             .Where(predicate)
+            .AsNoTracking()
+            .AsSplitQuery()
             .Distinct();
 
         if (sort != null)
@@ -45,7 +47,6 @@ public class OperatingSystemItemService : BaseService<OperatingSystemItem>, IOpe
             query = query.Skip(skip.Value);
 
         return query
-            .AsNoTracking()
             .ToArray();
     }
 
@@ -79,6 +80,7 @@ public class OperatingSystemItemService : BaseService<OperatingSystemItem>, IOpe
 
         return query
             .AsNoTracking()
+            .AsSplitQuery()
             .ToArray();
     }
     #endregion

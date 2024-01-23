@@ -48,6 +48,7 @@ public class UserService : BaseService<User>, IUserService
         return this.Context.Users
             .Include(u => u.Groups).ThenInclude(g => g.Roles)
             .Where(u => EF.Functions.Like(u.Email, email))
+            .AsSingleQuery()
             .ToArray();
     }
 
@@ -55,6 +56,7 @@ public class UserService : BaseService<User>, IUserService
     {
         return this.Context.Users
             .Include(u => u.Groups).ThenInclude(g => g.Roles)
+            .AsSingleQuery()
             .FirstOrDefault(u => u.Key == key);
     }
 
@@ -62,6 +64,7 @@ public class UserService : BaseService<User>, IUserService
     {
         return this.Context.Users
             .Include(u => u.Groups).ThenInclude(g => g.Roles)
+            .AsSingleQuery()
             .FirstOrDefault(u => EF.Functions.Like(u.Username, username));
     }
 

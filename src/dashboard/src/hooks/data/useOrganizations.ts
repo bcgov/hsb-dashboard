@@ -2,17 +2,23 @@ import { useApp } from '@/store';
 import React from 'react';
 import { IOrganizationModel, useApiOrganizations, useAuth } from '..';
 
-export const useOrganizations = () => {
+export interface IOrganizationsProps {
+  init?: boolean;
+}
+
+export const useOrganizations = ({ init }: IOrganizationsProps = {}) => {
   const { status } = useAuth();
   const { find } = useApiOrganizations();
   const organizations = useApp((state) => state.organizations);
   const setOrganizations = useApp((state) => state.setOrganizations);
 
   const [isReady, setIsReady] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
     // Get an array of organizations.
-    if (status === 'authenticated' && !organizations.length) {
+    if (status === 'authenticated' && !organizations.length && !isLoading && !isReady && init) {
+      setIsLoading(true);
       setIsReady(false);
       find()
         .then(async (res) => {
@@ -22,9 +28,12 @@ export const useOrganizations = () => {
         .catch((error) => {
           console.error(error);
         })
-        .finally(() => setIsReady(true));
+        .finally(() => {
+          setIsReady(true);
+          setIsLoading(false);
+        });
     } else if (organizations.length) setIsReady(true);
-  }, [find, setOrganizations, status, organizations.length]);
+  }, [find, setOrganizations, status, organizations.length, isLoading, isReady, init]);
 
   return { isReady, organizations };
 };

@@ -4,17 +4,23 @@ import React from 'react';
 import { IRoleModel, useAuth } from '..';
 import { useApiRoles } from '../api/admin';
 
-export const useRoles = () => {
+export interface IUsersProps {
+  init?: boolean;
+}
+
+export const useRoles = ({ init }: IUsersProps = {}) => {
   const { status } = useAuth();
   const { find } = useApiRoles();
   const roles = useApp((state) => state.roles);
   const setRoles = useApp((state) => state.setRoles);
 
   const [isReady, setIsReady] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
     // Get an array of roles.
-    if (status === 'authenticated' && !roles.length) {
+    if (status === 'authenticated' && !roles.length && !isLoading && !isReady && init) {
+      setIsLoading(true);
       setIsReady(false);
       find()
         .then(async (res) => {
@@ -24,9 +30,12 @@ export const useRoles = () => {
         .catch((error) => {
           console.error(error);
         })
-        .finally(() => setIsReady(true));
+        .finally(() => {
+          setIsReady(true);
+          setIsLoading(false);
+        });
     } else if (roles.length) setIsReady(true);
-  }, [find, setRoles, status, roles.length]);
+  }, [find, setRoles, status, roles.length, isLoading, isReady, init]);
 
   const options = React.useMemo(
     () =>

@@ -185,7 +185,7 @@ public class DataService : IDataService
                     continue;
                 }
 
-                if (tableName == this.ServiceNowApi.Options.TableNames.FileSystem)
+                if (this.Options.VolumeTableNames.Contains(tableName))
                 {
                     // Get the specific type of item this configuration is for.
                     var itemSN = await this.ServiceNowApi.GetTableItemAsync<ServiceNow.FileSystemModel>(tableName, configurationItemSN.Data.Id);
@@ -197,7 +197,7 @@ public class DataService : IDataService
 
                     await ProcessFileSystemItemAsync(itemSN, configurationItemSN);
                 }
-                else
+                else if (this.Options.ServerTableNames.Contains(tableName))
                 {
                     // Get the specific type of item this configuration is for.
                     var itemSN = await this.ServiceNowApi.GetTableItemAsync<ServiceNow.BaseItemModel>(tableName, configurationItemSN.Data.Id);
@@ -208,6 +208,10 @@ public class DataService : IDataService
                     }
 
                     await ProcessServerItemAsync(itemSN, configurationItemSN);
+                }
+                else
+                {
+                    this.Logger.LogWarning("Data Service configuration is not currently configured to support this class name: {tableName}", tableName);
                 }
 
                 // Update the current offset
