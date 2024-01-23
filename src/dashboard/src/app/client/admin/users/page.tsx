@@ -23,7 +23,7 @@ import { IUserForm } from './IUserForm';
 export default function Page() {
   const state = useAuth();
 
-  const { isReady: isReadyUsers, users } = useUsers({ includeGroups: true });
+  const { isReady: isReadyUsers, users } = useUsers({ includeGroups: true,  init: true });
   const { update: updateUser } = useApiUsers();
 
   const [loading, setLoading] = React.useState(true);
