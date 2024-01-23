@@ -13,22 +13,44 @@
     top: -8px;
 }
 
-.groupsSelect >div {
-    width: 100%;
-    max-width: 230px;
-    max-width: -webkit-fill-available;
-
-    select {
-        width: 100%;
-    }
-}
-
-.footer {
+.selectRow {
     display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    justify-content: flex-end;
-    padding: 1rem;
+    flex-direction: column;
+
+    >div {
+        display: flex;
+        align-items: center;
+        padding: 5px 0;
+        border-radius: 4px;
+        
+        &:hover {
+            background-color: $white;
+        }
+
+        >p {
+            width: 100%;
+            margin: 0 5px;
+            font-size: $font-size-small;
+            color: $dark-gray;
+
+            span {
+                font-weight: bold;
+                color: $bc-black;
+            }
+        }
+
+        button {
+            flex-direction: flex-end;
+            font-size: $font-size-small;
+            padding: 5px 8px;
+            margin-right: 10px;
+
+            &:hover {
+                background-color: $chart-blue;
+                color: $white;
+            }
+        }
+    }
 }
 
 .container .table>div {
@@ -44,7 +66,70 @@
         flex: 0.5;
     }
 
-    .groupsSelect {
+    .selectRow {
         flex: 1.5;
+    }
+}
+
+.popup {
+    width: 100%;
+    max-width: 450px;
+    min-height: 200px;
+    border: 0;
+    border-radius: 10px;
+    @include dropshadow;
+}
+
+.popupSearch {
+    padding: 12px;
+    background-color: $light-gray;
+    border-radius: 4px;
+
+    input {
+        background-color: $white;
+        width: -webkit-fill-available;
+        margin-right: 0;
+    }
+}
+
+.popupTitle {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.popupRows {
+    overflow-y: scroll;
+    min-height: 50px;
+    max-height: 400px;
+    @include scrollBar;
+    margin-bottom: 20px;
+
+    .row {
+        display: flex;
+        align-items: center;
+        min-height: 65px;
+        border-bottom: 1px solid $medium-gray;
+        gap: 1rem;
+        padding-left: 16px;
+
+        &:hover {
+            background-color: $light-gray;
+        }
+
+        label {
+            top: -7px;
+        }
+    }
+}
+
+.popupFooter {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+
+    button {
+        width: 100px;
+        padding: 8px;
     }
 }

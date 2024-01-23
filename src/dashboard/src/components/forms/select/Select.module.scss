@@ -3,6 +3,7 @@
 .simpleDropdown {
   position: relative;
   width: max-content;
+  height: fit-content;
 
   label {
     display: block;
@@ -13,7 +14,7 @@
     border: 1px solid $dark-gray;
     border-radius: 3px;
     min-width: 200px;
-    min-height: 28px;
+    min-height: 40px;
     font-size: $font-size-normal;
     color: $bc-black;
     padding: 5px 33px 5px 8px;
@@ -35,7 +36,7 @@
     display: block;
     position: absolute;
     right: 16px;
-    bottom: 15px;
+    bottom: 18px;
     transform: rotate(45deg);
     pointer-events: none;
   }

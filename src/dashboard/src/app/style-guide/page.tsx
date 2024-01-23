@@ -49,7 +49,7 @@ export default function Page() {
           <Button title="Secondary Button" variant="secondary">
             Button secondary
           </Button>
-          <Button title="Secondary Button" variant="secondary" iconPath="/images/trash-icon.png">
+          <Button title="Secondary Button" variant="secondary" iconPath="/images/trash-icon.svg">
             Button with icon
           </Button>
           <Button title="Disabled Button" disabled>
