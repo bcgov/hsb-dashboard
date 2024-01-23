@@ -10,6 +10,9 @@ export default function Page() {
   const router = useRouter();
   const state = useAuth();
   const { isReady, serverItems } = useServerItems({ useSimple: true, init: true });
+  const setFilteredTenant = useFiltered((state) => state.setTenant);
+  const setFilteredOrganization = useFiltered((state) => state.setOrganization);
+  const setFilteredOperatingSystemItem = useFiltered((state) => state.setOperatingSystemItem);
   const setFilteredServerItem = useFiltered((state) => state.setServerItem);
   const setDashboardServerItems = useDashboard((state) => state.setServerItems);
 
@@ -25,6 +28,9 @@ export default function Page() {
         loading={!isReady}
         onClick={(serverItem) => {
           if (serverItem) {
+            setFilteredTenant();
+            setFilteredOrganization();
+            setFilteredOperatingSystemItem();
             setFilteredServerItem(serverItem);
             setDashboardServerItems([serverItem]);
             router.push(`/hsb/dashboard?serverItem=${serverItem?.serviceNowKey}`);
