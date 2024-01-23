@@ -125,9 +125,11 @@
 
 .popupFooter {
     display: flex;
+    justify-content: flex-end;
     gap: 1rem;
 
     button {
-        width: 100%;
+        width: 100px;
+        padding: 8px;
     }
 }
