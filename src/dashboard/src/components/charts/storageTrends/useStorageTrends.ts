@@ -11,8 +11,11 @@ import { useStorageHistoryDateRange } from '../hooks';
  * @param minColumns Minimum number of columns in the line chard (default = 1).
  * @returns Line chart data.
  */
-export const useStorageTrends = (minColumns: number = 1): ChartData<'line', number[], string> => {
-  const groups = useStorageHistoryDateRange(minColumns);
+export const useStorageTrends = (
+  minColumns: number = 1,
+  dateRange: string[] = [],
+): ChartData<'line', number[], string> => {
+  const groups = useStorageHistoryDateRange(minColumns, dateRange);
   const serverHistoryItems = useDashboard((state) => state.serverHistoryItems);
 
   return React.useMemo(() => {

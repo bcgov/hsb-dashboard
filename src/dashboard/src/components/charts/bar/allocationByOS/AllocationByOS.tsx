@@ -37,7 +37,7 @@ export const AllocationByOS = ({
                     {os.label}
                   </label>
                 ) : (
-                  <p>{os.label}</p>
+                  os.label
                 )}
               </p>
             }

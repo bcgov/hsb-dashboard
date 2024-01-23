@@ -1,9 +1,8 @@
-﻿using System.Text.Json;
-using HSB.Entities;
+﻿using HSB.Entities;
 using System.Text.Json.Serialization;
 
 namespace HSB.Models;
-public class ServerItemModel : AuditableModel
+public class ServerItemSmallModel
 {
     #region Properties
     public string ServiceNowKey { get; set; } = "";
@@ -15,11 +14,7 @@ public class ServerItemModel : AuditableModel
     public int? OperatingSystemItemId { get; set; }
     public OperatingSystemItemModel? OperatingSystem { get; set; }
 
-    public IEnumerable<FileSystemItemModel> FileSystemItems { get; set; } = Array.Empty<FileSystemItemModel>();
-
     #region ServiceNow Properties
-    public JsonDocument RawData { get; set; } = JsonDocument.Parse("{}");
-    public JsonDocument RawDataCI { get; set; } = JsonDocument.Parse("{}");
     public string ClassName { get; set; } = "";
     public string Name { get; set; } = "";
     public string Category { get; set; } = "";
@@ -42,18 +37,15 @@ public class ServerItemModel : AuditableModel
     #endregion
 
     #region Constructors
-    public ServerItemModel() { }
+    public ServerItemSmallModel() { }
 
-    public ServerItemModel(ServerItem entity) : base(entity)
+    public ServerItemSmallModel(ServerItem entity)
     {
         this.ServiceNowKey = entity.ServiceNowKey;
 
         this.TenantId = entity.TenantId;
         this.OrganizationId = entity.OrganizationId;
         this.OperatingSystemItemId = entity.OperatingSystemItemId;
-
-        this.RawData = entity.RawData;
-        this.RawDataCI = entity.RawDataCI;
 
         this.ClassName = entity.ClassName;
         this.Name = entity.Name;
@@ -67,11 +59,9 @@ public class ServerItemModel : AuditableModel
 
         this.Capacity = entity.Capacity;
         this.AvailableSpace = entity.AvailableSpace;
-
-        this.FileSystemItems = entity.FileSystemItems.Select(fsi => new FileSystemItemModel(fsi)).ToArray();
     }
 
-    public ServerItemModel(
+    public ServerItemSmallModel(
         int? tenantId,
         int organizationId,
         int? operatingSystemItemId,
@@ -87,9 +77,6 @@ public class ServerItemModel : AuditableModel
         this.OrganizationId = organizationId;
         this.OperatingSystemItemId = operatingSystemItemId;
 
-        this.RawData = serverModel.RawData;
-        this.RawDataCI = ciModel.RawData;
-
         this.ClassName = serverModel.Data.ClassName ?? "";
         this.Name = serverModel.Data.Name ?? "";
         this.Category = serverModel.Data.Category ?? "";
@@ -99,39 +86,6 @@ public class ServerItemModel : AuditableModel
         this.IPAddress = serverModel.Data.IPAddress ?? "";
         this.FQDN = serverModel.Data.FQDN ?? "";
         this.DiskSpace = !String.IsNullOrWhiteSpace(serverModel.Data.DiskSpace) ? float.Parse(serverModel.Data.DiskSpace) : null;
-    }
-    #endregion
-
-    #region Methods
-    public ServerItem ToEntity()
-    {
-        return (ServerItem)this;
-    }
-
-    public static explicit operator ServerItem(ServerItemModel model)
-    {
-        if (model.RawData == null) throw new InvalidOperationException("Property 'RawData' is required.");
-
-        return new ServerItem(model.TenantId, model.OrganizationId, model.OperatingSystemItemId, model.RawData, model.RawDataCI)
-        {
-            ServiceNowKey = model.ServiceNowKey,
-            ClassName = model.ClassName,
-            Name = model.Name,
-            Category = model.Category,
-            Subcategory = model.Subcategory,
-            DnsDomain = model.DnsDomain,
-            Platform = model.Platform,
-            IPAddress = model.IPAddress,
-            FQDN = model.FQDN,
-            DiskSpace = model.DiskSpace,
-            Capacity = model.Capacity,
-            AvailableSpace = model.AvailableSpace,
-            CreatedOn = model.CreatedOn,
-            CreatedBy = model.CreatedBy,
-            UpdatedOn = model.UpdatedOn,
-            UpdatedBy = model.UpdatedBy,
-            Version = model.Version,
-        };
     }
     #endregion
 }

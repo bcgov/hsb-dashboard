@@ -4,17 +4,23 @@ import React from 'react';
 import { IGroupModel, useAuth } from '..';
 import { useApiGroups } from '../api/admin';
 
-export const useGroups = () => {
+export interface IGroupsProps {
+  init?: boolean;
+}
+
+export const useGroups = ({ init }: IGroupsProps = {}) => {
   const { status } = useAuth();
   const { find } = useApiGroups();
   const groups = useApp((state) => state.groups);
   const setGroups = useApp((state) => state.setGroups);
 
   const [isReady, setIsReady] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   React.useEffect(() => {
     // Get an array of groups.
-    if (status === 'authenticated' && !groups.length) {
+    if (status === 'authenticated' && !groups.length && !isLoading && !isReady && init) {
+      setIsLoading(true);
       setIsReady(false);
       find()
         .then(async (res) => {
@@ -24,9 +30,12 @@ export const useGroups = () => {
         .catch((error) => {
           console.error(error);
         })
-        .finally(() => setIsReady(true));
+        .finally(() => {
+          setIsReady(true);
+          setIsLoading(false);
+        });
     } else if (groups.length) setIsReady(true);
-  }, [find, setGroups, status, groups.length]);
+  }, [find, setGroups, status, groups.length, isLoading, isReady, init]);
 
   const options = React.useMemo(
     () =>

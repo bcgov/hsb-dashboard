@@ -14,6 +14,7 @@ import {
   useFilteredTenants,
 } from '@/hooks/filter';
 import { useDashboard, useFiltered } from '@/store';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 
 export interface IDashboardFilterProps {
@@ -29,6 +30,9 @@ export interface IDashboardFilterProps {
  * @returns Function to update dashboard state.
  */
 export const useDashboardFilter = () => {
+  const router = useRouter();
+  const path = usePathname();
+  const params = useSearchParams();
   const setDashboardTenants = useDashboard((state) => state.setTenants);
   const setDashboardOrganizations = useDashboard((state) => state.setOrganizations);
   const setDashboardOperatingSystemItems = useDashboard((state) => state.setOperatingSystemItems);
@@ -51,37 +55,62 @@ export const useDashboardFilter = () => {
   const filteredServerItems = useFiltered((state) => state.serverItems);
   const filteredDateRange = useFiltered((state) => state.dateRange);
 
+  const currentParams = React.useMemo(
+    () => new URLSearchParams(Array.from(params.entries())),
+    [params],
+  );
+
   return React.useCallback(
     async (filter?: IDashboardFilterProps) => {
       const selectedTenant = filter?.tenant ?? filteredTenant;
+      if (filter?.tenant) setFilteredTenant(filter.tenant);
+      if (selectedTenant) {
+        currentParams.set('tenant', selectedTenant.id.toString());
+        setDashboardTenants([selectedTenant]);
+      } else {
+        currentParams.delete('tenant');
+        setDashboardTenants(filteredTenants);
+      }
+
       const selectedOrganization = filter?.organization ?? filteredOrganization;
+      if (filter?.organization) setFilteredOrganization(filter.organization);
+      if (selectedOrganization) {
+        currentParams.set('organization', selectedOrganization.id.toString());
+        setDashboardOrganizations([selectedOrganization]);
+      } else {
+        currentParams.delete('organization');
+        setDashboardOrganizations(filteredOrganizations);
+      }
+
       const selectedOperatingSystemItem =
         filter?.operatingSystemItem ?? filteredOperatingSystemItem;
-      const selectedServerItem = filter?.serverItem ?? filteredServerItem;
-
-      if (filter?.tenant) setFilteredTenant(filter.tenant);
-      if (selectedTenant) setDashboardTenants([selectedTenant]);
-      else setDashboardTenants(filteredTenants);
-
-      if (filter?.organization) setFilteredOrganization(filter.organization);
-      if (selectedOrganization) setDashboardOrganizations([selectedOrganization]);
-      else setDashboardOrganizations(filteredOrganizations);
-
       if (filter?.operatingSystemItem) setFilteredOperatingSystemItem(filter.operatingSystemItem);
-      if (selectedOperatingSystemItem)
+      if (selectedOperatingSystemItem) {
+        currentParams.set('operatingSystemItem', selectedOperatingSystemItem.id.toString());
         setDashboardOperatingSystemItems([selectedOperatingSystemItem]);
-      else setDashboardOperatingSystemItems(filteredOperatingSystemItems);
+      } else {
+        currentParams.delete('operatingSystemItem');
+        setDashboardOperatingSystemItems(filteredOperatingSystemItems);
+      }
 
+      const selectedServerItem = filter?.serverItem ?? filteredServerItem;
       if (filter?.serverItem) setFilteredServerItem(filter.serverItem);
-      if (selectedServerItem) setDashboardServerItems([selectedServerItem]);
-      else setDashboardServerItems(filteredServerItems);
+      if (selectedServerItem) {
+        currentParams.set('serverItem', selectedServerItem.serviceNowKey);
+        setDashboardServerItems([selectedServerItem]);
+      } else {
+        currentParams.delete('serverItem');
+        setDashboardServerItems(filteredServerItems);
+      }
 
       setDashboardDateRange(filteredDateRange);
+      router.push(`${path}?${currentParams.toString()}`);
 
-      if (selectedServerItem)
+      if (selectedServerItem) {
         await findFileSystemItems({
           serverItemServiceNowKey: selectedServerItem.serviceNowKey,
         });
+      }
 
       await findServerHistoryItems({
         startDate: filteredDateRange[0] ? filteredDateRange[0] : undefined,
@@ -93,6 +122,7 @@ export const useDashboardFilter = () => {
       });
     },
     [
+      currentParams,
       filteredDateRange,
       filteredOperatingSystemItem,
       filteredOperatingSystemItems,
@@ -104,6 +134,8 @@ export const useDashboardFilter = () => {
       filteredTenants,
       findFileSystemItems,
       findServerHistoryItems,
+      path,
+      router,
       setDashboardDateRange,
       setDashboardOperatingSystemItems,
       setDashboardOrganizations,

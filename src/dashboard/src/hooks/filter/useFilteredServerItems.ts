@@ -3,19 +3,25 @@ import { useFiltered } from '@/store';
 import React from 'react';
 import { IServerItemFilter, IServerItemModel, useApiServerItems } from '..';
 
-export const useFilteredServerItems = () => {
-  const { find } = useApiServerItems();
+export interface IFilteredServerItemsProps {
+  useSimple?: boolean;
+}
+
+export const useFilteredServerItems = (
+  { useSimple = false }: IFilteredServerItemsProps | undefined = { useSimple: false },
+) => {
+  const { find, findSimple } = useApiServerItems();
   const serverItems = useFiltered((state) => state.serverItems);
   const setFilteredServerItems = useFiltered((state) => state.setServerItems);
 
   const fetch = React.useCallback(
     async (filter: IServerItemFilter) => {
-      const res = await find(filter);
+      const res = useSimple ? await findSimple(filter) : await find(filter);
       const serverItems: IServerItemModel[] = await res.json();
       setFilteredServerItems(serverItems);
       return serverItems;
     },
-    [find, setFilteredServerItems],
+    [find, findSimple, setFilteredServerItems, useSimple],
   );
 
   const options = React.useMemo(

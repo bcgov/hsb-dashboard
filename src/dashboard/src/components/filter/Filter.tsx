@@ -10,23 +10,32 @@ import {
   useTenants,
 } from '@/hooks/data';
 import {
-  useFilteredFileSystemItems,
   useFilteredOperatingSystemItems,
   useFilteredOrganizations,
   useFilteredServerItems,
   useFilteredTenants,
 } from '@/hooks/filter';
-import { useDashboard, useFiltered } from '@/store';
+import { useFiltered } from '@/store';
 import moment from 'moment';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
 import styles from './Filter.module.scss';
+import { useUrlParamsUpdateKey } from './hooks';
 
 export const Filter: React.FC = () => {
+  const router = useRouter();
+  const path = usePathname();
+  const params = useSearchParams();
   const { isHSB } = useAuth();
-  const { isReady: tenantsReady, tenants } = useTenants();
-  const { isReady: organizationsReady, organizations } = useOrganizations();
-  const { isReady: operatingSystemItemsReady, operatingSystemItems } = useOperatingSystemItems();
-  const { isReady: serverItemsReady, serverItems } = useServerItems();
+  const { isReady: tenantsReady, tenants } = useTenants({ init: true });
+  const { isReady: organizationsReady, organizations } = useOrganizations({ init: true });
+  const { isReady: operatingSystemItemsReady, operatingSystemItems } = useOperatingSystemItems({
+    init: true,
+  });
+  const { isReady: serverItemsReady, serverItems } = useServerItems({
+    useSimple: true,
+    init: true,
+  });
 
   const filteredDateRange = useFiltered((state) => state.dateRange);
   const setFilteredDateRange = useFiltered((state) => state.setDateRange);
@@ -34,63 +43,123 @@ export const Filter: React.FC = () => {
   const filteredTenant = useFiltered((state) => state.tenant);
   const setFilteredTenant = useFiltered((state) => state.setTenant);
   const setFilteredTenants = useFiltered((state) => state.setTenants);
-  const { options: filteredTenantOptions, tenants: filteredTenants } = useFilteredTenants();
+  const { options: filteredTenantOptions } = useFilteredTenants();
 
   const filteredOrganization = useFiltered((state) => state.organization);
   const setFilteredOrganization = useFiltered((state) => state.setOrganization);
   const setFilteredOrganizations = useFiltered((state) => state.setOrganizations);
-  const {
-    options: filteredOrganizationOptions,
-    findOrganizations,
-    organizations: filteredOrganizations,
-  } = useFilteredOrganizations();
+  const { options: filteredOrganizationOptions, findOrganizations } = useFilteredOrganizations();
 
   const filteredOperatingSystemItem = useFiltered((state) => state.operatingSystemItem);
   const setFilteredOperatingSystemItem = useFiltered((state) => state.setOperatingSystemItem);
   const setFilteredOperatingSystemItems = useFiltered((state) => state.setOperatingSystemItems);
-  const {
-    options: filteredOperatingSystemItemOptions,
-    findOperatingSystemItems,
-    operatingSystemItems: filteredOperatingSystemItems,
-  } = useFilteredOperatingSystemItems();
+  const { options: filteredOperatingSystemItemOptions, findOperatingSystemItems } =
+    useFilteredOperatingSystemItems();
 
   const filteredServerItem = useFiltered((state) => state.serverItem);
-  const filteredServerItems = useFiltered((state) => state.serverItems);
   const setFilteredServerItem = useFiltered((state) => state.setServerItem);
   const setFilteredServerItems = useFiltered((state) => state.setServerItems);
-  const { options: filteredServerItemOptions, findServerItems } = useFilteredServerItems();
+  const { options: filteredServerItemOptions, findServerItems } = useFilteredServerItems({
+    useSimple: true,
+  });
 
-  const setDashboardDateRange = useDashboard((state) => state.setDateRange);
-  const setDashboardTenants = useDashboard((state) => state.setTenants);
-  const setDashboardOrganizations = useDashboard((state) => state.setOrganizations);
-  const setDashboardOperatingSystemItems = useDashboard((state) => state.setOperatingSystemItems);
-  const setDashboardServerItems = useDashboard((state) => state.setServerItems);
-  const { isReady: serverHistoryItemsReady, findServerHistoryItems } =
-    useDashboardServerHistoryItems();
-  const { findFileSystemItems } = useFilteredFileSystemItems();
+  const { isReady: serverHistoryItemsReady } = useDashboardServerHistoryItems();
 
+  const { readyKey, lockKey } = useUrlParamsUpdateKey();
   const updateDashboard = useDashboardFilter();
+
+  const currentParams = React.useMemo(
+    () => new URLSearchParams(Array.from(params.entries())),
+    [params],
+  );
 
   const enableTenants = isHSB || tenants.length > 1;
   const enableOrganizations = isHSB || organizations.length > 1;
 
+  // Extract URL query parameters and initialize state.
+  const tenantId = currentParams.get('tenant');
+  const organizationId = currentParams.get('organization');
+  const operatingSystemItemId = currentParams.get('operatingSystemItem');
+  const serverItemKey = currentParams.get('serverItem');
+
+  React.useEffect(() => {
+    // Only update filtered selected values if they haven't already been set.
+    if (tenantId) {
+      const tenant = tenantId ? tenants.find((t) => t.id === +tenantId) : undefined;
+      if (tenant) {
+        setFilteredTenant(tenant);
+        readyKey.current = readyKey.current | 1;
+      }
+    }
+  }, [readyKey, setFilteredTenant, tenantId, tenants]);
+
+  React.useEffect(() => {
+    // Only update filtered selected values if they haven't already been set.
+    if (organizationId) {
+      const organization = organizationId
+        ? organizations.find((t) => t.id === +organizationId)
+        : undefined;
+      if (organization) {
+        setFilteredOrganization(organization);
+        readyKey.current = readyKey.current | 2;
+      }
+    }
+  }, [organizationId, organizations, readyKey, setFilteredOrganization]);
+
+  React.useEffect(() => {
+    // Only update filtered selected values if they haven't already been set.
+    if (operatingSystemItemId) {
+      const operatingSystemItem = operatingSystemItemId
+        ? operatingSystemItems.find((t) => t.id === +operatingSystemItemId)
+        : undefined;
+      if (operatingSystemItem) {
+        setFilteredOperatingSystemItem(operatingSystemItem);
+        readyKey.current = readyKey.current | 4;
+      }
+    }
+  }, [operatingSystemItemId, operatingSystemItems, readyKey, setFilteredOperatingSystemItem]);
+
+  React.useEffect(() => {
+    // Only update filtered selected values if they haven't already been set.
+    if (serverItemKey) {
+      const serverItem = serverItemKey
+        ? serverItems.find((t) => t.serviceNowKey === serverItemKey)
+        : undefined;
+      if (serverItem) {
+        setFilteredServerItem(serverItem);
+        readyKey.current = readyKey.current | 8;
+      }
+    }
+  }, [readyKey, serverItemKey, serverItems, setFilteredServerItem]);
+
+  React.useEffect(() => {
+    // We only want to update the dashboard once.
+    // If we don't have an update key it will attempt to update every time 'anything' changes.
+    if (readyKey.current && lockKey === readyKey.current) {
+      readyKey.current = 0; // Destroy key so that it does not update the dashboard again.
+      updateDashboard();
+    }
+  }, [readyKey, updateDashboard, lockKey]);
+
   React.useEffect(() => {
     if (tenants.length === 1) setFilteredTenant(tenants[0]);
-    setFilteredTenants(tenants);
+    if (tenants.length) setFilteredTenants(tenants);
   }, [setFilteredTenant, setFilteredTenants, tenants]);
 
   React.useEffect(() => {
     if (organizations.length === 1) setFilteredOrganization(organizations[0]);
-    setFilteredOrganizations(organizations);
+    if (organizations.length) setFilteredOrganizations(organizations);
   }, [setFilteredOrganizations, organizations, setFilteredOrganization]);
 
   React.useEffect(() => {
-    setFilteredOperatingSystemItems(operatingSystemItems);
-  }, [setFilteredOperatingSystemItems, operatingSystemItems]);
+    if (operatingSystemItems.length === 1) setFilteredOperatingSystemItem(operatingSystemItems[0]);
+    if (operatingSystemItems.length) setFilteredOperatingSystemItems(operatingSystemItems);
+  }, [setFilteredOperatingSystemItems, operatingSystemItems, setFilteredOperatingSystemItem]);
 
   React.useEffect(() => {
-    setFilteredServerItems(serverItems);
-  }, [setFilteredServerItems, serverItems]);
+    if (serverItems.length === 1) setFilteredServerItem(serverItems[0]);
+    if (serverItems.length) setFilteredServerItems(serverItems);
+  }, [setFilteredServerItems, serverItems, setFilteredServerItem]);
 
   React.useEffect(() => {
     if (!filteredDateRange[0]) {

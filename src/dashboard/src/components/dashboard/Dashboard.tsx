@@ -17,6 +17,7 @@ import {
 } from '@/hooks/dashboard';
 import { useOperatingSystemItems, useOrganizations, useServerItems } from '@/hooks/data';
 import { useFilteredFileSystemItems } from '@/hooks/filter';
+import { useDashboard } from '@/store';
 import { useDashboardFilter } from '.';
 
 /**
@@ -27,11 +28,12 @@ import { useDashboardFilter } from '.';
 export const Dashboard = () => {
   const { isReady: isReadyOrganizations, organizations } = useOrganizations();
   const { isReady: isReadyOperatingSystemItems, operatingSystemItems } = useOperatingSystemItems();
-  const { isReady: isReadyServerItems, serverItems } = useServerItems();
+  const { isReady: isReadyServerItems, serverItems } = useServerItems({ useSimple: true });
   const { organizations: dashboardOrganizations } = useDashboardOrganizations();
   const { operatingSystemItems: dashboardOperatingSystemItems } =
     useDashboardOperatingSystemItems();
   const { serverItems: dashboardServerItems } = useDashboardServerItems();
+  const dateRange = useDashboard((state) => state.dateRange);
   const { fileSystemItems } = useFilteredFileSystemItems();
 
   const updateDashboard = useDashboardFilter();
@@ -95,6 +97,7 @@ export const Dashboard = () => {
           selectedOperatingSystemItems.length === 1 ||
           selectedServerItems.length === 1
         }
+        dateRange={dateRange}
       />
       {showAllocationByStorageVolume && (
         <AllocationByStorageVolume
@@ -118,7 +121,11 @@ export const Dashboard = () => {
         />
       )}
       {showSegmentedBarChart && (
-        <SegmentedBarChart serverItem={selectedServerItems[0]} loading={!isReadyServerItems} />
+        <SegmentedBarChart
+          serverItem={selectedServerItems[0]}
+          loading={!isReadyServerItems}
+          dateRange={dateRange}
+        />
       )}
     </>
   );

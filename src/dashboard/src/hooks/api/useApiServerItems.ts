@@ -13,6 +13,19 @@ export const useApiServerItems = () => {
       find: async (filter: IServerItemFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/dashboard/server-items?${toQueryString(filter)}`);
       },
+      findSimple: async (filter: IServerItemFilter | undefined = {}): Promise<Response> => {
+        return await dispatch(`/api/dashboard/server-items/simple?${toQueryString(filter)}`);
+      },
+      get: async (
+        serviceNowKey: string,
+        includeFileSystemItems: boolean = false,
+      ): Promise<Response> => {
+        return await dispatch(
+          `/api/dashboard/server-items/${serviceNowKey}?${toQueryString({
+            includeFileSystemItems,
+          })}`,
+        );
+      },
       history: async (filter: IServerHistoryItemFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/dashboard/server-items/history?${toQueryString(filter)}`);
       },
