@@ -83,62 +83,55 @@ export const Filter: React.FC = () => {
   const serverItemKey = currentParams.get('serverItem');
 
   React.useEffect(() => {
-    // Only update filtered selected values if they haven't already been set.
-    if (tenantId) {
-      const tenant = tenantId ? tenants.find((t) => t.id === +tenantId) : undefined;
-      if (tenant) {
-        setFilteredTenant(tenant);
-        readyKey.current = readyKey.current | 1;
-      }
-    }
-  }, [readyKey, setFilteredTenant, tenantId, tenants]);
+    // Create a key to unlock a dashboard update.
+    // A key requires all URL query parameters to be ready.
+    const tenant = tenantId ? tenants.find((t) => t.id === +tenantId) : undefined;
+    const organization = organizationId
+      ? organizations.find((t) => t.id === +organizationId)
+      : undefined;
+    const operatingSystemItem = operatingSystemItemId
+      ? operatingSystemItems.find((t) => t.id === +operatingSystemItemId)
+      : undefined;
+    const serverItem = serverItemKey
+      ? serverItems.find((t) => t.serviceNowKey === serverItemKey)
+      : undefined;
 
-  React.useEffect(() => {
-    // Only update filtered selected values if they haven't already been set.
-    if (organizationId) {
-      const organization = organizationId
-        ? organizations.find((t) => t.id === +organizationId)
-        : undefined;
-      if (organization) {
-        setFilteredOrganization(organization);
-        readyKey.current = readyKey.current | 2;
-      }
-    }
-  }, [organizationId, organizations, readyKey, setFilteredOrganization]);
-
-  React.useEffect(() => {
-    // Only update filtered selected values if they haven't already been set.
-    if (operatingSystemItemId) {
-      const operatingSystemItem = operatingSystemItemId
-        ? operatingSystemItems.find((t) => t.id === +operatingSystemItemId)
-        : undefined;
-      if (operatingSystemItem) {
-        setFilteredOperatingSystemItem(operatingSystemItem);
-        readyKey.current = readyKey.current | 4;
-      }
-    }
-  }, [operatingSystemItemId, operatingSystemItems, readyKey, setFilteredOperatingSystemItem]);
-
-  React.useEffect(() => {
-    // Only update filtered selected values if they haven't already been set.
-    if (serverItemKey) {
-      const serverItem = serverItemKey
-        ? serverItems.find((t) => t.serviceNowKey === serverItemKey)
-        : undefined;
-      if (serverItem) {
-        setFilteredServerItem(serverItem);
-        readyKey.current = readyKey.current | 8;
-      }
-    }
-  }, [readyKey, serverItemKey, serverItems, setFilteredServerItem]);
+    if (tenant) readyKey.current = readyKey.current | 1;
+    if (organization) readyKey.current = readyKey.current | 2;
+    if (operatingSystemItem) readyKey.current = readyKey.current | 4;
+    if (serverItem) readyKey.current = readyKey.current | 8;
+  }, [
+    operatingSystemItemId,
+    operatingSystemItems,
+    organizationId,
+    organizations,
+    readyKey,
+    serverItemKey,
+    serverItems,
+    tenantId,
+    tenants,
+  ]);
 
   React.useEffect(() => {
     // We only want to update the dashboard once.
     // If we don't have an update key it will attempt to update every time 'anything' changes.
     if (readyKey.current && lockKey === readyKey.current) {
+      const tenant = tenantId ? tenants.find((t) => t.id === +tenantId) : undefined;
+      const organization = organizationId
+        ? organizations.find((t) => t.id === +organizationId)
+        : undefined;
+      const operatingSystemItem = operatingSystemItemId
+        ? operatingSystemItems.find((t) => t.id === +operatingSystemItemId)
+        : undefined;
+      const serverItem = serverItemKey
+        ? serverItems.find((t) => t.serviceNowKey === serverItemKey)
+        : undefined;
+
       readyKey.current = 0; // Destroy key so that it does not update the dashboard again.
-      updateDashboard();
+      updateDashboard({ tenant, organization, operatingSystemItem, serverItem });
     }
+    // We only want to update the dashboard when the URL values change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [readyKey, updateDashboard, lockKey]);
 
   React.useEffect(() => {

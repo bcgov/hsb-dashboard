@@ -50,7 +50,8 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
                           select ut.TenantId;
 
         var query = (from si in this.Context.ServerItems
-                     where userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
+                     where si.TenantId != null
+                        && (userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId))
                      select si)
             .Where(filter.GeneratePredicate())
             .Distinct();
@@ -100,7 +101,8 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
                           select ut.TenantId;
 
         var query = (from si in this.Context.ServerItems
-                     where userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
+                     where si.TenantId != null
+                        && (userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId))
                      select si)
             .Where(filter.GeneratePredicate())
             .Distinct();

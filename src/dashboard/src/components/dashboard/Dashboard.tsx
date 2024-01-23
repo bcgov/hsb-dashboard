@@ -50,7 +50,9 @@ export const Dashboard = () => {
     selectedServerItems.length === 1 ||
     (selectedOrganizations.length === 1 && selectedOperatingSystemItems.length > 1);
   const showAllocationByOS =
-    selectedOrganizations.length === 1 && selectedOperatingSystemItems.length > 1;
+    selectedOrganizations.length === 1 &&
+    selectedOperatingSystemItems.length > 1 &&
+    selectedServerItems.length !== 1;
   const showAllocationByVolume = selectedServerItems.length === 1;
   const showAllOrganizations =
     selectedOrganizations.length > 1 &&
