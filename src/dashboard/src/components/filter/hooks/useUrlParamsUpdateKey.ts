@@ -1,3 +1,4 @@
+import { useFiltered } from '@/store';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
 
@@ -8,26 +9,25 @@ import React from 'react';
  */
 export const useUrlParamsUpdateKey = () => {
   const params = useSearchParams();
-
-  const currentParams = React.useMemo(
-    () => new URLSearchParams(Array.from(params.entries())),
-    [params],
-  );
+  const filteredServerItem = useFiltered((state) => state.serverItem);
 
   const readyKey = React.useRef(0);
-  var lockKey = 0;
+  const lockKey = React.useRef(0);
 
-  // Extract URL query parameters and initialize state.
-  const tenantId = currentParams.get('tenant');
-  const organizationId = currentParams.get('organization');
-  const operatingSystemItemId = currentParams.get('operatingSystemItem');
-  const serverItemKey = currentParams.get('serverItem');
+  React.useEffect(() => {
+    const currentParams = new URLSearchParams(Array.from(params.entries()));
+    // Extract URL query parameters and initialize state.
+    const tenantId = currentParams.get('tenant');
+    const organizationId = currentParams.get('organization');
+    const operatingSystemItemId = currentParams.get('operatingSystemItem');
+    const serverItemKey = currentParams.get('serverItem');
 
-  // Generate a lock that matches the provided URL parameters.
-  if (tenantId) lockKey = lockKey | 1;
-  if (organizationId) lockKey = lockKey | 2;
-  if (operatingSystemItemId) lockKey = lockKey | 4;
-  if (serverItemKey) lockKey = lockKey | 8;
+    // Generate a lock that matches the provided URL parameters.
+    if (tenantId) lockKey.current = lockKey.current | 1;
+    if (organizationId) lockKey.current = lockKey.current | 2;
+    if (operatingSystemItemId) lockKey.current = lockKey.current | 4;
+    if (serverItemKey) lockKey.current = lockKey.current | 8;
+  }, [params]);
 
-  return { readyKey, lockKey };
+  return { readyKey, lockKey: lockKey.current };
 };
