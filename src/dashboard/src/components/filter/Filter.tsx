@@ -135,22 +135,18 @@ export const Filter: React.FC = () => {
   }, [readyKey, updateDashboard, lockKey]);
 
   React.useEffect(() => {
-    if (tenants.length === 1) setFilteredTenant(tenants[0]);
     if (tenants.length) setFilteredTenants(tenants);
   }, [setFilteredTenant, setFilteredTenants, tenants]);
 
   React.useEffect(() => {
-    if (organizations.length === 1) setFilteredOrganization(organizations[0]);
     if (organizations.length) setFilteredOrganizations(organizations);
   }, [setFilteredOrganizations, organizations, setFilteredOrganization]);
 
   React.useEffect(() => {
-    if (operatingSystemItems.length === 1) setFilteredOperatingSystemItem(operatingSystemItems[0]);
     if (operatingSystemItems.length) setFilteredOperatingSystemItems(operatingSystemItems);
   }, [setFilteredOperatingSystemItems, operatingSystemItems, setFilteredOperatingSystemItem]);
 
   React.useEffect(() => {
-    if (serverItems.length === 1) setFilteredServerItem(serverItems[0]);
     if (serverItems.length) setFilteredServerItems(serverItems);
   }, [setFilteredServerItems, serverItems, setFilteredServerItem]);
 
@@ -208,8 +204,8 @@ export const Filter: React.FC = () => {
 
             const serverItems = await handleFindServerItems(
               tenant,
-              filteredOrganization,
-              filteredOperatingSystemItem,
+              organizations.length === 1 ? organizations[0] : filteredOrganization,
+              operatingSystems.length === 1 ? operatingSystems[0] : filteredOperatingSystemItem,
             );
             if (serverItems.length === 1) setFilteredServerItem(serverItems[0]);
           } else {
@@ -243,7 +239,7 @@ export const Filter: React.FC = () => {
             const serverItems = await handleFindServerItems(
               filteredTenant,
               organization,
-              filteredOperatingSystemItem,
+              operatingSystems.length === 1 ? operatingSystems[0] : filteredOperatingSystemItem,
             );
             if (serverItems.length === 1) setFilteredServerItem(serverItems[0]);
           } else {

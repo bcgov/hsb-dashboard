@@ -46,7 +46,7 @@ public class ServerItemFilter : PageFilter
         if (this.ServiceNowKey != null)
             predicate = predicate.And((u) => EF.Functions.Like(u.ServiceNowKey, this.ServiceNowKey));
         if (this.TenantId != null)
-            predicate = predicate.And((u) => u.TenantId == this.TenantId || u.Organization!.TenantsManyToMany.Any(t => t.TenantId == this.TenantId));
+            predicate = predicate.And((u) => u.TenantId == this.TenantId);
         if (this.OrganizationId != null)
             predicate = predicate.And((u) => u.OrganizationId == this.OrganizationId);
         if (this.OperatingSystemItemId != null)
