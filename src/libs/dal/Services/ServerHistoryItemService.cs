@@ -21,7 +21,6 @@ public class ServerHistoryItemService : BaseService<ServerHistoryItem>, IServerH
     public IEnumerable<ServerHistoryItem> Find(ServerHistoryItemFilter filter)
     {
         var query = this.Context.ServerHistoryItems
-            .AsNoTracking()
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -34,6 +33,8 @@ public class ServerHistoryItemService : BaseService<ServerHistoryItem>, IServerH
             query = query.Skip(filter.Page.Value * filter.Quantity.Value);
 
         return query
+            .AsNoTracking()
+            .AsSingleQuery()
             .ToArray();
     }
 
@@ -49,7 +50,6 @@ public class ServerHistoryItemService : BaseService<ServerHistoryItem>, IServerH
         var query = (from si in this.Context.ServerHistoryItems
                      where userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
                      select si)
-            .AsNoTracking()
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -62,6 +62,8 @@ public class ServerHistoryItemService : BaseService<ServerHistoryItem>, IServerH
             query = query.Skip(filter.Page.Value * filter.Quantity.Value);
 
         return query
+            .AsNoTracking()
+            .AsSplitQuery()
             .ToArray();
     }
 

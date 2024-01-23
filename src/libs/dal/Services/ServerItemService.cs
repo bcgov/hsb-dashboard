@@ -23,7 +23,6 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
     public IEnumerable<ServerItem> Find(ServerItemFilter filter)
     {
         var query = this.Context.ServerItems
-            .AsNoTracking()
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -36,6 +35,8 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
             query = query.Skip(filter.Page.Value * filter.Quantity.Value);
 
         return query
+            .AsNoTracking()
+            .AsSingleQuery()
             .ToArray();
     }
 
@@ -51,7 +52,6 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
         var query = (from si in this.Context.ServerItems
                      where userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
                      select si)
-            .AsNoTracking()
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -64,13 +64,14 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
             query = query.Skip(filter.Page.Value * filter.Quantity.Value);
 
         return query
+            .AsNoTracking()
+            .AsSplitQuery()
             .ToArray();
     }
 
     public IEnumerable<ServerItemSmallModel> FindSimple(ServerItemFilter filter)
     {
         var query = this.Context.ServerItems
-            .AsNoTracking()
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -83,6 +84,8 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
             query = query.Skip(filter.Page.Value * filter.Quantity.Value);
 
         return query
+            .AsNoTracking()
+            .AsSplitQuery()
             .Select(si => new ServerItemSmallModel(si))
             .ToArray();
     }
@@ -99,7 +102,6 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
         var query = (from si in this.Context.ServerItems
                      where userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
                      select si)
-            .AsNoTracking()
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -112,6 +114,8 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
             query = query.Skip(filter.Page.Value * filter.Quantity.Value);
 
         return query
+            .AsNoTracking()
+            .AsSplitQuery()
             .Select(si => new ServerItemSmallModel(si))
             .ToArray();
     }
@@ -126,7 +130,9 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
         if (includeFileSystemItems)
             query = query.Include(m => m.FileSystemItems);
 
-        return query.FirstOrDefault();
+        return query
+            .AsSingleQuery()
+            .FirstOrDefault();
     }
 
     public ServerItem? FindForId(string key, long userId, bool includeFileSystemItems = false)
@@ -141,7 +147,9 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
         if (includeFileSystemItems)
             query = query.Include(m => m.FileSystemItems);
 
-        return query.FirstOrDefault();
+        return query
+            .AsSingleQuery()
+            .FirstOrDefault();
     }
 
     public override EntityEntry<ServerItem> Add(ServerItem entity)

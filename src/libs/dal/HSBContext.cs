@@ -6,8 +6,6 @@ using HSB.DAL.Extensions;
 using HSB.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -15,6 +13,7 @@ namespace HSB.DAL;
 public class HSBContext : DbContext
 {
     #region Variables
+    private readonly ILoggerFactory? _loggerFactory;
     private readonly ILogger? _logger;
     private readonly IHttpContextAccessor? _httpContextAccessor;
     private readonly JsonSerializerOptions? _serializerOptions;
@@ -42,10 +41,11 @@ public class HSBContext : DbContext
     /// <summary>
     /// Creates a new instance of a SiteContext object, initializes with specified parameters.
     /// </summary>
-    /// <param name="logger"></param>
-    protected HSBContext(ILogger<HSBContext> logger)
+    /// <param name="loggerFactory"></param>
+    protected HSBContext(ILoggerFactory loggerFactory)
     {
-        _logger = logger;
+        _loggerFactory = loggerFactory;
+        _logger = loggerFactory.CreateLogger<HSBContext>();
         this.ChangeTracker.LazyLoadingEnabled = false;
     }
 
@@ -55,11 +55,16 @@ public class HSBContext : DbContext
     /// <param name="options"></param>
     /// <param name="httpContextAccessor"></param>
     /// <param name="serializerOptions"></param>
-    /// <param name="logger"></param>
-    public HSBContext(DbContextOptions<HSBContext> options, IHttpContextAccessor? httpContextAccessor = null, IOptions<JsonSerializerOptions>? serializerOptions = null, ILogger<HSBContext>? logger = null)
+    /// <param name="loggerFactory"></param>
+    public HSBContext(
+        DbContextOptions<HSBContext> options,
+        IHttpContextAccessor? httpContextAccessor = null,
+        IOptions<JsonSerializerOptions>? serializerOptions = null,
+        ILoggerFactory? loggerFactory = null)
       : base(options)
     {
-        _logger = logger;
+        _loggerFactory = loggerFactory;
+        _logger = loggerFactory?.CreateLogger<HSBContext>();
         _httpContextAccessor = httpContextAccessor;
         _serializerOptions = serializerOptions?.Value;
         this.ChangeTracker.LazyLoadingEnabled = false;
@@ -74,11 +79,6 @@ public class HSBContext : DbContext
     /// <param name="optionsBuilder"></param>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (!optionsBuilder.IsConfigured)
-        {
-            optionsBuilder.EnableSensitiveDataLogging();
-        }
-
         base.OnConfiguring(optionsBuilder);
     }
 
@@ -89,7 +89,6 @@ public class HSBContext : DbContext
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         base.ConfigureConventions(configurationBuilder);
-        // configurationBuilder.Conventions.Remove(typeof(PluralizingTableNameConvention));
     }
 
     /// <summary>

@@ -25,7 +25,7 @@ public static class ServiceCollectionExtensions
     /// <param name="builder"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public static IServiceCollection AddHSBContext(this IServiceCollection services, WebApplicationBuilder builder, Action<DbContextOptionsBuilder>? options = null)
+    public static IServiceCollection AddHSBContext(this IServiceCollection services, WebApplicationBuilder builder, Action<DbContextOptionsBuilder, DbContextOptionsBuilder>? options = null)
     {
         var config = builder.Configuration;
         var env = builder.Environment;
@@ -41,19 +41,20 @@ public static class ServiceCollectionExtensions
             builder.Password = String.IsNullOrWhiteSpace(builder.Password) ? config["DB_PASSWORD"] : builder.Password;
 
             var sql = opt.UseNpgsql(builder.ConnectionString, sqlOptions =>
-        {
-            sqlOptions.CommandTimeout((int)TimeSpan.FromMinutes(5).TotalSeconds);
-        });
+            {
+                sqlOptions.CommandTimeout((int)TimeSpan.FromMinutes(5).TotalSeconds);
+            });
 
             if (options == null)
             {
                 var debugLoggerFactory = LoggerFactory.Create(builder => { builder.AddDebug(); });
                 sql.UseLoggerFactory(debugLoggerFactory);
+                sql.EnableDetailedErrors(env.IsDevelopment());
+                sql.EnableSensitiveDataLogging(env.IsDevelopment());
+                sql.LogTo(Console.Write);
             }
-            opt.EnableSensitiveDataLogging(env?.IsDevelopment() ?? false);
-            opt.EnableDetailedErrors(env?.IsDevelopment() ?? false);
 
-            options?.Invoke(opt);
+            options?.Invoke(opt, sql);
         });
     }
 
@@ -65,7 +66,7 @@ public static class ServiceCollectionExtensions
     /// <param name="options"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public static IServiceCollection AddHSBServices(this IServiceCollection services, WebApplicationBuilder builder, Action<DbContextOptionsBuilder>? options = null)
+    public static IServiceCollection AddHSBServices(this IServiceCollection services, WebApplicationBuilder builder, Action<DbContextOptionsBuilder, DbContextOptionsBuilder>? options = null)
     {
         // Find all the configuration classes.
         var assembly = typeof(BaseService).Assembly;

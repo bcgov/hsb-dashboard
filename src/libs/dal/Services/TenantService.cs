@@ -40,6 +40,7 @@ public class TenantService : BaseService<Tenant>, ITenantService
 
         return query
             .AsNoTracking()
+            .AsSingleQuery()
             .ToArray();
     }
 
@@ -65,6 +66,7 @@ public class TenantService : BaseService<Tenant>, ITenantService
 
         return query
             .AsNoTracking()
+            .AsSingleQuery()
             .ToArray();
     }
 
