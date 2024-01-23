@@ -151,7 +151,7 @@ export default function Page() {
             </Button>
           </div>
         </div>
-      </div>
+      
       <div className={styles.table}>
       <Table
         data={items}
@@ -211,6 +211,7 @@ export default function Page() {
         >
           Save
         </Button>
+      </div>
       </div>
     </Sheet>
   );

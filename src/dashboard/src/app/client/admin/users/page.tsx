@@ -23,11 +23,7 @@ import { IUserForm } from './IUserForm';
 export default function Page() {
   const state = useAuth();
 
-  // Only allow Organization Admin role to view this page.
-  if (state.status === 'loading') return <div>Loading...</div>;
-  if (!state.isOrganizationAdmin) redirect('/');
-
-  const { isReady: isReadyUsers, users } = useUsers({ includeGroups: trur });
+  const { isReady: isReadyUsers, users } = useUsers({ includeGroups: true });
   const { update: updateUser } = useApiUsers();
 
   const [loading, setLoading] = React.useState(true);
@@ -86,6 +82,10 @@ export default function Page() {
     const results = await Promise.all(update);
     setRecords(results);
   }, [updateUser, records]);
+  
+  // Only allow Organization Admin role to view this page.
+  if (state.status === 'loading') return <div>Loading...</div>;
+  if (!state.isOrganizationAdmin) redirect('/');
 
   return (
     <Sheet >

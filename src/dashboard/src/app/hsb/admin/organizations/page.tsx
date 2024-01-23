@@ -21,11 +21,6 @@ import { IUserForm } from './IUserForm';
 
 export default function Page() {
   const state = useAuth();
-
-  // Only allow System Admin role to view this page.
-  if (state.status === 'loading') return <div>Loading...</div>;
-  if (!state.isSystemAdmin) redirect('/');
-
   const { isReady: isReadyUsers, users } = useUsers({ includeGroups: true });
   const { isReady: isReadyGroups, groups, options: groupOptions } = useGroups();
   const { update: updateUser } = useApiUsers();
@@ -67,6 +62,10 @@ export default function Page() {
         : records,
     );
   }, [filter, records]);
+
+  // Only allow System Admin role to view this page.
+  if (state.status === 'loading') return <div>Loading...</div>;
+  if (!state.isSystemAdmin) redirect('/');
 
   return (
     <div className={styles.panelContainer}>
