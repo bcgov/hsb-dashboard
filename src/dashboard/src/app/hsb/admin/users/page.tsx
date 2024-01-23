@@ -31,7 +31,7 @@ export default function Page() {
   const [items, setItems] = React.useState<IUserModel[]>([]);
   const [filter, setFilter] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const dialogRef = useRef(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const [currentUsername, setCurrentUsername] = React.useState('');
   const [currentEditContext, setCurrentEditContext] = React.useState('');
 
