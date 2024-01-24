@@ -1,6 +1,6 @@
 'use client';
 
-import { AllocationTable, Col } from '@/components';
+import { AllocationTable } from '@/components';
 import { useAuth } from '@/hooks';
 import { useServerItems } from '@/hooks/data';
 import { useDashboard, useFiltered } from '@/store';
@@ -21,22 +21,20 @@ export default function Page() {
   if (!state.isHSB) redirect('/');
 
   return (
-    <Col>
-      <h1>All Servers</h1>
-      <AllocationTable
-        serverItems={serverItems}
-        loading={!isReady}
-        onClick={(serverItem) => {
-          if (serverItem) {
-            setFilteredTenant();
-            setFilteredOrganization();
-            setFilteredOperatingSystemItem();
-            setFilteredServerItem(serverItem);
-            setDashboardServerItems([serverItem]);
-            router.push(`/hsb/dashboard?serverItem=${serverItem?.serviceNowKey}`);
-          }
-        }}
-      />
-    </Col>
+    <AllocationTable
+      margin={-75}
+      serverItems={serverItems}
+      loading={!isReady}
+      onClick={(serverItem) => {
+        if (serverItem) {
+          setFilteredTenant();
+          setFilteredOrganization();
+          setFilteredOperatingSystemItem();
+          setFilteredServerItem(serverItem);
+          setDashboardServerItems([serverItem]);
+          router.push(`/hsb/dashboard?serverItem=${serverItem?.serviceNowKey}`);
+        }
+      }}
+    />
   );
 }

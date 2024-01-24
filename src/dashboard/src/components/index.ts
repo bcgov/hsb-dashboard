@@ -14,3 +14,4 @@ export * from './overlay';
 export * from './sheet';
 export * from './spinner';
 export * from './table';
+export * from './confirmPopup';

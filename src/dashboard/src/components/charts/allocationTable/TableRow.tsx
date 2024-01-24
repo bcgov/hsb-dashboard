@@ -39,8 +39,8 @@ export const TableRow: React.FC<TableRowProps> = ({
         </p>
         {showTenant ? <p title={tenant}>{tenant}</p> : ''}
         <p title={os}>{os}</p>
-        <p title={capacityValue}>{capacityValue}</p>
-        <p title={availableValue}>{availableValue}</p>
+        <p className={styles.centered} title={capacityValue}>{capacityValue}</p>
+        <p className={styles.centered} title={availableValue}>{availableValue}</p>
       </div>
       <div className={styles.barChart}>
         <div className={styles.bar}>
