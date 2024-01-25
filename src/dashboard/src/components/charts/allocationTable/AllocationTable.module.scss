@@ -121,6 +121,10 @@
     padding: 13px 0;
     position: relative;
     border-bottom: 1px solid $medium-gray;
+
+    &:hover {
+        background-color: $light-gray;
+    }
 }
 
 .info,
@@ -205,12 +209,16 @@
         p {
             width: 20%;
 
+            &.centered {
+                text-align: center;
+            }
+
             &:first-of-type {
                 width: 21%;
             }
 
             &:last-child {
-                width: unset;
+                width: 15%;
             }
         }
     }

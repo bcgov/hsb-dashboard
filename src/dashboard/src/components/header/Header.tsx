@@ -39,8 +39,8 @@ export const Header: React.FC = () => {
   return (
     <>
       <header
-        className={`${style.header} ${(isDashboardView || isServerView) && style.filterPadding} ${
-          isAdminView && style.adminPadding
+        className={`${style.header} ${isDashboardView ? style.filterPadding : ''} ${
+          (isAdminView || isServerView) ? style.adminPadding : ''
         }`}
       >
         <div className={style.container}>

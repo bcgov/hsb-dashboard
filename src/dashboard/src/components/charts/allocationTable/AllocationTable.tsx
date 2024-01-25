@@ -19,6 +19,7 @@ export interface IAllocationTableProps {
   serverItems: IServerItemModel[];
   loading?: boolean;
   onClick?: (serverItem?: IServerItemModel) => void;
+  margin?: number;
 }
 
 export const AllocationTable = ({
@@ -26,6 +27,7 @@ export const AllocationTable = ({
   serverItems,
   loading,
   onClick,
+  margin,
 }: IAllocationTableProps) => {
   const getServerItems = useAllocationByOS(operatingSystem);
 
@@ -60,7 +62,7 @@ export const AllocationTable = ({
   );
 
   return (
-    <div className={styles.panel}>
+    <div className={styles.panel} style={margin ? { marginTop: margin } : {}}>
       <h1>
         {operatingSystem
           ? `Allocation by Storage Volume - All ${getLabel(operatingSystem)}`

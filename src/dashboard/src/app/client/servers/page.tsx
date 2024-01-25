@@ -1,6 +1,6 @@
 'use client';
 
-import { AllocationTable, Col } from '@/components';
+import { AllocationTable } from '@/components';
 import { useAuth } from '@/hooks';
 import { useOperatingSystemItems, useServerItems } from '@/hooks/data';
 import { useDashboard, useFiltered } from '@/store';
@@ -25,22 +25,20 @@ export default function Page() {
   if (!state.isClient) redirect('/');
 
   return (
-    <Col>
-      <h1>All Servers</h1>
-      <AllocationTable
-        serverItems={serverItems}
-        loading={!isReadyOperatingSystemItems && !isReadyServerItems}
-        onClick={(serverItem) => {
-          if (serverItem) {
-            setFilteredTenant();
-            setFilteredOrganization();
-            setFilteredOperatingSystemItem();
-            setFilteredServerItem(serverItem);
-            setDashboardServerItems([serverItem]);
-            router.push(`/client/dashboard?serverItem=${serverItem?.serviceNowKey}`);
-          }
-        }}
-      />
-    </Col>
+    <AllocationTable
+      margin={-75}
+      serverItems={serverItems}
+      loading={!isReadyOperatingSystemItems && !isReadyServerItems}
+      onClick={(serverItem) => {
+        if (serverItem) {
+          setFilteredTenant();
+          setFilteredOrganization();
+          setFilteredOperatingSystemItem();
+          setFilteredServerItem(serverItem);
+          setDashboardServerItems([serverItem]);
+          router.push(`/client/dashboard?serverItem=${serverItem?.serviceNowKey}`);
+        }
+      }}
+    />
   );
 }

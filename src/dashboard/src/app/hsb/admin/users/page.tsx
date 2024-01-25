@@ -12,6 +12,7 @@ import {
   Spinner,
   Table,
   Text,
+  ConfirmPopup,
 } from '@/components';
 import { IUserModel, useAuth } from '@/hooks';
 import { useApiUsers } from '@/hooks/api/admin';
@@ -34,6 +35,7 @@ export default function Page() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [currentUsername, setCurrentUsername] = React.useState('');
   const [currentEditContext, setCurrentEditContext] = React.useState('');
+  const [showPopup, setShowPopup] = React.useState(false);
 
   const handleEditClick = (username: string, context: string) => {
     setCurrentUsername(username);
@@ -48,7 +50,7 @@ export default function Page() {
       dialogRef.current.close();
     }
   };
-
+  
   React.useEffect(() => {
     setLoading(!isReadyUsers && !isReadyGroups);
   }, [isReadyUsers, isReadyGroups]);
@@ -105,6 +107,14 @@ export default function Page() {
   return (
     
     <Sheet>
+      {showPopup && (
+        <ConfirmPopup
+          onCancel={() => setShowPopup(false)}
+          onConfirm={() => {
+            setShowPopup(false);
+          }}
+        />
+      )}
       <dialog ref={dialogRef} className={styles.popup}>
         <p className={styles.popupTitle}>{currentEditContext} for {currentUsername}</p>
         <div className={styles.popupSearch}>

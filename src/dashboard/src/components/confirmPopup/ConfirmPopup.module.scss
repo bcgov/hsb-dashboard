@@ -1,0 +1,50 @@
+@import '@/styles/utils.scss';
+
+.popupConfirm {
+    width: 100%;
+    max-width: 450px;
+    min-height: 170px;
+    border: 0;
+    border-radius: 10px;
+    @include dropshadow;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1;
+    position: fixed;
+}
+
+.popupTitle {
+    font-weight: bold;
+    text-align: center;
+    font-size: $font-size-20;
+}
+
+.popupContent {
+    text-align: center;
+    line-height: 1.8;
+}
+
+.popupFooter {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+
+    button {
+        width: 200px;
+        padding: 8px;
+    }
+}
+
+.backdrop {
+    content: '';
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: $bc-black;
+    opacity: 0.4;
+    z-index: 1;
+}
