@@ -3,7 +3,12 @@ import { useFiltered } from '@/store';
 import React from 'react';
 import { ITenantFilter, ITenantModel, useApiTenants } from '..';
 
-export const useFilteredTenants = () => {
+export interface IFilteredTenants {
+  /** Whether to include disabled options */
+  includeDisabled?: boolean;
+}
+
+export const useFilteredTenants = ({ includeDisabled }: IFilteredTenants = {}) => {
   const { find } = useApiTenants();
   const tenants = useFiltered((state) => state.tenants);
   const setTenants = useFiltered((state) => state.setTenants);
@@ -21,6 +26,7 @@ export const useFilteredTenants = () => {
   const options = React.useMemo(
     () =>
       tenants
+        .filter((t) => (includeDisabled ? true : t.isEnabled))
         .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
         .map<IOption<ITenantModel>>((t) => ({
           label: t.name,
@@ -28,7 +34,7 @@ export const useFilteredTenants = () => {
           data: t,
           disabled: t.isEnabled,
         })),
-    [tenants],
+    [includeDisabled, tenants],
   );
 
   return React.useMemo(

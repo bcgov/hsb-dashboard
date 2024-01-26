@@ -59,7 +59,7 @@ namespace HSB.Core.Models
         /// </summary>
         /// <param name="message"></param>
         /// <param name="details"></param>
-        public ErrorResponseModel(string message, string details)
+        public ErrorResponseModel(string message, string? details = null)
         {
             this.Error = message;
             this.Details = details;

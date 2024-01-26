@@ -21,10 +21,14 @@ public class OrganizationService : BaseService<Organization>, IOrganizationServi
     public IEnumerable<Organization> Find(
         Models.Filters.OrganizationFilter filter)
     {
-        var query = (from org in this.Context.Organizations
-                     select org)
-            .Where(filter.GeneratePredicate())
-            .Distinct();
+        var query = from org in this.Context.Organizations
+                    select org;
+
+        if (filter.IncludeTenants == true)
+            query = query.Include(o => o.TenantsManyToMany).ThenInclude(t => t.Tenant);
+
+        query = query
+            .Where(filter.GeneratePredicate());
 
         if (filter.Sort?.Any() == true)
             query = query.OrderByProperty(filter.Sort);
@@ -52,9 +56,14 @@ public class OrganizationService : BaseService<Organization>, IOrganizationServi
                                       where ut.UserId == userId
                                       select tOrg.OrganizationId;
 
-        var query = (from org in this.Context.Organizations
-                     where userOrganizationQuery.Contains(org.Id) || tenantOrganizationQuery.Contains(org.Id)
-                     select org)
+        var query = from org in this.Context.Organizations
+                    where userOrganizationQuery.Contains(org.Id) || tenantOrganizationQuery.Contains(org.Id)
+                    select org;
+
+        if (filter.IncludeTenants == true)
+            query = query.Include(o => o.TenantsManyToMany).ThenInclude(t => t.Tenant);
+
+        query = query
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -70,6 +79,17 @@ public class OrganizationService : BaseService<Organization>, IOrganizationServi
             .AsNoTracking()
             .AsSplitQuery()
             .ToArray();
+    }
+
+    public Organization? FindForId(int id, bool includeTenants)
+    {
+        var query = this.Context.Organizations.Where(u => u.Id == id);
+
+        if (includeTenants)
+            query = query
+                .Include(m => m.TenantsManyToMany).ThenInclude(g => g.Tenant);
+
+        return query.FirstOrDefault();
     }
 
     #endregion

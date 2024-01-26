@@ -27,6 +27,8 @@ public class GroupModel : SortableAuditableModel<int>
     {
         this.Id = group.Id;
         this.Name = group.Name;
+        this.Roles = group.RolesManyToMany.Any() ? this.Roles = group.RolesManyToMany.Where(r => r.Role != null).Select(r => new RoleModel(r.Role!)) : this.Roles;
+        this.Roles = group.Roles.Any() ? group.Roles.Select(r => new RoleModel(r)) : this.Roles;
     }
     #endregion
 

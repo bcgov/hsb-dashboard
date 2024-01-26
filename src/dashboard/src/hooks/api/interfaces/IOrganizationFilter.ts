@@ -4,4 +4,5 @@ export interface IOrganizationFilter {
   parentId?: number;
   tenantId?: number;
   isEnabled?: boolean;
+  includeTenants?: boolean;
 }

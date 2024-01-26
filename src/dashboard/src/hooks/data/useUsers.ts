@@ -5,11 +5,11 @@ import { IUserModel, useAuth } from '..';
 import { useApiUsers } from '../api/admin';
 
 interface IUserProps {
-  includeGroups?: boolean;
+  includePermissions?: boolean;
   init?: boolean;
 }
 
-export const useUsers = ({ includeGroups, init }: IUserProps = {}) => {
+export const useUsers = ({ includePermissions, init }: IUserProps = {}) => {
   const { status } = useAuth();
   const { find, get } = useApiUsers();
   const userInfo = useApp((state) => state.userinfo);
@@ -24,7 +24,7 @@ export const useUsers = ({ includeGroups, init }: IUserProps = {}) => {
     if (status === 'authenticated' && !users.length && !isLoading && !isReady && init) {
       setIsLoading(true);
       setIsReady(false);
-      find({ includeGroups })
+      find({ includePermissions })
         .then(async (res) => {
           const users: IUserModel[] = await res.json();
           setUsers(users);
@@ -37,7 +37,7 @@ export const useUsers = ({ includeGroups, init }: IUserProps = {}) => {
           setIsLoading(false);
         });
     } else if (users.length) setIsReady(true);
-  }, [find, includeGroups, init, isLoading, isReady, setUsers, status, users.length]);
+  }, [find, includePermissions, init, isLoading, isReady, setUsers, status, users.length]);
 
   React.useEffect(() => {
     // When a page is first loaded a request is made to activate the user.
@@ -45,7 +45,7 @@ export const useUsers = ({ includeGroups, init }: IUserProps = {}) => {
     // Need to make a request for the latest user information.
     if (userInfo) {
       if (users.some((u) => u.id === userInfo.id && u.version !== userInfo.version)) {
-        get(userInfo.id)
+        get(userInfo.id, { includePermissions })
           .then(async (response) => {
             const user = await response.json();
             setUsers(users.map((u) => (u.id === userInfo.id ? user : u)));
@@ -55,7 +55,7 @@ export const useUsers = ({ includeGroups, init }: IUserProps = {}) => {
           });
       }
     }
-  }, [userInfo, users, get, setUsers]);
+  }, [userInfo, users, get, setUsers, includePermissions]);
 
   const options = React.useMemo(
     () =>

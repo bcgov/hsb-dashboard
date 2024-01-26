@@ -43,10 +43,14 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
     public IEnumerable<ServerItem> FindForUser(long userId, ServerItemFilter filter)
     {
         var userOrganizationQuery = from uo in this.Context.UserOrganizations
+                                    join o in this.Context.Organizations on uo.OrganizationId equals o.Id
                                     where uo.UserId == userId
+                                        && o.IsEnabled
                                     select uo.OrganizationId;
         var userTenants = from ut in this.Context.UserTenants
+                          join t in this.Context.Tenants on ut.TenantId equals t.Id
                           where ut.UserId == userId
+                            && t.IsEnabled
                           select ut.TenantId;
 
         var query = (from si in this.Context.ServerItems
@@ -94,10 +98,14 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
     public IEnumerable<ServerItemSmallModel> FindSimpleForUser(long userId, ServerItemFilter filter)
     {
         var userOrganizationQuery = from uo in this.Context.UserOrganizations
+                                    join o in this.Context.Organizations on uo.OrganizationId equals o.Id
                                     where uo.UserId == userId
+                                        && o.IsEnabled
                                     select uo.OrganizationId;
         var userTenants = from ut in this.Context.UserTenants
+                          join t in this.Context.Tenants on ut.TenantId equals t.Id
                           where ut.UserId == userId
+                            && t.IsEnabled
                           select ut.TenantId;
 
         var query = (from si in this.Context.ServerItems

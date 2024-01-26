@@ -4,17 +4,12 @@ namespace HSB.DAL.Services;
 
 public interface ITenantService : IBaseService<Tenant>
 {
-    IEnumerable<Tenant> FindForUser<T>(
-        long userId,
-        System.Linq.Expressions.Expression<Func<Tenant, bool>> predicate,
-        System.Linq.Expressions.Expression<Func<Tenant, T>>? sort = null,
-        int? take = null,
-        int? skip = null);
+    IEnumerable<Tenant> Find(
+        Models.Filters.TenantFilter filter);
 
-    public IEnumerable<Tenant> FindForUser(
+    IEnumerable<Tenant> FindForUser(
         long userId,
-        System.Linq.Expressions.Expression<Func<Tenant, bool>> predicate,
-        string[] sort,
-        int? take = null,
-        int? skip = null);
+        Models.Filters.TenantFilter filter);
+
+    Tenant? FindForId(int id, bool includeOrganizations);
 }

@@ -9,7 +9,12 @@ import Link from 'next/link';
 import { redirect, usePathname } from 'next/navigation';
 import React from 'react';
 import { AuthState } from '../auth';
+import { Message } from './Message';
 
+/**
+ * Provides the header for the application with the navigation.
+ * @returns Component
+ */
 export const Header: React.FC = () => {
   const path = usePathname();
   const {
@@ -35,12 +40,13 @@ export const Header: React.FC = () => {
   const isDashboardView = path.includes('/dashboard');
   const isServerView = path.includes('/servers');
   const isAdminView = path.includes('/admin');
+  const showAdminNav = isDashboardView || isAdminView || isServerView;
 
   return (
     <>
       <header
         className={`${style.header} ${isDashboardView ? style.filterPadding : ''} ${
-          (isAdminView || isServerView) ? style.adminPadding : ''
+          isAdminView || isServerView ? style.adminPadding : ''
         }`}
       >
         <div className={style.container}>
@@ -61,11 +67,7 @@ export const Header: React.FC = () => {
             <>
               <div className={style.headerMiddle}>
                 {infoIcon && <span className={style.infoIcon}></span>}
-                <p>
-                  Welcome to the storage dashboard. This is an overview of the storage consumption
-                  for all organizations you belong to. <br />
-                  Use the filters to see further breakdowns of storage data.
-                </p>
+                <Message />
               </div>
               <div className={style.headerBottom}>
                 {isAuthorized && (
@@ -81,9 +83,9 @@ export const Header: React.FC = () => {
                           >
                             Storage
                           </Link>
-                          {(isOrganizationAdmin || isSystemAdmin) && (
+                          {(isOrganizationAdmin || isSystemAdmin) && showAdminNav && (
                             <Link
-                              href={`/${rootPath}/admin`}
+                              href={`/${rootPath}/admin/users`}
                               className={`${
                                 path.startsWith(`/${rootPath}/admin`) && style.active
                               } ${style.admin} `}
@@ -97,7 +99,7 @@ export const Header: React.FC = () => {
                             See all servers
                           </Link>
                         )}
-                        {isSystemAdmin && !isDashboardView && !isServerView && (
+                        {isSystemAdmin && !isDashboardView && !isServerView && isAdminView && (
                           <>
                             <nav>
                               <div className={style.adminNav}>

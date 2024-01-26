@@ -21,16 +21,18 @@ public class TenantModel : SortableCodeAuditableModel<int>
     #region Constructors
     public TenantModel() { }
 
-    public TenantModel(Tenant entity) : base(entity)
+    public TenantModel(Tenant entity, bool includeOrganizations) : base(entity)
     {
         this.Id = entity.Id;
 
         this.ServiceNowKey = entity.ServiceNowKey;
         this.RawData = entity.RawData;
 
-        this.Organizations = entity.OrganizationsManyToMany.Where(o => o.Organization != null).Select(o => new OrganizationModel(o.Organization!));
-        if (entity.Organizations.Any())
-            this.Organizations = entity.Organizations.Select(o => new OrganizationModel(o));
+        if (includeOrganizations)
+        {
+            this.Organizations = entity.OrganizationsManyToMany.Any() ? entity.OrganizationsManyToMany.Where(o => o.Organization != null).Select(o => new OrganizationModel(o.Organization!, false)) : this.Organizations;
+            this.Organizations = entity.Organizations.Any() ? entity.Organizations.Select(o => new OrganizationModel(o, false)) : this.Organizations;
+        }
     }
 
     public TenantModel(ServiceNow.ResultModel<ServiceNow.TenantModel> model, IEnumerable<OrganizationModel> organizations)

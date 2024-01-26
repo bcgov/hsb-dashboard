@@ -4,6 +4,5 @@ export interface IUserFilter {
   enabled?: boolean;
   firstName?: string;
   lastName?: string;
-  includeGroups?: boolean;
-  includeTenants?: boolean;
+  includePermissions?: boolean;
 }

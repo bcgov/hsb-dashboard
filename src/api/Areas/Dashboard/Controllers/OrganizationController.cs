@@ -71,7 +71,7 @@ public class OrganizationController : ControllerBase
         if (isHSB)
         {
             var result = _service.Find(filter);
-            return new JsonResult(result.Select(o => new OrganizationModel(o)));
+            return new JsonResult(result.Select(o => new OrganizationModel(o, true)));
         }
         else
         {
@@ -80,7 +80,7 @@ public class OrganizationController : ControllerBase
             if (user == null) return Forbid();
 
             var result = _service.FindForUser(user.Id, filter);
-            return new JsonResult(result.Select(o => new OrganizationModel(o)));
+            return new JsonResult(result.Select(o => new OrganizationModel(o, true)));
         }
     }
 
@@ -101,7 +101,7 @@ public class OrganizationController : ControllerBase
         {
             var entity = _service.FindForId(id);
             if (entity == null) return new NoContentResult();
-            return new JsonResult(new OrganizationModel(entity));
+            return new JsonResult(new OrganizationModel(entity, true));
         }
         else
         {
@@ -111,7 +111,7 @@ public class OrganizationController : ControllerBase
 
             var entity = _service.FindForUser(user.Id, new HSB.Models.Filters.OrganizationFilter() { Id = id }).FirstOrDefault();
             if (entity == null) return Forbid();
-            return new JsonResult(new OrganizationModel(entity));
+            return new JsonResult(new OrganizationModel(entity, true));
         }
     }
     #endregion

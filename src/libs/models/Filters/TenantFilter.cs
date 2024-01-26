@@ -7,12 +7,15 @@ using Microsoft.EntityFrameworkCore;
 public class TenantFilter : PageFilter
 {
     #region Properties
+    public int? Id { get; set; }
     public string? Name { get; set; }
 
     public bool? IsEnabled { get; set; }
 
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
+
+    public bool? IncludeOrganizations { get; set; }
 
     public string[] Sort { get; set; } = Array.Empty<string>();
     #endregion
@@ -24,10 +27,12 @@ public class TenantFilter : PageFilter
     {
         var filter = new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>(queryParams, StringComparer.OrdinalIgnoreCase);
 
+        this.Id = filter.GetIntNullValue(nameof(this.Id));
         this.Name = filter.GetStringValue(nameof(this.Name));
         this.IsEnabled = filter.GetBoolNullValue(nameof(this.IsEnabled));
         this.StartDate = filter.GetDateTimeNullValue(nameof(this.StartDate));
         this.EndDate = filter.GetDateTimeNullValue(nameof(this.EndDate));
+        this.IncludeOrganizations = filter.GetBoolNullValue(nameof(this.IncludeOrganizations));
 
         this.Sort = filter.GetStringArrayValue(nameof(this.Sort), new[] { nameof(TenantModel.Name) });
     }
@@ -37,6 +42,8 @@ public class TenantFilter : PageFilter
     public ExpressionStarter<Entities.Tenant> GeneratePredicate()
     {
         var predicate = PredicateBuilder.New<Entities.Tenant>();
+        if (this.Id != null)
+            predicate = predicate.And((u) => u.Id == this.Id);
         if (this.Name != null)
             predicate = predicate.And((u) => EF.Functions.Like(u.Name, $"%{this.Name}%"));
         if (this.IsEnabled != null)

@@ -51,7 +51,7 @@ public class OrganizationController : ControllerBase
     public IActionResult Find()
     {
         var organizations = _service.Find(o => true);
-        return new JsonResult(organizations.Select(ci => new OrganizationModel(ci)));
+        return new JsonResult(organizations.Select(ci => new OrganizationModel(ci, true)));
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public class OrganizationController : ControllerBase
 
         if (entity == null) return new NoContentResult();
 
-        return new JsonResult(new OrganizationModel(entity));
+        return new JsonResult(new OrganizationModel(entity, true));
     }
 
     /// <summary>
@@ -92,14 +92,14 @@ public class OrganizationController : ControllerBase
         {
             _service.Add(entity);
             _service.CommitTransaction();
-            return CreatedAtAction(nameof(GetForId), new { id = entity.Id }, new OrganizationModel(entity));
+            return CreatedAtAction(nameof(GetForId), new { id = entity.Id }, new OrganizationModel(entity, true));
         }
         else
         {
             _service.ClearChangeTracker(); // Remove existing from context.
             _service.Update(entity);
             _service.CommitTransaction();
-            return new JsonResult(new OrganizationModel(entity));
+            return new JsonResult(new OrganizationModel(entity, true));
         }
     }
 
@@ -118,7 +118,7 @@ public class OrganizationController : ControllerBase
         var entity = model.ToEntity();
         _service.Update(entity);
         _service.CommitTransaction();
-        return new JsonResult(new OrganizationModel(entity));
+        return new JsonResult(new OrganizationModel(entity, true));
     }
     #endregion
 }

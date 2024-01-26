@@ -18,25 +18,25 @@ public class TenantService : BaseService<Tenant>, ITenantService
     #endregion
 
     #region Methods
-    public IEnumerable<Tenant> FindForUser<T>(
-        long userId,
-        System.Linq.Expressions.Expression<Func<Tenant, bool>> predicate,
-        System.Linq.Expressions.Expression<Func<Tenant, T>>? sort = null,
-        int? take = null,
-        int? skip = null)
+    public IEnumerable<Tenant> Find(
+        Models.Filters.TenantFilter filter)
     {
-        var query = (from t in this.Context.Tenants
-                     join ut in this.Context.UserTenants on t.Id equals ut.TenantId
-                     where ut.UserId == userId
-                     select t)
-            .Where(predicate);
+        var query = from tenant in this.Context.Tenants
+                    select tenant;
 
-        if (sort != null)
-            query = query.OrderBy(sort);
-        if (take.HasValue)
-            query = query.Take(take.Value);
-        if (skip.HasValue)
-            query = query.Skip(skip.Value);
+        if (filter.IncludeOrganizations == true)
+            query = query.Include(o => o.OrganizationsManyToMany).ThenInclude(t => t.Organization);
+
+        query = query
+            .Where(filter.GeneratePredicate());
+
+        if (filter.Sort?.Any() == true)
+            query = query.OrderByProperty(filter.Sort);
+        else query = query.OrderBy(si => si.Name);
+        if (filter.Quantity.HasValue)
+            query = query.Take(filter.Quantity.Value);
+        if (filter.Page.HasValue && filter.Quantity.HasValue && filter.Page > 1)
+            query = query.Skip(filter.Page.Value * filter.Quantity.Value);
 
         return query
             .AsNoTracking()
@@ -46,28 +46,50 @@ public class TenantService : BaseService<Tenant>, ITenantService
 
     public IEnumerable<Tenant> FindForUser(
         long userId,
-        System.Linq.Expressions.Expression<Func<Tenant, bool>> predicate,
-        string[] sort,
-        int? take = null,
-        int? skip = null)
+        Models.Filters.TenantFilter filter)
     {
-        var query = (from t in this.Context.Tenants
-                     join ut in this.Context.UserTenants on t.Id equals ut.TenantId
-                     where ut.UserId == userId
-                     select t)
-            .Where(predicate);
+        var userTenantQuery = from uo in this.Context.UserTenants
+                              where uo.UserId == userId
+                              select uo.TenantId;
+        var tenantOrganizationQuery = from tOrg in this.Context.TenantOrganizations
+                                      join ut in this.Context.UserTenants on tOrg.TenantId equals ut.TenantId
+                                      where ut.UserId == userId
+                                      select tOrg.TenantId;
 
-        if (sort?.Any() == true)
-            query = query.OrderByProperty(sort);
-        if (take.HasValue)
-            query = query.Take(take.Value);
-        if (skip.HasValue)
-            query = query.Skip(skip.Value);
+        var query = from tenant in this.Context.Tenants
+                    where userTenantQuery.Contains(tenant.Id) || tenantOrganizationQuery.Contains(tenant.Id)
+                    select tenant;
+
+        if (filter.IncludeOrganizations == true)
+            query = query.Include(o => o.OrganizationsManyToMany).ThenInclude(t => t.Organization);
+
+        query = query
+            .Where(filter.GeneratePredicate())
+            .Distinct();
+
+        if (filter.Sort?.Any() == true)
+            query = query.OrderByProperty(filter.Sort);
+        else query = query.OrderBy(si => si.Name);
+        if (filter.Quantity.HasValue)
+            query = query.Take(filter.Quantity.Value);
+        if (filter.Page.HasValue && filter.Quantity.HasValue && filter.Page > 1)
+            query = query.Skip(filter.Page.Value * filter.Quantity.Value);
 
         return query
             .AsNoTracking()
-            .AsSingleQuery()
+            .AsSplitQuery()
             .ToArray();
+    }
+
+    public Tenant? FindForId(int id, bool includeOrganizations)
+    {
+        var query = this.Context.Tenants.Where(u => u.Id == id);
+
+        if (includeOrganizations)
+            query = query
+                .Include(m => m.OrganizationsManyToMany).ThenInclude(g => g.Organization);
+
+        return query.FirstOrDefault();
     }
 
     public override EntityEntry<Tenant> Add(Tenant entity)

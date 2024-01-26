@@ -14,17 +14,25 @@ public class OrganizationModel : SortableCodeAuditableModel<int>
     /// </summary>
     public string ServiceNowKey { get; set; } = "";
     public IEnumerable<OrganizationModel> Children { get; set; } = Array.Empty<OrganizationModel>();
+
+    public IEnumerable<TenantModel> Tenants { get; set; } = Array.Empty<TenantModel>();
     #endregion
 
     #region Constructors
     public OrganizationModel() { }
 
-    public OrganizationModel(Organization entity, bool includeChildren = false) : base(entity)
+    public OrganizationModel(Organization entity, bool includeTenants, bool includeChildren = false) : base(entity)
     {
         this.Id = entity.Id;
         this.ParentId = entity.ParentId;
-        if (!includeChildren) this.Parent = entity.Parent != null ? new OrganizationModel(entity.Parent) : null;
-        if (includeChildren) this.Children = entity.Children.Select(c => new OrganizationModel(c));
+        if (!includeChildren) this.Parent = entity.Parent != null ? new OrganizationModel(entity.Parent, false) : null;
+        if (includeChildren) this.Children = entity.Children.Select(c => new OrganizationModel(c, false));
+
+        if (includeTenants)
+        {
+            this.Tenants = entity.TenantsManyToMany.Any() ? entity.TenantsManyToMany.Where(t => t.Tenant != null).Select(t => new TenantModel(t.Tenant!, false)).ToArray() : this.Tenants;
+            this.Tenants = entity.Tenants.Any() ? entity.Tenants.Select(t => new TenantModel(t, false)).ToArray() : this.Tenants;
+        }
 
         this.ServiceNowKey = entity.ServiceNowKey;
         this.RawData = entity.RawData;
@@ -51,7 +59,7 @@ public class OrganizationModel : SortableCodeAuditableModel<int>
     {
         if (model.RawData == null) throw new InvalidOperationException("Property 'RawData' is required.");
 
-        return new Organization(model.Name)
+        var entity = new Organization(model.Name)
         {
             Id = model.Id,
             Description = model.Description,
@@ -63,6 +71,9 @@ public class OrganizationModel : SortableCodeAuditableModel<int>
             SortOrder = model.SortOrder,
             Version = model.Version,
         };
+        entity.TenantsManyToMany.AddRange(model.Tenants.Select(t => new TenantOrganization(t.Id, entity.Id)));
+
+        return entity;
     }
     #endregion
 }

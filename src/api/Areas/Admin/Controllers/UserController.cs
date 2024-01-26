@@ -75,15 +75,16 @@ public class UserController : ControllerBase
     /// Get user for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="includePermissions"></param>
     /// <returns></returns>
     [HttpGet("{id}", Name = "GetUser-SystemAdmin")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(UserModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [SwaggerOperation(Tags = new[] { "User" })]
-    public IActionResult GetForId(int id)
+    public IActionResult GetForId(int id, bool includePermissions)
     {
-        var result = _userService.FindForId(id);
+        var result = _userService.FindForId(id, includePermissions);
         if (result == null) return new NoContentResult();
         return new JsonResult(new UserModel(result));
     }
@@ -102,10 +103,12 @@ public class UserController : ControllerBase
     {
         var user = (Entities.User)model;
         if (String.IsNullOrWhiteSpace(user.Key) || user.Key == Guid.Empty.ToString()) user.Key = Guid.NewGuid().ToString();
-        var result = _userService.Add(user);
+        var entry = _userService.Add(user);
         _userService.CommitTransaction();
-        var entity = result.Entity;
-        return CreatedAtAction(nameof(GetForId), new { id = entity.Id }, new UserModel(entity));
+
+        var result = _userService.FindForId(model.Id, true);
+        if (result == null) return new BadRequestObjectResult(new ErrorResponseModel("User does not exist"));
+        return CreatedAtAction(nameof(GetForId), new { id = result.Id }, new UserModel(result));
     }
 
     /// <summary>
@@ -133,9 +136,13 @@ public class UserController : ControllerBase
         }
         roles = roles.Distinct().ToList();
 
+        // TODO: Only update if roles changed
         await _cssHelper.UpdateUserRolesAsync(model.Key.ToString(), roles.ToArray());
         _userService.CommitTransaction();
-        return new JsonResult(new UserModel(entry.Entity));
+
+        var result = _userService.FindForId(model.Id, true);
+        if (result == null) return new BadRequestObjectResult(new ErrorResponseModel("User does not exist"));
+        return new JsonResult(new UserModel(result));
     }
 
     /// <summary>

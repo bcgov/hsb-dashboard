@@ -24,11 +24,11 @@ public class UserService : BaseService<User>, IUserService
             .Users
             .AsNoTracking();
 
-        if (filter.IncludeGroups == true)
-            query = query.Include(u => u.GroupsManyToMany).ThenInclude(g => g.Group);
-
-        if (filter.IncludeTenants == true)
-            query = query.Include(u => u.TenantsManyToMany).ThenInclude(g => g.Tenant);
+        if (filter.IncludePermissions == true)
+            query = query
+                .Include(u => u.GroupsManyToMany).ThenInclude(g => g.Group)
+                .Include(u => u.OrganizationsManyToMany).ThenInclude(g => g.Organization)
+                .Include(u => u.TenantsManyToMany).ThenInclude(g => g.Tenant);
 
         query = query.Where(filter.GeneratePredicate());
 
@@ -50,6 +50,19 @@ public class UserService : BaseService<User>, IUserService
             .Where(u => EF.Functions.Like(u.Email, email))
             .AsSingleQuery()
             .ToArray();
+    }
+
+    public User? FindForId(int id, bool includePermissions)
+    {
+        var query = this.Context.Users.Where(u => u.Id == id);
+
+        if (includePermissions)
+            query = query
+                .Include(m => m.Groups).ThenInclude(g => g.Roles)
+                .Include(m => m.Organizations)
+                .Include(m => m.Tenants);
+
+        return query.FirstOrDefault();
     }
 
     public User? FindByKey(string key)
@@ -86,19 +99,35 @@ public class UserService : BaseService<User>, IUserService
             }
         });
 
+        // Update organizations
+        var originalOrganizations = this.Context.UserOrganizations.Where(ut => ut.UserId == entity.Id).ToArray();
+        originalOrganizations.Except(entity.OrganizationsManyToMany).ForEach((organization) =>
+        {
+            this.Context.Entry(organization).State = EntityState.Deleted;
+        });
+        entity.OrganizationsManyToMany.ForEach((organization) =>
+        {
+            var originalOrganization = originalOrganizations.FirstOrDefault(s => s.OrganizationId == organization.OrganizationId);
+            if (originalOrganization == null)
+            {
+                organization.UserId = entity.Id;
+                this.Context.Entry(organization).State = EntityState.Added;
+            }
+        });
+
         // Update tenants
         var originalTenants = this.Context.UserTenants.Where(ut => ut.UserId == entity.Id).ToArray();
-        originalTenants.Except(entity.TenantsManyToMany).ForEach((source) =>
+        originalTenants.Except(entity.TenantsManyToMany).ForEach((tenant) =>
         {
-            this.Context.Entry(source).State = EntityState.Deleted;
+            this.Context.Entry(tenant).State = EntityState.Deleted;
         });
-        entity.TenantsManyToMany.ForEach((group) =>
+        entity.TenantsManyToMany.ForEach((tenant) =>
         {
-            var originalTenant = originalTenants.FirstOrDefault(s => s.TenantId == group.TenantId);
+            var originalTenant = originalTenants.FirstOrDefault(s => s.TenantId == tenant.TenantId);
             if (originalTenant == null)
             {
-                group.UserId = entity.Id;
-                this.Context.Entry(group).State = EntityState.Added;
+                tenant.UserId = entity.Id;
+                this.Context.Entry(tenant).State = EntityState.Added;
             }
         });
 

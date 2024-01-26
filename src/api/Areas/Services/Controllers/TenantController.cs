@@ -51,7 +51,7 @@ public class TenantController : ControllerBase
     public IActionResult Find()
     {
         var tenants = _service.Find(o => true);
-        return new JsonResult(tenants.Select(ci => new TenantModel(ci)));
+        return new JsonResult(tenants.Select(ci => new TenantModel(ci, true)));
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public class TenantController : ControllerBase
 
         if (tenant == null) return new NoContentResult();
 
-        return new JsonResult(new TenantModel(tenant));
+        return new JsonResult(new TenantModel(tenant, true));
     }
 
     /// <summary>
@@ -88,7 +88,7 @@ public class TenantController : ControllerBase
         var entity = model.ToEntity();
         _service.Add(entity);
         _service.CommitTransaction();
-        return CreatedAtAction(nameof(GetForId), new { id = entity.Id }, new TenantModel(entity));
+        return CreatedAtAction(nameof(GetForId), new { id = entity.Id }, new TenantModel(entity, true));
     }
 
     /// <summary>
@@ -106,7 +106,7 @@ public class TenantController : ControllerBase
         var entity = model.ToEntity();
         _service.Update(entity);
         _service.CommitTransaction();
-        return new JsonResult(new TenantModel(entity));
+        return new JsonResult(new TenantModel(entity, true));
     }
     #endregion
 }

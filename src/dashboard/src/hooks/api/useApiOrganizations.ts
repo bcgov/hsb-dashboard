@@ -1,6 +1,6 @@
 import { dispatch, toQueryString } from '@/utils';
 import React from 'react';
-import { ITenantFilter } from './interfaces';
+import { IOrganizationFilter } from './interfaces';
 
 /**
  * Provides a simple way to manage all the API endpoints.
@@ -10,7 +10,7 @@ import { ITenantFilter } from './interfaces';
 export const useApiOrganizations = () => {
   return React.useMemo(
     () => ({
-      find: async (filter: ITenantFilter | undefined = {}): Promise<Response> => {
+      find: async (filter: IOrganizationFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/dashboard/organizations?${toQueryString(filter)}`);
       },
     }),

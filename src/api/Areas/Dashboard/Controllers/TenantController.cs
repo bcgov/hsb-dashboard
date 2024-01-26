@@ -70,7 +70,7 @@ public class TenantController : ControllerBase
         if (isHSB)
         {
             var result = _tenantService.Find(filter.GeneratePredicate(), filter.Sort);
-            return new JsonResult(result.Select(ci => new TenantModel(ci)));
+            return new JsonResult(result.Select(ci => new TenantModel(ci, true)));
         }
         else
         {
@@ -78,8 +78,8 @@ public class TenantController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var result = _tenantService.FindForUser(user.Id, filter.GeneratePredicate(), filter.Sort);
-            return new JsonResult(result.Select(ci => new TenantModel(ci)));
+            var result = _tenantService.FindForUser(user.Id, filter);
+            return new JsonResult(result.Select(ci => new TenantModel(ci, true)));
         }
     }
 
@@ -100,7 +100,7 @@ public class TenantController : ControllerBase
         {
             var entity = _tenantService.FindForId(id);
             if (entity == null) return new NoContentResult();
-            return new JsonResult(new TenantModel(entity));
+            return new JsonResult(new TenantModel(entity, true));
         }
         else
         {
@@ -108,9 +108,9 @@ public class TenantController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var entity = _tenantService.FindForUser(user.Id, (t) => t.Id == id, t => t.Id).FirstOrDefault();
+            var entity = _tenantService.FindForUser(user.Id, new HSB.Models.Filters.TenantFilter() { Id = id }).FirstOrDefault();
             if (entity == null) return Forbid();
-            return new JsonResult(new TenantModel(entity));
+            return new JsonResult(new TenantModel(entity, true));
         }
     }
     #endregion

@@ -1,135 +1,109 @@
 @import '@/styles/utils.scss';
 
 .search {
-    margin-bottom: 34px;
+  margin-bottom: 34px;
 
-    input {
-        width: 100%;
-        max-width: 520px;
-    }
+  input {
+    width: 100%;
+    max-width: 520px;
+  }
 }
 
 .checkbox label {
-    top: -8px;
+  top: -8px;
 }
 
 .selectRow {
+  display: flex;
+  flex-direction: column;
+
+  >div {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    padding: 5px 0;
+    border-radius: 4px;
 
-    >div {
-        display: flex;
-        align-items: center;
-        padding: 5px 0;
-        border-radius: 4px;
-        
-        &:hover {
-            background-color: $white;
-        }
-
-        >p {
-            width: 100%;
-            margin: 0 5px;
-            font-size: $font-size-small;
-            color: $dark-gray;
-
-            span {
-                font-weight: bold;
-                color: $bc-black;
-            }
-        }
-
-        button {
-            flex-direction: flex-end;
-            font-size: $font-size-small;
-            padding: 5px 8px;
-            margin-right: 10px;
-
-            &:hover {
-                background-color: $chart-blue;
-                color: $white;
-            }
-        }
+    &:hover {
+      background-color: $white;
     }
+
+    >p {
+      width: 100%;
+      margin: 0 5px;
+      font-size: $font-size-small;
+      color: $dark-gray;
+
+      span {
+        font-weight: bold;
+        color: $bc-black;
+      }
+    }
+
+    button {
+      flex-direction: flex-end;
+      font-size: $font-size-small;
+      padding: 5px 8px;
+      margin-right: 10px;
+
+      &:hover {
+        background-color: $chart-blue;
+        color: $white;
+      }
+    }
+  }
 }
 
 .container .table>div {
-    .tableHeader {
-        flex: 0.5;
+  .tableHeader {
+    flex: 0.5;
 
-        &+div {
-            flex: 1.5;
-        }
+    &+div {
+      flex: 1.5;
     }
+  }
 
-    .checkbox {
-        flex: 0.5;
-    }
+  .checkbox {
+    flex: 0.5;
+  }
 
-    .selectRow {
-        flex: 1.5;
-    }
-}
-
-.popup {
-    width: 100%;
-    max-width: 450px;
-    min-height: 200px;
-    border: 0;
-    border-radius: 10px;
-    @include dropshadow;
+  .selectRow {
+    flex: 1.5;
+  }
 }
 
 .popupSearch {
-    padding: 12px;
-    background-color: $light-gray;
-    border-radius: 4px;
+  padding: 12px;
+  background-color: $light-gray;
+  border-radius: 4px;
 
-    input {
-        background-color: $white;
-        width: -webkit-fill-available;
-        margin-right: 0;
-    }
-}
-
-.popupTitle {
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
+  input {
+    background-color: $white;
+    width: -webkit-fill-available;
+    margin-right: 0;
+  }
 }
 
 .popupRows {
-    overflow-y: scroll;
-    min-height: 50px;
-    max-height: 400px;
-    @include scrollBar;
-    margin-bottom: 20px;
+  overflow-y: scroll;
+  min-height: 50px;
+  max-height: 400px;
+  @include scrollBar;
+  margin-bottom: 20px;
 
-    .row {
-        display: flex;
-        align-items: center;
-        min-height: 65px;
-        border-bottom: 1px solid $medium-gray;
-        gap: 1rem;
-        padding-left: 16px;
-
-        &:hover {
-            background-color: $light-gray;
-        }
-
-        label {
-            top: -7px;
-        }
-    }
-}
-
-.popupFooter {
+  .row {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    min-height: 65px;
+    border-bottom: 1px solid $medium-gray;
     gap: 1rem;
+    padding-left: 16px;
 
-    button {
-        width: 100px;
-        padding: 8px;
+    &:hover {
+      background-color: $light-gray;
     }
+
+    label {
+      top: -7px;
+    }
+  }
 }

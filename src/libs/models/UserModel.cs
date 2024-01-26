@@ -118,10 +118,10 @@ public class UserModel : AuditableModel
         this.Preferences = user.Preferences;
         this.Groups = user.GroupsManyToMany.Any() ? user.GroupsManyToMany.Where(g => g.Group != null).Select(g => new GroupModel(g.Group!)) : this.Groups;
         this.Groups = user.Groups.Any() ? user.Groups.Select(g => new GroupModel(g)) : this.Groups;
-        this.Tenants = user.TenantsManyToMany.Any() ? user.TenantsManyToMany.Where(t => t.Tenant != null).Select(t => new TenantModel(t.Tenant!)) : this.Tenants;
-        this.Tenants = user.Tenants.Any() ? user.Tenants.Select(t => new TenantModel(t)) : this.Tenants;
-        this.Organizations = user.OrganizationsManyToMany.Any() ? user.OrganizationsManyToMany.Where(o => o.Organization != null).Select(o => new OrganizationModel(o.Organization!)) : this.Organizations;
-        this.Organizations = user.Organizations.Any() ? user.Organizations.Select(o => new OrganizationModel(o)) : this.Organizations;
+        this.Tenants = user.TenantsManyToMany.Any() ? user.TenantsManyToMany.Where(t => t.Tenant != null).Select(t => new TenantModel(t.Tenant!, false)) : this.Tenants;
+        this.Tenants = user.Tenants.Any() ? user.Tenants.Select(t => new TenantModel(t, false)) : this.Tenants;
+        this.Organizations = user.OrganizationsManyToMany.Any() ? user.OrganizationsManyToMany.Where(o => o.Organization != null).Select(o => new OrganizationModel(o.Organization!, false)) : this.Organizations;
+        this.Organizations = user.Organizations.Any() ? user.Organizations.Select(o => new OrganizationModel(o, false)) : this.Organizations;
     }
     #endregion
 
