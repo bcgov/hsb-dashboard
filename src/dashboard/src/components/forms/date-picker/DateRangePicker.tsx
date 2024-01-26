@@ -1,6 +1,7 @@
 import { uniqueId } from 'lodash';
 import moment from 'moment';
 import React from 'react';
+import { Button } from '@/components/buttons';
 import styles from './DateRangePicker.module.scss';
 
 export interface IDateRangePickerProps {
@@ -78,6 +79,7 @@ export const DateRangePicker = ({
           }}
         />
       </div>
+      <Button>Update</Button>
     </div>
   );
 };

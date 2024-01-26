@@ -11,12 +11,31 @@
   padding: 12px 22px;
   border-radius: 10px;
   position: absolute;
-  top: 215px;
+  top: 225px;
   transform: translateX(-50%);
   left: 50%;
   color: $bc-black;
 }
 
-.dropdown {
-  max-width: 205px;
+.reset {
+  max-width: 200px;
+  max-width: fit-content;
+  font-size: $font-size-12;
+  color: $white;
+  background-color: $medium-yellow;
+  padding: 5px 10px 5px 30px;
+  border: 0;
+  border-radius: 4px;
+  position: absolute;
+  top: -15px;
+  right: -10px;
+  cursor: pointer;
+  background-image: url('/images/reset-icon.png');
+  background-repeat: no-repeat;
+  background-position: 7px 4px;
+  @include dropshadow;
+
+  &:hover {
+    background-color: $bc-yellow;
+  }
 }
