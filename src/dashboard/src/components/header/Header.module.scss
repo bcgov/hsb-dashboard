@@ -80,6 +80,10 @@
   margin: 20px 0 20px;
   font-size: $font-size-normal;
   font-weight: 300;
+
+  p {
+    font-size: $font-size-18;
+  }
 }
 
 .infoIcon {

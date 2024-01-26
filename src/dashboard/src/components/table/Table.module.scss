@@ -21,6 +21,10 @@
 
   .tableRows {
     padding: 0 1rem;
+    max-height: 450px;
+    overflow-y: scroll;
+    @include scrollBar;
+    border-bottom: solid 1px $medium-gray;
 
     .tableRow {
       display: flex;
