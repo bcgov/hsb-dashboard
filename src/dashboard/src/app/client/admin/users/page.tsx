@@ -2,28 +2,18 @@
 
 import styles from './ClientAdmin.module.scss';
 
-import {
-  Button,
-  Checkbox,
-  Info,
-  Overlay,
-  Select,
-  Sheet,
-  Spinner,
-  Table,
-  Text,
-} from '@/components';
+import { Button, Checkbox, Info, Overlay, Select, Sheet, Spinner, Table, Text } from '@/components';
 import { IUserModel, useAuth } from '@/hooks';
-import { redirect } from 'next/navigation';
 import { useApiUsers } from '@/hooks/api/admin';
 import { useUsers } from '@/hooks/data';
+import { redirect } from 'next/navigation';
 import React from 'react';
 import { IUserForm } from './IUserForm';
 
 export default function Page() {
   const state = useAuth();
 
-  const { isReady: isReadyUsers, users } = useUsers({ includeGroups: true,  init: true });
+  const { isReady: isReadyUsers, users } = useUsers({ includePermissions: true, init: true });
   const { update: updateUser } = useApiUsers();
 
   const [loading, setLoading] = React.useState(true);
@@ -82,101 +72,100 @@ export default function Page() {
     const results = await Promise.all(update);
     setRecords(results);
   }, [updateUser, records]);
-  
+
   // Only allow Organization Admin role to view this page.
   if (state.status === 'loading') return <div>Loading...</div>;
   if (!state.isOrganizationAdmin) redirect('/');
 
   return (
-    <Sheet >
+    <Sheet>
       <div className={styles.container}>
-      {loading && (
-        <Overlay>
-          <Spinner />
-        </Overlay>
-      )}
-      <div className={styles.section}>
-        <div className={styles.search}>
-          <Select 
-            options={[]}
-            placeholder="Select Organization" 
-          />
-          <Text
-            name="search"
-            placeholder="Search"
-            iconType="search"
-            onChange={(e) => setFilter(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.code === 'Enter') handleSearch();
+        {loading && (
+          <Overlay>
+            <Spinner />
+          </Overlay>
+        )}
+        <div className={styles.section}>
+          <div className={styles.search}>
+            <Select options={[]} placeholder="Select Organization" />
+            <Text
+              name="search"
+              placeholder="Search"
+              iconType="search"
+              onChange={(e) => setFilter(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.code === 'Enter') handleSearch();
+              }}
+            />
+            <Button variant="secondary" onClick={() => handleSearch()}>
+              Search
+            </Button>
+          </div>
+          <Info>
+            Enable access to the dashboard and/or admin access to users associated with{' '}
+            {organization}:
+          </Info>
+        </div>
+        <div className={styles.table}>
+          <Table
+            data={items}
+            header={
+              <>
+                <div>Access</div>
+                <div>Username</div>
+                <div>Email</div>
+                <div>Name</div>
+                <div>Admin</div>
+              </>
+            }
+          >
+            {({ data }) => {
+              return (
+                <>
+                  <div className={styles.checkbox}>
+                    <Checkbox
+                      checked={data.isEnabled}
+                      onChange={(e) => {
+                        setRecords((records) =>
+                          records.map((r) =>
+                            r.id === data.id
+                              ? { ...data, isEnabled: e.target.checked, isDirty: true }
+                              : r,
+                          ),
+                        );
+                      }}
+                    />
+                  </div>
+                  <div>{data.username}</div>
+                  <div>{data.email}</div>
+                  <div>{data.displayName}</div>
+                  <div className={styles.checkbox}>
+                    <Checkbox
+                      checked={data.isEnabled}
+                      onChange={(e) => {
+                        setRecords((records) =>
+                          records.map((r) =>
+                            r.id === data.id
+                              ? { ...data, isEnabled: e.target.checked, isDirty: true }
+                              : r,
+                          ),
+                        );
+                      }}
+                    />
+                  </div>
+                </>
+              );
             }}
-          />
-          <Button variant="secondary" onClick={() => handleSearch()}>
-            Search
+          </Table>
+        </div>
+        <div className={styles.footer}>
+          <Button
+            onClick={async () => await handleUpdate()}
+            disabled={isSubmitting || !records.some((r) => r.isDirty)}
+          >
+            Save
           </Button>
         </div>
-        <Info>
-        Enable access to the dashboard and/or admin access to users associated with {organization}:
-        </Info>
-      </div>
-      <div className={styles.table}>
-      <Table
-        data={items}
-        header={
-          <>
-            <div>Access</div>
-            <div>Username</div>
-            <div>Email</div>
-            <div>Name</div>
-            <div>Admin</div>
-          </>
-        }
-      >
-        {({ data }) => {
-          return (
-            <>
-              <div className={styles.checkbox}>
-                <Checkbox
-                  checked={data.isEnabled}
-                  onChange={(e) => {
-                    setRecords((records) =>
-                      records.map((r) =>
-                        r.id === data.id
-                          ? { ...data, isEnabled: e.target.checked, isDirty: true }
-                          : r,
-                      ),
-                    );
-                  }}
-                />
-              </div>
-              <div>{data.username}</div>
-              <div>{data.email}</div>
-              <div>{data.displayName}</div>
-              <div className={styles.checkbox}>
-                <Checkbox
-                  checked={data.isEnabled}
-                  onChange={(e) => {
-                    setRecords((records) =>
-                      records.map((r) =>
-                        r.id === data.id
-                          ? { ...data, isEnabled: e.target.checked, isDirty: true }
-                          : r,
-                      ),
-                    );
-                  }}
-                />
-              </div>
-            </>
-          );
-        }}
-      </Table>
-      </div>
-      <div className={styles.footer}>
-        <Button
-          onClick={async () => await handleUpdate()}
-          disabled={isSubmitting || !records.some((r) => r.isDirty)}>
-          Save
-        </Button>
-      </div>
       </div>
     </Sheet>
   );

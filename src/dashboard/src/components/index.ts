@@ -1,7 +1,9 @@
 export * from './auth';
 export * from './buttons';
 export * from './charts';
+export * from './confirmPopup';
 export * from './dashboard';
+export * from './dialog';
 export * from './flex';
 export * from './footer';
 export * from './forms';
@@ -14,4 +16,3 @@ export * from './overlay';
 export * from './sheet';
 export * from './spinner';
 export * from './table';
-export * from './confirmPopup';

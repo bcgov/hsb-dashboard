@@ -17,9 +17,7 @@ public class UserFilter : PageFilter
 
     public bool? IsEnabled { get; set; }
 
-    public bool? IncludeGroups { get; set; }
-
-    public bool? IncludeTenants { get; set; }
+    public bool? IncludePermissions { get; set; }
 
     public string[] Sort { get; set; } = Array.Empty<string>();
     #endregion
@@ -36,8 +34,7 @@ public class UserFilter : PageFilter
         this.FirstName = filter.GetStringValue(nameof(this.FirstName));
         this.LastName = filter.GetStringValue(nameof(this.LastName));
         this.IsEnabled = filter.GetBoolNullValue(nameof(this.IsEnabled)) ?? filter.GetBoolNullValue("enabled");
-        this.IncludeGroups = filter.GetBoolNullValue(nameof(this.IncludeGroups));
-        this.IncludeTenants = filter.GetBoolNullValue(nameof(this.IncludeTenants));
+        this.IncludePermissions = filter.GetBoolNullValue(nameof(this.IncludePermissions));
 
         this.Sort = filter.GetStringArrayValue(nameof(this.Sort), new[] { nameof(UserModel.Username) });
     }

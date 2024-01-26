@@ -17,14 +17,12 @@ import {
 } from '@/hooks/filter';
 import { useFiltered } from '@/store';
 import moment from 'moment';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import React from 'react';
 import styles from './Filter.module.scss';
 import { useUrlParamsUpdateKey } from './hooks';
 
 export const Filter: React.FC = () => {
-  const router = useRouter();
-  const path = usePathname();
   const params = useSearchParams();
   const { isHSB } = useAuth();
   const { isReady: tenantsReady, tenants } = useTenants({ init: true });

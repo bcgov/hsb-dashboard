@@ -3,7 +3,12 @@ import { useFiltered } from '@/store';
 import React from 'react';
 import { IOrganizationFilter, IOrganizationModel, useApiOrganizations } from '..';
 
-export const useFilteredOrganizations = () => {
+export interface IFilteredOrganizations {
+  /** Whether to include disabled options */
+  includeDisabled?: boolean;
+}
+
+export const useFilteredOrganizations = ({ includeDisabled }: IFilteredOrganizations = {}) => {
   const { find } = useApiOrganizations();
   const organizations = useFiltered((state) => state.organizations);
   const setOrganizations = useFiltered((state) => state.setOrganizations);
@@ -21,6 +26,7 @@ export const useFilteredOrganizations = () => {
   const options = React.useMemo(
     () =>
       organizations
+        .filter((t) => (includeDisabled ? true : t.isEnabled))
         .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
         .map<IOption<IOrganizationModel>>((t) => ({
           label: t.name,
@@ -28,7 +34,7 @@ export const useFilteredOrganizations = () => {
           data: t,
           disabled: t.isEnabled,
         })),
-    [organizations],
+    [organizations, includeDisabled],
   );
 
   return React.useMemo(

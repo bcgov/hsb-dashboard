@@ -1,4 +1,4 @@
-import { IAuditableModel } from '.';
+import { IAuditableModel, IOrganizationModel } from '.';
 import { IGroupModel } from './IGroupModel';
 import { ITenantModel } from './ITenantModel';
 
@@ -20,4 +20,5 @@ export interface IUserModel extends IAuditableModel {
   preferences: any;
   groups?: IGroupModel[];
   tenants?: ITenantModel[];
+  organizations?: IOrganizationModel[];
 }

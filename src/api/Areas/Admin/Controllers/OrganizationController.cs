@@ -55,8 +55,8 @@ public class OrganizationController : ControllerBase
         var uri = new Uri(this.Request.GetDisplayUrl());
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
         var filter = new HSB.Models.Filters.OrganizationFilter(query);
-        var result = _service.Find(filter.GeneratePredicate(), filter.Sort);
-        return new JsonResult(result.Select(ci => new OrganizationModel(ci)));
+        var result = _service.Find(filter);
+        return new JsonResult(result.Select(ci => new OrganizationModel(ci, true)));
     }
 
     /// <summary>
@@ -75,7 +75,7 @@ public class OrganizationController : ControllerBase
 
         if (organization == null) return new NoContentResult();
 
-        return new JsonResult(new OrganizationModel(organization));
+        return new JsonResult(new OrganizationModel(organization, true));
     }
 
     /// <summary>
@@ -93,7 +93,10 @@ public class OrganizationController : ControllerBase
         var entity = model.ToEntity();
         _service.Add(entity);
         _service.CommitTransaction();
-        return CreatedAtAction(nameof(GetForId), new { id = entity.Id }, new OrganizationModel(entity));
+
+        var result = _service.FindForId(model.Id, true);
+        if (result == null) return new BadRequestObjectResult(new ErrorResponseModel("Organization does not exist"));
+        return CreatedAtAction(nameof(GetForId), new { id = result.Id }, new OrganizationModel(result, true));
     }
 
     /// <summary>
@@ -111,7 +114,10 @@ public class OrganizationController : ControllerBase
         var entity = model.ToEntity();
         _service.Update(entity);
         _service.CommitTransaction();
-        return new JsonResult(new OrganizationModel(entity));
+
+        var result = _service.FindForId(model.Id, true);
+        if (result == null) return new BadRequestObjectResult(new ErrorResponseModel("Organization does not exist"));
+        return new JsonResult(new OrganizationModel(result, true));
     }
 
     /// <summary>
@@ -129,7 +135,7 @@ public class OrganizationController : ControllerBase
         var entity = model.ToEntity() ?? throw new NoContentException();
         _service.Remove(entity);
         _service.CommitTransaction();
-        return new JsonResult(new OrganizationModel(entity));
+        return new JsonResult(new OrganizationModel(entity, false));
     }
     #endregion
 }

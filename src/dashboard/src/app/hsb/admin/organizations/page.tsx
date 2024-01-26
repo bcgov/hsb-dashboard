@@ -2,66 +2,73 @@
 
 import styles from './Organizations.module.scss';
 
-import {
-  Button,
-  Checkbox,
-  Info,
-  Overlay,
-  Sheet,
-  Spinner,
-  Table,
-  Text,
-} from '@/components';
-import { IUserModel, useAuth } from '@/hooks';
+import { Button, Checkbox, Info, Overlay, Sheet, Spinner, Table, Text } from '@/components';
+import { IOrganizationModel, useAuth } from '@/hooks';
+import { useApiOrganizations } from '@/hooks/api/admin';
+import { useOrganizations } from '@/hooks/data';
+import { useApp } from '@/store';
 import { redirect } from 'next/navigation';
-import { useApiUsers } from '@/hooks/api/admin';
-import { useGroups, useUsers } from '@/hooks/data';
 import React from 'react';
-import { IUserForm } from './IUserForm';
+import { IOrganizationForm } from './IOrganizationForm';
+import { searchOrganizations } from './utils';
 
 export default function Page() {
   const state = useAuth();
-  const { isReady: isReadyUsers, users } = useUsers({ includeGroups: true,  init: true });
-  const { isReady: isReadyGroups, groups, options: groupOptions } = useGroups({ init: true });
-  const { update: updateUser } = useApiUsers();
+  const { isReady: isReadyOrganizations, organizations } = useOrganizations({
+    init: true,
+    includeTenants: true,
+  });
+  const { update: updateOrganization } = useApiOrganizations();
+  const setOrganizations = useApp((state) => state.setOrganizations);
 
   const [loading, setLoading] = React.useState(true);
-  const [records, setRecords] = React.useState<IUserForm[]>([]);
-  const [items, setItems] = React.useState<IUserModel[]>([]);
+  const [formOrganizations, setFormOrganizations] = React.useState<IOrganizationForm[]>([]);
+  const [filteredOrganizations, setFilteredOrganizations] = React.useState<number[]>([]);
   const [filter, setFilter] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   React.useEffect(() => {
-    setLoading(!isReadyUsers && !isReadyGroups);
-  }, [isReadyUsers, isReadyGroups]);
+    setLoading(!isReadyOrganizations);
+  }, [isReadyOrganizations]);
 
   React.useEffect(() => {
-    setItems(records);
-  }, [records]);
-
-  React.useEffect(() => {
-    setRecords((state) =>
-      users.map((user) => {
-        const value = state.find((s) => s.id === user.id);
-        if (value) ({ ...user, isDirty: value.isDirty });
-        return user;
+    setFormOrganizations((state) =>
+      organizations.map((organization) => {
+        const value = state.find((s) => s.id === organization.id);
+        if (value) ({ ...organization, isDirty: value.isDirty });
+        return organization;
       }),
     );
-    setItems(users);
-  }, [users]);
+    setFilteredOrganizations(searchOrganizations(organizations, filter).map((o) => o.id));
+  }, [filter, organizations]);
 
   const handleSearch = React.useCallback(() => {
-    setItems(
-      filter
-        ? records.filter(
-            (r) =>
-              r.username.includes(filter) ||
-              r.displayName.includes(filter) ||
-              r.email.includes(filter),
-          )
-        : records,
-    );
-  }, [filter, records]);
+    setFilteredOrganizations(searchOrganizations(formOrganizations, filter).map((o) => o.id));
+  }, [filter, formOrganizations]);
+
+  const handleUpdate = React.useCallback(async () => {
+    const update = formOrganizations.map(async (organization) => {
+      if (organization.isDirty) {
+        try {
+          setIsSubmitting(true);
+          const res = await updateOrganization(organization);
+          const result: IOrganizationModel = await res.json();
+          return { ...result, isDirty: false };
+        } catch (error) {
+          console.error(error);
+        } finally {
+          setIsSubmitting(false);
+        }
+      }
+      return organization;
+    });
+    const results = await Promise.all(update);
+    const updatedOrganizations = formOrganizations.map((organization) => {
+      return results.find((u) => u.id === organization.id) ?? organization;
+    });
+    setFormOrganizations(updatedOrganizations);
+    setOrganizations(updatedOrganizations);
+  }, [formOrganizations, setOrganizations, updateOrganization]);
 
   // Only allow System Admin role to view this page.
   if (state.status === 'loading') return <div>Loading...</div>;
@@ -69,76 +76,80 @@ export default function Page() {
 
   return (
     <div className={styles.panelContainer}>
-    <Sheet >
-      <div className={styles.container}>
-      {loading && (
-        <Overlay>
-          <Spinner />
-        </Overlay>
-      )}
-      <div className={styles.section}>
-        <Info>
-          Find an organization by name and/or associated tenant.  Click checkbox to enable  or disable organization on dashboard.
-        </Info>
-        <div className={styles.search}>
-          <Text
-            name="search"
-            placeholder="Search"
-            iconType="search"
-            onChange={(e) => setFilter(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.code === 'Enter') handleSearch();
-            }}
-          />
-          <Button variant="secondary" onClick={() => handleSearch()}>
-            Search
-          </Button>
+      <Sheet>
+        <div className={styles.container}>
+          {loading && (
+            <Overlay>
+              <Spinner />
+            </Overlay>
+          )}
+          <div className={styles.section}>
+            <Info>
+              Find an organization by name and/or associated tenant. Click checkbox to enable or
+              disable organization on dashboard.
+            </Info>
+            <div className={styles.search}>
+              <Text
+                name="search"
+                placeholder="Search"
+                iconType="search"
+                onChange={(e) => setFilter(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.code === 'Enter') handleSearch();
+                }}
+              />
+              <Button variant="secondary" onClick={() => handleSearch()}>
+                Search
+              </Button>
+            </div>
+          </div>
+          <div>
+            <Table
+              data={formOrganizations.filter((o) =>
+                filteredOrganizations.some((fo) => fo === o.id),
+              )}
+              header={
+                <>
+                  <div>Organization Name</div>
+                  <div>Associated Tenants</div>
+                  <div>Dashboard Enabled</div>
+                </>
+              }
+            >
+              {({ data }) => {
+                return (
+                  <>
+                    <div>{data.name}</div>
+                    <div>{data.tenants?.map((tenant) => tenant.name).join(', ')}</div>
+                    <div className={styles.checkbox}>
+                      <Checkbox
+                        checked={data.isEnabled}
+                        onChange={(e) => {
+                          setFormOrganizations((formOrganizations) =>
+                            formOrganizations.map((r) =>
+                              r.id === data.id
+                                ? { ...data, isEnabled: e.target.checked, isDirty: true }
+                                : r,
+                            ),
+                          );
+                        }}
+                      />
+                    </div>
+                  </>
+                );
+              }}
+            </Table>
+          </div>
+          <div className={styles.footer}>
+            <Button
+              disabled={isSubmitting || !formOrganizations.some((r) => r.isDirty)}
+              onClick={() => handleUpdate()}
+            >
+              Save
+            </Button>
+          </div>
         </div>
-      </div>
-      <div>
-      <Table
-        data={items}
-        header={
-          <>
-            <div>Organization Name</div>
-            <div>Associated Tenants</div>
-            <div>Dashboard Enabled</div>
-          </>
-        }
-      >
-        {({ data }) => {
-          return (
-            <>
-              <div>organization name</div>
-              <div>tenant name</div>
-              <div className={styles.checkbox}>
-                <Checkbox
-                  checked={data.isEnabled}
-                  onChange={(e) => {
-                    setRecords((records) =>
-                      records.map((r) =>
-                        r.id === data.id
-                          ? { ...data, isEnabled: e.target.checked, isDirty: true }
-                          : r,
-                      ),
-                    );
-                  }}
-                />
-              </div>
-            </>
-          );
-        }}
-      </Table>
-      </div>
-      <div className={styles.footer}>
-        <Button
-          disabled={isSubmitting || !records.some((r) => r.isDirty)}
-        >
-          Save
-        </Button>
-      </div>
-      </div>
-    </Sheet>
+      </Sheet>
     </div>
   );
 }

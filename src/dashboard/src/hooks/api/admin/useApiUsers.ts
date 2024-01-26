@@ -13,8 +13,11 @@ export const useApiUsers = () => {
       find: async (filter: IUserFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/admin/users?${toQueryString(filter)}`);
       },
-      get: async (id: number): Promise<Response> => {
-        return await dispatch(`/api/admin/users/${id}`);
+      get: async (
+        id: number,
+        options: { includePermissions?: boolean } = {},
+      ): Promise<Response> => {
+        return await dispatch(`/api/admin/users/${id}?${toQueryString(options)}`);
       },
       update: async (model: IUserModel): Promise<Response> => {
         const url = `/api/admin/users/${model.id}`;

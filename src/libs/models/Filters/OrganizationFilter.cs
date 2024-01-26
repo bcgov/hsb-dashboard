@@ -20,6 +20,8 @@ public class OrganizationFilter : PageFilter
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
 
+    public bool? IncludeTenants { get; set; }
+
     public string[] Sort { get; set; } = Array.Empty<string>();
     #endregion
 
@@ -38,6 +40,7 @@ public class OrganizationFilter : PageFilter
         this.TenantId = filter.GetIntNullValue(nameof(this.TenantId));
         this.StartDate = filter.GetDateTimeNullValue(nameof(this.StartDate));
         this.EndDate = filter.GetDateTimeNullValue(nameof(this.EndDate));
+        this.IncludeTenants = filter.GetBoolNullValue(nameof(this.IncludeTenants));
 
         this.Sort = filter.GetStringArrayValue(nameof(this.Sort), new[] { nameof(OrganizationModel.Name) });
     }

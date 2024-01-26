@@ -56,7 +56,7 @@ public class TenantController : ControllerBase
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
         var filter = new HSB.Models.Filters.TenantFilter(query);
         var result = _service.Find(filter.GeneratePredicate(), filter.Sort);
-        return new JsonResult(result.Select(ci => new TenantModel(ci)));
+        return new JsonResult(result.Select(ci => new TenantModel(ci, true)));
     }
 
     /// <summary>
@@ -75,7 +75,7 @@ public class TenantController : ControllerBase
 
         if (tenant == null) return new NoContentResult();
 
-        return new JsonResult(new TenantModel(tenant));
+        return new JsonResult(new TenantModel(tenant, true));
     }
 
     /// <summary>
@@ -93,7 +93,10 @@ public class TenantController : ControllerBase
         var entity = model.ToEntity();
         _service.Add(entity);
         _service.CommitTransaction();
-        return CreatedAtAction(nameof(GetForId), new { id = entity.Id }, new TenantModel(entity));
+
+        var result = _service.FindForId(model.Id, true);
+        if (result == null) return new BadRequestObjectResult(new ErrorResponseModel("Tenant does not exist"));
+        return CreatedAtAction(nameof(GetForId), new { id = result.Id }, new TenantModel(result, true));
     }
 
     /// <summary>
@@ -111,7 +114,10 @@ public class TenantController : ControllerBase
         var entity = model.ToEntity();
         _service.Update(entity);
         _service.CommitTransaction();
-        return new JsonResult(new TenantModel(entity));
+
+        var result = _service.FindForId(model.Id, true);
+        if (result == null) return new BadRequestObjectResult(new ErrorResponseModel("Tenant does not exist"));
+        return new JsonResult(new TenantModel(result, true));
     }
 
     /// <summary>
@@ -129,7 +135,7 @@ public class TenantController : ControllerBase
         var entity = model.ToEntity() ?? throw new NoContentException();
         _service.Remove(entity);
         _service.CommitTransaction();
-        return new JsonResult(new TenantModel(entity));
+        return new JsonResult(new TenantModel(entity, true));
     }
     #endregion
 }

@@ -4,9 +4,10 @@ import { IOrganizationModel, useApiOrganizations, useAuth } from '..';
 
 export interface IOrganizationsProps {
   init?: boolean;
+  includeTenants?: boolean;
 }
 
-export const useOrganizations = ({ init }: IOrganizationsProps = {}) => {
+export const useOrganizations = ({ init, includeTenants }: IOrganizationsProps = {}) => {
   const { status } = useAuth();
   const { find } = useApiOrganizations();
   const organizations = useApp((state) => state.organizations);
@@ -20,7 +21,7 @@ export const useOrganizations = ({ init }: IOrganizationsProps = {}) => {
     if (status === 'authenticated' && !organizations.length && !isLoading && !isReady && init) {
       setIsLoading(true);
       setIsReady(false);
-      find()
+      find({ includeTenants })
         .then(async (res) => {
           const organizations: IOrganizationModel[] = await res.json();
           setOrganizations(organizations);
@@ -33,7 +34,16 @@ export const useOrganizations = ({ init }: IOrganizationsProps = {}) => {
           setIsLoading(false);
         });
     } else if (organizations.length) setIsReady(true);
-  }, [find, setOrganizations, status, organizations.length, isLoading, isReady, init]);
+  }, [
+    find,
+    setOrganizations,
+    status,
+    organizations.length,
+    isLoading,
+    isReady,
+    init,
+    includeTenants,
+  ]);
 
   return { isReady, organizations };
 };
