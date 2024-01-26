@@ -34,7 +34,8 @@
   }
 
   &.filterPadding {
-    margin-bottom: 88px;
+    margin-bottom: 78px;
+    min-height: 260px;
   }
 
   &.adminPadding {
@@ -79,6 +80,10 @@
   margin: 20px 0 20px;
   font-size: $font-size-normal;
   font-weight: 300;
+
+  p {
+    font-size: $font-size-18;
+  }
 }
 
 .infoIcon {

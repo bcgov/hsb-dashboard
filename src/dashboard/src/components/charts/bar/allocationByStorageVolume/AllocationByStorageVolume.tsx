@@ -97,7 +97,7 @@ export const AllocationByStorageVolume = ({
           );
         })}
       </div>
-      <div className={styles.footer}>
+      <div className={styles.allocationFooter}>
         <p>Used</p>
         <p>Unused</p>
       </div>

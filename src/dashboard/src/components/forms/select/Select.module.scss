@@ -25,6 +25,10 @@
     &:focus {
       outline: 1px solid $focus-blue;
     }
+
+    option {
+      font-family: $bc-sans;
+    }
   }
 
   &::after {
@@ -47,7 +51,7 @@
   flex-direction: column;
   position: relative;
   width: 100%;
-  max-width: 205px;
+  max-width: 255px;
 
   @media screen and (max-width: $desktop) {
     margin: 0 5px;

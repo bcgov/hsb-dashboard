@@ -1,39 +1,47 @@
 @import '@/styles/utils.scss';
 
 .dateRange {
-  font-size: $font-size-small;
-  background-color: $light-gray;
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  padding: 5px 16px;
-  width: 100%;
-  max-width: 248px;
-
-  @media screen and (max-width: $desktop) {
-    margin: 0 5px;
-    width: auto;
-  }
-
-  .datePicker {
+    font-size: $font-size-small;
+    border-radius: 6px;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    label {
-      font-weight: bold;
-
-      @media screen and (max-width: $desktop) {
-        display: none;
+    flex-direction: row;
+    gap: 1rem;
+  
+    @media screen and (max-width: $desktop) {
+      margin: 0 5px;
+      width: auto;
+    }
+  
+    .datePicker {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: $light-gray;
+      padding: 5px 5px 5px 10px;
+      border-radius: 4px;
+  
+      label {
+        font-weight: bold;
+  
+        @media screen and (max-width: $desktop) {
+          display: none;
+        }
+      }
+  
+      input {
+        padding: 2px 5px;
+        border-radius: 2px;
+        background-color: $light-gray;
+        border: 0;
+        font-family: "BCSans";
+        cursor: text;
       }
     }
 
-    input {
-      padding: 2px 5px;
-      border-radius: 2px;
-      background-color: $light-gray;
-      border: 0;
-      font-family: "BCSans";
+    button {
+        position: relative;
+        padding: 5px 10px;
+        top: unset;
+        right: unset;
     }
   }
-}

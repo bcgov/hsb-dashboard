@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/buttons';
+import { Button, DateRangePicker } from '@/components';
 import { Bar } from 'react-chartjs-2';
 import styles from './SegmentedBarChart.module.scss';
 
@@ -81,6 +81,9 @@ export const SegmentedBarChart = ({
   return (
     <div className={styles.panel}>
       <h1>Storage Trends - {serverItem?.name ?? 'Drive'} Storage</h1>
+      <div className={styles.date}> 
+        <DateRangePicker />
+      </div>
       {CustomLegend}
       <div className={styles.chartContainer}>
         <Bar data={data} options={defaultOptions} />

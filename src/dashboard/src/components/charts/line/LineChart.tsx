@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@/components/buttons';
+import { Button, DateRangePicker } from '@/components';
 import {
   CategoryScale,
   ChartData,
@@ -45,6 +45,9 @@ export const LineChart = <
   return (
     <div className={`${styles.lineChart} ${large ? styles.panelLarge : styles.panel}`}>
       {label && <h1>{label}</h1>}
+      <div className={styles.date}>
+        <DateRangePicker />
+      </div>
       <div className={styles.chartContainer}>
         <Line data={data} options={{ ...options, maintainAspectRatio: !large }} />
       </div>

@@ -174,7 +174,7 @@ export const Filter: React.FC = () => {
 
   return (
     <div className={styles.filter}>
-      <h1>Filter</h1>
+      <h1>Filter by:</h1>
       <Select
         label="Tenant"
         variant="filter"
@@ -284,7 +284,7 @@ export const Filter: React.FC = () => {
           setFilteredServerItem(server);
         }}
       />
-      <DateRangePicker
+      {/* <DateRangePicker
         values={filteredDateRange}
         onChange={async (values, e) => {
           setFilteredDateRange(values);
@@ -295,7 +295,7 @@ export const Filter: React.FC = () => {
           );
           if (serverItems.length === 1) setFilteredServerItem(serverItems[0]);
         }}
-      />
+      /> */}
 
       <Button
         variant="primary"
@@ -313,6 +313,9 @@ export const Filter: React.FC = () => {
       >
         Update
       </Button>
+      <button className={styles.reset}>
+        Reset Filters
+      </button>
     </div>
   );
 };

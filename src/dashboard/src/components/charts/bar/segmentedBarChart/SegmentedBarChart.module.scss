@@ -52,3 +52,14 @@
   position: relative;
   bottom: 4px;
 }
+
+.date {
+  margin: 10px 0;
+
+  button {
+    position: relative;
+    padding: 5px 10px;
+    top: unset;
+    right: unset;
+  }
+}
