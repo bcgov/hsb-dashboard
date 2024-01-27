@@ -64,6 +64,16 @@ public class PrincipalModel
     /// <summary>
     /// get/set - Groups this user belongs to.
     /// </summary>
+    public IEnumerable<TenantModel> Tenants { get; set; } = Array.Empty<TenantModel>();
+
+    /// <summary>
+    /// get/set - Groups this user belongs to.
+    /// </summary>
+    public IEnumerable<OrganizationModel> Organizations { get; set; } = Array.Empty<OrganizationModel>();
+
+    /// <summary>
+    /// get/set - Groups this user belongs to.
+    /// </summary>
     public IEnumerable<string> Groups { get; set; } = Array.Empty<string>();
 
     /// <summary>
@@ -106,6 +116,10 @@ public class PrincipalModel
         this.IsEnabled = user?.IsEnabled ?? false;
         this.Note = user?.Note ?? "";
         this.Preferences = user?.Preferences ?? JsonDocument.Parse("{}");
+        this.Tenants = user?.TenantsManyToMany.Any() == true ? user.TenantsManyToMany.Where(t => t.Tenant != null).Select(t => new TenantModel(t.Tenant!)) : this.Tenants;
+        this.Tenants = user?.Tenants.Any() == true ? user.Tenants.Select(t => new TenantModel(t)) : this.Tenants;
+        this.Organizations = user?.OrganizationsManyToMany.Any() == true ? user.OrganizationsManyToMany.Where(t => t.Organization != null).Select(t => new OrganizationModel(t.Organization!)) : this.Organizations;
+        this.Organizations = user?.Organizations.Any() == true ? user.Organizations.Select(t => new OrganizationModel(t)) : this.Organizations;
         this.Groups = user?.Groups.Select(g => g.Name).Distinct() ?? Array.Empty<string>();
         this.Roles = user?.Groups.SelectMany(g => g.Roles).Select(r => r.Name).Distinct() ?? principal.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value);
         this.Version = user?.Version;

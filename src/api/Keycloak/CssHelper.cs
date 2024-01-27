@@ -128,19 +128,19 @@ public class CssHelper : ICssHelper
     {
         // CSS uses the preferred_username value as a username, but it's not the actual username...
         var key = principal.GetKey() ?? throw new NotAuthorizedException("The 'preferred_username' is required but missing from token");
-        var user = _userService.FindByKey(key);
+        var user = _userService.FindByKey(key, true);
 
         // If user doesn't exist, add them to the database.
         if (user == null)
         {
             var username = principal.GetUsername() ?? throw new NotAuthorizedException("The 'username' is required by missing from token");
             var email = principal.GetEmail() ?? "";
-            user = _userService.FindByUsername(username);
+            user = _userService.FindByUsername(username, true);
 
             if (user == null && !String.IsNullOrWhiteSpace(email))
             {
                 // Check if the user has been manually added by their email address.
-                var users = _userService.FindByEmail(email).Where(u => u.IsEnabled);
+                var users = _userService.FindByEmail(email, true).Where(u => u.IsEnabled);
 
                 // If only one account has the email, we can assume it's a preapproved user.
                 if (users.Count() == 1) user = users.First();
@@ -161,7 +161,6 @@ public class CssHelper : ICssHelper
                     IsEnabled = true,
                     EmailVerified = principal.GetEmailVerified() ?? false,
                     LastLoginOn = DateTime.UtcNow,
-                    // Roles = String.Join(",", userRoles.Roles.Select(r => $"[{r.Name}]"))
                 };
                 _userService.Add(user);
             }

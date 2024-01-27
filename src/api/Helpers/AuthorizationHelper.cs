@@ -44,7 +44,7 @@ public class AuthorizationHelper : IAuthorizationHelper
         // Only return tenants this user belongs to.
         var username = this.User?.GetUsername();
         if (!String.IsNullOrWhiteSpace(username))
-            return this.UserService.FindByUsername(username);
+            return this.UserService.FindByUsername(username, true);
 
         return null;
     }

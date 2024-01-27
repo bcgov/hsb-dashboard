@@ -6,9 +6,9 @@ import {
   IRoleModel,
   IServerItemModel,
   ITenantModel,
-  IUserInfoModel,
   IUserModel,
 } from '@/hooks/api';
+import { IUserInfoModel } from '@/hooks/api/interfaces/auth';
 import { create } from 'zustand';
 
 export interface IAppState {

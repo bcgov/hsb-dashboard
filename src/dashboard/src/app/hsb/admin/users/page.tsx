@@ -16,11 +16,11 @@ import {
 import { IUserModel, useAuth } from '@/hooks';
 import { useApiUsers } from '@/hooks/api/admin';
 import { useGroups, useUsers } from '@/hooks/data';
+import { searchUsers } from '@/utils';
 import { redirect } from 'next/navigation';
 import React, { useRef } from 'react';
 import { IUserForm } from './IUserForm';
 import { UserDialog, UserDialogVariant } from './UserDialog';
-import { searchUsers } from './utils';
 
 export default function Page() {
   const state = useAuth();
@@ -51,7 +51,9 @@ export default function Page() {
       }),
     );
     setFilteredUsers(searchUsers(users, filter).map((u) => u.id));
-  }, [filter, users]);
+    // Only apply the 'filter' when the button is pressed.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [users]);
 
   const handleSearch = React.useCallback(() => {
     setFilteredUsers(searchUsers(formUsers, filter).map((u) => u.id));
