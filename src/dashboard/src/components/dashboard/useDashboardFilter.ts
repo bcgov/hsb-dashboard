@@ -22,6 +22,7 @@ export interface IDashboardFilterProps {
   organization?: IOrganizationModel;
   operatingSystemItem?: IOperatingSystemItemModel;
   serverItem?: IServerItemModel;
+  reset?: boolean;
 }
 
 /**
@@ -62,7 +63,7 @@ export const useDashboardFilter = () => {
 
   return React.useCallback(
     async (filter?: IDashboardFilterProps) => {
-      const selectedTenant = filter?.tenant ?? filteredTenant;
+      const selectedTenant = filter?.reset ? undefined : filter?.tenant ?? filteredTenant;
       if (filter?.tenant) setFilteredTenant(filter.tenant);
       if (selectedTenant) {
         currentParams.set('tenant', selectedTenant.id.toString());
@@ -72,8 +73,10 @@ export const useDashboardFilter = () => {
         setDashboardTenants(filteredTenants);
       }
 
-      const selectedOrganization = filter?.organization ?? filteredOrganization;
-      if (filter?.organization) setFilteredOrganization(filter.organization);
+      const selectedOrganization = filter?.reset
+        ? undefined
+        : filter?.organization ?? filteredOrganization;
+      if (filter?.reset || filter?.organization) setFilteredOrganization(filter.organization);
       if (selectedOrganization) {
         currentParams.set('organization', selectedOrganization.id.toString());
         setDashboardOrganizations([selectedOrganization]);
@@ -82,9 +85,11 @@ export const useDashboardFilter = () => {
         setDashboardOrganizations(filteredOrganizations);
       }
 
-      const selectedOperatingSystemItem =
-        filter?.operatingSystemItem ?? filteredOperatingSystemItem;
-      if (filter?.operatingSystemItem) setFilteredOperatingSystemItem(filter.operatingSystemItem);
+      const selectedOperatingSystemItem = filter?.reset
+        ? undefined
+        : filter?.operatingSystemItem ?? filteredOperatingSystemItem;
+      if (filter?.reset || filter?.operatingSystemItem)
+        setFilteredOperatingSystemItem(filter.operatingSystemItem);
       if (selectedOperatingSystemItem) {
         currentParams.set('operatingSystemItem', selectedOperatingSystemItem.id.toString());
         setDashboardOperatingSystemItems([selectedOperatingSystemItem]);
@@ -93,8 +98,10 @@ export const useDashboardFilter = () => {
         setDashboardOperatingSystemItems(filteredOperatingSystemItems);
       }
 
-      const selectedServerItem = filter?.serverItem ?? filteredServerItem;
-      if (filter?.serverItem) setFilteredServerItem(filter.serverItem);
+      const selectedServerItem = filter?.reset
+        ? undefined
+        : filter?.serverItem ?? filteredServerItem;
+      if (filter?.reset || filter?.serverItem) setFilteredServerItem(filter.serverItem);
       if (selectedServerItem) {
         currentParams.set('serverItem', selectedServerItem.serviceNowKey);
         setDashboardServerItems([selectedServerItem]);

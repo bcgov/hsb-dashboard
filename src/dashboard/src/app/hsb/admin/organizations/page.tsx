@@ -7,10 +7,10 @@ import { IOrganizationModel, useAuth } from '@/hooks';
 import { useApiOrganizations } from '@/hooks/api/admin';
 import { useOrganizations } from '@/hooks/data';
 import { useApp } from '@/store';
+import { searchOrganizations } from '@/utils';
 import { redirect } from 'next/navigation';
 import React from 'react';
 import { IOrganizationForm } from './IOrganizationForm';
-import { searchOrganizations } from './utils';
 
 export default function Page() {
   const state = useAuth();
@@ -40,7 +40,9 @@ export default function Page() {
       }),
     );
     setFilteredOrganizations(searchOrganizations(organizations, filter).map((o) => o.id));
-  }, [filter, organizations]);
+    // Only apply the 'filter' when the button is pressed.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [organizations]);
 
   const handleSearch = React.useCallback(() => {
     setFilteredOrganizations(searchOrganizations(formOrganizations, filter).map((o) => o.id));

@@ -43,10 +43,17 @@ public class UserService : BaseService<User>, IUserService
             .ToArray();
     }
 
-    public IEnumerable<User> FindByEmail(string email)
+    public IEnumerable<User> FindByEmail(string email, bool includePermissions)
     {
-        return this.Context.Users
-            .Include(u => u.Groups).ThenInclude(g => g.Roles)
+        var query = this.Context.Users.AsQueryable();
+
+        if (includePermissions)
+            query = query
+                .Include(m => m.Groups).ThenInclude(g => g.Roles)
+                .Include(m => m.OrganizationsManyToMany).ThenInclude(m => m.Organization)
+                .Include(m => m.TenantsManyToMany).ThenInclude(m => m.Tenant);
+
+        return query
             .Where(u => EF.Functions.Like(u.Email, email))
             .AsSingleQuery()
             .ToArray();
@@ -54,29 +61,46 @@ public class UserService : BaseService<User>, IUserService
 
     public User? FindForId(int id, bool includePermissions)
     {
-        var query = this.Context.Users.Where(u => u.Id == id);
+        var query = this.Context.Users.AsQueryable();
 
         if (includePermissions)
             query = query
                 .Include(m => m.Groups).ThenInclude(g => g.Roles)
-                .Include(m => m.Organizations)
-                .Include(m => m.Tenants);
+                .Include(m => m.OrganizationsManyToMany).ThenInclude(m => m.Organization)
+                .Include(m => m.TenantsManyToMany).ThenInclude(m => m.Tenant);
 
-        return query.FirstOrDefault();
+        return query
+            .Where(u => u.Id == id)
+            .AsSingleQuery()
+            .FirstOrDefault();
     }
 
-    public User? FindByKey(string key)
+    public User? FindByKey(string key, bool includePermissions)
     {
-        return this.Context.Users
-            .Include(u => u.Groups).ThenInclude(g => g.Roles)
+        var query = this.Context.Users.AsQueryable();
+
+        if (includePermissions)
+            query = query
+                .Include(m => m.Groups).ThenInclude(g => g.Roles)
+                .Include(m => m.OrganizationsManyToMany).ThenInclude(m => m.Organization)
+                .Include(m => m.TenantsManyToMany).ThenInclude(m => m.Tenant);
+
+        return query
             .AsSingleQuery()
             .FirstOrDefault(u => u.Key == key);
     }
 
-    public User? FindByUsername(string username)
+    public User? FindByUsername(string username, bool includePermissions)
     {
-        return this.Context.Users
-            .Include(u => u.Groups).ThenInclude(g => g.Roles)
+        var query = this.Context.Users.AsQueryable();
+
+        if (includePermissions)
+            query = query
+                .Include(m => m.Groups).ThenInclude(g => g.Roles)
+                .Include(m => m.OrganizationsManyToMany).ThenInclude(m => m.Organization)
+                .Include(m => m.TenantsManyToMany).ThenInclude(m => m.Tenant);
+
+        return query
             .AsSingleQuery()
             .FirstOrDefault(u => EF.Functions.Like(u.Username, username));
     }
