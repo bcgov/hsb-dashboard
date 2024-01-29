@@ -28,11 +28,13 @@ on:
       - main
     types:
       - closed
-  # push:
-  #   branches:
-  #     - dev
-  #     - main
-  #     - test
+      - opened
+      - reopened
+      - edited
+  push:
+    branches:
+      - dev
+      - main
 
 jobs:
   build-push:
@@ -61,6 +63,9 @@ jobs:
             api:
               - 'src/api/**'
               - 'src/libs/**'
+            data-service:
+              - 'src/data-service/**'
+              - 'src/libs/**'
             dashboard:
               - 'src/dashboard/**'
             db-migration:
@@ -70,7 +75,7 @@ jobs:
       - name: Build API
         id: build-api
         uses: redhat-actions/buildah-build@v2
-        if: steps.filter.outputs.api == 'true'
+        if: ${{ steps.filter.outputs.api == 'true' || contains(github.event.pull_request.labels.*.name, 'api') }}
         with:
           image: ${{ github.event.repository.name }}/${{ env.API_IMAGE_NAME }}
           tags: ${{ env.IMAGE_TAG }} ${{ env.VERSION }} ${{ env.DEPLOY_TO }}
@@ -81,7 +86,7 @@ jobs:
       - name: Build Data Service
         id: build-data-service
         uses: redhat-actions/buildah-build@v2
-        if: steps.filter.outputs.data-service == 'true'
+        if: ${{ steps.filter.outputs.data-service == 'true' || contains(github.event.pull_request.labels.*.name, 'data-service') }}
         with:
           image: ${{ github.event.repository.name }}/${{ env.DATA_SERVICE_IMAGE_NAME }}
           tags: ${{ env.IMAGE_TAG }} ${{ env.VERSION }} ${{ env.DEPLOY_TO }}
@@ -92,7 +97,7 @@ jobs:
       - name: Build Dasbhoard
         id: build-app
         uses: redhat-actions/buildah-build@v2
-        if: steps.filter.outputs.dashboard == 'true'
+        if: ${{ steps.filter.outputs.dashboard == 'true' || contains(github.event.pull_request.labels.*.name, 'dashboard') }}
         with:
           image: ${{ github.event.repository.name }}/${{ env.APP_IMAGE_NAME }}
           tags: ${{ env.IMAGE_TAG }} ${{ env.VERSION }} ${{ env.DEPLOY_TO }}
@@ -103,7 +108,7 @@ jobs:
       - name: Build DB Migration
         id: build-db-migration
         uses: redhat-actions/buildah-build@v2
-        if: steps.filter.outputs.db-migration == 'true'
+        if: ${{ steps.filter.outputs.db-migration == 'true' || contains(github.event.pull_request.labels.*.name, 'db-migration') }}
         with:
           image: ${{ github.event.repository.name }}/${{ env.DB_MIGRATION_IMAGE_NAME }}
           tags: ${{ env.IMAGE_TAG }} ${{ env.VERSION }} ${{ env.DEPLOY_TO }}
@@ -114,7 +119,7 @@ jobs:
         ## PUSH TO REGISTRY
       - name: Push API to registry
         uses: redhat-actions/push-to-registry@v2
-        if: steps.filter.outputs.api == 'true'
+        if: ${{ steps.filter.outputs.api == 'true' || contains(github.event.pull_request.labels.*.name, 'api')  }}
         with:
           image: ${{ steps.build-api.outputs.image }}
           tags: ${{ steps.build-api.outputs.tags }}
@@ -124,7 +129,7 @@ jobs:
 
       - name: Push Data Service to registry
         uses: redhat-actions/push-to-registry@v2
-        if: steps.filter.outputs.data-service == 'true'
+        if: ${{ steps.filter.outputs.data-service == 'true' || contains(github.event.pull_request.labels.*.name, 'data-service')  }}
         with:
           image: ${{ steps.build-data-service.outputs.image }}
           tags: ${{ steps.build-data-service.outputs.tags }}
@@ -134,7 +139,7 @@ jobs:
 
       - name: Push Dashboard to registry
         uses: redhat-actions/push-to-registry@v2
-        if: steps.filter.outputs.dashboard == 'true'
+        if: ${{ steps.filter.outputs.dashboard == 'true' || contains(github.event.pull_request.labels.*.name, 'dashboard')  }}
         with:
           image: ${{ steps.build-app.outputs.image }}
           tags: ${{ steps.build-app.outputs.tags }}
@@ -144,7 +149,7 @@ jobs:
 
       - name: Push DB Migration to registry
         uses: redhat-actions/push-to-registry@v2
-        if: steps.filter.outputs.db-migration == 'true'
+        if: ${{ steps.filter.outputs.db-migration == 'true' || contains(github.event.pull_request.labels.*.name, 'db-migration')  }}
         with:
           image: ${{ steps.build-db-migration.outputs.image }}
           tags: ${{ steps.build-db-migration.outputs.tags }}
