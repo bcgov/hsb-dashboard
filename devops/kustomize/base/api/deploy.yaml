@@ -76,7 +76,7 @@ spec:
             - name: HTTPS_PROXY
               value: http://swpxkam.gov.bc.ca:8080
             - name: NO_PROXY
-              value: .cluster.local,.svc,10.91.0.0/16,172.30.0.0/16,127.0.0.1,localhost,.gov.bc.ca
+              value: .cluster.local,.svc,10.91.0.0/16,172.30.0.0/16,127.0.0.1,localhost,dev.loginproxy.gov.bc.ca,test.loginproxy.gov.bc.ca,loginproxy.gov.bc.ca
 
             - name: Keycloak__Authority
               valueFrom:
