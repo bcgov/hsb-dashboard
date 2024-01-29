@@ -63,7 +63,7 @@ export const FilteredTenants = ({ onChange }: IFilteredTenantsProps) => {
   }, [setFilteredTenant, setFilteredTenants, tenants]);
 
   return (
-    filteredTenantOptions.length && (
+    filteredTenantOptions.length > 0 && (
       <Select
         label="Tenant"
         variant="filter"

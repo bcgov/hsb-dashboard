@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: data-service
+  namespace: default
+  annotations:
+    description: CronJob service to pull data from the ServiceNow API.
+  labels:
+    name: data-service
+    part-of: hsb
+    version: 1.0.0
+    component: data-service
+    managed-by: kustomize
+    created-by: jeremy.foster
+spec:
+  # ttlSecondsAfterFinished: 100
+  schedule: "0 1 * * *" # Every day at 1:00am
+  # schedule: "*/5 * * * *" # Immediately
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          securityContext:
+            runAsUser: 1010230000
+            fsGroup: 1010230000
+          containers:
+            - name: data-service
+              image: image-registry.apps.emerald.devops.gov.bc.ca/e89443-tools/data-service:dev
+              imagePullPolicy: IfNotPresent
+              resources:
+                requests:
+                  cpu: 20m
+                  memory: 120Mi
+                limits:
+                  cpu: 50m
+                  memory: 200Mix

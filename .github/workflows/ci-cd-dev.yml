@@ -13,6 +13,7 @@ env:
   IMAGE_REGISTRY_PASSWORD: ${{ github.token }}
 
   API_IMAGE_NAME: api
+  DATA_SERVICE_IMAGE_NAME: data-service
   APP_IMAGE_NAME: dashboard
   DB_MIGRATION_IMAGE_NAME: db-migration
 
@@ -39,6 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       api: ${{ steps.filter.outputs.api }}
+      data-service: ${{ steps.filter.outputs.data-service }}
       dashboard: ${{ steps.filter.outputs.dashboard }}
       db-migration: ${{ steps.filter.outputs.db-migration }}
     timeout-minutes: 10
@@ -76,6 +78,17 @@ jobs:
           dockerfiles: |
             src/api/Dockerfile
 
+      - name: Build Data Service
+        id: build-data-service
+        uses: redhat-actions/buildah-build@v2
+        if: steps.filter.outputs.data-service == 'true'
+        with:
+          image: ${{ github.event.repository.name }}/${{ env.DATA_SERVICE_IMAGE_NAME }}
+          tags: ${{ env.IMAGE_TAG }} ${{ env.VERSION }} ${{ env.DEPLOY_TO }}
+          context: .
+          dockerfiles: |
+            src/data-service/Dockerfile
+
       - name: Build Dasbhoard
         id: build-app
         uses: redhat-actions/buildah-build@v2
@@ -105,6 +118,16 @@ jobs:
         with:
           image: ${{ steps.build-api.outputs.image }}
           tags: ${{ steps.build-api.outputs.tags }}
+          registry: ${{ env.IMAGE_REGISTRY }}
+          username: ${{ env.IMAGE_REGISTRY_USER }}
+          password: ${{ env.IMAGE_REGISTRY_PASSWORD }}
+
+      - name: Push Data Service to registry
+        uses: redhat-actions/push-to-registry@v2
+        if: steps.filter.outputs.data-service == 'true'
+        with:
+          image: ${{ steps.build-data-service.outputs.image }}
+          tags: ${{ steps.build-data-service.outputs.tags }}
           registry: ${{ env.IMAGE_REGISTRY }}
           username: ${{ env.IMAGE_REGISTRY_USER }}
           password: ${{ env.IMAGE_REGISTRY_PASSWORD }}
