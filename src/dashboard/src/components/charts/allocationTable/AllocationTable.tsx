@@ -12,6 +12,7 @@ import { ITableRowData } from './ITableRowData';
 import { TableRow } from './TableRow';
 import { useAllocationByOS } from './hooks';
 import { getColumns, getLabel } from './utils';
+import { LoadingAnimation } from '../loadingAnimation';
 
 export interface IAllocationTableProps {
   /** Filter servers by their OS */
@@ -63,6 +64,7 @@ export const AllocationTable = ({
 
   return (
     <div className={styles.panel} style={margin ? { marginTop: margin } : {}}>
+      {loading && <LoadingAnimation />}
       <h1>
         {operatingSystem
           ? `Allocation by Storage Volume - All ${getLabel(operatingSystem)}`

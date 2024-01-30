@@ -31,5 +31,5 @@ export const StorageTrendsChart: React.FC<LineChartProps> = ({
 }) => {
   const data = useStorageTrends(minColumns, dateRange);
 
-  return <LineChart data={data} label="Storage Trends" large={large} showExport exportDisabled />;
+  return <LineChart data={data} label="Storage Trends" loading={loading} large={large} showExport exportDisabled />;
 };

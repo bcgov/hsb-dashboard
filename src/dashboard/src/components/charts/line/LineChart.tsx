@@ -18,6 +18,7 @@ import {
 import { Line } from 'react-chartjs-2';
 import styles from './LineChart.module.scss';
 import { defaultChartOptions } from './defaultChartOptions';
+import { LoadingAnimation } from '../loadingAnimation';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -28,6 +29,7 @@ interface LineChartProps<TData = DefaultDataPoint<'line'>, TLabel = unknown> {
   data: ChartData<'line', TData, TLabel>;
   showExport?: boolean;
   exportDisabled?: boolean;
+  loading?: boolean;
 }
 
 export const LineChart = <
@@ -41,9 +43,11 @@ export const LineChart = <
   options = defaultChartOptions,
   showExport,
   exportDisabled,
+  loading,
 }: LineChartProps<TData, TLabel>) => {
   return (
     <div className={`${styles.lineChart} ${large ? styles.panelLarge : styles.panel}`}>
+      {loading && <LoadingAnimation />}
       {label && <h1>{label}</h1>}
       <div className={styles.date}>
         <DateRangePicker />

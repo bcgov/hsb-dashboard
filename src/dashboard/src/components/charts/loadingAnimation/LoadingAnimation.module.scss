@@ -1,0 +1,62 @@
+@import '@/styles/utils.scss';
+
+.container {
+    height: 100%;
+    width: 100%;
+    background-color: rgba($chart-gray, 0.7);
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    backdrop-filter: blur(2px);
+}
+
+.animationContainer {
+    height: 80px;
+    width: 80px;
+    display: flex;
+    align-items: flex-end;
+    gap: 0.3rem;
+
+    div {
+        animation: loading 2s infinite ease-in-out;
+        height: 10px;
+        width: 8px;
+        border-radius: 2px;
+        background-color: $bc-black;
+
+        &.bar1 {
+    
+        }
+
+        &.bar2 {
+            animation-delay: 0.2s;
+        }
+
+        &.bar3 {
+            animation-delay: 0.4s;
+        }
+
+        &.bar4 {
+            animation-delay: 0.6s;
+        }
+
+        &.bar5 {
+            animation-delay: 0.8s;
+        }
+
+        &.bar6 {
+            animation-delay: 1s;
+        }
+    }
+}
+
+@keyframes loading {
+    0% {height: 20px;}
+    50% {height: 50px; background-color: rgba($bc-black, 0.5);}
+    100% {height: 20px};
+}

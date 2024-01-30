@@ -12,6 +12,7 @@ import React from 'react';
 import { defaultOptions } from './defaultOptions';
 import { useStorageTrends } from './useStorageTrends';
 import { extractVolumeName } from './utils';
+import { LoadingAnimation } from '../../loadingAnimation';
 
 ChartJS.register(CategoryScale, BarElement, Title, Tooltip, Legend);
 
@@ -80,6 +81,7 @@ export const SegmentedBarChart = ({
 
   return (
     <div className={styles.panel}>
+      {loading && <LoadingAnimation />}
       <h1>Storage Trends - {serverItem?.name ?? 'Drive'} Storage</h1>
       <div className={styles.date}> 
         <DateRangePicker />

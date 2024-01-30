@@ -69,7 +69,7 @@ export const Dashboard = () => {
   return (
     <>
       {/* Single Organization total storage */}
-      {showTotalStorage && <TotalStorage serverItems={selectedServerItems} />}
+      {showTotalStorage && <TotalStorage serverItems={selectedServerItems} loading={false} />}
       {/* Multiple OS */}
       {showAllocationByOS && (
         <AllocationByOS
@@ -94,6 +94,7 @@ export const Dashboard = () => {
         />
       )}
       <StorageTrendsChart
+        loading={false}
         large={
           selectedOrganizations.length === 1 ||
           selectedOperatingSystemItems.length === 1 ||

@@ -20,6 +20,7 @@ export const AllocationByVolume = ({
   return (
     <SmallBarChart
       title="Drive Space"
+      loading={loading}
       data={{
         ...defaultData,
         datasets: fileSystemItems

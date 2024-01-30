@@ -7,6 +7,7 @@ import { IOrganizationModel, IServerItemModel } from '@/hooks';
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import { useAllOrganizationsDoughnutChart } from './hooks';
+import { LoadingAnimation } from '../../loadingAnimation';
 
 ChartJS.register(ArcElement, Tooltip);
 
@@ -24,7 +25,8 @@ export const AllOrganizations = ({
   const data = useAllOrganizationsDoughnutChart(serverItems);
 
   return (
-    <div className={styles.panel}>
+    <div className={styles.panel} >
+      {loading && <LoadingAnimation />}
       <h1>All Organizations</h1>
       <div className={styles.chartContainer}>
         <div className={styles.info}>
