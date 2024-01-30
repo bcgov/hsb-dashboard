@@ -29,7 +29,7 @@ interface LineChartProps<TData = DefaultDataPoint<'line'>, TLabel = unknown> {
   data: ChartData<'line', TData, TLabel>;
   showExport?: boolean;
   exportDisabled?: boolean;
-  loading: boolean;
+  loading?: boolean;
 }
 
 export const LineChart = <
