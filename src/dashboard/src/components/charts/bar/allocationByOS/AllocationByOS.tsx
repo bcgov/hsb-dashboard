@@ -25,6 +25,7 @@ export const AllocationByOS = ({
       data={{ ...defaultData, datasets: groupByOS(serverItems, operatingSystemItems) }}
       exportDisabled={true}
       onExport={() => {}}
+      loading={loading}
     >
       {(data) => {
         return data.datasets.map((os) => (

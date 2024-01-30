@@ -3,6 +3,7 @@ import { BarRow } from './BarRow';
 import { IBarChartData } from './IBarChartData';
 import { IBarChartRowData } from './IBarChartRowData';
 import styles from './SmallBarChart.module.scss';
+import { LoadingAnimation } from '../../loadingAnimation';
 
 export interface ISmallBarChartProps<T extends IBarChartRowData<unknown>> {
   /** Title header of the component */
@@ -15,6 +16,7 @@ export interface ISmallBarChartProps<T extends IBarChartRowData<unknown>> {
   onExport?: () => void;
   /** Children bar char row output */
   children?: React.ReactNode | ((data: IBarChartData<T>) => React.ReactNode);
+  loading?: boolean;
 }
 
 export const SmallBarChart = <T extends IBarChartRowData<unknown>>({
@@ -23,9 +25,11 @@ export const SmallBarChart = <T extends IBarChartRowData<unknown>>({
   children,
   exportDisabled,
   onExport,
+  loading,
 }: ISmallBarChartProps<T>) => {
   return (
     <div className={styles.panel}>
+      {loading && <LoadingAnimation />}
       {title && <h1>{title}</h1>}
       <div className={styles.chartContainer}>
         <div className={styles.headings}>

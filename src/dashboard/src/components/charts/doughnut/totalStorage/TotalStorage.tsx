@@ -6,6 +6,7 @@ import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import styles from './TotalStorage.module.scss';
 import { useTotalStorageDoughnutChart } from './hooks';
+import { LoadingAnimation } from '../../loadingAnimation';
 
 ChartJS.register(ArcElement, Tooltip);
 
@@ -19,6 +20,7 @@ export const TotalStorage = ({ serverItems, loading }: ITotalStorageProps) => {
 
   return (
     <div className={styles.panel}>
+      {loading && <LoadingAnimation />}
       <h1>Total Storage Allocation</h1>
       <div className={styles.chartContainer}>
         <div className={styles.chart}>

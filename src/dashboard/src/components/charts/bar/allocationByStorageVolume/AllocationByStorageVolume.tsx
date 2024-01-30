@@ -11,6 +11,7 @@ import { IOrganizationStorageModel } from './IOrganizationStorageModel';
 import { PercentageLines } from './PercentageLines';
 import { calcOrganizationStorage } from './calcOrganizationStorage';
 import { SortOptions, sortOptions } from './sortOptions';
+import { LoadingAnimation } from '../../loadingAnimation';
 
 export interface IAllocationByStorageVolumeProps {
   organizations: IOrganizationModel[];
@@ -54,6 +55,7 @@ export const AllocationByStorageVolume = ({
 
   return (
     <div className={styles.panel}>
+      {loading && <LoadingAnimation />}
       <h1>Allocation by Storage Volume - All Organizations</h1>
       <div className={styles.sort}>
         <Select

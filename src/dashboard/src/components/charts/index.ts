@@ -4,3 +4,4 @@ export * from './line';
 export * from './storageTrends';
 export * from './unusedSpace';
 export * from './allocationTable';
+export * from './loadingAnimation';
