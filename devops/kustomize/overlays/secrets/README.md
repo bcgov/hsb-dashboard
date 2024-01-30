@@ -1,5 +1,7 @@
 # Setup Solution Secrets
 
+Populate each overlay with the following secrets.
+
 Create a `database.env` file with the following records.
 
 ```env
@@ -36,4 +38,13 @@ Create a `dashboard.env` file with the following records.
 
 ```env
 NEXTAUTH_SECRET={RANDOM SECRET}
+```
+
+Create a `service-now.env` file with the following records.
+
+```env
+USERNAME={SERVICE NOW USERNAME}
+PASSWORD={SERVICE NOW PASSWORD}
+INSTANCE=thehubtest
+URL=https://{instance}.service-now.com
 ```

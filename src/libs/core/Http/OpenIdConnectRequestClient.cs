@@ -118,6 +118,7 @@ namespace HSB.Core.Http
             {
                 var body = await response.Content.ReadAsStringAsync();
                 _accessToken = JsonSerializer.Deserialize<Models.TokenModel>(body, _serializeOptions);
+                this.Logger.LogDebug("Successfully received token: {token}", _accessToken?.AccessToken);
                 return $"Bearer {_accessToken?.AccessToken}";
             }
             else
@@ -156,6 +157,8 @@ namespace HSB.Core.Http
             {
                 keycloakTokenUrl = $"{authority}{keycloakTokenUrl}";
             }
+
+            this.Logger.LogDebug("Requesting token: {url}", keycloakTokenUrl);
 
             using var tokenMessage = new HttpRequestMessage(HttpMethod.Post, keycloakTokenUrl);
             // var authentication = $"{audience}:{secret}";
@@ -198,6 +201,8 @@ namespace HSB.Core.Http
             {
                 keycloakTokenUrl = $"{authority}{keycloakTokenUrl}";
             }
+
+            this.Logger.LogDebug("Refresh token: {url}", keycloakTokenUrl);
 
             using var tokenMessage = new HttpRequestMessage(HttpMethod.Post, keycloakTokenUrl);
             var p = new Dictionary<string, string>

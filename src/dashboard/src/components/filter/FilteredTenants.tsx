@@ -62,47 +62,47 @@ export const FilteredTenants = ({ onChange }: IFilteredTenantsProps) => {
     if (tenants.length === 1) setFilteredTenant(tenants[0]);
   }, [setFilteredTenant, setFilteredTenants, tenants]);
 
-  return (
-    filteredTenantOptions.length > 0 && (
-      <Select
-        label="Tenant"
-        variant="filter"
-        options={filteredTenantOptions}
-        placeholder="Select tenant"
-        value={filteredTenant?.id ?? ''}
-        disabled={!tenantsReady || !enableTenants || !serverItemsReady}
-        loading={!tenantsReady}
-        onChange={async (value) => {
-          const tenant = tenants.find((t) => t.id == value);
-          setFilteredTenant(tenant);
-          setFilteredOrganization();
-          setFilteredOperatingSystemItem();
-          setFilteredServerItem();
+  return filteredTenantOptions.length > 0 ? (
+    <Select
+      label="Tenant"
+      variant="filter"
+      options={filteredTenantOptions}
+      placeholder="Select tenant"
+      value={filteredTenant?.id ?? ''}
+      disabled={!tenantsReady || !enableTenants || !serverItemsReady}
+      loading={!tenantsReady}
+      onChange={async (value) => {
+        const tenant = tenants.find((t) => t.id == value);
+        setFilteredTenant(tenant);
+        setFilteredOrganization();
+        setFilteredOperatingSystemItem();
+        setFilteredServerItem();
 
-          if (tenant) {
-            const organizations = await findOrganizations({ tenantId: tenant.id });
-            if (organizations.length === 1) setFilteredOrganization(organizations[0]);
+        if (tenant) {
+          const organizations = await findOrganizations({ tenantId: tenant.id });
+          if (organizations.length === 1) setFilteredOrganization(organizations[0]);
 
-            const operatingSystems = await findOperatingSystemItems({
-              tenantId: tenant.id,
-              organizationId: filteredOrganization?.id,
-            });
-            if (operatingSystems.length === 1) setFilteredOperatingSystemItem(operatingSystems[0]);
+          const operatingSystems = await findOperatingSystemItems({
+            tenantId: tenant.id,
+            organizationId: filteredOrganization?.id,
+          });
+          if (operatingSystems.length === 1) setFilteredOperatingSystemItem(operatingSystems[0]);
 
-            const serverItems = await onChange?.(
-              tenant,
-              organizations.length === 1 ? organizations[0] : filteredOrganization,
-              operatingSystems.length === 1 ? operatingSystems[0] : filteredOperatingSystemItem,
-            );
-            if (serverItems?.length === 1) setFilteredServerItem(serverItems[0]);
-          } else {
-            setFilteredOrganizations(organizations);
-            setFilteredOperatingSystemItems(operatingSystemItems);
+          const serverItems = await onChange?.(
+            tenant,
+            organizations.length === 1 ? organizations[0] : filteredOrganization,
+            operatingSystems.length === 1 ? operatingSystems[0] : filteredOperatingSystemItem,
+          );
+          if (serverItems?.length === 1) setFilteredServerItem(serverItems[0]);
+        } else {
+          setFilteredOrganizations(organizations);
+          setFilteredOperatingSystemItems(operatingSystemItems);
 
-            await onChange?.(tenant);
-          }
-        }}
-      />
-    )
+          await onChange?.(tenant);
+        }
+      }}
+    />
+  ) : (
+    <></>
   );
 };

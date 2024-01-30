@@ -2,57 +2,53 @@
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: enable-app-to-api-ingress
+  name: enable-data-service-to-internet
   labels:
-    name: enable-app-to-api-ingress
+    name: enable-data-service-to-internet
     part-of: hsb
     version: 1.0.0
-    component: app
+    component: service
     managed-by: kustomize
     created-by: jeremy.foster
   annotations:
-    description: Enable the app to communicate with the api
+    description: Enable the data-service to communicate with the internet
 spec:
-  policyTypes:
-    - Ingress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 142.34.229.249/32
+        - ipBlock:
+            cidr: 142.34.94.249/32
+      ports:
+        - port: 8080
+          protocol: TCP
   podSelector:
     matchLabels:
       part-of: hsb
-      component: api
-  ingress:
-    - from:
-        - podSelector:
-            matchLabels:
-              part-of: hsb
-              component: app
-      ports:
-        - protocol: TCP
-          port: 8080
-        - protocol: TCP
-          port: 80
-        - protocol: TCP
-          port: 443
+      component: service
+  policyTypes:
+    - Egress
 ---
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: enable-app-to-api-egress
+  name: enable-data-service-to-api-egress
   labels:
-    name: enable-app-to-api-egress
+    name: enable-data-service-to-api-egress
     part-of: hsb
     version: 1.0.0
-    component: app
+    component: service
     managed-by: kustomize
     created-by: jeremy.foster
   annotations:
-    description: Enable the app to communicate with the api
+    description: Enable the data-service to communicate with the api
 spec:
   policyTypes:
     - Ingress
   podSelector:
     matchLabels:
       part-of: hsb
-      component: app
+      component: service
   egress:
     - to:
         - podSelector:
@@ -70,16 +66,50 @@ spec:
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: enable-app-to-keycloak
+  name: enable-data-service-to-api-ingress
   labels:
-    name: enable-app-to-keycloak
+    name: enable-data-service-to-api-ingress
     part-of: hsb
     version: 1.0.0
-    component: app
+    component: service
     managed-by: kustomize
     created-by: jeremy.foster
   annotations:
-    description: Enable the app to communicate with the keycloak
+    description: Enable the data-service to communicate with the api
+spec:
+  policyTypes:
+    - Ingress
+  podSelector:
+    matchLabels:
+      part-of: hsb
+      component: api
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              part-of: hsb
+              component: service
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: enable-data-service-to-keycloak
+  labels:
+    name: enable-data-service-to-keycloak
+    part-of: hsb
+    version: 1.0.0
+    component: service
+    managed-by: kustomize
+    created-by: jeremy.foster
+  annotations:
+    description: Enable the data-service to communicate with the keycloak
 spec:
   egress:
     - to:
@@ -93,6 +123,6 @@ spec:
   podSelector:
     matchLabels:
       part-of: hsb
-      component: app
+      component: service
   policyTypes:
     - Egress

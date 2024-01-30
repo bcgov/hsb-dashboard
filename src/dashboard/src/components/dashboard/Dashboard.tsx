@@ -118,7 +118,6 @@ export const Dashboard = () => {
           serverItems={selectedServerItems}
           loading={!isReadyServerItems || !isReadyOperatingSystemItems}
           onClick={async (serverItem) => {
-            console.debug(serverItem);
             await updateDashboard({ serverItem });
           }}
         />

@@ -27,8 +27,8 @@ export const AllocationByVolume = ({
           .map<IBarChartRowData<IFileSystemItemModel>>((fsi) => ({
             key: fsi.name,
             label: fsi.name,
-            capacity: fsi.capacity,
-            available: fsi.availableSpace,
+            capacity: fsi.sizeBytes / 1024 / 1024,
+            available: fsi.freeSpaceBytes / 1024 / 1024,
             data: fsi,
           }))
           .sort((a, b) =>

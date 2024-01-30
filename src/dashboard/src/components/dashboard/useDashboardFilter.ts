@@ -70,6 +70,7 @@ export const useDashboardFilter = () => {
         setDashboardTenants([selectedTenant]);
       } else {
         currentParams.delete('tenant');
+        setFilteredTenant(undefined);
         setDashboardTenants(filteredTenants);
       }
 
@@ -82,6 +83,7 @@ export const useDashboardFilter = () => {
         setDashboardOrganizations([selectedOrganization]);
       } else {
         currentParams.delete('organization');
+        setFilteredOrganization(undefined);
         setDashboardOrganizations(filteredOrganizations);
       }
 
@@ -95,6 +97,7 @@ export const useDashboardFilter = () => {
         setDashboardOperatingSystemItems([selectedOperatingSystemItem]);
       } else {
         currentParams.delete('operatingSystemItem');
+        setFilteredOperatingSystemItem(undefined);
         setDashboardOperatingSystemItems(filteredOperatingSystemItems);
       }
 
@@ -107,6 +110,7 @@ export const useDashboardFilter = () => {
         setDashboardServerItems([selectedServerItem]);
       } else {
         currentParams.delete('serverItem');
+        setFilteredServerItem(undefined);
         setDashboardServerItems(filteredServerItems);
       }
 

@@ -4,15 +4,5 @@ kind: Kustomization
 namespace: e89443-dev
 
 resources:
+  - ../../secrets/dev
   - ../../../base/database
-
-generatorOptions:
-  disableNameSuffixHash: true
-
-secretGenerator:
-  - name: database
-    envs:
-      - database.env
-  - name: database-local
-    envs:
-      - database-local.env

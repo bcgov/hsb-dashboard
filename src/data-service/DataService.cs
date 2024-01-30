@@ -244,6 +244,12 @@ public class DataService : IDataService
         if (serverItemSN.Data == null) throw new ArgumentNullException(nameof(serverItemSN));
         if (configurationItemSN.Data == null) throw new ArgumentNullException(nameof(configurationItemSN));
 
+        if (serverItemSN.Data.InstallStatus != "1")
+        {
+            this.Logger.LogDebug("Server item install status: {status}", serverItemSN.Data.InstallStatus);
+            return null;
+        }
+
         var serviceNowKey = serverItemSN.Data.Id;
         var tenant = await ProcessTenantAsync(configurationItemSN.RawData, serverItemSN.RawData);
         var organization = await ProcessOrganizationAsync(configurationItemSN.RawData, serverItemSN.RawData);
@@ -312,6 +318,12 @@ public class DataService : IDataService
     {
         if (fileSystemItemSN.Data == null) throw new ArgumentNullException(nameof(fileSystemItemSN));
         if (configurationItemSN.Data == null) throw new ArgumentNullException(nameof(configurationItemSN));
+
+        if (fileSystemItemSN.Data.InstallStatus != "1")
+        {
+            this.Logger.LogDebug("Server item install status: {status}", fileSystemItemSN.Data.InstallStatus);
+            return null;
+        }
 
         var serviceNowKey = fileSystemItemSN.Data.Id;
 
