@@ -26,11 +26,9 @@ export const Filter: React.FC = () => {
   const { isReady: serverItemsReady, serverItems } = useServerItems({
     useSimple: true,
   });
-
   const { findServerItems } = useFilteredServerItems({
     useSimple: true,
   });
-
   const { readyKey, lockKey } = useUrlParamsUpdateKey();
   const updateDashboard = useDashboardFilter();
 
@@ -89,7 +87,6 @@ export const Filter: React.FC = () => {
       const serverItem = serverItemKey
         ? serverItems.find((t) => t.serviceNowKey === serverItemKey)
         : undefined;
-
       readyKey.current = 0; // Destroy key so that it does not update the dashboard again.
       updateDashboard({ tenant, organization, operatingSystemItem, serverItem });
     }
@@ -131,19 +128,6 @@ export const Filter: React.FC = () => {
         }}
       />
       <FilteredServerItems />
-      {/* <DateRangePicker
-        values={filteredDateRange}
-        onChange={async (values, e) => {
-          setFilteredDateRange(values);
-          const serverItems = await handleFindServerItems(
-            filteredTenant,
-            filteredOrganization,
-            filteredOperatingSystemItem,
-          );
-          if (serverItems.length === 1) setFilteredServerItem(serverItems[0]);
-        }}
-      /> */}
-
       <Button
         variant="primary"
         disabled={

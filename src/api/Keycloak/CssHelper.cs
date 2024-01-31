@@ -16,6 +16,7 @@ public class CssHelper : ICssHelper
     #region Variables
     private readonly ICssEnvironmentService _cssService;
     private readonly IUserService _userService;
+    private readonly ILogger _logger;
     #endregion
 
     #region Constructors
@@ -24,10 +25,12 @@ public class CssHelper : ICssHelper
     /// </summary>
     /// <param name="cssService"></param>
     /// <param name="userService"></param>
-    public CssHelper(ICssEnvironmentService cssService, IUserService userService)
+    /// <param name="logger"></param>
+    public CssHelper(ICssEnvironmentService cssService, IUserService userService, ILogger<ICssHelper> logger)
     {
         _cssService = cssService;
         _userService = userService;
+        _logger = logger;
     }
     #endregion
 
@@ -130,12 +133,16 @@ public class CssHelper : ICssHelper
         var key = principal.GetKey() ?? throw new NotAuthorizedException("The 'preferred_username' is required but missing from token");
         var user = _userService.FindByKey(key, true);
 
+        _logger.LogDebug("User activation key: {key}", key);
+
         // If user doesn't exist, add them to the database.
         if (user == null)
         {
             var username = principal.GetUsername() ?? throw new NotAuthorizedException("The 'username' is required by missing from token");
             var email = principal.GetEmail() ?? "";
             user = _userService.FindByUsername(username, true);
+
+            _logger.LogDebug("User activation: username: {username} email: {email}", username, email);
 
             if (user == null && !String.IsNullOrWhiteSpace(email))
             {
