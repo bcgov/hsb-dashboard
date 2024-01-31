@@ -11,6 +11,7 @@ import { searchOrganizations } from '@/utils';
 import { redirect } from 'next/navigation';
 import React from 'react';
 import { IOrganizationForm } from './IOrganizationForm';
+import { LoadingAnimation } from '@/components/charts/loadingAnimation';
 
 export default function Page() {
   const state = useAuth();
@@ -73,7 +74,7 @@ export default function Page() {
   }, [formOrganizations, setOrganizations, updateOrganization]);
 
   // Only allow System Admin role to view this page.
-  if (state.status === 'loading') return <div>Loading...</div>;
+  if (state.status === 'loading') return <LoadingAnimation />;
   if (!state.isSystemAdmin) redirect('/');
 
   return (
@@ -81,9 +82,7 @@ export default function Page() {
       <Sheet>
         <div className={styles.container}>
           {loading && (
-            <Overlay>
-              <Spinner />
-            </Overlay>
+            <LoadingAnimation />
           )}
           <div className={styles.section}>
             <Info>

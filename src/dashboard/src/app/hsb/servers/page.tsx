@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks';
 import { useServerItems } from '@/hooks/data';
 import { useDashboardStore, useFilteredStore } from '@/store';
 import { redirect, useRouter } from 'next/navigation';
+import { LoadingAnimation } from '@/components/charts/loadingAnimation';
 
 export default function Page() {
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function Page() {
   const setDashboardServerItems = useDashboardStore((state) => state.setServerItems);
 
   // Only allow HSB role to view this page.
-  if (state.status === 'loading') return <div>Loading...</div>;
+  if (state.status === 'loading') return <LoadingAnimation />;
   if (!state.isHSB) redirect('/');
 
   return (

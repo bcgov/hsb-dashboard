@@ -3,7 +3,7 @@
 .container {
     height: 100%;
     width: 100%;
-    background-color: rgba($chart-gray, 0.7);
+    background-color: rgba($white, 0.7);
     position: absolute;
     top: 0;
     left: 0;
@@ -19,13 +19,14 @@
     height: 80px;
     width: 80px;
     display: flex;
+    justify-content: center;
     align-items: flex-end;
-    gap: 0.3rem;
+    gap: 0.2rem;
 
     div {
         animation: loading 2s infinite ease-in-out;
-        height: 10px;
-        width: 8px;
+        height: 5px;
+        width: 5px;
         border-radius: 2px;
         background-color: $bc-black;
 
@@ -56,7 +57,7 @@
 }
 
 @keyframes loading {
-    0% {height: 20px;}
-    50% {height: 50px; background-color: rgba($bc-black, 0.5);}
-    100% {height: 20px};
+    0% {height: 10px;}
+    50% {height: 30px; background-color: rgba($bc-black, 0.5);}
+    100% {height: 10px};
 }
