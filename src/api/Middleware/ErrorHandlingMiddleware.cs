@@ -168,6 +168,14 @@ namespace HSB.API.Middleware
 
                 _logger.LogError(ex, "Configuration error.  {error}", ex.Message);
             }
+            else if (ex is HttpClientRequestException)
+            {
+                code = HttpStatusCode.InternalServerError;
+                message = "HTTP request failure.";
+                details = ex.Data["Body"]?.ToString();
+
+                _logger.LogError(ex, "HTTP request failure.  {error}", ex.Message);
+            }
             else
             {
                 _logger.LogError(ex, "Middleware caught unhandled exception. {error}", ex.GetAllMessages());

@@ -48,29 +48,22 @@ export const Dashboard = () => {
     : operatingSystemItems;
   const selectedServerItems = dashboardServerItems.length ? dashboardServerItems : serverItems;
 
-  const isInitialLoading =
-    !dashboardOrganization && !dashboardOperatingSystemItem && !dashboardServerItem;
+  // Total storage is for a single organization
   const showTotalStorage =
-    selectedServerItems.length === 1 ||
-    (selectedOrganizations.length === 1 && selectedOperatingSystemItems.length > 1);
+    !!dashboardServerItem || (!!dashboardOrganization && !dashboardOperatingSystemItem);
+  // All organizations is for multiple organizations
+  const showAllOrganizations = !dashboardOrganization;
+  // For multiple OS
   const showAllocationByOS =
-    selectedOrganizations.length === 1 &&
-    selectedOperatingSystemItems.length > 1 &&
-    selectedServerItems.length !== 1;
-  const showAllocationByVolume = selectedServerItems.length === 1;
-  const showAllOrganizations =
-    isInitialLoading ||
-    (selectedOrganizations.length > 1 &&
-      selectedOperatingSystemItems.length > 1 &&
-      selectedServerItems.length > 1);
-  const showAllocationByStorageVolume =
-    isInitialLoading ||
-    (selectedOrganizations.length > 1 &&
-      selectedOperatingSystemItems.length > 1 &&
-      selectedServerItems.length > 1);
-  const showAllocationTable =
-    selectedOperatingSystemItems.length === 1 && selectedServerItems.length > 1;
-  const showSegmentedBarChart = selectedServerItems.length === 1;
+    !!dashboardOrganization && !dashboardOperatingSystemItem && !dashboardServerItem;
+  // A single server
+  const showAllocationByVolume = !!dashboardServerItem;
+  // All servers within available organizations
+  const showAllocationByStorageVolume = !dashboardOrganization;
+  // All servers with OS
+  const showAllocationTable = !!dashboardOperatingSystemItem && !dashboardServerItem;
+  // Show each drive over time for server
+  const showSegmentedBarChart = !!dashboardServerItem;
 
   return (
     <>
@@ -105,11 +98,7 @@ export const Dashboard = () => {
         />
       )}
       <StorageTrendsChart
-        large={
-          selectedOrganizations.length === 1 ||
-          selectedOperatingSystemItems.length === 1 ||
-          selectedServerItems.length === 1
-        }
+        large={!!dashboardOrganization || !!dashboardOperatingSystemItem || !!dashboardServerItem}
       />
       {showAllocationByStorageVolume && (
         <AllocationByStorageVolume
@@ -123,7 +112,6 @@ export const Dashboard = () => {
       )}
       {showAllocationTable && (
         <AllocationTable
-          osClassName={dashboardServerItem?.className}
           operatingSystemId={dashboardOperatingSystemItem?.id}
           serverItems={selectedServerItems}
           loading={!isReadyServerItems || !isReadyOperatingSystemItems}
