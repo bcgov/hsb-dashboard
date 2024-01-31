@@ -1,13 +1,15 @@
-import { useDashboard } from '@/store';
+import { IServerHistoryItemFilter, IServerHistoryItemModel, useApiServerItems } from '@/hooks';
+import { useStorageTrendsStore } from '@/store';
 import React from 'react';
-import { IServerHistoryItemFilter, IServerHistoryItemModel, useApiServerItems } from '..';
 
-export const useDashboardServerHistoryItems = () => {
+export const useServerHistoryItems = () => {
   const { history } = useApiServerItems();
-  const serverHistoryItemsReady = useDashboard((state) => state.serverHistoryItemsReady);
-  const setServerHistoryItemsReady = useDashboard((state) => state.setServerHistoryItemsReady);
-  const serverHistoryItems = useDashboard((state) => state.serverHistoryItems);
-  const setServerHistoryItems = useDashboard((state) => state.setServerHistoryItems);
+  const serverHistoryItemsReady = useStorageTrendsStore((state) => state.serverHistoryItemsReady);
+  const setServerHistoryItemsReady = useStorageTrendsStore(
+    (state) => state.setServerHistoryItemsReady,
+  );
+  const serverHistoryItems = useStorageTrendsStore((state) => state.serverHistoryItems);
+  const setServerHistoryItems = useStorageTrendsStore((state) => state.setServerHistoryItems);
 
   const fetch = React.useCallback(
     async (filter: IServerHistoryItemFilter) => {

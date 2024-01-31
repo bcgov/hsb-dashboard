@@ -1,15 +1,17 @@
-import { useDashboard } from '@/store';
+import { useDashboardStore } from '@/store';
 import React from 'react';
 
 export const useDashboardServerItems = () => {
-  const serverItems = useDashboard((state) => state.serverItems);
-  const setServerItems = useDashboard((state) => state.setServerItems);
+  const serverItem = useDashboardStore((state) => state.serverItem);
+  const serverItems = useDashboardStore((state) => state.serverItems);
+  const setServerItems = useDashboardStore((state) => state.setServerItems);
 
   return React.useMemo(
     () => ({
+      serverItem,
       serverItems,
       setServerItems,
     }),
-    [serverItems, setServerItems],
+    [serverItem, serverItems, setServerItems],
   );
 };

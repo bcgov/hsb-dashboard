@@ -5,10 +5,11 @@ import { ITableRowData } from '../ITableRowData';
 
 /**
  * Provides a function to filter server items.
- * @param operatingSystem Operating system filter.
+ * @param osClassName Operating system filter.
+ * @param operatingSystemId Operating system filter.
  * @returns Function to filter server items by operating system and predicate.
  */
-export const useAllocationByOS = (operatingSystem?: string) => {
+export const useAllocationByOS = (osClassName?: string, operatingSystemId?: number) => {
   const { operatingSystemItems } = useOperatingSystemItems();
   const { tenants } = useTenants();
 
@@ -22,12 +23,18 @@ export const useAllocationByOS = (operatingSystem?: string) => {
       const data = serverItems
         .map((si) => ({
           ...si,
-          operatingSystemItem: operatingSystemItems.find((o) => o.id === si.operatingSystemItemId),
+          operatingSystemItem: operatingSystemItems.find(
+            (os) => os.id === si.operatingSystemItemId,
+          ),
           tenant: tenants.find((t) => t.id === si.tenantId),
         }))
         .filter((si) => {
           const className = si.operatingSystemItem?.rawData.u_class;
-          return (!operatingSystem || className === operatingSystem) && filter(si);
+          return (
+            (!osClassName || className === osClassName) &&
+            (!operatingSystemId || si.operatingSystemItem?.id === operatingSystemId) &&
+            filter(si)
+          );
         })
         .map<ITableRowData<IServerItemModel>>((si) => {
           return {
@@ -57,6 +64,6 @@ export const useAllocationByOS = (operatingSystem?: string) => {
 
       return data;
     },
-    [operatingSystem, operatingSystemItems, tenants],
+    [osClassName, operatingSystemId, operatingSystemItems, tenants],
   );
 };

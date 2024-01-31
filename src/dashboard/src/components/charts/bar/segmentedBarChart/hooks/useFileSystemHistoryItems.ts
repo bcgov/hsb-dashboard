@@ -1,19 +1,21 @@
-import { useDashboard } from '@/store';
-import React from 'react';
 import {
   IFileSystemHistoryItemFilter,
   IFileSystemHistoryItemModel,
   useApiFileSystemItems,
-} from '..';
+} from '@/hooks';
+import { useStorageTrendsStore } from '@/store';
+import React from 'react';
 
-export const useDashboardFileSystemHistoryItems = () => {
+export const useFileSystemHistoryItems = () => {
   const { history } = useApiFileSystemItems();
-  const fileSystemHistoryItemsReady = useDashboard((state) => state.fileSystemHistoryItemsReady);
-  const setFileSystemHistoryItemsReady = useDashboard(
+  const fileSystemHistoryItemsReady = useStorageTrendsStore(
+    (state) => state.fileSystemHistoryItemsReady,
+  );
+  const setFileSystemHistoryItemsReady = useStorageTrendsStore(
     (state) => state.setFileSystemHistoryItemsReady,
   );
-  const fileSystemHistoryItems = useDashboard((state) => state.fileSystemHistoryItems);
-  const setFilteredFileSystemHistoryItems = useDashboard(
+  const fileSystemHistoryItems = useStorageTrendsStore((state) => state.fileSystemHistoryItems);
+  const setFilteredFileSystemHistoryItems = useStorageTrendsStore(
     (state) => state.setFileSystemHistoryItems,
   );
 

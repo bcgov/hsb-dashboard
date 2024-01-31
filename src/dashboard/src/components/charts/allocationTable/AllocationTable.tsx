@@ -6,17 +6,18 @@ import { IServerItemModel } from '@/hooks';
 import classNames from 'classnames';
 import { debounce } from 'lodash';
 import React from 'react';
+import { LoadingAnimation } from '../loadingAnimation';
 import styles from './AllocationTable.module.scss';
 import { Dropdown } from './Dropdown';
 import { ITableRowData } from './ITableRowData';
 import { TableRow } from './TableRow';
 import { useAllocationByOS } from './hooks';
 import { getColumns, getLabel } from './utils';
-import { LoadingAnimation } from '../loadingAnimation';
 
 export interface IAllocationTableProps {
   /** Filter servers by their OS */
-  operatingSystem?: string;
+  osClassName?: string;
+  operatingSystemId?: number;
   serverItems: IServerItemModel[];
   loading?: boolean;
   onClick?: (serverItem?: IServerItemModel) => void;
@@ -24,13 +25,14 @@ export interface IAllocationTableProps {
 }
 
 export const AllocationTable = ({
-  operatingSystem,
+  osClassName,
+  operatingSystemId,
   serverItems,
   loading,
   onClick,
   margin,
 }: IAllocationTableProps) => {
-  const getServerItems = useAllocationByOS(operatingSystem);
+  const getServerItems = useAllocationByOS(osClassName, operatingSystemId);
 
   const [keyword, setKeyword] = React.useState('');
   const [filter, setFilter] = React.useState(keyword);
@@ -66,8 +68,8 @@ export const AllocationTable = ({
     <div className={styles.panel} style={margin ? { marginTop: margin } : {}}>
       {loading && <LoadingAnimation />}
       <h1>
-        {operatingSystem
-          ? `Allocation by Storage Volume - All ${getLabel(operatingSystem)}`
+        {osClassName
+          ? `Allocation by Storage Volume - All ${getLabel(osClassName)}`
           : 'All Servers'}
       </h1>
       <div className={styles.filter}>

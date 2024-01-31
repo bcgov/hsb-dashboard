@@ -1,5 +1,5 @@
 import { IOption } from '@/components';
-import { useApp } from '@/store';
+import { useAppStore } from '@/store';
 import React from 'react';
 import { IRoleModel, useAuth } from '..';
 import { useApiRoles } from '../api/admin';
@@ -11,8 +11,8 @@ export interface IUsersProps {
 export const useRoles = ({ init }: IUsersProps = {}) => {
   const { status } = useAuth();
   const { find } = useApiRoles();
-  const roles = useApp((state) => state.roles);
-  const setRoles = useApp((state) => state.setRoles);
+  const roles = useAppStore((state) => state.roles);
+  const setRoles = useAppStore((state) => state.setRoles);
 
   const [isReady, setIsReady] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);

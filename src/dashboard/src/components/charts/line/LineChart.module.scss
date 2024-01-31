@@ -1,32 +1,19 @@
 @import '@/styles/utils.scss';
 
 .lineChart {
-    button {
-        @include export-btn;
-    }
+  button {
+    @include export-btn;
+  }
 }
 
 .panel {
-    @include panel-style(370px, unset, unset, 638px);
+  @include panel-style(370px, unset, unset, 638px);
 }
 
 .panelLarge {
-    @include panel-style(480px, unset, unset, 1310px);
+  @include panel-style(480px, unset, unset, 1310px);
 
-    .chartContainer {
-        min-height: 420px;
-    }
-}
-
-.date {
-    margin-top: 10px;
-    display: flex;
-    gap: 1rem;
-
-    button {
-        position: relative;
-        padding: 5px 10px;
-        top: unset;
-        right: unset;
-    }
+  .chartContainer {
+    min-height: 420px;
+  }
 }

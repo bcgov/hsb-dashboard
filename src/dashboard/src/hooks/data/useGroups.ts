@@ -1,5 +1,5 @@
 import { IOption } from '@/components';
-import { useApp } from '@/store';
+import { useAppStore } from '@/store';
 import React from 'react';
 import { IGroupModel, useAuth } from '..';
 import { useApiGroups } from '../api/admin';
@@ -11,8 +11,8 @@ export interface IGroupsProps {
 export const useGroups = ({ init }: IGroupsProps = {}) => {
   const { status } = useAuth();
   const { find } = useApiGroups();
-  const groups = useApp((state) => state.groups);
-  const setGroups = useApp((state) => state.setGroups);
+  const groups = useAppStore((state) => state.groups);
+  const setGroups = useAppStore((state) => state.setGroups);
 
   const [isReady, setIsReady] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);

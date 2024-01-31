@@ -17,7 +17,6 @@ import {
 } from '@/hooks/dashboard';
 import { useOperatingSystemItems, useOrganizations, useServerItems } from '@/hooks/data';
 import { useFilteredFileSystemItems } from '@/hooks/filter';
-import { useDashboard } from '@/store';
 import { useDashboardFilter } from '.';
 
 /**
@@ -29,12 +28,15 @@ export const Dashboard = () => {
   const { isReady: isReadyOrganizations, organizations } = useOrganizations();
   const { isReady: isReadyOperatingSystemItems, operatingSystemItems } = useOperatingSystemItems();
   const { isReady: isReadyServerItems, serverItems } = useServerItems({ useSimple: true });
-  const { organizations: dashboardOrganizations } = useDashboardOrganizations();
-  const { operatingSystemItems: dashboardOperatingSystemItems } =
-    useDashboardOperatingSystemItems();
-  const { serverItems: dashboardServerItems } = useDashboardServerItems();
-  const dateRange = useDashboard((state) => state.dateRange);
-  const { fileSystemItems } = useFilteredFileSystemItems();
+  const { organization: dashboardOrganization, organizations: dashboardOrganizations } =
+    useDashboardOrganizations();
+  const {
+    operatingSystemItem: dashboardOperatingSystemItem,
+    operatingSystemItems: dashboardOperatingSystemItems,
+  } = useDashboardOperatingSystemItems();
+  const { serverItem: dashboardServerItem, serverItems: dashboardServerItems } =
+    useDashboardServerItems();
+  const { isLoading: fileSystemItemsIsLoading, fileSystemItems } = useFilteredFileSystemItems();
 
   const updateDashboard = useDashboardFilter();
 
@@ -46,6 +48,8 @@ export const Dashboard = () => {
     : operatingSystemItems;
   const selectedServerItems = dashboardServerItems.length ? dashboardServerItems : serverItems;
 
+  const isInitialLoading =
+    !dashboardOrganization && !dashboardOperatingSystemItem && !dashboardServerItem;
   const showTotalStorage =
     selectedServerItems.length === 1 ||
     (selectedOrganizations.length === 1 && selectedOperatingSystemItems.length > 1);
@@ -55,13 +59,15 @@ export const Dashboard = () => {
     selectedServerItems.length !== 1;
   const showAllocationByVolume = selectedServerItems.length === 1;
   const showAllOrganizations =
-    selectedOrganizations.length > 1 &&
-    selectedOperatingSystemItems.length > 1 &&
-    selectedServerItems.length > 1;
+    isInitialLoading ||
+    (selectedOrganizations.length > 1 &&
+      selectedOperatingSystemItems.length > 1 &&
+      selectedServerItems.length > 1);
   const showAllocationByStorageVolume =
-    selectedOrganizations.length > 1 &&
-    selectedOperatingSystemItems.length > 1 &&
-    selectedServerItems.length > 1;
+    isInitialLoading ||
+    (selectedOrganizations.length > 1 &&
+      selectedOperatingSystemItems.length > 1 &&
+      selectedServerItems.length > 1);
   const showAllocationTable =
     selectedOperatingSystemItems.length === 1 && selectedServerItems.length > 1;
   const showSegmentedBarChart = selectedServerItems.length === 1;
@@ -69,7 +75,12 @@ export const Dashboard = () => {
   return (
     <>
       {/* Single Organization total storage */}
-      {showTotalStorage && <TotalStorage serverItems={selectedServerItems} loading={false} />}
+      {showTotalStorage && (
+        <TotalStorage
+          serverItems={selectedServerItems}
+          loading={!isReadyOrganizations || !isReadyServerItems}
+        />
+      )}
       {/* Multiple OS */}
       {showAllocationByOS && (
         <AllocationByOS
@@ -83,7 +94,7 @@ export const Dashboard = () => {
       )}
       {/* One Server Selected */}
       {showAllocationByVolume && (
-        <AllocationByVolume fileSystemItems={fileSystemItems} loading={false} />
+        <AllocationByVolume fileSystemItems={fileSystemItems} loading={fileSystemItemsIsLoading} />
       )}
       {/* Multiple Organizations */}
       {showAllOrganizations && (
@@ -94,13 +105,11 @@ export const Dashboard = () => {
         />
       )}
       <StorageTrendsChart
-        loading={false}
         large={
           selectedOrganizations.length === 1 ||
           selectedOperatingSystemItems.length === 1 ||
           selectedServerItems.length === 1
         }
-        dateRange={dateRange}
       />
       {showAllocationByStorageVolume && (
         <AllocationByStorageVolume
@@ -114,7 +123,8 @@ export const Dashboard = () => {
       )}
       {showAllocationTable && (
         <AllocationTable
-          operatingSystem={selectedServerItems[0].className}
+          osClassName={dashboardServerItem?.className}
+          operatingSystemId={dashboardOperatingSystemItem?.id}
           serverItems={selectedServerItems}
           loading={!isReadyServerItems || !isReadyOperatingSystemItems}
           onClick={async (serverItem) => {
@@ -123,11 +133,7 @@ export const Dashboard = () => {
         />
       )}
       {showSegmentedBarChart && (
-        <SegmentedBarChart
-          serverItem={selectedServerItems[0]}
-          loading={!isReadyServerItems}
-          dateRange={dateRange}
-        />
+        <SegmentedBarChart serverItem={dashboardServerItem} loading={!isReadyServerItems} />
       )}
     </>
   );

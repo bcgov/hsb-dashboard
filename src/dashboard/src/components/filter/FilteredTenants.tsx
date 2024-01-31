@@ -19,7 +19,7 @@ import {
   useFilteredOrganizations,
   useFilteredTenants,
 } from '@/hooks/filter';
-import { useFiltered } from '@/store';
+import { useFilteredStore } from '@/store';
 import React from 'react';
 
 export interface IFilteredTenantsProps {
@@ -38,22 +38,24 @@ export const FilteredTenants = ({ onChange }: IFilteredTenantsProps) => {
   const { operatingSystemItems } = useOperatingSystemItems();
   const { isReady: serverItemsReady } = useServerItems();
 
-  const filteredTenant = useFiltered((state) => state.tenant);
-  const setFilteredTenant = useFiltered((state) => state.setTenant);
-  const setFilteredTenants = useFiltered((state) => state.setTenants);
+  const filteredTenant = useFilteredStore((state) => state.tenant);
+  const setFilteredTenant = useFilteredStore((state) => state.setTenant);
+  const setFilteredTenants = useFilteredStore((state) => state.setTenants);
   const { options: filteredTenantOptions } = useFilteredTenants();
 
-  const filteredOrganization = useFiltered((state) => state.organization);
-  const setFilteredOrganization = useFiltered((state) => state.setOrganization);
-  const setFilteredOrganizations = useFiltered((state) => state.setOrganizations);
+  const filteredOrganization = useFilteredStore((state) => state.organization);
+  const setFilteredOrganization = useFilteredStore((state) => state.setOrganization);
+  const setFilteredOrganizations = useFilteredStore((state) => state.setOrganizations);
   const { findOrganizations } = useFilteredOrganizations();
 
-  const filteredOperatingSystemItem = useFiltered((state) => state.operatingSystemItem);
-  const setFilteredOperatingSystemItem = useFiltered((state) => state.setOperatingSystemItem);
-  const setFilteredOperatingSystemItems = useFiltered((state) => state.setOperatingSystemItems);
+  const filteredOperatingSystemItem = useFilteredStore((state) => state.operatingSystemItem);
+  const setFilteredOperatingSystemItem = useFilteredStore((state) => state.setOperatingSystemItem);
+  const setFilteredOperatingSystemItems = useFilteredStore(
+    (state) => state.setOperatingSystemItems,
+  );
   const { findOperatingSystemItems } = useFilteredOperatingSystemItems();
 
-  const setFilteredServerItem = useFiltered((state) => state.setServerItem);
+  const setFilteredServerItem = useFilteredStore((state) => state.setServerItem);
 
   const enableTenants = isHSB || tenants.length > 0;
 

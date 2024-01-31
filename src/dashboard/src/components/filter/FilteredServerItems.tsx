@@ -3,7 +3,7 @@
 import { Select } from '@/components';
 import { useServerItems } from '@/hooks/data';
 import { useFilteredServerItems } from '@/hooks/filter';
-import { useFiltered } from '@/store';
+import { useFilteredStore } from '@/store';
 import React from 'react';
 
 export const FilteredServerItems = () => {
@@ -12,9 +12,9 @@ export const FilteredServerItems = () => {
     init: true,
   });
 
-  const filteredServerItem = useFiltered((state) => state.serverItem);
-  const setFilteredServerItem = useFiltered((state) => state.setServerItem);
-  const setFilteredServerItems = useFiltered((state) => state.setServerItems);
+  const filteredServerItem = useFilteredStore((state) => state.serverItem);
+  const setFilteredServerItem = useFilteredStore((state) => state.setServerItem);
+  const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
   const { options: filteredServerItemOptions } = useFilteredServerItems({
     useSimple: true,
   });

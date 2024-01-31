@@ -7,11 +7,7 @@ import {
 } from '@/hooks/api';
 import { create } from 'zustand';
 
-export interface IFilteredState {
-  // Date Range
-  dateRange: string[];
-  setDateRange: (value?: string[]) => void;
-
+export interface IFilteredStoreState {
   // Tenants
   tenantsReady?: boolean;
   setTenantsReady: (value?: boolean) => void;
@@ -53,11 +49,7 @@ export interface IFilteredState {
   setFileSystemItems: (values: IFileSystemItemModel[]) => void;
 }
 
-export const useFiltered = create<IFilteredState>((set) => ({
-  // Date Range
-  dateRange: [],
-  setDateRange: (values) => set((state) => ({ dateRange: values })),
-
+export const useFilteredStore = create<IFilteredStoreState>((set) => ({
   // Tenants
   setTenantsReady: (value) => set((state) => ({ tenantsReady: value })),
   setTenant: (value) => set((state) => ({ tenant: value })),

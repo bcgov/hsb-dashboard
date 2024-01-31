@@ -1,15 +1,17 @@
-import { useDashboard } from '@/store';
+import { useDashboardStore } from '@/store';
 import React from 'react';
 
 export const useDashboardTenants = () => {
-  const tenants = useDashboard((state) => state.tenants);
-  const setTenants = useDashboard((state) => state.setTenants);
+  const tenant = useDashboardStore((state) => state.tenant);
+  const tenants = useDashboardStore((state) => state.tenants);
+  const setTenants = useDashboardStore((state) => state.setTenants);
 
   return React.useMemo(
     () => ({
+      tenant,
       tenants,
       setTenants,
     }),
-    [tenants, setTenants],
+    [tenant, tenants, setTenants],
   );
 };

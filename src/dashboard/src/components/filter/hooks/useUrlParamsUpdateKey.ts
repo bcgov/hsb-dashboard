@@ -1,4 +1,3 @@
-import { useFiltered } from '@/store';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
 
@@ -9,7 +8,6 @@ import React from 'react';
  */
 export const useUrlParamsUpdateKey = () => {
   const params = useSearchParams();
-  const filteredServerItem = useFiltered((state) => state.serverItem);
 
   const readyKey = React.useRef(0);
   const lockKey = React.useRef(0);

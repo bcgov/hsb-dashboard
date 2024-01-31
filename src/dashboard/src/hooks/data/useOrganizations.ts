@@ -1,4 +1,4 @@
-import { useApp } from '@/store';
+import { useAppStore } from '@/store';
 import React from 'react';
 import { IOrganizationModel, useApiOrganizations, useAuth } from '..';
 
@@ -10,8 +10,8 @@ export interface IOrganizationsProps {
 export const useOrganizations = ({ init, includeTenants }: IOrganizationsProps = {}) => {
   const { status } = useAuth();
   const { find } = useApiOrganizations();
-  const organizations = useApp((state) => state.organizations);
-  const setOrganizations = useApp((state) => state.setOrganizations);
+  const organizations = useAppStore((state) => state.organizations);
+  const setOrganizations = useAppStore((state) => state.setOrganizations);
 
   const [isReady, setIsReady] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);

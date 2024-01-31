@@ -2,7 +2,6 @@
 
 import { Button, useDashboardFilter } from '@/components';
 import { IOperatingSystemItemModel, IOrganizationModel, ITenantModel } from '@/hooks';
-import { useDashboardServerHistoryItems } from '@/hooks/dashboard';
 import {
   useOperatingSystemItems,
   useOrganizations,
@@ -10,8 +9,6 @@ import {
   useTenants,
 } from '@/hooks/data';
 import { useFilteredServerItems } from '@/hooks/filter';
-import { useFiltered } from '@/store';
-import moment from 'moment';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
 import styles from './Filter.module.scss';
@@ -30,14 +27,9 @@ export const Filter: React.FC = () => {
     useSimple: true,
   });
 
-  const filteredDateRange = useFiltered((state) => state.dateRange);
-  const setFilteredDateRange = useFiltered((state) => state.setDateRange);
-
   const { findServerItems } = useFilteredServerItems({
     useSimple: true,
   });
-
-  const { isReady: serverHistoryItemsReady } = useDashboardServerHistoryItems();
 
   const { readyKey, lockKey } = useUrlParamsUpdateKey();
   const updateDashboard = useDashboardFilter();
@@ -105,15 +97,6 @@ export const Filter: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [readyKey, updateDashboard, lockKey]);
 
-  React.useEffect(() => {
-    if (!filteredDateRange[0]) {
-      setFilteredDateRange([
-        moment().subtract(1, 'year').format('YYYY-MM-DD 00:00:00'),
-        filteredDateRange ? filteredDateRange[1] : '',
-      ]);
-    }
-  }, [filteredDateRange, setFilteredDateRange]);
-
   const handleFindServerItems = React.useCallback(
     async (
       tenant?: ITenantModel,
@@ -164,13 +147,11 @@ export const Filter: React.FC = () => {
       <Button
         variant="primary"
         disabled={
-          !tenantsReady ||
-          !organizationsReady ||
-          !operatingSystemItemsReady ||
-          !serverItemsReady ||
-          !serverHistoryItemsReady
+          !tenantsReady || !organizationsReady || !operatingSystemItemsReady || !serverItemsReady
         }
-        loading={!serverHistoryItemsReady}
+        loading={
+          !tenantsReady || !organizationsReady || !operatingSystemItemsReady || !serverItemsReady
+        }
         onClick={async () => {
           await updateDashboard();
         }}

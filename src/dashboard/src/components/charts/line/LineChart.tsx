@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, DateRangePicker } from '@/components';
+import { Button } from '@/components';
 import {
   CategoryScale,
   ChartData,
@@ -16,9 +16,9 @@ import {
   Tooltip,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import { LoadingAnimation } from '../loadingAnimation';
 import styles from './LineChart.module.scss';
 import { defaultChartOptions } from './defaultChartOptions';
-import { LoadingAnimation } from '../loadingAnimation';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -26,6 +26,7 @@ interface LineChartProps<TData = DefaultDataPoint<'line'>, TLabel = unknown> {
   label?: string;
   large?: boolean;
   options?: ChartOptions<'line'>;
+  filter?: React.ReactNode;
   data: ChartData<'line', TData, TLabel>;
   showExport?: boolean;
   exportDisabled?: boolean;
@@ -41,6 +42,7 @@ export const LineChart = <
   large,
   data,
   options = defaultChartOptions,
+  filter,
   showExport,
   exportDisabled,
   loading,
@@ -49,9 +51,7 @@ export const LineChart = <
     <div className={`${styles.lineChart} ${large ? styles.panelLarge : styles.panel}`}>
       {loading && <LoadingAnimation />}
       {label && <h1>{label}</h1>}
-      <div className={styles.date}>
-        <DateRangePicker />
-      </div>
+      {filter}
       <div className={styles.chartContainer}>
         <Line data={data} options={{ ...options, maintainAspectRatio: !large }} />
       </div>

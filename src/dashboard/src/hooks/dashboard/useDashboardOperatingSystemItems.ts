@@ -1,15 +1,13 @@
-import { useDashboard } from '@/store';
+import { useDashboardStore } from '@/store';
 import React from 'react';
 
 export const useDashboardOperatingSystemItems = () => {
-  const operatingSystemItems = useDashboard((state) => state.operatingSystemItems);
-  const setOperatingSystemItems = useDashboard((state) => state.setOperatingSystemItems);
+  const operatingSystemItem = useDashboardStore((state) => state.operatingSystemItem);
+  const operatingSystemItems = useDashboardStore((state) => state.operatingSystemItems);
+  const setOperatingSystemItems = useDashboardStore((state) => state.setOperatingSystemItems);
 
   return React.useMemo(
-    () => ({
-      operatingSystemItems,
-      setOperatingSystemItems,
-    }),
-    [operatingSystemItems, setOperatingSystemItems],
+    () => ({ operatingSystemItem, operatingSystemItems, setOperatingSystemItems }),
+    [operatingSystemItem, operatingSystemItems, setOperatingSystemItems],
   );
 };

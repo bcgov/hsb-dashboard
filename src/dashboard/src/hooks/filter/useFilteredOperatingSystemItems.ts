@@ -1,5 +1,5 @@
 import { IOption } from '@/components';
-import { useFiltered } from '@/store';
+import { useFilteredStore } from '@/store';
 import React from 'react';
 import {
   IOperatingSystemItemFilter,
@@ -9,16 +9,25 @@ import {
 
 export const useFilteredOperatingSystemItems = () => {
   const { find } = useApiOperatingSystemItems();
-  const operatingSystemItem = useFiltered((state) => state.operatingSystemItem);
-  const operatingSystemItems = useFiltered((state) => state.operatingSystemItems);
-  const setOperatingSystemItems = useFiltered((state) => state.setOperatingSystemItems);
+  const operatingSystemItem = useFilteredStore((state) => state.operatingSystemItem);
+  const operatingSystemItems = useFilteredStore((state) => state.operatingSystemItems);
+  const setOperatingSystemItems = useFilteredStore((state) => state.setOperatingSystemItems);
+
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const fetch = React.useCallback(
     async (filter: IOperatingSystemItemFilter) => {
-      const res = await find(filter);
-      const operatingSystemItems: IOperatingSystemItemModel[] = await res.json();
-      setOperatingSystemItems(operatingSystemItems);
-      return operatingSystemItems;
+      try {
+        setIsLoading(true);
+        const res = await find(filter);
+        const operatingSystemItems: IOperatingSystemItemModel[] = await res.json();
+        setOperatingSystemItems(operatingSystemItems);
+        return operatingSystemItems;
+      } catch (error) {
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
     },
     [find, setOperatingSystemItems],
   );
@@ -37,11 +46,12 @@ export const useFilteredOperatingSystemItems = () => {
 
   return React.useMemo(
     () => ({
+      isLoading,
       findOperatingSystemItems: fetch,
       options,
       operatingSystemItems,
       operatingSystemItem,
     }),
-    [fetch, options, operatingSystemItems, operatingSystemItem],
+    [isLoading, fetch, options, operatingSystemItems, operatingSystemItem],
   );
 };

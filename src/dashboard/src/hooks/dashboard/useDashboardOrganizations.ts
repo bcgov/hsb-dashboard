@@ -1,15 +1,13 @@
-import { useDashboard } from '@/store';
+import { useDashboardStore } from '@/store';
 import React from 'react';
 
 export const useDashboardOrganizations = () => {
-  const organizations = useDashboard((state) => state.organizations);
-  const setOrganizations = useDashboard((state) => state.setOrganizations);
+  const organization = useDashboardStore((state) => state.organization);
+  const organizations = useDashboardStore((state) => state.organizations);
+  const setOrganizations = useDashboardStore((state) => state.setOrganizations);
 
   return React.useMemo(
-    () => ({
-      organizations,
-      setOrganizations,
-    }),
-    [organizations, setOrganizations],
+    () => ({ organization, organizations, setOrganizations }),
+    [organization, organizations, setOrganizations],
   );
 };
