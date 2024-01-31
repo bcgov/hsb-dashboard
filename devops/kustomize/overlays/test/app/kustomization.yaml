@@ -1,11 +1,11 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: e89443-dev
+namespace: e89443-test
 
 resources:
-  - ../../secrets/dev
-  - ../../../base/api
+  - ../../secrets/test
+  - ../../../base/app
   - ../../../base/config
 
 patches:
@@ -18,7 +18,7 @@ patches:
         value: "true"
       - op: replace
         path: /data/KEYCLOAK_AUTHORITY
-        value: https://dev.loginproxy.gov.bc.ca/auth/realms/standard
+        value: https://test.loginproxy.gov.bc.ca/auth/realms/standard
       - op: replace
         path: /data/KEYCLOAK_AUDIENCE
         value: hsb-dashboard-5128
@@ -38,25 +38,32 @@ patches:
       - op: replace
         path: /data/CSS_AUTHORITY
         value: https://loginproxy.gov.bc.ca
+  - target:
+      kind: ConfigMap
+      name: dashboard
+    patch: |-
+      - op: replace
+        path: /data/NEXTAUTH_URL
+        value: https://test-hsb.apps.emerald.devops.gov.bc.ca
 
   - target:
       kind: Route
-      name: api
+      name: dashboard
     patch: |-
       - op: replace
         path: /spec/host
-        value: dev-api-hsb.apps.emerald.devops.gov.bc.ca
+        value: test-hsb.apps.emerald.devops.gov.bc.ca
   # - target:
   #     kind: Route
-  #     name: api-tls
+  #     name: dashboard-tls
   #   patch: |-
   #     - op: replace
   #       path: /spec/host
-  #       value: api.hsb.gov.bc.ca
+  #       value: hsb.gov.bc.ca
 
   - target:
       kind: DeploymentConfig
-      name: api
+      name: dashboard
     patch: |-
       - op: replace
         path: /spec/replicas
@@ -69,10 +76,10 @@ patches:
         value: 100Mi
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/cpu
-        value: 200m
+        value: 100m
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/memory
-        value: 1Gi
+        value: 250Mi
       - op: replace
         path: /spec/triggers/1/imageChangeParams/from/name
-        value: api:dev
+        value: dashboard:test

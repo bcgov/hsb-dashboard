@@ -4,19 +4,9 @@ kind: Kustomization
 namespace: e89443-dev
 
 resources:
+  - ../../secrets/dev
   - ../../../base/app
   - ../../../base/config
-
-generatorOptions:
-  disableNameSuffixHash: true
-
-secretGenerator:
-  - name: keycloak
-    envs:
-      - keycloak.env
-  - name: dashboard
-    envs:
-      - dashboard.env
 
 patches:
   - target:

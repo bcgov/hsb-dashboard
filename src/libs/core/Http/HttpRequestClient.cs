@@ -17,7 +17,6 @@ namespace HSB.Core.Http
     {
         #region Variables
         protected readonly JsonSerializerOptions _serializeOptions;
-        private readonly ILogger<HttpRequestClient> _logger;
         #endregion
 
         #region Properties
@@ -25,6 +24,11 @@ namespace HSB.Core.Http
         /// get - The HttpClient use to make requests.
         /// </summary>
         public HttpClient Client { get; }
+
+        /// <summary>
+        /// get - Logger.
+        /// </summary>
+        protected ILogger<HttpRequestClient> Logger { get; }
         #endregion
 
         #region Constructors
@@ -52,7 +56,7 @@ namespace HSB.Core.Http
                 if (_serializeOptions.DefaultIgnoreCondition != JsonIgnoreCondition.WhenWritingNull)
                     _serializeOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             }
-            _logger = logger;
+            this.Logger = logger;
         }
         #endregion
 
@@ -84,7 +88,7 @@ namespace HSB.Core.Http
             catch (Exception ex)
             {
                 var body = Encoding.Default.GetString(data);
-                _logger.LogError(ex, "Failed to deserialize response: {body}", body);
+                this.Logger.LogError(ex, "Failed to deserialize response: {body}", body);
                 throw;
             }
 
@@ -172,7 +176,7 @@ namespace HSB.Core.Http
                 message.Headers.Add("User-Agent", "HSB");
             }
 
-            _logger.LogDebug("HTTP request made: {method}:{uri} (User-Agent: {userAgent})",
+            this.Logger.LogDebug("HTTP request made: {method}:{uri} (User-Agent: {userAgent})",
                 message.Method, message.RequestUri, userAgent);
             return await this.Client.SendAsync(message);
         }
@@ -468,7 +472,7 @@ namespace HSB.Core.Http
             if ((onError?.Invoke(response) ?? false) == false)
             {
                 var error = new HttpClientRequestException(response);
-                _logger.LogError(error, "{message}", error.Message);
+                this.Logger.LogError(error, "{message}", error.Message);
                 throw error;
             }
 

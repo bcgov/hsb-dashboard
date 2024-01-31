@@ -26,6 +26,12 @@ public class BaseItemModel
     /// <summary>
     /// get/set -
     /// </summary>
+    [JsonPropertyName("install_status")]
+    public string? InstallStatus { get; set; }
+
+    /// <summary>
+    /// get/set -
+    /// </summary>
     [JsonPropertyName("host_name")]
     public string? HostName { get; set; }
 

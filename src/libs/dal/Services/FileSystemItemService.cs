@@ -99,17 +99,19 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
         var server = this.Context.ServerItems.FirstOrDefault(si => si.ServiceNowKey == entity.ServerItemServiceNowKey);
         if (server != null)
         {
+            // TODO: File system items need to be removed otherwise this formula will be invalid over time.
             var volumes = this.Context.FileSystemItems.AsNoTracking().Where(fsi => fsi.ServerItemServiceNowKey == entity.ServerItemServiceNowKey).ToArray();
-            server.Capacity = volumes.Sum(v => v.Capacity);
-            server.AvailableSpace = volumes.Sum(v => v.AvailableSpace);
+            server.Capacity = volumes.Sum(v => v.SizeBytes / 1024 / 1024);
+            server.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes / 1024 / 1024);
             this.Context.Entry(server).State = EntityState.Modified;
 
             // Update current historical record too.
+            // TODO: File system items need to be removed otherwise this formula will be invalid over time.
             var history = this.Context.ServerHistoryItems.FirstOrDefault(shi => shi.ServiceNowKey == server.ServiceNowKey && shi.HistoryKey == server.HistoryKey);
             if (history != null)
             {
-                history.Capacity = volumes.Sum(v => v.Capacity);
-                history.AvailableSpace = volumes.Sum(v => v.AvailableSpace);
+                history.Capacity = volumes.Sum(v => v.SizeBytes / 1024 / 1024);
+                history.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes / 1024 / 1024);
                 this.Context.Entry(history).State = EntityState.Modified;
             }
         }
@@ -133,17 +135,19 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
         var server = this.Context.ServerItems.FirstOrDefault(si => si.ServiceNowKey == entity.ServerItemServiceNowKey);
         if (server != null)
         {
+            // TODO: File system items need to be removed otherwise this formula will be invalid over time.
             var volumes = this.Context.FileSystemItems.AsNoTracking().Where(fsi => fsi.ServerItemServiceNowKey == entity.ServerItemServiceNowKey).ToArray();
-            server.Capacity = volumes.Sum(v => v.Capacity);
-            server.AvailableSpace = volumes.Sum(v => v.AvailableSpace);
+            server.Capacity = volumes.Sum(v => v.SizeBytes / 1024 / 1024);
+            server.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes / 1024 / 1024);
             this.Context.Entry(server).State = EntityState.Modified;
 
             // Update current historical record too.
+            // TODO: File system items need to be removed otherwise this formula will be invalid over time.
             var history = this.Context.ServerHistoryItems.FirstOrDefault(shi => shi.ServiceNowKey == server.ServiceNowKey && shi.HistoryKey == server.HistoryKey);
             if (history != null)
             {
-                history.Capacity = volumes.Sum(v => v.Capacity);
-                history.AvailableSpace = volumes.Sum(v => v.AvailableSpace);
+                history.Capacity = volumes.Sum(v => v.SizeBytes / 1024 / 1024);
+                history.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes / 1024 / 1024);
                 this.Context.Entry(history).State = EntityState.Modified;
             }
         }

@@ -7,4 +7,4 @@ resources:
   - ../base/database
   - ../base/api
   - ../base/app
-  - ../base/network
+  - ../base/data-service

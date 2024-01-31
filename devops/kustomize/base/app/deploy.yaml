@@ -102,7 +102,7 @@ spec:
                   key: KEYCLOAK_END_SESSION_PATH
           livenessProbe:
             httpGet:
-              path: "/api/health?status=live"
+              path: "/api/health/local?status=live"
               port: 3000
               scheme: HTTP
             initialDelaySeconds: 30
@@ -112,7 +112,7 @@ spec:
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: "/api/health?status=ready"
+              path: "/api/health/local?status=ready"
               port: 3000
               scheme: HTTP
             initialDelaySeconds: 10
