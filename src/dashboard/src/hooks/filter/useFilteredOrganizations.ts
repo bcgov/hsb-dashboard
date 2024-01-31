@@ -1,4 +1,4 @@
-import { useFiltered } from '@/store';
+import { useFilteredStore } from '@/store';
 import { getOrganizationOptions } from '@/utils';
 import React from 'react';
 import { IOrganizationFilter, IOrganizationModel, useApiOrganizations } from '..';
@@ -10,15 +10,24 @@ export interface IFilteredOrganizations {
 
 export const useFilteredOrganizations = ({ includeDisabled }: IFilteredOrganizations = {}) => {
   const { find } = useApiOrganizations();
-  const organizations = useFiltered((state) => state.organizations);
-  const setOrganizations = useFiltered((state) => state.setOrganizations);
+  const organizations = useFilteredStore((state) => state.organizations);
+  const setOrganizations = useFilteredStore((state) => state.setOrganizations);
+
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const fetch = React.useCallback(
     async (filter: IOrganizationFilter) => {
-      const res = await find(filter);
-      const organizations: IOrganizationModel[] = await res.json();
-      setOrganizations(organizations);
-      return organizations;
+      try {
+        setIsLoading(true);
+        const res = await find(filter);
+        const organizations: IOrganizationModel[] = await res.json();
+        setOrganizations(organizations);
+        return organizations;
+      } catch (error) {
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
     },
     [find, setOrganizations],
   );
@@ -29,11 +38,7 @@ export const useFilteredOrganizations = ({ includeDisabled }: IFilteredOrganizat
   );
 
   return React.useMemo(
-    () => ({
-      findOrganizations: fetch,
-      options,
-      organizations,
-    }),
-    [organizations, fetch, options],
+    () => ({ isLoading, findOrganizations: fetch, options, organizations }),
+    [isLoading, organizations, fetch, options],
   );
 };

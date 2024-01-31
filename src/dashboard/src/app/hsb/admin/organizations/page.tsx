@@ -6,7 +6,7 @@ import { Button, Checkbox, Info, Overlay, Sheet, Spinner, Table, Text } from '@/
 import { IOrganizationModel, useAuth } from '@/hooks';
 import { useApiOrganizations } from '@/hooks/api/admin';
 import { useOrganizations } from '@/hooks/data';
-import { useApp } from '@/store';
+import { useAppStore } from '@/store';
 import { searchOrganizations } from '@/utils';
 import { redirect } from 'next/navigation';
 import React from 'react';
@@ -19,7 +19,7 @@ export default function Page() {
     includeTenants: true,
   });
   const { update: updateOrganization } = useApiOrganizations();
-  const setOrganizations = useApp((state) => state.setOrganizations);
+  const setOrganizations = useAppStore((state) => state.setOrganizations);
 
   const [loading, setLoading] = React.useState(true);
   const [formOrganizations, setFormOrganizations] = React.useState<IOrganizationForm[]>([]);

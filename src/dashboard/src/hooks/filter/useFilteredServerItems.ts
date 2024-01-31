@@ -1,5 +1,5 @@
 import { IOption } from '@/components';
-import { useFiltered } from '@/store';
+import { useFilteredStore } from '@/store';
 import React from 'react';
 import { IServerItemFilter, IServerItemModel, useApiServerItems } from '..';
 
@@ -11,15 +11,24 @@ export const useFilteredServerItems = (
   { useSimple = false }: IFilteredServerItemsProps | undefined = { useSimple: false },
 ) => {
   const { find, findSimple } = useApiServerItems();
-  const serverItems = useFiltered((state) => state.serverItems);
-  const setFilteredServerItems = useFiltered((state) => state.setServerItems);
+  const serverItems = useFilteredStore((state) => state.serverItems);
+  const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
+
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const fetch = React.useCallback(
     async (filter: IServerItemFilter) => {
-      const res = useSimple ? await findSimple(filter) : await find(filter);
-      const serverItems: IServerItemModel[] = await res.json();
-      setFilteredServerItems(serverItems);
-      return serverItems;
+      try {
+        setIsLoading(true);
+        const res = useSimple ? await findSimple(filter) : await find(filter);
+        const serverItems: IServerItemModel[] = await res.json();
+        setFilteredServerItems(serverItems);
+        return serverItems;
+      } catch (error) {
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
     },
     [find, findSimple, setFilteredServerItems, useSimple],
   );
@@ -37,11 +46,7 @@ export const useFilteredServerItems = (
   );
 
   return React.useMemo(
-    () => ({
-      findServerItems: fetch,
-      options,
-      serverItems,
-    }),
-    [serverItems, fetch, options],
+    () => ({ isLoading, findServerItems: fetch, options, serverItems }),
+    [isLoading, serverItems, fetch, options],
   );
 };

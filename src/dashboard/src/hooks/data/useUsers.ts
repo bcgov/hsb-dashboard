@@ -1,4 +1,4 @@
-import { useApp } from '@/store';
+import { useAppStore } from '@/store';
 import { getUserOptions } from '@/utils';
 import React from 'react';
 import { IUserModel, useAuth } from '..';
@@ -12,9 +12,9 @@ interface IUserProps {
 export const useUsers = ({ includePermissions, init }: IUserProps = {}) => {
   const { status } = useAuth();
   const { find, get } = useApiUsers();
-  const userInfo = useApp((state) => state.userinfo);
-  const users = useApp((state) => state.users);
-  const setUsers = useApp((state) => state.setUsers);
+  const userInfo = useAppStore((state) => state.userinfo);
+  const users = useAppStore((state) => state.users);
+  const setUsers = useAppStore((state) => state.setUsers);
 
   const [isReady, setIsReady] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);

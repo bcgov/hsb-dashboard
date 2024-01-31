@@ -9,7 +9,7 @@ import {
 } from '@/hooks';
 import { useOperatingSystemItems, useServerItems } from '@/hooks/data';
 import { useFilteredOperatingSystemItems } from '@/hooks/filter';
-import { useFiltered } from '@/store';
+import { useFilteredStore } from '@/store';
 import React from 'react';
 
 export interface IFilteredOperatingSystemItemsProps {
@@ -29,16 +29,18 @@ export const FilteredOperatingSystemItems = ({ onChange }: IFilteredOperatingSys
     useSimple: true,
   });
 
-  const filteredTenant = useFiltered((state) => state.tenant);
+  const filteredTenant = useFilteredStore((state) => state.tenant);
 
-  const filteredOrganization = useFiltered((state) => state.organization);
+  const filteredOrganization = useFilteredStore((state) => state.organization);
 
-  const filteredOperatingSystemItem = useFiltered((state) => state.operatingSystemItem);
-  const setFilteredOperatingSystemItem = useFiltered((state) => state.setOperatingSystemItem);
-  const setFilteredOperatingSystemItems = useFiltered((state) => state.setOperatingSystemItems);
+  const filteredOperatingSystemItem = useFilteredStore((state) => state.operatingSystemItem);
+  const setFilteredOperatingSystemItem = useFilteredStore((state) => state.setOperatingSystemItem);
+  const setFilteredOperatingSystemItems = useFilteredStore(
+    (state) => state.setOperatingSystemItems,
+  );
   const { options: filteredOperatingSystemItemOptions } = useFilteredOperatingSystemItems();
 
-  const setFilteredServerItem = useFiltered((state) => state.setServerItem);
+  const setFilteredServerItem = useFilteredStore((state) => state.setServerItem);
 
   React.useEffect(() => {
     if (operatingSystemItems.length) setFilteredOperatingSystemItems(operatingSystemItems);

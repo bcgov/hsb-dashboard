@@ -1,4 +1,4 @@
-import { useApp } from '@/store';
+import { useAppStore } from '@/store';
 import React from 'react';
 import { ITenantModel, useApiTenants, useAuth } from '..';
 
@@ -9,8 +9,8 @@ export interface ITenantsProps {
 export const useTenants = ({ init }: ITenantsProps = {}) => {
   const { status } = useAuth();
   const { find } = useApiTenants();
-  const tenants = useApp((state) => state.tenants);
-  const setTenants = useApp((state) => state.setTenants);
+  const tenants = useAppStore((state) => state.tenants);
+  const setTenants = useAppStore((state) => state.setTenants);
 
   const [isReady, setIsReady] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);

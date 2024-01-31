@@ -1,4 +1,4 @@
-import { useApp } from '@/store';
+import { useAppStore } from '@/store';
 import React from 'react';
 import { IOperatingSystemItemModel, useApiOperatingSystemItems, useAuth } from '..';
 
@@ -9,8 +9,8 @@ export interface IOperatingSystemItemsProps {
 export const useOperatingSystemItems = ({ init }: IOperatingSystemItemsProps = {}) => {
   const { status } = useAuth();
   const { find } = useApiOperatingSystemItems();
-  const operatingSystemItems = useApp((state) => state.operatingSystemItems);
-  const setOperatingSystemItems = useApp((state) => state.setOperatingSystemItems);
+  const operatingSystemItems = useAppStore((state) => state.operatingSystemItems);
+  const setOperatingSystemItems = useAppStore((state) => state.setOperatingSystemItems);
 
   const [isReady, setIsReady] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);

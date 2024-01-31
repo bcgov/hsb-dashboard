@@ -5,19 +5,20 @@ import { Bar } from 'react-chartjs-2';
 import styles from './SegmentedBarChart.module.scss';
 
 import { IServerItemModel } from '@/hooks';
-import { useDashboardFileSystemHistoryItems } from '@/hooks/dashboard';
+import { useStorageTrendsStore } from '@/store';
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, Title, Tooltip } from 'chart.js';
 import moment from 'moment';
 import React from 'react';
-import { defaultOptions } from './defaultOptions';
-import { useStorageTrends } from './useStorageTrends';
-import { extractVolumeName } from './utils';
 import { LoadingAnimation } from '../../loadingAnimation';
+import { defaultOptions } from './defaultOptions';
+import { useFileSystemHistoryItems } from './hooks';
+import { useStorageTrendsData } from './useStorageTrendsData';
+import { extractVolumeName } from './utils';
 
 ChartJS.register(CategoryScale, BarElement, Title, Tooltip, Legend);
 
 export interface ISegmentedBarChart {
-  serverItem: IServerItemModel;
+  serverItem?: IServerItemModel;
   maxVolumes?: number;
   loading?: boolean;
   dateRange?: string[];
@@ -28,27 +29,47 @@ export const SegmentedBarChart = ({
   serverItem,
   maxVolumes = 4,
   loading,
-  dateRange,
+  dateRange: initDateRange,
   minColumns = 12,
 }: ISegmentedBarChart) => {
-  const { findFileSystemHistoryItems } = useDashboardFileSystemHistoryItems();
+  const getStorageTrends = useStorageTrendsData();
+  const dateRange = useStorageTrendsStore((state) => state.dateRangeFileSystemHistoryItems);
+  const setDateRange = useStorageTrendsStore((state) => state.setDateRangeFileSystemHistoryItems);
+  const { isReady: fileSystemHistoryItemsIsReady, findFileSystemHistoryItems } =
+    useFileSystemHistoryItems();
 
-  const data = useStorageTrends(1, maxVolumes, dateRange);
+  const now = moment();
+  const values = [
+    initDateRange?.length && initDateRange[0]
+      ? initDateRange[0]
+      : moment(new Date(now.year(), now.month(), 1))
+          .add(-1 * minColumns, 'months')
+          .format('YYYY-MM-DD'),
+    initDateRange?.length && initDateRange[1] ? initDateRange[1] : '',
+  ];
+
+  React.useEffect(() => {
+    setDateRange(values);
+    // Infinite loop if we use the array instead of individual values.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values[0], values[1], setDateRange]);
+
+  const data = getStorageTrends(1, maxVolumes, dateRange);
 
   React.useEffect(() => {
     if (serverItem) {
-      const now = moment();
-      const start = dateRange?.length
-        ? moment(dateRange[0])
-        : moment(new Date(now.year(), now.month(), 1)).add(-1 * minColumns, 'months');
       // A single server was selected, fetch the history for this server.
       findFileSystemHistoryItems({
         serverItemServiceNowKey: serverItem.serviceNowKey,
-        startDate: start.format('yyyy-MM-DD'),
-        endDate: dateRange && dateRange.length > 1 ? dateRange?.[1] : undefined,
-      }).catch(() => {});
+        startDate: values[0] ? values[0] : undefined,
+        endDate: values[1] ? values[1] : undefined,
+      }).catch((error) => {
+        console.error(error);
+      });
     }
-  }, [findFileSystemHistoryItems, serverItem, dateRange, minColumns]);
+    // Values array will cause infinite loop, we're only interested in the values.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [findFileSystemHistoryItems, serverItem, values[0], values[1]]);
 
   const CustomLegend = React.useMemo(
     () => (
@@ -81,10 +102,25 @@ export const SegmentedBarChart = ({
 
   return (
     <div className={styles.panel}>
-      {loading && <LoadingAnimation />}
+      {(loading || !fileSystemHistoryItemsIsReady) && <LoadingAnimation />}
       <h1>Storage Trends - {serverItem?.name ?? 'Drive'} Storage</h1>
-      <div className={styles.date}> 
-        <DateRangePicker />
+      <div className={styles.date}>
+        <DateRangePicker
+          showButton
+          values={dateRange}
+          onChange={async (values, e) => {
+            setDateRange(values);
+            try {
+              await findFileSystemHistoryItems({
+                serverItemServiceNowKey: serverItem?.serviceNowKey,
+                startDate: values[0] ? values[0] : undefined,
+                endDate: values[1] ? values[1] : undefined,
+              });
+            } catch (error) {
+              console.error(error);
+            }
+          }}
+        />
       </div>
       {CustomLegend}
       <div className={styles.chartContainer}>

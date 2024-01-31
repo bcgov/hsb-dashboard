@@ -1,0 +1,14 @@
+@import '@/styles/utils.scss';
+
+.date {
+  margin-top: 10px;
+  display: flex;
+  gap: 1rem;
+
+  button {
+    position: relative;
+    padding: 5px 10px;
+    top: unset;
+    right: unset;
+  }
+}

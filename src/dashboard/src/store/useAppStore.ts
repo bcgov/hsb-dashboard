@@ -11,7 +11,7 @@ import {
 import { IUserInfoModel } from '@/hooks/api/interfaces/auth';
 import { create } from 'zustand';
 
-export interface IAppState {
+export interface IAppStoreState {
   // User
   userinfo?: IUserInfoModel; // TODO: Replace with interface.
   setUserinfo: (value: IUserInfoModel) => void;
@@ -49,7 +49,7 @@ export interface IAppState {
   setFileSystemItems: (values: IFileSystemItemModel[]) => void;
 }
 
-export const useApp = create<IAppState>((set) => ({
+export const useAppStore = create<IAppStoreState>((set) => ({
   // User
   userinfo: undefined,
   setUserinfo: (value) => set((state) => ({ userinfo: value })),

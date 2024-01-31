@@ -7,7 +7,7 @@ import { IUserModel, RoleName, useAuth } from '@/hooks';
 import { useApiUsers } from '@/hooks/api/admin';
 import { IOrganizationModel, ITenantModel } from '@/hooks/api/interfaces/auth';
 import { useGroups, useTenants, useUsers } from '@/hooks/data';
-import { useApp } from '@/store';
+import { useAppStore } from '@/store';
 import { redirect } from 'next/navigation';
 import React from 'react';
 import { IUserForm } from './IUserForm';
@@ -15,7 +15,7 @@ import { getOrganizationOptions, getTenantOptions, searchUsers } from './utils';
 
 export default function Page() {
   const state = useAuth();
-  const userinfo = useApp((state) => state.userinfo);
+  const userinfo = useAppStore((state) => state.userinfo);
 
   const { isReady: isReadyTenants, tenants } = useTenants({ init: true });
   const { isReady: isReadyUsers, users } = useUsers({ includePermissions: true, init: true });

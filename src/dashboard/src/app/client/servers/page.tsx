@@ -3,7 +3,7 @@
 import { AllocationTable } from '@/components';
 import { useAuth } from '@/hooks';
 import { useOperatingSystemItems, useServerItems } from '@/hooks/data';
-import { useDashboard, useFiltered } from '@/store';
+import { useDashboardStore, useFilteredStore } from '@/store';
 import { redirect, useRouter } from 'next/navigation';
 
 export default function Page() {
@@ -14,11 +14,11 @@ export default function Page() {
     useSimple: true,
     init: true,
   });
-  const setFilteredTenant = useFiltered((state) => state.setTenant);
-  const setFilteredOrganization = useFiltered((state) => state.setOrganization);
-  const setFilteredOperatingSystemItem = useFiltered((state) => state.setOperatingSystemItem);
-  const setFilteredServerItem = useFiltered((state) => state.setServerItem);
-  const setDashboardServerItems = useDashboard((state) => state.setServerItems);
+  const setFilteredTenant = useFilteredStore((state) => state.setTenant);
+  const setFilteredOrganization = useFilteredStore((state) => state.setOrganization);
+  const setFilteredOperatingSystemItem = useFilteredStore((state) => state.setOperatingSystemItem);
+  const setFilteredServerItem = useFilteredStore((state) => state.setServerItem);
+  const setDashboardServerItems = useDashboardStore((state) => state.setServerItems);
 
   // Only allow Client role to view this page.
   if (state.status === 'loading') return <div>Loading...</div>;

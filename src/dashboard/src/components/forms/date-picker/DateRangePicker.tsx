@@ -1,7 +1,7 @@
+import { Button } from '@/components/buttons';
 import { uniqueId } from 'lodash';
 import moment from 'moment';
 import React from 'react';
-import { Button } from '@/components/buttons';
 import styles from './DateRangePicker.module.scss';
 
 export interface IDateRangePickerProps {
@@ -11,10 +11,12 @@ export interface IDateRangePickerProps {
   name?: string;
   /** The start and end date initial values */
   values?: string[];
+  /** Whether to show the button.  If true it will perform the onChange event. */
+  showButton?: boolean;
   /** Class name */
   className?: string;
   /** Event fires when date range changes */
-  onChange?: (values: string[], e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (values: string[], e?: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const DateRangePicker = ({
@@ -22,6 +24,7 @@ export const DateRangePicker = ({
   name = '',
   values: initValues = ['', ''],
   className,
+  showButton,
   onChange,
 }: IDateRangePickerProps) => {
   // Always make sure there are two values in the array.
@@ -47,7 +50,7 @@ export const DateRangePicker = ({
           name={`${name}-startDate`}
           value={selected[0] ? moment(selected[0]).format('YYYY-MM-DD') : ''}
           onChange={(e) => {
-            if (onChange) {
+            if (!showButton && onChange) {
               const result = [moment(e.target.value).format('YYYY-MM-DD 00:00:00'), values[1]];
               onChange?.(result, e);
             } else {
@@ -67,7 +70,7 @@ export const DateRangePicker = ({
           name={`${name}-endDate`}
           value={selected[1] ? moment(selected[1]).format('YYYY-MM-DD') : ''}
           onChange={(e) => {
-            if (onChange) {
+            if (!showButton && onChange) {
               const result = [values[0], moment(e.target.value).format('YYYY-MM-DD 23:59:59')];
               onChange?.(result, e);
             } else {
@@ -79,7 +82,15 @@ export const DateRangePicker = ({
           }}
         />
       </div>
-      <Button>Update</Button>
+      {showButton && (
+        <Button
+          onClick={(e) => {
+            onChange?.(selected);
+          }}
+        >
+          Update
+        </Button>
+      )}
     </div>
   );
 };

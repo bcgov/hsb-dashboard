@@ -1,4 +1,4 @@
-import { useApp } from '@/store';
+import { useAppStore } from '@/store';
 import React from 'react';
 import { IServerItemModel, useApiServerItems, useAuth } from '..';
 
@@ -12,8 +12,8 @@ export const useServerItems = (
 ) => {
   const { status } = useAuth();
   const { find, findSimple } = useApiServerItems();
-  const serverItems = useApp((state) => state.serverItems);
-  const setServerItems = useApp((state) => state.setServerItems);
+  const serverItems = useAppStore((state) => state.serverItems);
+  const setServerItems = useAppStore((state) => state.setServerItems);
 
   const [isReady, setIsReady] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);

@@ -1,13 +1,13 @@
-import { useApp, useFiltered } from '@/store';
+import { useAppStore, useFilteredStore } from '@/store';
 import { usePathname } from 'next/navigation';
 
 export const Message = () => {
   const path = usePathname();
-  const userInfo = useApp((state) => state.userinfo);
-  const selectedOrganization = useFiltered((state) => state.organization);
-  const selectedOperatingSystemItem = useFiltered((state) => state.operatingSystemItem);
-  const selectedServerItem = useFiltered((state) => state.serverItem);
-  const operatingSystemItems = useApp((state) => state.operatingSystemItems);
+  const userInfo = useAppStore((state) => state.userinfo);
+  const selectedOrganization = useFilteredStore((state) => state.organization);
+  const selectedOperatingSystemItem = useFilteredStore((state) => state.operatingSystemItem);
+  const selectedServerItem = useFilteredStore((state) => state.serverItem);
+  const operatingSystemItems = useAppStore((state) => state.operatingSystemItems);
 
   const isDashboardView = path.includes('/dashboard');
   const isServerView = path.includes('/servers');
