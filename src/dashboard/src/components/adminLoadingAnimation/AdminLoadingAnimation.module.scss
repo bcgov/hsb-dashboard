@@ -1,0 +1,57 @@
+@import '@/styles/utils.scss';
+
+.panel {
+    @include panel-style(370px, 400px, unset, 1310px);
+    padding-bottom: 34px;
+    margin-top: -75px;
+    animation: animateBg 2s linear infinite;
+    background-image: linear-gradient(90deg, $white, $light-gray, $white, $light-gray);
+    background-size: 300% 100%;
+  }
+  @keyframes animateBg {
+    0% { background-position: 100% 0%; }
+    100% { background-position: 0% 0%; }
+  }
+  
+  .title {
+    height: 20px;
+    width: 30%;
+    display: inline-block;
+    background-color: $medium-gray;
+    margin: 0 20px 20px 0;
+    border-radius: 10px;
+
+    &:nth-of-type(2) {
+      max-width: 10%;
+    }
+  }
+
+  .titleRow {
+    display: flex;
+    justify-content: flex-start;
+    gap: 8%;
+
+    div {
+      height: 10px;
+      width: 8%;
+      background-color: $medium-gray;
+      margin: 20px 0;
+      border-radius: 10px;
+    }
+  }
+
+  .rows {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 70%;
+
+      div {
+      height: 5px;
+      width: 100%;
+      background-color: $medium-gray;
+      border-radius: 3px;
+    }
+  }
+
+  

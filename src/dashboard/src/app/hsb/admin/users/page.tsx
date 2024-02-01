@@ -12,6 +12,7 @@ import {
   Spinner,
   Table,
   Text,
+  AdminLoadingAnimation,
 } from '@/components';
 import { IUserModel, useAuth } from '@/hooks';
 import { useApiUsers } from '@/hooks/api/admin';
@@ -21,6 +22,7 @@ import { redirect } from 'next/navigation';
 import React, { useRef } from 'react';
 import { IUserForm } from './IUserForm';
 import { UserDialog, UserDialogVariant } from './UserDialog';
+import { LoadingAnimation } from '@/components/charts/loadingAnimation';
 
 export default function Page() {
   const state = useAuth();
@@ -89,7 +91,7 @@ export default function Page() {
   };
 
   // Only allow System Admin role to view this page.
-  if (state.status === 'loading') return <div>Loading...</div>;
+  if (state.status === 'loading') return <AdminLoadingAnimation />;
   if (!state.isSystemAdmin) redirect('/');
 
   return (
@@ -118,9 +120,7 @@ export default function Page() {
       />
       <div className={styles.container}>
         {loading && (
-          <Overlay>
-            <Spinner />
-          </Overlay>
+          <LoadingAnimation />
         )}
         <div className={styles.section}>
           <Info>

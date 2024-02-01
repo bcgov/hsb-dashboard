@@ -2,7 +2,7 @@
 
 import styles from './ClientAdmin.module.scss';
 
-import { Button, Checkbox, Info, Overlay, Select, Sheet, Spinner, Table, Text } from '@/components';
+import { Button, Checkbox, Info, Overlay, Select, Sheet, Spinner, Table, Text, AdminLoadingAnimation } from '@/components';
 import { IUserModel, RoleName, useAuth } from '@/hooks';
 import { useApiUsers } from '@/hooks/api/admin';
 import { IOrganizationModel, ITenantModel } from '@/hooks/api/interfaces/auth';
@@ -12,6 +12,7 @@ import { redirect } from 'next/navigation';
 import React from 'react';
 import { IUserForm } from './IUserForm';
 import { getOrganizationOptions, getTenantOptions, searchUsers } from './utils';
+import { LoadingAnimation } from '@/components/charts/loadingAnimation';
 
 export default function Page() {
   const state = useAuth();
@@ -88,16 +89,14 @@ export default function Page() {
   }, [updateUser, formUsers]);
 
   // Only allow Organization Admin role to view this page.
-  if (state.status === 'loading') return <div>Loading...</div>;
+  if (state.status === 'loading') return <AdminLoadingAnimation />;
   if (!state.isOrganizationAdmin) redirect('/');
 
   return (
     <Sheet>
       <div className={styles.container}>
         {loading && (
-          <Overlay>
-            <Spinner />
-          </Overlay>
+          <LoadingAnimation />
         )}
         <div className={styles.section}>
           <div className={styles.search}>
