@@ -179,7 +179,8 @@ export default function Page() {
                   <div className={styles.selectRow}>
                     <div>
                       <p>
-                        <span>Roles: </span>role, role, role
+                        <span>Roles: </span>
+                        {data.groups?.map((org) => org.name).join(', ')}
                       </p>
                       <Button variant="secondary" onClick={() => handleEditClick(data, 'group')}>
                         Edit
@@ -187,8 +188,8 @@ export default function Page() {
                     </div>
                     <div>
                       <p>
-                        <span>Organizations: </span>Organization name, Organization name,
-                        Organization name
+                        <span>Organizations: </span>
+                        {data.organizations?.map((org) => org.name).join(', ')}
                       </p>
                       <Button
                         variant="secondary"
@@ -199,7 +200,8 @@ export default function Page() {
                     </div>
                     <div>
                       <p>
-                        <span>Tenant: </span>Tenant name, Tenant name, Tenant name
+                        <span>Tenant: </span>
+                        {data.tenants?.map((org) => org.name).join(', ')}
                       </p>
                       <Button variant="secondary" onClick={() => handleEditClick(data, 'tenant')}>
                         Edit
