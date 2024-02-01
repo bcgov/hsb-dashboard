@@ -2,7 +2,7 @@
 
 import styles from './ClientAdmin.module.scss';
 
-import { Button, Checkbox, Info, Overlay, Select, Sheet, Spinner, Table, Text } from '@/components';
+import { Button, Checkbox, Info, Overlay, Select, Sheet, Spinner, Table, Text, AdminLoadingAnimation } from '@/components';
 import { IUserModel, RoleName, useAuth } from '@/hooks';
 import { useApiUsers } from '@/hooks/api/admin';
 import { IOrganizationModel, ITenantModel } from '@/hooks/api/interfaces/auth';
@@ -89,7 +89,7 @@ export default function Page() {
   }, [updateUser, formUsers]);
 
   // Only allow Organization Admin role to view this page.
-  if (state.status === 'loading') return <LoadingAnimation />;
+  if (state.status === 'loading') return <AdminLoadingAnimation />;
   if (!state.isOrganizationAdmin) redirect('/');
 
   return (

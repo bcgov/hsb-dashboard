@@ -12,6 +12,7 @@ import {
   Spinner,
   Table,
   Text,
+  AdminLoadingAnimation,
 } from '@/components';
 import { IUserModel, useAuth } from '@/hooks';
 import { useApiUsers } from '@/hooks/api/admin';
@@ -90,7 +91,7 @@ export default function Page() {
   };
 
   // Only allow System Admin role to view this page.
-  if (state.status === 'loading') return <LoadingAnimation />;
+  if (state.status === 'loading') return <AdminLoadingAnimation />;
   if (!state.isSystemAdmin) redirect('/');
 
   return (

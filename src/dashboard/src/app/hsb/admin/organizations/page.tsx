@@ -2,7 +2,7 @@
 
 import styles from './Organizations.module.scss';
 
-import { Button, Checkbox, Info, Overlay, Sheet, Spinner, Table, Text } from '@/components';
+import { Button, Checkbox, Info, Overlay, Sheet, Spinner, Table, Text, AdminLoadingAnimation, } from '@/components';
 import { IOrganizationModel, useAuth } from '@/hooks';
 import { useApiOrganizations } from '@/hooks/api/admin';
 import { useOrganizations } from '@/hooks/data';
@@ -74,7 +74,7 @@ export default function Page() {
   }, [formOrganizations, setOrganizations, updateOrganization]);
 
   // Only allow System Admin role to view this page.
-  if (state.status === 'loading') return <LoadingAnimation />;
+  if (state.status === 'loading') return <AdminLoadingAnimation />;
   if (!state.isSystemAdmin) redirect('/');
 
   return (
