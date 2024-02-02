@@ -15,8 +15,15 @@ import {
   useDashboardOrganizations,
   useDashboardServerItems,
 } from '@/hooks/dashboard';
-import { useOperatingSystemItems, useOrganizations, useServerItems } from '@/hooks/data';
+import {
+  useOperatingSystemItems,
+  useOrganizations,
+  useServerItems,
+  useTenants,
+} from '@/hooks/data';
 import { useFilteredFileSystemItems } from '@/hooks/filter';
+import { useFilteredStore } from '@/store';
+import React from 'react';
 import { useDashboardFilter } from '.';
 
 /**
@@ -25,6 +32,7 @@ import { useDashboardFilter } from '.';
  * @returns Component
  */
 export const Dashboard = () => {
+  const { isReady: isReadyTenants, tenants } = useTenants();
   const { isReady: isReadyOrganizations, organizations } = useOrganizations();
   const { isReady: isReadyOperatingSystemItems, operatingSystemItems } = useOperatingSystemItems();
   const { isReady: isReadyServerItems, serverItems } = useServerItems({ useSimple: true });
@@ -37,16 +45,9 @@ export const Dashboard = () => {
   const { serverItem: dashboardServerItem, serverItems: dashboardServerItems } =
     useDashboardServerItems();
   const { isLoading: fileSystemItemsIsLoading, fileSystemItems } = useFilteredFileSystemItems();
+  const values = useFilteredStore((state) => state.values);
 
   const updateDashboard = useDashboardFilter();
-
-  const selectedOrganizations = dashboardOrganizations.length
-    ? dashboardOrganizations
-    : organizations;
-  const selectedOperatingSystemItems = dashboardOperatingSystemItems.length
-    ? dashboardOperatingSystemItems
-    : operatingSystemItems;
-  const selectedServerItems = dashboardServerItems.length ? dashboardServerItems : serverItems;
 
   // Total storage is for a single organization
   const showTotalStorage =
@@ -66,20 +67,46 @@ export const Dashboard = () => {
   // Show each drive over time for server
   const showSegmentedBarChart = !!dashboardServerItem;
 
+  React.useEffect(() => {
+    // When no filter is selected use all values available.
+    if (
+      isReadyTenants &&
+      !values.tenant &&
+      isReadyOrganizations &&
+      !values.organization &&
+      isReadyOperatingSystemItems &&
+      !values.operatingSystemItem &&
+      isReadyServerItems &&
+      !values.serverItem
+    ) {
+      updateDashboard({ reset: true });
+    }
+  }, [
+    isReadyOperatingSystemItems,
+    isReadyOrganizations,
+    isReadyServerItems,
+    isReadyTenants,
+    updateDashboard,
+    values.operatingSystemItem,
+    values.organization,
+    values.serverItem,
+    values.tenant,
+  ]);
+
   return (
     <>
       {/* Single Organization total storage */}
       {showTotalStorage && (
         <TotalStorage
-          serverItems={selectedServerItems}
+          serverItems={dashboardServerItems}
           loading={!isReadyOrganizations || !isReadyServerItems}
         />
       )}
       {/* Multiple OS */}
       {showAllocationByOS && (
         <AllocationByOS
-          operatingSystemItems={selectedOperatingSystemItems}
-          serverItems={selectedServerItems}
+          operatingSystemItems={dashboardOperatingSystemItems}
+          serverItems={dashboardServerItems}
           loading={!isReadyOperatingSystemItems || !isReadyServerItems}
           onClick={async (operatingSystemItem) => {
             await updateDashboard({ operatingSystemItem });
@@ -93,8 +120,8 @@ export const Dashboard = () => {
       {/* Multiple Organizations */}
       {showAllOrganizations && (
         <AllOrganizations
-          organizations={selectedOrganizations}
-          serverItems={selectedServerItems}
+          organizations={dashboardOrganizations}
+          serverItems={dashboardServerItems}
           loading={!isReadyOrganizations || !isReadyServerItems}
         />
       )}
@@ -103,8 +130,8 @@ export const Dashboard = () => {
       />
       {showAllocationByStorageVolume && (
         <AllocationByStorageVolume
-          organizations={selectedOrganizations}
-          serverItems={selectedServerItems}
+          organizations={dashboardOrganizations}
+          serverItems={dashboardServerItems}
           loading={!isReadyOrganizations || !isReadyServerItems}
           onClick={async (organization) => {
             await updateDashboard({ organization });
@@ -114,7 +141,7 @@ export const Dashboard = () => {
       {showAllocationTable && (
         <AllocationTable
           operatingSystemId={dashboardOperatingSystemItem?.id}
-          serverItems={selectedServerItems}
+          serverItems={dashboardServerItems}
           loading={!isReadyServerItems || !isReadyOperatingSystemItems}
           onClick={async (serverItem) => {
             await updateDashboard({ serverItem });

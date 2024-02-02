@@ -29,23 +29,21 @@ export const FilteredOperatingSystemItems = ({ onChange }: IFilteredOperatingSys
     useSimple: true,
   });
 
-  const filteredTenant = useFilteredStore((state) => state.tenant);
+  const values = useFilteredStore((state) => state.values);
+  const setValues = useFilteredStore((state) => state.setValues);
 
-  const filteredOrganization = useFilteredStore((state) => state.organization);
-
-  const filteredOperatingSystemItem = useFilteredStore((state) => state.operatingSystemItem);
-  const setFilteredOperatingSystemItem = useFilteredStore((state) => state.setOperatingSystemItem);
   const setFilteredOperatingSystemItems = useFilteredStore(
     (state) => state.setOperatingSystemItems,
   );
   const { options: filteredOperatingSystemItemOptions } = useFilteredOperatingSystemItems();
 
-  const setFilteredServerItem = useFilteredStore((state) => state.setServerItem);
+  const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
 
   React.useEffect(() => {
     if (operatingSystemItems.length) setFilteredOperatingSystemItems(operatingSystemItems);
-    if (operatingSystemItems.length === 1) setFilteredOperatingSystemItem(operatingSystemItems[0]);
-  }, [setFilteredOperatingSystemItems, operatingSystemItems, setFilteredOperatingSystemItem]);
+    if (operatingSystemItems.length === 1)
+      setValues((values) => ({ ...values, operatingSystemItem: operatingSystemItems[0] }));
+  }, [setFilteredOperatingSystemItems, operatingSystemItems, setValues]);
 
   return (
     <Select
@@ -53,23 +51,30 @@ export const FilteredOperatingSystemItems = ({ onChange }: IFilteredOperatingSys
       variant="filter"
       options={filteredOperatingSystemItemOptions}
       placeholder="Select OS"
-      value={filteredOperatingSystemItem?.id ?? ''}
+      value={values.operatingSystemItem?.id ?? ''}
       disabled={!operatingSystemItemsReady || !serverItemsReady}
       loading={!operatingSystemItemsReady}
       onChange={async (value) => {
         const operatingSystemItem = operatingSystemItems.find((o) => o.id == value);
-        setFilteredOperatingSystemItem(operatingSystemItem);
-        setFilteredServerItem();
+        setValues((state) => ({ ...state, operatingSystemItem }));
 
         if (operatingSystemItem) {
           const serverItems = await onChange?.(
-            filteredTenant,
-            filteredOrganization,
+            values.tenant,
+            values.organization,
             operatingSystemItem,
           );
-          if (serverItems?.length === 1) setFilteredServerItem(serverItems[0]);
+          const serverItem = serverItems?.length === 1 ? serverItems[0] : values.serverItem;
+
+          setFilteredServerItems(serverItems ?? []);
+          setValues((state) => ({ ...state, operatingSystemItem, serverItem }));
         } else {
-          await onChange?.(filteredTenant, filteredOrganization, operatingSystemItem);
+          const serverItems = await onChange?.(
+            values.tenant,
+            values.organization,
+            operatingSystemItem,
+          );
+          setFilteredServerItems(serverItems ?? []);
         }
       }}
     />

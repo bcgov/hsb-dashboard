@@ -1,11 +1,11 @@
 'use client';
 
 import { AllocationTable } from '@/components';
+import { LoadingAnimation } from '@/components/charts/loadingAnimation';
 import { useAuth } from '@/hooks';
 import { useOperatingSystemItems, useServerItems } from '@/hooks/data';
 import { useDashboardStore, useFilteredStore } from '@/store';
 import { redirect, useRouter } from 'next/navigation';
-import { LoadingAnimation } from '@/components/charts/loadingAnimation';
 
 export default function Page() {
   const router = useRouter();
@@ -15,10 +15,7 @@ export default function Page() {
     useSimple: true,
     init: true,
   });
-  const setFilteredTenant = useFilteredStore((state) => state.setTenant);
-  const setFilteredOrganization = useFilteredStore((state) => state.setOrganization);
-  const setFilteredOperatingSystemItem = useFilteredStore((state) => state.setOperatingSystemItem);
-  const setFilteredServerItem = useFilteredStore((state) => state.setServerItem);
+  const setValues = useFilteredStore((state) => state.setValues);
   const setDashboardServerItems = useDashboardStore((state) => state.setServerItems);
 
   // Only allow Client role to view this page.
@@ -32,10 +29,7 @@ export default function Page() {
       loading={!isReadyOperatingSystemItems && !isReadyServerItems}
       onClick={(serverItem) => {
         if (serverItem) {
-          setFilteredTenant();
-          setFilteredOrganization();
-          setFilteredOperatingSystemItem();
-          setFilteredServerItem(serverItem);
+          setValues((state) => ({ serverItem }));
           setDashboardServerItems([serverItem]);
           router.push(`/client/dashboard?serverItem=${serverItem?.serviceNowKey}`);
         }

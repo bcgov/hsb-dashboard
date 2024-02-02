@@ -12,8 +12,9 @@ export const FilteredServerItems = () => {
     init: true,
   });
 
-  const filteredServerItem = useFilteredStore((state) => state.serverItem);
-  const setFilteredServerItem = useFilteredStore((state) => state.setServerItem);
+  const values = useFilteredStore((state) => state.values);
+  const setValues = useFilteredStore((state) => state.setValues);
+
   const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
   const { options: filteredServerItemOptions } = useFilteredServerItems({
     useSimple: true,
@@ -21,8 +22,9 @@ export const FilteredServerItems = () => {
 
   React.useEffect(() => {
     if (serverItems.length) setFilteredServerItems(serverItems);
-    if (serverItems.length === 1) setFilteredServerItem(serverItems[0]);
-  }, [setFilteredServerItems, serverItems, setFilteredServerItem]);
+    if (serverItems.length === 1)
+      setValues((values) => ({ ...values, serverItem: serverItems[0] }));
+  }, [setFilteredServerItems, serverItems, setValues]);
 
   return (
     <Select
@@ -30,12 +32,12 @@ export const FilteredServerItems = () => {
       variant="filter"
       options={filteredServerItemOptions}
       placeholder="Select server"
-      value={filteredServerItem?.serviceNowKey ?? ''}
+      value={values.serverItem?.serviceNowKey ?? ''}
       disabled={!serverItemsReady}
       loading={!serverItemsReady}
       onChange={async (value) => {
-        const server = serverItems.find((o) => o.serviceNowKey == value);
-        setFilteredServerItem(server);
+        const serverItem = serverItems.find((o) => o.serviceNowKey == value);
+        setValues((values) => ({ ...values, serverItem }));
       }}
     />
   );

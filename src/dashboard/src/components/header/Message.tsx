@@ -4,9 +4,7 @@ import { usePathname } from 'next/navigation';
 export const Message = () => {
   const path = usePathname();
   const userInfo = useAppStore((state) => state.userinfo);
-  const selectedOrganization = useFilteredStore((state) => state.organization);
-  const selectedOperatingSystemItem = useFilteredStore((state) => state.operatingSystemItem);
-  const selectedServerItem = useFilteredStore((state) => state.serverItem);
+  const values = useFilteredStore((state) => state.values);
   const operatingSystemItems = useAppStore((state) => state.operatingSystemItems);
 
   const isDashboardView = path.includes('/dashboard');
@@ -16,46 +14,47 @@ export const Message = () => {
   const isClientOrganizationAdminView = path.includes('/client/admin/organizations');
 
   if (isDashboardView) {
-    if (!!selectedOrganization && !!selectedServerItem)
+    if (!!values.organization && !!values.serverItem) {
       return (
         <p>
-          Showing results for: {selectedOrganization.name}, {selectedServerItem.name}
+          Showing results for: {values.organization.name}, {values.serverItem.name}
         </p>
       );
+    }
 
-    if (selectedServerItem) {
+    if (values.serverItem) {
       var os = operatingSystemItems.find(
-        (os) => os.id === selectedServerItem.operatingSystemItemId,
+        (os) => os.id === values.serverItem?.operatingSystemItemId,
       );
       return (
         <p>
-          Showing results for: {selectedServerItem.name}
+          Showing results for: {values.serverItem.name}
           {os ? `: ${os.name}` : ''}
         </p>
       );
     }
 
-    if (!!selectedOrganization && !!selectedOperatingSystemItem)
+    if (!!values.organization && !!values.operatingSystemItem)
       return (
         <p>
-          Showing results for: {selectedOrganization.name}, all {selectedOperatingSystemItem.name}{' '}
+          Showing results for: {values.organization.name}, all {values.operatingSystemItem.name}{' '}
           servers. <br />
           Use the filters to see further breakdowns of storage data.
         </p>
       );
 
-    if (!!selectedOrganization)
+    if (!!values.organization)
       return (
         <p>
-          Showing results for: {selectedOrganization.name}. <br />
+          Showing results for: {values.organization.name}. <br />
           Use the filters to see further breakdowns of storage data.
         </p>
       );
 
-    if (!!selectedOperatingSystemItem)
+    if (!!values.operatingSystemItem)
       return (
         <p>
-          Showing results for: all {selectedOperatingSystemItem.name} servers. <br />
+          Showing results for: all {values.operatingSystemItem.name} servers. <br />
           Use the filters to see further breakdowns of storage data.
         </p>
       );
