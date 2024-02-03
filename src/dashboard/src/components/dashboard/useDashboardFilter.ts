@@ -91,34 +91,29 @@ export const useDashboardFilter = () => {
 
       setDashboardTenant(values?.tenant);
       setDashboardTenants(
-        values?.tenants ?? values?.applyFilter ? filteredTenants : values?.reset ? tenants : [],
+        values?.tenants ?? (values?.reset ? tenants : values?.applyFilter ? filteredTenants : []),
       );
 
       setDashboardOrganization(values?.organization);
       setDashboardOrganizations(
-        values?.organizations ?? values?.applyFilter
-          ? filteredOrganizations
-          : values?.reset
-          ? organizations
-          : [],
+        values?.organizations ??
+          (values?.reset ? organizations : values?.applyFilter ? filteredOrganizations : []),
       );
 
       setDashboardOperatingSystemItem(values?.operatingSystemItem);
       setDashboardOperatingSystemItems(
-        values?.operatingSystemItems ?? values?.applyFilter
-          ? filteredOperatingSystemItems
-          : values?.reset
-          ? operatingSystemItems
-          : [],
+        values?.operatingSystemItems ??
+          (values?.reset
+            ? operatingSystemItems
+            : values?.applyFilter
+            ? filteredOperatingSystemItems
+            : []),
       );
 
       setDashboardServerItem(values?.serverItem);
       setDashboardServerItems(
-        values?.serverItems ?? values?.applyFilter
-          ? filteredServerItems
-          : values?.reset
-          ? serverItems
-          : [],
+        values?.serverItems ??
+          (values?.reset ? serverItems : values?.applyFilter ? filteredServerItems : []),
       );
 
       if (values?.serverItem) {

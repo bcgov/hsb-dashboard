@@ -31,6 +31,13 @@ export const Filter: React.FC = () => {
   const values = useFilteredStore((state) => state.values);
   const setValues = useFilteredStore((state) => state.setValues);
 
+  const setFilteredTenants = useFilteredStore((state) => state.setTenants);
+  const setFilteredOrganizations = useFilteredStore((state) => state.setOrganizations);
+  const setFilteredOperatingSystemItems = useFilteredStore(
+    (state) => state.setOperatingSystemItems,
+  );
+  const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
+
   const { findServerItems } = useFilteredServerItems({
     useSimple: true,
   });
@@ -158,6 +165,10 @@ export const Filter: React.FC = () => {
         className={styles.reset}
         onClick={async () => {
           setValues(() => ({}));
+          setFilteredTenants(tenants);
+          setFilteredOrganizations(organizations);
+          setFilteredOperatingSystemItems(operatingSystemItems);
+          setFilteredServerItems(serverItems);
           await updateDashboard({ reset: true });
         }}
       >
