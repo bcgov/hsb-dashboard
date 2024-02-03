@@ -9,6 +9,7 @@ import {
   useTenants,
 } from '@/hooks/data';
 import { useFilteredServerItems } from '@/hooks/filter';
+import { useFilteredStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
 import styles from './Filter.module.scss';
@@ -26,9 +27,14 @@ export const Filter: React.FC = () => {
   const { isReady: serverItemsReady, serverItems } = useServerItems({
     useSimple: true,
   });
+
+  const values = useFilteredStore((state) => state.values);
+  const setValues = useFilteredStore((state) => state.setValues);
+
   const { findServerItems } = useFilteredServerItems({
     useSimple: true,
   });
+
   const { readyKey, lockKey } = useUrlParamsUpdateKey();
   const updateDashboard = useDashboardFilter();
 
@@ -137,7 +143,13 @@ export const Filter: React.FC = () => {
           !tenantsReady || !organizationsReady || !operatingSystemItemsReady || !serverItemsReady
         }
         onClick={async () => {
-          await updateDashboard();
+          await updateDashboard({
+            tenant: values.tenant,
+            organization: values.organization,
+            operatingSystemItem: values.operatingSystemItem,
+            serverItem: values.serverItem,
+            applyFilter: true,
+          });
         }}
       >
         Update
@@ -145,6 +157,7 @@ export const Filter: React.FC = () => {
       <button
         className={styles.reset}
         onClick={async () => {
+          setValues(() => ({}));
           await updateDashboard({ reset: true });
         }}
       >

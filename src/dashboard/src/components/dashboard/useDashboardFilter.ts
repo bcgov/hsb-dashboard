@@ -6,20 +6,21 @@ import {
   IServerItemModel,
   ITenantModel,
 } from '@/hooks';
-import {
-  useFilteredFileSystemItems,
-  useFilteredOperatingSystemItems,
-  useFilteredOrganizations,
-} from '@/hooks/filter';
+import { useFilteredFileSystemItems } from '@/hooks/filter';
 import { useAppStore, useDashboardStore, useFilteredStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
 
-export interface IDashboardFilterProps {
+export interface IDashboardValues {
   tenant?: ITenantModel;
+  tenants?: ITenantModel[];
   organization?: IOrganizationModel;
+  organizations?: IOrganizationModel[];
   operatingSystemItem?: IOperatingSystemItemModel;
+  operatingSystemItems?: IOperatingSystemItemModel[];
   serverItem?: IServerItemModel;
+  serverItems?: IServerItemModel[];
+  applyFilter?: boolean;
   reset?: boolean;
 }
 
@@ -54,22 +55,9 @@ export const useDashboardFilter = () => {
 
   const { findFileSystemItems } = useFilteredFileSystemItems();
 
-  const filteredTenant = useFilteredStore((state) => state.tenant);
-  const setFilteredTenant = useFilteredStore((state) => state.setTenant);
-  const setFilteredTenants = useFilteredStore((state) => state.setTenants);
-  const filteredOrganization = useFilteredStore((state) => state.organization);
-  const setFilteredOrganization = useFilteredStore((state) => state.setOrganization);
-  const setFilteredOrganizations = useFilteredStore((state) => state.setOrganizations);
-  const { organizations: filteredOrganizations } = useFilteredOrganizations();
-  const filteredOperatingSystemItem = useFilteredStore((state) => state.operatingSystemItem);
-  const setFilteredOperatingSystemItem = useFilteredStore((state) => state.setOperatingSystemItem);
-  const setFilteredOperatingSystemItems = useFilteredStore(
-    (state) => state.setOperatingSystemItems,
-  );
-  const { operatingSystemItems: filteredOperatingSystemItems } = useFilteredOperatingSystemItems();
-  const filteredServerItem = useFilteredStore((state) => state.serverItem);
-  const setFilteredServerItem = useFilteredStore((state) => state.setServerItem);
-  const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
+  const filteredTenants = useFilteredStore((state) => state.tenants);
+  const filteredOrganizations = useFilteredStore((state) => state.organizations);
+  const filteredOperatingSystemItems = useFilteredStore((state) => state.operatingSystemItems);
   const filteredServerItems = useFilteredStore((state) => state.serverItems);
 
   const currentParams = React.useMemo(
@@ -78,101 +66,64 @@ export const useDashboardFilter = () => {
   );
 
   return React.useCallback(
-    async (filter?: IDashboardFilterProps) => {
-      const selectedTenant = filter?.reset ? undefined : filter?.tenant ?? filteredTenant;
-      const selectedOrganization = filter?.reset
-        ? undefined
-        : filter?.organization ?? filteredOrganization;
-      const selectedOperatingSystemItem = filter?.reset
-        ? undefined
-        : filter?.operatingSystemItem ?? filteredOperatingSystemItem;
-      const selectedServerItem = filter?.reset
-        ? undefined
-        : filter?.serverItem ?? filteredServerItem;
-
-      if (filter?.reset || filter?.tenant) {
-        setFilteredTenant(filter.tenant);
-      }
-      if (filter?.reset || filter?.organization) {
-        setFilteredOrganization(filter.organization);
-      }
-      if (filter?.reset || filter?.operatingSystemItem) {
-        setFilteredOperatingSystemItem(filter.operatingSystemItem);
-      }
-      if (filter?.reset || filter?.serverItem) {
-        setFilteredServerItem(filter.serverItem);
-      }
-
+    async (values?: IDashboardValues) => {
       // Update the URL
-      if (selectedTenant) {
-        currentParams.set('tenant', selectedTenant.id.toString());
+      if (values?.tenant) {
+        currentParams.set('tenant', values.tenant.id.toString());
       } else {
         currentParams.delete('tenant');
       }
-      if (selectedOrganization) {
-        currentParams.set('organization', selectedOrganization.id.toString());
+      if (values?.organization) {
+        currentParams.set('organization', values.organization.id.toString());
       } else {
         currentParams.delete('organization');
       }
-      if (selectedOperatingSystemItem) {
-        currentParams.set('operatingSystemItem', selectedOperatingSystemItem.id.toString());
+      if (values?.operatingSystemItem) {
+        currentParams.set('operatingSystemItem', values.operatingSystemItem.id.toString());
       } else {
         currentParams.delete('operatingSystemItem');
       }
-      if (selectedServerItem) {
-        currentParams.set('serverItem', selectedServerItem.serviceNowKey);
+      if (values?.serverItem) {
+        currentParams.set('serverItem', values.serverItem.serviceNowKey);
       } else {
         currentParams.delete('serverItem');
       }
 
-      if (selectedTenant) {
-        setDashboardTenant(selectedTenant);
-        setDashboardTenants([selectedTenant]);
-      } else {
-        setDashboardTenant(undefined);
-        setFilteredTenants(tenants);
-        setDashboardTenants(tenants);
-      }
+      setDashboardTenant(values?.tenant);
+      setDashboardTenants(
+        values?.tenants ?? values?.applyFilter ? filteredTenants : values?.reset ? tenants : [],
+      );
 
-      if (selectedOrganization) {
-        setDashboardOrganization(selectedOrganization);
-        setDashboardOrganizations([selectedOrganization]);
-      } else {
-        setDashboardOrganization(undefined);
-        if (selectedTenant) setDashboardOrganizations(filteredOrganizations);
-        else {
-          setFilteredOrganizations(organizations);
-          setDashboardOrganizations(organizations);
-        }
-      }
+      setDashboardOrganization(values?.organization);
+      setDashboardOrganizations(
+        values?.organizations ?? values?.applyFilter
+          ? filteredOrganizations
+          : values?.reset
+          ? organizations
+          : [],
+      );
 
-      if (selectedOperatingSystemItem) {
-        setDashboardOperatingSystemItem(selectedOperatingSystemItem);
-        setDashboardOperatingSystemItems([selectedOperatingSystemItem]);
-      } else {
-        setDashboardOperatingSystemItem(undefined);
-        if (selectedOrganization) setDashboardOperatingSystemItems(filteredOperatingSystemItems);
-        else {
-          setFilteredOperatingSystemItems(operatingSystemItems);
-          setDashboardOperatingSystemItems(operatingSystemItems);
-        }
-      }
+      setDashboardOperatingSystemItem(values?.operatingSystemItem);
+      setDashboardOperatingSystemItems(
+        values?.operatingSystemItems ?? values?.applyFilter
+          ? filteredOperatingSystemItems
+          : values?.reset
+          ? operatingSystemItems
+          : [],
+      );
 
-      if (selectedServerItem) {
-        setDashboardServerItem(selectedServerItem);
-        setDashboardServerItems([selectedServerItem]);
-      } else {
-        setDashboardServerItem(undefined);
-        if (selectedOperatingSystemItem) setDashboardServerItems(filteredServerItems);
-        else {
-          setFilteredServerItems(serverItems);
-          setDashboardServerItems(serverItems);
-        }
-      }
+      setDashboardServerItem(values?.serverItem);
+      setDashboardServerItems(
+        values?.serverItems ?? values?.applyFilter
+          ? filteredServerItems
+          : values?.reset
+          ? serverItems
+          : [],
+      );
 
-      if (selectedServerItem) {
+      if (values?.serverItem) {
         await findFileSystemItems({
-          serverItemServiceNowKey: selectedServerItem.serviceNowKey,
+          serverItemServiceNowKey: values?.serverItem.serviceNowKey,
         });
       }
 
@@ -182,13 +133,10 @@ export const useDashboardFilter = () => {
     },
     [
       currentParams,
-      filteredOperatingSystemItem,
       filteredOperatingSystemItems,
-      filteredOrganization,
       filteredOrganizations,
-      filteredServerItem,
       filteredServerItems,
-      filteredTenant,
+      filteredTenants,
       findFileSystemItems,
       operatingSystemItems,
       organizations,
@@ -201,14 +149,6 @@ export const useDashboardFilter = () => {
       setDashboardServerItems,
       setDashboardTenant,
       setDashboardTenants,
-      setFilteredOperatingSystemItem,
-      setFilteredOperatingSystemItems,
-      setFilteredOrganization,
-      setFilteredOrganizations,
-      setFilteredServerItem,
-      setFilteredServerItems,
-      setFilteredTenant,
-      setFilteredTenants,
       tenants,
     ],
   );

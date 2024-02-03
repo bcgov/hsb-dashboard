@@ -38,31 +38,28 @@ export const FilteredTenants = ({ onChange }: IFilteredTenantsProps) => {
   const { operatingSystemItems } = useOperatingSystemItems();
   const { isReady: serverItemsReady } = useServerItems();
 
-  const filteredTenant = useFilteredStore((state) => state.tenant);
-  const setFilteredTenant = useFilteredStore((state) => state.setTenant);
+  const values = useFilteredStore((state) => state.values);
+  const setValues = useFilteredStore((state) => state.setValues);
+
   const setFilteredTenants = useFilteredStore((state) => state.setTenants);
   const { options: filteredTenantOptions } = useFilteredTenants();
 
-  const filteredOrganization = useFilteredStore((state) => state.organization);
-  const setFilteredOrganization = useFilteredStore((state) => state.setOrganization);
   const setFilteredOrganizations = useFilteredStore((state) => state.setOrganizations);
   const { findOrganizations } = useFilteredOrganizations();
 
-  const filteredOperatingSystemItem = useFilteredStore((state) => state.operatingSystemItem);
-  const setFilteredOperatingSystemItem = useFilteredStore((state) => state.setOperatingSystemItem);
   const setFilteredOperatingSystemItems = useFilteredStore(
     (state) => state.setOperatingSystemItems,
   );
   const { findOperatingSystemItems } = useFilteredOperatingSystemItems();
 
-  const setFilteredServerItem = useFilteredStore((state) => state.setServerItem);
+  const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
 
   const enableTenants = isHSB || tenants.length > 0;
 
   React.useEffect(() => {
     if (tenants.length) setFilteredTenants(tenants);
-    if (tenants.length === 1) setFilteredTenant(tenants[0]);
-  }, [setFilteredTenant, setFilteredTenants, tenants]);
+    if (tenants.length === 1) setValues((values) => ({ ...values, tenant: tenants[0] }));
+  }, [setFilteredTenants, setValues, tenants]);
 
   return filteredTenantOptions.length > 0 ? (
     <Select
@@ -70,37 +67,39 @@ export const FilteredTenants = ({ onChange }: IFilteredTenantsProps) => {
       variant="filter"
       options={filteredTenantOptions}
       placeholder="Select tenant"
-      value={filteredTenant?.id ?? ''}
+      value={values.tenant?.id ?? ''}
       disabled={!tenantsReady || !enableTenants || !serverItemsReady}
       loading={!tenantsReady}
       onChange={async (value) => {
         const tenant = tenants.find((t) => t.id == value);
-        setFilteredTenant(tenant);
-        setFilteredOrganization();
-        setFilteredOperatingSystemItem();
-        setFilteredServerItem();
+        setValues((state) => ({ ...state, tenant }));
 
         if (tenant) {
           const organizations = await findOrganizations({ tenantId: tenant.id });
-          if (organizations.length === 1) setFilteredOrganization(organizations[0]);
+          const organization = organizations.length === 1 ? organizations[0] : values.organization;
 
           const operatingSystems = await findOperatingSystemItems({
             tenantId: tenant.id,
-            organizationId: filteredOrganization?.id,
+            organizationId: organization?.id,
           });
-          if (operatingSystems.length === 1) setFilteredOperatingSystemItem(operatingSystems[0]);
+          const operatingSystemItem =
+            operatingSystems.length === 1 ? operatingSystems[0] : values.operatingSystemItem;
 
           const serverItems = await onChange?.(
             tenant,
-            organizations.length === 1 ? organizations[0] : filteredOrganization,
-            operatingSystems.length === 1 ? operatingSystems[0] : filteredOperatingSystemItem,
+            organizations.length === 1 ? organizations[0] : organization,
+            operatingSystems.length === 1 ? operatingSystems[0] : operatingSystemItem,
           );
-          if (serverItems?.length === 1) setFilteredServerItem(serverItems[0]);
+          const serverItem = serverItems?.length === 1 ? serverItems[0] : values.serverItem;
+
+          setFilteredServerItems(serverItems ?? []);
+          setValues((state) => ({ tenant, organization, operatingSystemItem, serverItem }));
         } else {
           setFilteredOrganizations(organizations);
           setFilteredOperatingSystemItems(operatingSystemItems);
 
-          await onChange?.(tenant);
+          const serverItems = await onChange?.(tenant);
+          setFilteredServerItems(serverItems ?? []);
         }
       }}
     />

@@ -5,9 +5,10 @@ import styles from './AllOrganizations.module.scss';
 import { Button } from '@/components/buttons';
 import { IOrganizationModel, IServerItemModel } from '@/hooks';
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js';
+import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import { useAllOrganizationsDoughnutChart } from './hooks';
 import { LoadingAnimation } from '../../loadingAnimation';
+import { generateAllOrganizationsDoughnutChart } from './utils';
 
 ChartJS.register(ArcElement, Tooltip);
 
@@ -22,10 +23,14 @@ export const AllOrganizations = ({
   serverItems,
   loading,
 }: IAllOrganizationsProps) => {
-  const data = useAllOrganizationsDoughnutChart(serverItems);
+  const [data, setData] = React.useState(generateAllOrganizationsDoughnutChart(serverItems));
+
+  React.useEffect(() => {
+    setData(generateAllOrganizationsDoughnutChart(serverItems));
+  }, [serverItems]);
 
   return (
-    <div className={styles.panel} >
+    <div className={styles.panel}>
       {loading && <LoadingAnimation />}
       <h1>All Organizations</h1>
       <div className={styles.chartContainer}>
