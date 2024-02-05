@@ -1,0 +1,38 @@
+@import '@/styles/utils.scss';
+
+.popupSearch {
+  padding: 12px;
+  background-color: $light-gray;
+  border-radius: 4px;
+
+  input {
+    background-color: $white;
+    width: -webkit-fill-available;
+    margin-right: 0;
+  }
+}
+
+.popupRows {
+  overflow-y: scroll;
+  min-height: 50px;
+  max-height: 400px;
+  @include scrollBar;
+  margin-bottom: 20px;
+
+  .row {
+    display: flex;
+    align-items: center;
+    min-height: 65px;
+    border-bottom: 1px solid $medium-gray;
+    gap: 1rem;
+    padding-left: 16px;
+
+    &:hover {
+      background-color: $light-gray;
+    }
+
+    label {
+      top: -7px;
+    }
+  }
+}

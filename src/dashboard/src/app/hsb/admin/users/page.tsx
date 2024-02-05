@@ -3,26 +3,23 @@
 import styles from './Users.module.scss';
 
 import {
+  AdminLoadingAnimation,
   Button,
   Checkbox,
   ConfirmPopup,
   Info,
-  Overlay,
   Sheet,
-  Spinner,
   Table,
   Text,
-  AdminLoadingAnimation,
 } from '@/components';
-import { IUserModel, useAuth } from '@/hooks';
+import { IUserForm, UserDialog, UserDialogVariant } from '@/components/admin';
+import { LoadingAnimation } from '@/components/loadingAnimation';
+import { useAuth } from '@/hooks';
 import { useApiUsers } from '@/hooks/api/admin';
 import { useGroups, useUsers } from '@/hooks/data';
 import { searchUsers } from '@/utils';
 import { redirect } from 'next/navigation';
-import React, { useRef } from 'react';
-import { IUserForm } from './IUserForm';
-import { UserDialog, UserDialogVariant } from './UserDialog';
-import { LoadingAnimation } from '@/components/charts/loadingAnimation';
+import React from 'react';
 
 export default function Page() {
   const state = useAuth();
@@ -36,7 +33,7 @@ export default function Page() {
   const [filter, setFilter] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const dialogRef = useRef<HTMLDialogElement>(null);
+  const dialogRef = React.useRef<HTMLDialogElement>(null);
   const [dialog, setDialog] = React.useState<{ user: IUserForm; variant: UserDialogVariant }>();
   const [showPopup, setShowPopup] = React.useState(false);
 
@@ -62,22 +59,29 @@ export default function Page() {
   }, [filter, formUsers]);
 
   const handleUpdate = React.useCallback(async () => {
+    setIsSubmitting(true);
     const update = formUsers.map(async (user) => {
       if (user.isDirty) {
+        let result = user;
         try {
-          setIsSubmitting(true);
+          setFormUsers((users) =>
+            users.map((fu) => (fu.id === user.id ? { ...result, isSubmitting: true } : fu)),
+          );
           const res = await updateUser(user);
-          const result: IUserModel = await res.json();
+          result = await res.json();
           return { ...result, isDirty: false };
         } catch (error) {
           console.error(error);
         } finally {
-          setIsSubmitting(false);
+          setFormUsers((users) =>
+            users.map((fu) => (fu.id === user.id ? { ...result, isSubmitting: false } : fu)),
+          );
         }
       }
       return user;
     });
     const results = await Promise.all(update);
+    setIsSubmitting(false);
     setFormUsers((users) =>
       users.map((user) => {
         return results.find((u) => u.id === user.id) ?? user;
@@ -114,14 +118,12 @@ export default function Page() {
           )
         }
         onSave={async () => {
-          await handleUpdate();
           dialogRef.current?.close();
+          await handleUpdate();
         }}
       />
       <div className={styles.container}>
-        {loading && (
-          <LoadingAnimation />
-        )}
+        {loading && <LoadingAnimation />}
         <div className={styles.section}>
           <Info>
             Find a user by name, username, or email. Click checkbox to enable user access to
@@ -145,7 +147,9 @@ export default function Page() {
 
         <div className={styles.table}>
           <Table
-            data={formUsers.filter((u) => filteredUsers.some((fu) => fu === u.id))}
+            rows={formUsers
+              .filter((u) => filteredUsers.some((user) => user === u.id))
+              .map((user, index) => ({ data: user, index, loading: user.isSubmitting }))}
             header={
               <>
                 <div>Username</div>

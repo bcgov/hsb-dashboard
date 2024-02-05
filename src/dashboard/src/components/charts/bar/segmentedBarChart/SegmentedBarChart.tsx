@@ -9,7 +9,7 @@ import { useStorageTrendsStore } from '@/store';
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, Title, Tooltip } from 'chart.js';
 import moment from 'moment';
 import React from 'react';
-import { LoadingAnimation } from '../../loadingAnimation';
+import { LoadingAnimation } from '../../../loadingAnimation';
 import { defaultOptions } from './defaultOptions';
 import { useFileSystemHistoryItems } from './hooks';
 import { useStorageTrendsData } from './useStorageTrendsData';

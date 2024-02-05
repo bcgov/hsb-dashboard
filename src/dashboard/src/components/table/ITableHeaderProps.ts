@@ -1,3 +1,3 @@
-export interface ITableHeaderProps<T> {
+export interface ITableHeaderProps<T extends object> {
   data: T[];
 }

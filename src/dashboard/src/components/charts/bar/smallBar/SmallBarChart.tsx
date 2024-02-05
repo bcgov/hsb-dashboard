@@ -1,9 +1,9 @@
 import { Button } from '@/components';
+import { LoadingAnimation } from '../../../loadingAnimation';
 import { BarRow } from './BarRow';
 import { IBarChartData } from './IBarChartData';
 import { IBarChartRowData } from './IBarChartRowData';
 import styles from './SmallBarChart.module.scss';
-import { LoadingAnimation } from '../../loadingAnimation';
 
 export interface ISmallBarChartProps<T extends IBarChartRowData<unknown>> {
   /** Title header of the component */

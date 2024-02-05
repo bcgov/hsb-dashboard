@@ -6,7 +6,7 @@ import { IServerItemModel } from '@/hooks';
 import classNames from 'classnames';
 import { debounce } from 'lodash';
 import React from 'react';
-import { LoadingAnimation } from '../loadingAnimation';
+import { LoadingAnimation } from '../../loadingAnimation';
 import styles from './AllocationTable.module.scss';
 import { Dropdown } from './Dropdown';
 import { ITableRowData } from './ITableRowData';

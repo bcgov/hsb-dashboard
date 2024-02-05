@@ -2,7 +2,8 @@
 
 import styles from './Organizations.module.scss';
 
-import { Button, Checkbox, Info, Overlay, Sheet, Spinner, Table, Text, AdminLoadingAnimation, } from '@/components';
+import { AdminLoadingAnimation, Button, Checkbox, Info, Sheet, Table, Text } from '@/components';
+import { LoadingAnimation } from '@/components/loadingAnimation';
 import { IOrganizationModel, useAuth } from '@/hooks';
 import { useApiOrganizations } from '@/hooks/api/admin';
 import { useOrganizations } from '@/hooks/data';
@@ -11,7 +12,6 @@ import { searchOrganizations } from '@/utils';
 import { redirect } from 'next/navigation';
 import React from 'react';
 import { IOrganizationForm } from './IOrganizationForm';
-import { LoadingAnimation } from '@/components/charts/loadingAnimation';
 
 export default function Page() {
   const state = useAuth();
@@ -50,17 +50,15 @@ export default function Page() {
   }, [filter, formOrganizations]);
 
   const handleUpdate = React.useCallback(async () => {
+    setIsSubmitting(true);
     const update = formOrganizations.map(async (organization) => {
       if (organization.isDirty) {
         try {
-          setIsSubmitting(true);
           const res = await updateOrganization(organization);
           const result: IOrganizationModel = await res.json();
           return { ...result, isDirty: false };
         } catch (error) {
           console.error(error);
-        } finally {
-          setIsSubmitting(false);
         }
       }
       return organization;
@@ -71,6 +69,7 @@ export default function Page() {
     });
     setFormOrganizations(updatedOrganizations);
     setOrganizations(updatedOrganizations);
+    setIsSubmitting(false);
   }, [formOrganizations, setOrganizations, updateOrganization]);
 
   // Only allow System Admin role to view this page.
@@ -81,9 +80,7 @@ export default function Page() {
     <div className={styles.panelContainer}>
       <Sheet>
         <div className={styles.container}>
-          {loading && (
-            <LoadingAnimation />
-          )}
+          {(loading || isSubmitting) && <LoadingAnimation />}
           <div className={styles.section}>
             <Info>
               Find an organization by name and/or associated tenant. Click checkbox to enable or

@@ -2,7 +2,18 @@
 
 import styles from './ClientAdmin.module.scss';
 
-import { Button, Checkbox, Info, Overlay, Select, Sheet, Spinner, Table, Text, AdminLoadingAnimation } from '@/components';
+import {
+  AdminLoadingAnimation,
+  Button,
+  Checkbox,
+  Info,
+  Select,
+  Sheet,
+  Table,
+  Text,
+} from '@/components';
+import { IUserForm, UserDialog, UserDialogVariant } from '@/components/admin';
+import { LoadingAnimation } from '@/components/loadingAnimation';
 import { IUserModel, RoleName, useAuth } from '@/hooks';
 import { useApiUsers } from '@/hooks/api/admin';
 import { IOrganizationModel, ITenantModel } from '@/hooks/api/interfaces/auth';
@@ -10,9 +21,7 @@ import { useGroups, useTenants, useUsers } from '@/hooks/data';
 import { useAppStore } from '@/store';
 import { redirect } from 'next/navigation';
 import React from 'react';
-import { IUserForm } from './IUserForm';
 import { getOrganizationOptions, getTenantOptions, searchUsers } from './utils';
-import { LoadingAnimation } from '@/components/charts/loadingAnimation';
 
 export default function Page() {
   const state = useAuth();
@@ -23,6 +32,8 @@ export default function Page() {
   const { isReady: isReadyGroups, groups } = useGroups({ init: true });
   const { update: updateUser } = useApiUsers();
 
+  const dialogRef = React.useRef<HTMLDialogElement>(null);
+  const [dialog, setDialog] = React.useState<{ user: IUserForm; variant: UserDialogVariant }>();
   const [loading, setLoading] = React.useState(true);
   const [selectedTenant, setSelectedTenant] = React.useState<ITenantModel>();
   const [tenantOptions, setTenantOptions] = React.useState(
@@ -64,29 +75,53 @@ export default function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users]);
 
-  const handleSearch = React.useCallback(() => {
-    setFilteredUsers(searchUsers(formUsers, filter).map((u) => u.id));
-  }, [filter, formUsers]);
+  const doSearch = React.useCallback(
+    (
+      users: IUserModel[],
+      search?: string,
+      tenant?: ITenantModel,
+      organization?: IOrganizationModel,
+    ) => {
+      setFilteredUsers(searchUsers(users, search, tenant, organization).map((u) => u.id));
+    },
+    [],
+  );
 
   const handleUpdate = React.useCallback(async () => {
+    setIsSubmitting(true);
     const update = formUsers.map(async (user) => {
       if (user.isDirty) {
+        let result = user;
         try {
-          setIsSubmitting(true);
+          setFormUsers((users) =>
+            users.map((fu) => (fu.id === user.id ? { ...result, isSubmitting: true } : fu)),
+          );
           const res = await updateUser(user);
-          const result: IUserModel = await res.json();
+          result = await res.json();
           return { ...result, isDirty: false };
         } catch (error) {
           console.error(error);
         } finally {
-          setIsSubmitting(false);
+          setFormUsers((users) =>
+            users.map((fu) => (fu.id === user.id ? { ...result, isSubmitting: false } : fu)),
+          );
         }
       }
       return user;
     });
     const results = await Promise.all(update);
-    setFormUsers(results);
+    setIsSubmitting(false);
+    setFormUsers((users) =>
+      users.map((user) => {
+        return results.find((u) => u.id === user.id) ?? user;
+      }),
+    );
   }, [updateUser, formUsers]);
+
+  const handleEditClick = (user: IUserForm, variant: UserDialogVariant) => {
+    setDialog({ user, variant });
+    dialogRef.current?.showModal();
+  };
 
   // Only allow Organization Admin role to view this page.
   if (state.status === 'loading') return <AdminLoadingAnimation />;
@@ -94,12 +129,40 @@ export default function Page() {
 
   return (
     <Sheet>
+      <UserDialog
+        ref={dialogRef}
+        user={dialog?.user}
+        variant={dialog?.variant}
+        onChange={(data) =>
+          setFormUsers((formUsers) =>
+            formUsers.map((u) => (u.id === data.id ? { ...data, isDirty: true } : u)),
+          )
+        }
+        onSave={async () => {
+          dialogRef.current?.close();
+          await handleUpdate();
+        }}
+      />
       <div className={styles.container}>
-        {loading && (
-          <LoadingAnimation />
-        )}
+        {loading && <LoadingAnimation />}
         <div className={styles.section}>
           <div className={styles.search}>
+            <Text
+              name="search"
+              placeholder="Search"
+              iconType="search"
+              onChange={(e) => setFilter(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.code === 'Enter')
+                  doSearch(formUsers, filter, selectedTenant, selectedOrganization);
+              }}
+            />
+            <Button
+              variant="secondary"
+              onClick={() => doSearch(formUsers, filter, selectedTenant, selectedOrganization)}
+            >
+              Search
+            </Button>
             <Select
               options={tenantOptions}
               placeholder="Select Tenant"
@@ -107,9 +170,10 @@ export default function Page() {
               onChange={(value) => {
                 const tenant = userinfo?.tenants.find((t) => t.id == value);
                 setSelectedTenant(tenant);
+                doSearch(formUsers, filter, tenant, selectedOrganization);
               }}
             />
-            {/* <Select
+            <Select
               options={organizationOptions}
               placeholder="Select Organization"
               value={
@@ -118,72 +182,38 @@ export default function Page() {
               onChange={(value) => {
                 const organization = userinfo?.organizations.find((t) => t.id == value);
                 setSelectedOrganization(organization);
-              }}
-            /> */}
-            <Text
-              name="search"
-              placeholder="Search"
-              iconType="search"
-              onChange={(e) => setFilter(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.code === 'Enter') handleSearch();
+                doSearch(formUsers, filter, selectedTenant, organization);
               }}
             />
-            <Button variant="secondary" onClick={() => handleSearch()}>
-              Search
-            </Button>
           </div>
           <Info>
-            Enable access to the dashboard and/or admin access to users associated with{' '}
+            Enable user access to tenants and/or organizations, and make users administrators.
             {organization}:
           </Info>
         </div>
         <div className={styles.table}>
           <Table
-            data={
-              selectedTenant || selectedOrganization
-                ? formUsers.filter((u) => filteredUsers.some((fu) => fu === u.id))
-                : []
-            }
+            rows={formUsers
+              .filter((u) => filteredUsers.some((user) => user === u.id))
+              .map((user, index) => ({ data: user, index, loading: user.isSubmitting }))}
             header={
               <>
-                <div>Access</div>
                 <div>Username</div>
                 <div>Email</div>
                 <div>Name</div>
-                <div>Admin</div>
+                <div className={styles.tableHeader}>Admin</div>
+                <div>Roles, Tenants, Organizations</div>
               </>
             }
           >
             {({ data }) => {
               return (
                 <>
-                  <div className={styles.checkbox}>
-                    <Checkbox
-                      checked={data.tenants?.some((t) => t.id === selectedTenant?.id)}
-                      onChange={(e) => {
-                        // Add/Remove the organization from the user.
-                        setFormUsers((formUsers) =>
-                          formUsers.map((r) => {
-                            const tenant = tenants.find((t) => t.id === selectedTenant?.id);
-                            const userTenants =
-                              e.target.checked && tenant
-                                ? [...(r.tenants ?? []), tenant]
-                                : r.tenants?.filter((t) => t.id !== tenant?.id) ?? [];
-                            return r.id === data.id
-                              ? { ...data, tenants: userTenants, isDirty: true }
-                              : r;
-                          }),
-                        );
-                      }}
-                    />
-                  </div>
                   <div>{data.username}</div>
                   <div>{data.email}</div>
                   <div>{data.displayName}</div>
                   <div className={styles.checkbox}>
                     <Checkbox
-                      disabled={!data.tenants?.some((t) => t.id === selectedTenant?.id)}
                       checked={data.groups?.some((t) => t.name === RoleName.OrganizationAdmin)}
                       onChange={(e) => {
                         // Add/Remove organization-admin group.
@@ -200,6 +230,29 @@ export default function Page() {
                         });
                       }}
                     />
+                  </div>
+                  <div className={styles.selectRow}>
+                    <div>
+                      <p>
+                        <span>Organizations: </span>
+                        {data.organizations?.map((org) => org.name).join(', ')}
+                      </p>
+                      <Button
+                        variant="secondary"
+                        onClick={() => handleEditClick(data, 'organization')}
+                      >
+                        Edit
+                      </Button>
+                    </div>
+                    <div>
+                      <p>
+                        <span>Tenant: </span>
+                        {data.tenants?.map((org) => org.name).join(', ')}
+                      </p>
+                      <Button variant="secondary" onClick={() => handleEditClick(data, 'tenant')}>
+                        Edit
+                      </Button>
+                    </div>
                   </div>
                 </>
               );
