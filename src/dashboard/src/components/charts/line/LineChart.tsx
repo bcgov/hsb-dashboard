@@ -16,7 +16,7 @@ import {
   Tooltip,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import { LoadingAnimation } from '../loadingAnimation';
+import { LoadingAnimation } from '../../loadingAnimation';
 import styles from './LineChart.module.scss';
 import { defaultChartOptions } from './defaultChartOptions';
 

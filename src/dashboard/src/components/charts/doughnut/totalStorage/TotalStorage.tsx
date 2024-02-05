@@ -4,9 +4,9 @@ import { IServerItemModel } from '@/hooks';
 import { convertToStorageSize } from '@/utils';
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
+import { LoadingAnimation } from '../../../loadingAnimation';
 import styles from './TotalStorage.module.scss';
 import { useTotalStorageDoughnutChart } from './hooks';
-import { LoadingAnimation } from '../../loadingAnimation';
 
 ChartJS.register(ArcElement, Tooltip);
 

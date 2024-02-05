@@ -1,8 +1,8 @@
 'use client';
 
+import { LoadingAnimation } from '@/components/loadingAnimation';
 import { useAuth } from '@/hooks';
 import { redirect } from 'next/navigation';
-import { LoadingAnimation } from '@/components/charts/loadingAnimation';
 
 export default function Page() {
   const { isClient, isHSB } = useAuth();

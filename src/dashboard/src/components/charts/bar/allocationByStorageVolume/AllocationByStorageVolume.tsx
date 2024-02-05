@@ -5,13 +5,13 @@ import { Select } from '@/components/forms/select';
 import { Text } from '@/components/forms/text';
 import { IOrganizationModel, IServerItemModel } from '@/hooks';
 import React from 'react';
+import { LoadingAnimation } from '../../../loadingAnimation';
 import styles from './AllocationByStorageVolume.module.scss';
 import { BarChart } from './BarChart';
 import { IOrganizationStorageModel } from './IOrganizationStorageModel';
 import { PercentageLines } from './PercentageLines';
 import { calcOrganizationStorage } from './calcOrganizationStorage';
 import { SortOptions, sortOptions } from './sortOptions';
-import { LoadingAnimation } from '../../loadingAnimation';
 
 export interface IAllocationByStorageVolumeProps {
   organizations: IOrganizationModel[];

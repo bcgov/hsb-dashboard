@@ -1,21 +1,79 @@
 @import '@/styles/utils.scss';
 
 .search {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 10px;
 
-    select {
-        width: 100%;
-        max-width: 590px;
-    }
+  select {
+    width: 100%;
+    max-width: 590px;
+  }
 
-    input {
-        margin-right: 0;
-    }
+  input {
+    margin-right: 0;
+  }
 }
 
-.checkbox {
-    top: -8px;
+.checkbox label {
+  top: -8px;
+}
+
+.selectRow {
+  display: flex;
+  flex-direction: column;
+
+  >div {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+    border-radius: 4px;
+
+    &:hover {
+      background-color: $white;
+    }
+
+    >p {
+      width: 100%;
+      margin: 0 5px;
+      font-size: $font-size-small;
+      color: $dark-gray;
+
+      span {
+        font-weight: bold;
+        color: $bc-black;
+      }
+    }
+
+    button {
+      flex-direction: flex-end;
+      font-size: $font-size-small;
+      padding: 5px 8px;
+      margin-right: 10px;
+
+      &:hover {
+        background-color: $chart-blue;
+        color: $white;
+      }
+    }
+  }
+}
+
+.container .table>div {
+  .tableHeader {
+    flex: 0.5;
+
+    &+div {
+      flex: 1.5;
+    }
+  }
+
+  .checkbox {
+    flex: 0.5;
+  }
+
+  .selectRow {
+    flex: 1.5;
+  }
 }

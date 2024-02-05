@@ -7,7 +7,7 @@ import { IOrganizationModel, IServerItemModel } from '@/hooks';
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js';
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import { LoadingAnimation } from '../../loadingAnimation';
+import { LoadingAnimation } from '../../../loadingAnimation';
 import { generateAllOrganizationsDoughnutChart } from './utils';
 
 ChartJS.register(ArcElement, Tooltip);

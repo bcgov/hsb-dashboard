@@ -2,8 +2,8 @@ import { Button, Checkbox, Dialog, IDialogProps } from '@/components';
 import { Text } from '@/components/forms/text';
 import { useGroups, useOrganizations, useTenants } from '@/hooks/data';
 import React from 'react';
-import { IUserForm } from './IUserForm';
-import styles from './Users.module.scss';
+import { IUserForm } from '../';
+import styles from './UserDialog.module.scss';
 
 export type UserDialogVariant = 'organization' | 'tenant' | 'group';
 

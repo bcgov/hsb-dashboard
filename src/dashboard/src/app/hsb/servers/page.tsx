@@ -1,7 +1,7 @@
 'use client';
 
 import { AllocationTable } from '@/components';
-import { LoadingAnimation } from '@/components/charts/loadingAnimation';
+import { LoadingAnimation } from '@/components/loadingAnimation';
 import { useAuth } from '@/hooks';
 import { useServerItems } from '@/hooks/data';
 import { useDashboardStore, useFilteredStore } from '@/store';

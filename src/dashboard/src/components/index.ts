@@ -1,3 +1,4 @@
+export * from './adminLoadingAnimation';
 export * from './auth';
 export * from './buttons';
 export * from './charts';
@@ -11,10 +12,10 @@ export * from './grid';
 export * from './header';
 export * from './info';
 export * from './keycloak';
+export * from './loadingAnimation';
 export * from './navbar';
 export * from './overlay';
+export * from './pageLoadingAnimation';
 export * from './sheet';
 export * from './spinner';
 export * from './table';
-export * from './pageLoadingAnimation';
-export * from './adminLoadingAnimation';
