@@ -1,7 +1,12 @@
 @import '@/styles/utils.scss';
 
 .panel {
-    @include panel-style(330px, unset, unset, 297px);
+    @include panel-style(330px, unset, unset, unset);
+    flex-basis: 23%;
+    
+    @media (max-width: $tablet) {
+        flex-basis: 100%;
+    }
 }
 
 .chart {

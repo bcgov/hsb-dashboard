@@ -15,6 +15,12 @@
   transform: translateX(-50%);
   left: 50%;
   color: $bc-black;
+
+  @media (max-width: $desktop) {
+    h1 {
+      display: none;
+    }
+  }
 }
 
 .reset {

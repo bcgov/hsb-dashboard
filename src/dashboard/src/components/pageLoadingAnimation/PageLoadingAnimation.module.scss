@@ -6,8 +6,13 @@
 }
 
 .panel {
-    @include panel-style(370px, 370px, unset, 638px);
+    @include panel-style(370px, 370px, unset, unset);
     padding-bottom: 34px;
+    flex-basis: 49%;
+
+  @media (max-width: $tablet) {
+      flex-basis: 100%;
+  }
 }
 
 .panel2 {
