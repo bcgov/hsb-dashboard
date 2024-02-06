@@ -8,3 +8,4 @@ resources:
   - ../base/api
   - ../base/app
   - ../base/data-service
+  - ../base/tekton/service-account

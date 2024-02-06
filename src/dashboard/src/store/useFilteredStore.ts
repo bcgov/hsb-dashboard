@@ -16,6 +16,8 @@ export interface IFilterValues {
 
 export interface IFilteredStoreState {
   // Filter
+  loading: boolean;
+  setLoading: (value: boolean) => void;
   values: IFilterValues;
   setValues: (dispatch: (values: IFilterValues) => IFilterValues) => void;
 
@@ -52,6 +54,8 @@ export interface IFilteredStoreState {
 
 export const useFilteredStore = create<IFilteredStoreState>((set, get) => ({
   // Filter
+  loading: false,
+  setLoading: (value) => set((state) => ({ ...state, loading: value })),
   values: {},
   setValues: (dispatch: (values: IFilterValues) => IFilterValues) => {
     const values = dispatch(get().values);

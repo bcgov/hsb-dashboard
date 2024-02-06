@@ -28,6 +28,7 @@ export const Filter: React.FC = () => {
     useSimple: true,
   });
 
+  const loading = useFilteredStore((state) => state.loading);
   const values = useFilteredStore((state) => state.values);
   const setValues = useFilteredStore((state) => state.setValues);
 
@@ -144,7 +145,11 @@ export const Filter: React.FC = () => {
       <Button
         variant="primary"
         disabled={
-          !tenantsReady || !organizationsReady || !operatingSystemItemsReady || !serverItemsReady
+          !tenantsReady ||
+          !organizationsReady ||
+          !operatingSystemItemsReady ||
+          !serverItemsReady ||
+          loading
         }
         loading={
           !tenantsReady || !organizationsReady || !operatingSystemItemsReady || !serverItemsReady

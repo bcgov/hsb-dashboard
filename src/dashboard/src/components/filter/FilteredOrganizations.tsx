@@ -30,6 +30,7 @@ export const FilteredOrganizations = ({ onChange }: IFilteredOrganizationsProps)
 
   const values = useFilteredStore((state) => state.values);
   const setValues = useFilteredStore((state) => state.setValues);
+  const setLoading = useFilteredStore((state) => state.setLoading);
 
   const setFilteredOrganizations = useFilteredStore((state) => state.setOrganizations);
   const { options: filteredOrganizationOptions } = useFilteredOrganizations();
@@ -60,6 +61,7 @@ export const FilteredOrganizations = ({ onChange }: IFilteredOrganizationsProps)
       loading={!organizationsReady}
       onChange={async (value) => {
         const organization = organizations.find((o) => o.id == value);
+        setLoading(true);
         setValues((state) => ({ ...state, organization }));
 
         if (organization) {
@@ -68,14 +70,10 @@ export const FilteredOrganizations = ({ onChange }: IFilteredOrganizationsProps)
             organizationId: organization.id,
           });
           const operatingSystemItem =
-            operatingSystems.length === 1 ? operatingSystems[0] : values.operatingSystemItem;
+            operatingSystems.length === 1 ? operatingSystems[0] : undefined;
 
-          const serverItems = await onChange?.(
-            values.tenant,
-            organization,
-            operatingSystems.length === 1 ? operatingSystems[0] : values.operatingSystemItem,
-          );
-          const serverItem = serverItems?.length === 1 ? serverItems[0] : values.serverItem;
+          const serverItems = await onChange?.(values.tenant, organization, operatingSystemItem);
+          const serverItem = serverItems?.length === 1 ? serverItems[0] : undefined;
 
           setFilteredServerItems(serverItems ?? []);
           setValues((state) => ({ ...state, organization, operatingSystemItem, serverItem }));
@@ -84,6 +82,7 @@ export const FilteredOrganizations = ({ onChange }: IFilteredOrganizationsProps)
           const serverItems = await onChange?.(values.tenant, organization);
           setFilteredServerItems(serverItems ?? []);
         }
+        setLoading(false);
       }}
     />
   );
