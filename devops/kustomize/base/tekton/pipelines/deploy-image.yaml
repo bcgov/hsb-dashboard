@@ -1,0 +1,67 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: deploy-image
+  annotations:
+    tekton.dev/displayName: Deploy Image
+    tekton.dev/pipelines.minVersion: 0.17.0
+    tekton.dev/tags: deploy
+  labels:
+    name: deploy-image
+    part-of: hsb
+    version: 1.0.0
+    component: pipeline
+    managed-by: kustomize
+    DataClass: Low
+spec:
+  params:
+    - name: PROJECT_SHORTNAME
+      description: >-
+        The project namespace shortname.
+        The part before the "-" (i.e. 9b301c-dev = 9b301c).
+      type: string
+      default: e89443
+
+    - name: IMAGE
+      description: >-
+        The image to deploy
+      type: string
+      default: dashboard
+
+    - name: IMAGE_TAG
+      description: >-
+        The tag given to the built images.
+        Use this to create versioned images.
+      type: string
+      default: latest
+
+    - name: DEPLOY_TO
+      description: >-
+        Identify the environment to deploy the solution to [dev,test,prod,tools].
+      type: string
+      default: dev
+
+  tasks:
+    - name: wait
+      taskRef:
+        name: pipeline-wait
+        kind: Task
+      params:
+        - name: PIPELINE_NAME
+          value: $(context.pipelineRun.name)
+
+    - name: deploy-image
+      runAfter:
+        - wait
+      taskRef:
+        name: oc-deploy-with-tag
+        kind: Task
+      params:
+        - name: PROJECT_SHORTNAME
+          value: $(params.PROJECT_SHORTNAME)
+        - name: IMAGE
+          value: $(params.IMAGE)
+        - name: IMAGE_TAG
+          value: $(params.IMAGE_TAG)
+        - name: ENV
+          value: $(params.DEPLOY_TO)

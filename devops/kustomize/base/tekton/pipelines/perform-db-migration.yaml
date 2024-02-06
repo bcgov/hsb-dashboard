@@ -1,0 +1,75 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: perform-db-migration
+  annotations:
+    tekton.dev/displayName: Perform Database Migration
+    tekton.dev/pipelines.minVersion: 0.17.0
+    tekton.dev/tags: deploy
+  labels:
+    name: perform-db-migration
+    part-of: hsb
+    version: 1.0.0
+    component: pipeline
+    managed-by: kustomize
+    DataClass: Low
+spec:
+  params:
+    - name: PROJECT_SHORTNAME
+      description: >-
+        The project namespace shortname.
+        The part before the "-" (i.e. 9b301c-dev = 9b301c).
+      type: string
+      default: e89443
+
+    - name: MIGRATION
+      description: >-
+        The migration version number (0 to rollback everything, '' to upgrade to latest)
+      type: string
+      default: ""
+
+    - name: IMAGE
+      description: >-
+        The image of the database migration.
+      type: string
+      default: db-migration
+
+    - name: IMAGE_TAG
+      description: >-
+        The tag given to the built images.
+        Use this to create versioned images.
+      type: string
+      default: latest
+
+    - name: DEPLOY_TO
+      description: >-
+        Identify the environment to deploy the solution to [dev,test,prod,tools].
+      type: string
+      default: dev
+
+  tasks:
+    - name: wait
+      taskRef:
+        name: pipeline-wait
+        kind: Task
+      params:
+        - name: PIPELINE_NAME
+          value: $(context.pipelineRun.name)
+
+    - name: run-db-migration
+      runAfter:
+        - wait
+      taskRef:
+        name: db-migration
+        kind: Task
+      params:
+        - name: PROJECT_SHORTNAME
+          value: $(params.PROJECT_SHORTNAME)
+        - name: IMAGE
+          value: $(params.IMAGE)
+        - name: IMAGE_TAG
+          value: $(params.IMAGE_TAG)
+        - name: DEPLOY_TO
+          value: $(params.DEPLOY_TO)
+        - name: MIGRATION
+          value: $(params.MIGRATION)

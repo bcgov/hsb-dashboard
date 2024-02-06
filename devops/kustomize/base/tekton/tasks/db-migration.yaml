@@ -17,10 +17,6 @@ metadata:
     DataClass: Low
 spec:
   params:
-    - name: IMAGE
-      description: The name of the database migration image.
-      type: string
-      default: db-migration
     - name: PROJECT_SHORTNAME
       description: The shortname of the project namespace.
       type: string
@@ -30,6 +26,12 @@ spec:
       description: The image registry
       type: string
       default: image-registry.apps.emerald.devops.gov.bc.ca
+
+    - name: IMAGE
+      description: The name of the database migration image.
+      type: string
+      default: db-migration
+
     - name: IMAGE_TAG
       description: The tag given to the built image.
       type: string
@@ -48,7 +50,25 @@ spec:
   steps:
     - name: run
       image: "image-registry.openshift-image-registry.svc:5000/openshift/cli:latest"
-      resources: {}
+      env:
+        - name: HTTP_PROXY
+          value: http://swpxkam.gov.bc.ca:8080
+        - name: HTTPS_PROXY
+          value: http://swpxkam.gov.bc.ca:8080
+        - name: NO_PROXY
+          value: .cluster.local,.svc,10.91.0.0/16,172.30.0.0/16,127.0.0.1,localhost,.gov.bc.ca
+      securityContext:
+        capabilities:
+          add:
+            - SETFCAP
+        runAsUser: 0
+      resources:
+        requests:
+          memory: 250Mi
+          cpu: 500m
+        limits:
+          memory: 2Gi
+          cpu: 2000m
       script: |
         #!/usr/bin/env bash
         set -e
