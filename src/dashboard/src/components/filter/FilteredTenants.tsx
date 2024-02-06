@@ -40,6 +40,7 @@ export const FilteredTenants = ({ onChange }: IFilteredTenantsProps) => {
 
   const values = useFilteredStore((state) => state.values);
   const setValues = useFilteredStore((state) => state.setValues);
+  const setLoading = useFilteredStore((state) => state.setLoading);
 
   const setFilteredTenants = useFilteredStore((state) => state.setTenants);
   const { options: filteredTenantOptions } = useFilteredTenants();
@@ -72,25 +73,26 @@ export const FilteredTenants = ({ onChange }: IFilteredTenantsProps) => {
       loading={!tenantsReady}
       onChange={async (value) => {
         const tenant = tenants.find((t) => t.id == value);
+        setLoading(true);
         setValues((state) => ({ ...state, tenant }));
 
         if (tenant) {
           const organizations = await findOrganizations({ tenantId: tenant.id });
-          const organization = organizations.length === 1 ? organizations[0] : values.organization;
+          const organization = organizations.length === 1 ? organizations[0] : undefined;
 
           const operatingSystems = await findOperatingSystemItems({
             tenantId: tenant.id,
             organizationId: organization?.id,
           });
           const operatingSystemItem =
-            operatingSystems.length === 1 ? operatingSystems[0] : values.operatingSystemItem;
+            operatingSystems.length === 1 ? operatingSystems[0] : undefined;
 
           const serverItems = await onChange?.(
             tenant,
             organizations.length === 1 ? organizations[0] : organization,
             operatingSystems.length === 1 ? operatingSystems[0] : operatingSystemItem,
           );
-          const serverItem = serverItems?.length === 1 ? serverItems[0] : values.serverItem;
+          const serverItem = serverItems?.length === 1 ? serverItems[0] : undefined;
 
           setFilteredServerItems(serverItems ?? []);
           setValues((state) => ({ tenant, organization, operatingSystemItem, serverItem }));
@@ -101,6 +103,7 @@ export const FilteredTenants = ({ onChange }: IFilteredTenantsProps) => {
           const serverItems = await onChange?.(tenant);
           setFilteredServerItems(serverItems ?? []);
         }
+        setLoading(false);
       }}
     />
   ) : (

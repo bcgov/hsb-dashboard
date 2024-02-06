@@ -14,6 +14,7 @@ export const FilteredServerItems = () => {
 
   const values = useFilteredStore((state) => state.values);
   const setValues = useFilteredStore((state) => state.setValues);
+  const setLoading = useFilteredStore((state) => state.setLoading);
 
   const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
   const { options: filteredServerItemOptions } = useFilteredServerItems({
@@ -37,7 +38,9 @@ export const FilteredServerItems = () => {
       loading={!serverItemsReady}
       onChange={async (value) => {
         const serverItem = serverItems.find((o) => o.serviceNowKey == value);
+        setLoading(true);
         setValues((values) => ({ ...values, serverItem }));
+        setLoading(false);
       }}
     />
   );

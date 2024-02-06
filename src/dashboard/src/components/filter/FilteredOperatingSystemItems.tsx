@@ -31,6 +31,7 @@ export const FilteredOperatingSystemItems = ({ onChange }: IFilteredOperatingSys
 
   const values = useFilteredStore((state) => state.values);
   const setValues = useFilteredStore((state) => state.setValues);
+  const setLoading = useFilteredStore((state) => state.setLoading);
 
   const setFilteredOperatingSystemItems = useFilteredStore(
     (state) => state.setOperatingSystemItems,
@@ -56,6 +57,7 @@ export const FilteredOperatingSystemItems = ({ onChange }: IFilteredOperatingSys
       loading={!operatingSystemItemsReady}
       onChange={async (value) => {
         const operatingSystemItem = operatingSystemItems.find((o) => o.id == value);
+        setLoading(true);
         setValues((state) => ({ ...state, operatingSystemItem }));
 
         if (operatingSystemItem) {
@@ -64,7 +66,7 @@ export const FilteredOperatingSystemItems = ({ onChange }: IFilteredOperatingSys
             values.organization,
             operatingSystemItem,
           );
-          const serverItem = serverItems?.length === 1 ? serverItems[0] : values.serverItem;
+          const serverItem = serverItems?.length === 1 ? serverItems[0] : undefined;
 
           setFilteredServerItems(serverItems ?? []);
           setValues((state) => ({ ...state, operatingSystemItem, serverItem }));
@@ -76,6 +78,7 @@ export const FilteredOperatingSystemItems = ({ onChange }: IFilteredOperatingSys
           );
           setFilteredServerItems(serverItems ?? []);
         }
+        setLoading(false);
       }}
     />
   );

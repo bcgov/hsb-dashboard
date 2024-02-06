@@ -137,3 +137,10 @@ patches:
       - op: replace
         path: /spec/jobTemplate/spec/template/spec/containers/0/resources/limits/memory
         value: 1Gi
+  - target:
+      kind: RoleBinding
+      name: pipeline
+    patch: |-
+      - op: replace
+        path: /roleRef/namespace
+        value: e89443-test
