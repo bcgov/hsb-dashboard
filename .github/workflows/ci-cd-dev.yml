@@ -74,7 +74,7 @@ jobs:
         ## BUILD
       - name: Build API
         id: build-api
-        uses: redhat-actions/buildah-build@v2
+        uses: redhat-actions/buildah-build@v2.12
         if: ${{ steps.filter.outputs.api == 'true' || contains(github.event.pull_request.labels.*.name, 'api') }}
         with:
           image: ${{ github.event.repository.name }}/${{ env.API_IMAGE_NAME }}
@@ -85,7 +85,7 @@ jobs:
 
       - name: Build Data Service
         id: build-data-service
-        uses: redhat-actions/buildah-build@v2
+        uses: redhat-actions/buildah-build@v2.12
         if: ${{ steps.filter.outputs.data-service == 'true' || contains(github.event.pull_request.labels.*.name, 'data-service') }}
         with:
           image: ${{ github.event.repository.name }}/${{ env.DATA_SERVICE_IMAGE_NAME }}
@@ -96,7 +96,7 @@ jobs:
 
       - name: Build Dasbhoard
         id: build-app
-        uses: redhat-actions/buildah-build@v2
+        uses: redhat-actions/buildah-build@v2.12
         if: ${{ steps.filter.outputs.dashboard == 'true' || contains(github.event.pull_request.labels.*.name, 'dashboard') }}
         with:
           image: ${{ github.event.repository.name }}/${{ env.APP_IMAGE_NAME }}
@@ -107,7 +107,7 @@ jobs:
 
       - name: Build DB Migration
         id: build-db-migration
-        uses: redhat-actions/buildah-build@v2
+        uses: redhat-actions/buildah-build@v2.12
         if: ${{ steps.filter.outputs.db-migration == 'true' || contains(github.event.pull_request.labels.*.name, 'db-migration') }}
         with:
           image: ${{ github.event.repository.name }}/${{ env.DB_MIGRATION_IMAGE_NAME }}

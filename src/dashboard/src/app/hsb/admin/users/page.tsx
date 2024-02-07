@@ -2,21 +2,13 @@
 
 import styles from './Users.module.scss';
 
-import {
-  AdminLoadingAnimation,
-  Button,
-  Checkbox,
-  ConfirmPopup,
-  Info,
-  Sheet,
-  Table,
-  Text,
-} from '@/components';
+import { AdminLoadingAnimation, Button, Checkbox, Info, Sheet, Table, Text } from '@/components';
 import { IUserForm, UserDialog, UserDialogVariant } from '@/components/admin';
 import { LoadingAnimation } from '@/components/loadingAnimation';
 import { useAuth } from '@/hooks';
 import { useApiUsers } from '@/hooks/api/admin';
 import { useGroups, useUsers } from '@/hooks/data';
+import { useNavigateStore } from '@/store';
 import { searchUsers } from '@/utils';
 import { redirect } from 'next/navigation';
 import React from 'react';
@@ -26,6 +18,7 @@ export default function Page() {
   const { isReady: isReadyUsers, users } = useUsers({ includePermissions: true, init: true });
   const { isReady: isReadyGroups } = useGroups({ init: true });
   const { update: updateUser } = useApiUsers();
+  const setEnableNavigate = useNavigateStore((state) => state.setEnableNavigate);
 
   const [loading, setLoading] = React.useState(true);
   const [formUsers, setFormUsers] = React.useState<IUserForm[]>([]);
@@ -35,11 +28,16 @@ export default function Page() {
 
   const dialogRef = React.useRef<HTMLDialogElement>(null);
   const [dialog, setDialog] = React.useState<{ user: IUserForm; variant: UserDialogVariant }>();
-  const [showPopup, setShowPopup] = React.useState(false);
+
+  const isDirty = formUsers.some((u) => u.isDirty);
 
   React.useEffect(() => {
     setLoading(!isReadyUsers && !isReadyGroups);
   }, [isReadyUsers, isReadyGroups]);
+
+  React.useEffect(() => {
+    setEnableNavigate(!isDirty);
+  }, [isDirty, setEnableNavigate]);
 
   React.useEffect(() => {
     setFormUsers((state) =>
@@ -100,14 +98,6 @@ export default function Page() {
 
   return (
     <Sheet>
-      {showPopup && (
-        <ConfirmPopup
-          onCancel={() => setShowPopup(false)}
-          onConfirm={() => {
-            setShowPopup(false);
-          }}
-        />
-      )}
       <UserDialog
         ref={dialogRef}
         user={dialog?.user}

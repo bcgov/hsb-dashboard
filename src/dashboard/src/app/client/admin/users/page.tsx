@@ -18,7 +18,7 @@ import { IUserModel, RoleName, useAuth } from '@/hooks';
 import { useApiUsers } from '@/hooks/api/admin';
 import { IOrganizationModel, ITenantModel } from '@/hooks/api/interfaces/auth';
 import { useGroups, useTenants, useUsers } from '@/hooks/data';
-import { useAppStore } from '@/store';
+import { useAppStore, useNavigateStore } from '@/store';
 import { redirect } from 'next/navigation';
 import React from 'react';
 import { getOrganizationOptions, getTenantOptions, searchUsers } from './utils';
@@ -26,8 +26,9 @@ import { getOrganizationOptions, getTenantOptions, searchUsers } from './utils';
 export default function Page() {
   const state = useAuth();
   const userinfo = useAppStore((state) => state.userinfo);
+  const setEnableNavigate = useNavigateStore((state) => state.setEnableNavigate);
 
-  const { isReady: isReadyTenants, tenants } = useTenants({ init: true });
+  const { isReady: isReadyTenants } = useTenants({ init: true });
   const { isReady: isReadyUsers, users } = useUsers({ includePermissions: true, init: true });
   const { isReady: isReadyGroups, groups } = useGroups({ init: true });
   const { update: updateUser } = useApiUsers();
@@ -48,6 +49,12 @@ export default function Page() {
   const [filter, setFilter] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [organization, setOrganization] = React.useState('');
+
+  const isDirty = formUsers.some((u) => u.isDirty);
+
+  React.useEffect(() => {
+    setEnableNavigate(!isDirty);
+  }, [isDirty, setEnableNavigate]);
 
   React.useEffect(() => {
     setLoading(!isReadyUsers || !isReadyTenants || !isReadyGroups);

@@ -67,7 +67,6 @@ export const useDashboardFilter = () => {
 
   return React.useCallback(
     async (values?: IDashboardValues) => {
-      console.debug(values);
       // Update the URL
       if (values?.tenant) {
         currentParams.set('tenant', values.tenant.id.toString());
