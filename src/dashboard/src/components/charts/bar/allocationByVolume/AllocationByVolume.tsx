@@ -57,7 +57,7 @@ export const AllocationByVolume = ({
                     {os.label}
                   </label>
                 ) : (
-                  <label>{os.label}</label>
+                  <label className={styles.linkStatic} title={os.label}>{os.label}</label>
                 )}
               </p>
             }

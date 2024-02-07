@@ -8,6 +8,12 @@
 
 .panel {
   @include panel-style(370px, unset, unset, 638px);
+  flex-basis: 49%;
+
+  @media (max-width: $tablet) {
+    max-width: unset;
+    flex-basis: 100%;
+  }
 }
 
 .panelLarge {

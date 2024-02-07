@@ -1,7 +1,12 @@
 @import '@/styles/utils.scss';
 
 .panel {
-    @include panel-style(370px, unset, unset, 638px);
+    @include panel-style(370px, unset, unset, unset);
+    flex-basis: 49%;
+
+    @media (max-width: $tablet) {
+        flex-basis: 100%;
+    }
 
     button {
         @include export-btn;

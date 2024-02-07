@@ -1,7 +1,12 @@
 @import '@/styles/utils.scss';
 
 .panel {
-    @include panel-style(330px, unset, unset, 980px);
+    @include panel-style(330px, unset, unset, unset);
+    flex-basis: 74%;
+
+    @media (max-width: $tablet) {
+        flex-basis: 100%;
+    }
 
     button {
         @include export-btn;
@@ -135,4 +140,9 @@
 
 .link {
   cursor: pointer;
+}
+
+.linkStatic {
+    @include ellipsis;
+    display: block;
 }
