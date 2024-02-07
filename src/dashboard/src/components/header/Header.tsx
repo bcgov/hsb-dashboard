@@ -5,9 +5,9 @@ import style from './Header.module.scss';
 import { Filter } from '@/components/filter';
 import { useAuth } from '@/hooks';
 import Image from 'next/image';
-import Link from 'next/link';
 import { redirect, usePathname } from 'next/navigation';
 import React from 'react';
+import { ConfirmLink, ConfirmPopup } from '..';
 import { AuthState } from '../auth';
 import { Message } from './Message';
 
@@ -44,6 +44,7 @@ export const Header: React.FC = () => {
 
   return (
     <>
+      <ConfirmPopup />
       <header
         className={`${style.header} ${isDashboardView ? style.filterPadding : ''} ${
           isAdminView || isServerView ? style.adminPadding : ''
@@ -56,9 +57,9 @@ export const Header: React.FC = () => {
             } ${style.headerTop}`}
           >
             <div>
-              <Link href="/">
+              <ConfirmLink href="/">
                 <Image src="/images/BCLogo.png" alt="Logo" width={134} height={56} />
-              </Link>
+              </ConfirmLink>
               <h1>Storage Dashboard</h1>
             </div>
             {!isLogin && <AuthState showName={true} />}
@@ -75,35 +76,35 @@ export const Header: React.FC = () => {
                     {(isClient || isHSB) && (
                       <>
                         <nav>
-                          <Link
+                          <ConfirmLink
                             href={`/${rootPath}/dashboard`}
                             className={`${
                               path.startsWith(`/${rootPath}/dashboard`) && style.active
                             } ${style.storage}`}
                           >
                             Storage
-                          </Link>
+                          </ConfirmLink>
                           {(isOrganizationAdmin || isSystemAdmin) && showAdminNav && (
-                            <Link
+                            <ConfirmLink
                               href={`/${rootPath}/admin/users`}
                               className={`${
                                 path.startsWith(`/${rootPath}/admin`) && style.active
                               } ${style.admin} `}
                             >
                               Administration
-                            </Link>
+                            </ConfirmLink>
                           )}
                         </nav>
                         {(isDashboardView || isServerView) && (
-                          <Link href={`/${rootPath}/servers`} className={style.allServers}>
+                          <ConfirmLink href={`/${rootPath}/servers`} className={style.allServers}>
                             See all servers
-                          </Link>
+                          </ConfirmLink>
                         )}
                         {isSystemAdmin && !isDashboardView && !isServerView && isAdminView && (
                           <>
                             <nav>
                               <div className={style.adminNav}>
-                                <Link
+                                <ConfirmLink
                                   href={`/${rootPath}/admin/organizations`}
                                   title="Look up organizations and enable them on dashboard"
                                   className={`${
@@ -112,8 +113,8 @@ export const Header: React.FC = () => {
                                   }`}
                                 >
                                   Organizations
-                                </Link>
-                                <Link
+                                </ConfirmLink>
+                                <ConfirmLink
                                   href={`/${rootPath}/admin/users`}
                                   title="Manage user access to dashboard, assign roles"
                                   className={`${
@@ -121,7 +122,7 @@ export const Header: React.FC = () => {
                                   }`}
                                 >
                                   Users
-                                </Link>
+                                </ConfirmLink>
                               </div>
                             </nav>
                             <span className={style.navLine}></span>
@@ -132,30 +133,30 @@ export const Header: React.FC = () => {
                     {/* No need for subnav for MVP */}
                     {/* {isSystemAdmin && path.startsWith('/hsb/admin/organizations') && (
                       <nav className={style.adminSubNav}>
-                        <Link
+                        <ConfirmLink
                           href="/hsb/admin/organizations"
                           className={`${style.subNavItem} ${
                             path === '/hsb/admin/organizations' && style.active
                           }`}
                         >
                           All Organizations
-                        </Link>
-                        <Link
+                        </ConfirmLink>
+                        <ConfirmLink
                           href="/hsb/admin/organizations/0"
                           className={`${style.subNavItem} ${
                             path.startsWith('/hsb/admin/organizations/0') && style.active
                           }`}
                         >
                           Add New Organization
-                        </Link>
-                        <Link
+                        </ConfirmLink>
+                        <ConfirmLink
                           href="/hsb/admin/organizations/1"
                           className={`${style.subNavItem} ${
                             /\/hsb\/admin\/organizations\/[1-9]+/.test(path) && style.active
                           }`}
                         >
                           Update Existing Organization
-                        </Link>
+                        </ConfirmLink>
                       </nav>
                     )} */}
                   </>

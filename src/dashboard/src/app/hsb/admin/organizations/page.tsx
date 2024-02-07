@@ -7,7 +7,7 @@ import { LoadingAnimation } from '@/components/loadingAnimation';
 import { IOrganizationModel, useAuth } from '@/hooks';
 import { useApiOrganizations } from '@/hooks/api/admin';
 import { useOrganizations } from '@/hooks/data';
-import { useAppStore } from '@/store';
+import { useAppStore, useNavigateStore } from '@/store';
 import { searchOrganizations } from '@/utils';
 import { redirect } from 'next/navigation';
 import React from 'react';
@@ -21,6 +21,7 @@ export default function Page() {
   });
   const { update: updateOrganization } = useApiOrganizations();
   const setOrganizations = useAppStore((state) => state.setOrganizations);
+  const setEnableNavigate = useNavigateStore((state) => state.setEnableNavigate);
 
   const [loading, setLoading] = React.useState(true);
   const [formOrganizations, setFormOrganizations] = React.useState<IOrganizationForm[]>([]);
@@ -28,9 +29,15 @@ export default function Page() {
   const [filter, setFilter] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
+  const isDirty = formOrganizations.some((o) => o.isDirty);
+
   React.useEffect(() => {
     setLoading(!isReadyOrganizations);
   }, [isReadyOrganizations]);
+
+  React.useEffect(() => {
+    setEnableNavigate(!isDirty);
+  }, [isDirty, setEnableNavigate]);
 
   React.useEffect(() => {
     setFormOrganizations((state) =>
