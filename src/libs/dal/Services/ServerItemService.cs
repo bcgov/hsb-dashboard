@@ -184,10 +184,6 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
         entity.HistoryKey = key;
 
         // Move original to history.
-        // An unsafe assumption occurs here, where we copy the calculated capacity and available space.
-        // If the original calculations are off, the historical values will be to.
-        // The calculation occurs when a file system item is added or updated.
-        // All file system items should be added/updated before a new server item record is updated.
         var original = this.Context.ServerItems.AsNoTracking().FirstOrDefault(si => si.ServiceNowKey == entity.ServiceNowKey);
         if (original != null)
         {

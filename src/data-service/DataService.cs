@@ -213,15 +213,14 @@ public class DataService : IDataService
                 {
                     this.Logger.LogWarning("Data Service configuration is not currently configured to support this class name: {tableName}", tableName);
                 }
+            }
 
-                // Update the current offset
-                if (option.Id != 0)
-                {
-                    // TODO: This is a really noisy update.
-                    option.Offset++;
-                    var update = await this.HsbApi.UpdateDataSyncAsync(option) ?? throw new InvalidOperationException($"Failed to return data sync from HSB: {option.Name}");
-                    option.Version = update.Version;
-                }
+            if (option.Id != 0)
+            {
+                // Update the current offset so that if it fails we'll pick up at this point.
+                option.Offset += limit;
+                var update = await this.HsbApi.UpdateDataSyncAsync(option) ?? throw new InvalidOperationException($"Failed to return data sync from HSB: {option.Name}");
+                option.Version = update.Version;
             }
 
             // We assume that if the results contain the limit, we need to make another request for more.

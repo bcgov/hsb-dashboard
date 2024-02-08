@@ -32,10 +32,18 @@ import { useDashboardFilter } from '.';
  * @returns Component
  */
 export const Dashboard = () => {
-  const { isReady: isReadyTenants, tenants } = useTenants();
-  const { isReady: isReadyOrganizations, organizations } = useOrganizations();
-  const { isReady: isReadyOperatingSystemItems, operatingSystemItems } = useOperatingSystemItems();
-  const { isReady: isReadyServerItems, serverItems } = useServerItems({ useSimple: true });
+  const { isReady: isReadyTenants, tenants } = useTenants({ init: true });
+  const { isReady: isReadyOrganizations, organizations } = useOrganizations({
+    init: true,
+    includeTenants: true,
+  });
+  const { isReady: isReadyOperatingSystemItems, operatingSystemItems } = useOperatingSystemItems({
+    init: true,
+  });
+  const { isReady: isReadyServerItems, serverItems } = useServerItems({
+    init: true,
+    useSimple: true,
+  });
   const { organization: dashboardOrganization, organizations: dashboardOrganizations } =
     useDashboardOrganizations();
   const {

@@ -1,14 +1,12 @@
 'use client';
 
 import { Button, useDashboardFilter } from '@/components';
-import { IOperatingSystemItemModel, IOrganizationModel, ITenantModel } from '@/hooks';
 import {
   useOperatingSystemItems,
   useOrganizations,
   useServerItems,
   useTenants,
 } from '@/hooks/data';
-import { useFilteredServerItems } from '@/hooks/filter';
 import { useFilteredStore } from '@/store';
 import { useSearchParams } from 'next/navigation';
 import React from 'react';
@@ -38,10 +36,6 @@ export const Filter: React.FC = () => {
     (state) => state.setOperatingSystemItems,
   );
   const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
-
-  const { findServerItems } = useFilteredServerItems({
-    useSimple: true,
-  });
 
   const { readyKey, lockKey } = useUrlParamsUpdateKey();
   const updateDashboard = useDashboardFilter();
@@ -108,39 +102,12 @@ export const Filter: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [readyKey, updateDashboard, lockKey]);
 
-  const handleFindServerItems = React.useCallback(
-    async (
-      tenant?: ITenantModel,
-      organization?: IOrganizationModel,
-      operatingSystemItem?: IOperatingSystemItemModel,
-    ) => {
-      return await findServerItems({
-        tenantId: tenant?.id,
-        organizationId: organization?.id,
-        operatingSystemItemId: operatingSystemItem?.id,
-      });
-    },
-    [findServerItems],
-  );
-
   return (
     <div className={styles.filter}>
       <h1>Filter by:</h1>
-      <FilteredTenants
-        onChange={async (tenant, organization, operatingSystem) => {
-          return await handleFindServerItems(tenant, organization, operatingSystem);
-        }}
-      />
-      <FilteredOrganizations
-        onChange={async (tenant, organization, operatingSystem) => {
-          return await handleFindServerItems(tenant, organization, operatingSystem);
-        }}
-      />
-      <FilteredOperatingSystemItems
-        onChange={async (tenant, organization, operatingSystem) => {
-          return await handleFindServerItems(tenant, organization, operatingSystem);
-        }}
-      />
+      <FilteredTenants />
+      <FilteredOrganizations />
+      <FilteredOperatingSystemItems />
       <FilteredServerItems />
       <Button
         variant="primary"

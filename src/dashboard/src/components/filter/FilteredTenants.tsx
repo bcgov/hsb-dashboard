@@ -1,13 +1,7 @@
 'use client';
 
 import { Select } from '@/components';
-import {
-  IOperatingSystemItemModel,
-  IOrganizationModel,
-  IServerItemModel,
-  ITenantModel,
-  useAuth,
-} from '@/hooks';
+import { IOperatingSystemItemModel, IOrganizationModel, IServerItemModel, useAuth } from '@/hooks';
 import {
   useOperatingSystemItems,
   useOrganizations,
@@ -17,26 +11,20 @@ import {
 import {
   useFilteredOperatingSystemItems,
   useFilteredOrganizations,
+  useFilteredServerItems,
   useFilteredTenants,
 } from '@/hooks/filter';
 import { useFilteredStore } from '@/store';
 import React from 'react';
 
-export interface IFilteredTenantsProps {
-  /** Event fires when the selected tenant changes. */
-  onChange?: (
-    tenant?: ITenantModel,
-    organization?: IOrganizationModel,
-    operatingSystemItem?: IOperatingSystemItemModel,
-  ) => Promise<IServerItemModel[]>;
-}
+export interface IFilteredTenantsProps {}
 
-export const FilteredTenants = ({ onChange }: IFilteredTenantsProps) => {
+export const FilteredTenants = ({}: IFilteredTenantsProps) => {
   const { isHSB } = useAuth();
-  const { isReady: tenantsReady, tenants } = useTenants({ init: true });
+  const { isReady: tenantsReady, tenants } = useTenants();
   const { organizations } = useOrganizations();
   const { operatingSystemItems } = useOperatingSystemItems();
-  const { isReady: serverItemsReady } = useServerItems();
+  const { isReady: serverItemsReady, serverItems } = useServerItems();
 
   const values = useFilteredStore((state) => state.values);
   const setValues = useFilteredStore((state) => state.setValues);
@@ -54,6 +42,9 @@ export const FilteredTenants = ({ onChange }: IFilteredTenantsProps) => {
   const { findOperatingSystemItems } = useFilteredOperatingSystemItems();
 
   const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
+  const { findServerItems } = useFilteredServerItems({
+    useSimple: true,
+  });
 
   const enableTenants = isHSB || tenants.length > 0;
 
@@ -77,31 +68,56 @@ export const FilteredTenants = ({ onChange }: IFilteredTenantsProps) => {
         setValues((state) => ({ ...state, tenant }));
 
         if (tenant) {
-          const organizations = await findOrganizations({ tenantId: tenant.id });
-          const organization = organizations.length === 1 ? organizations[0] : undefined;
+          let filteredOrganizations: IOrganizationModel[];
+          if (organizations.length) {
+            filteredOrganizations = organizations.filter((org) =>
+              org.tenants?.some((t) => t.id === tenant.id),
+            );
+            setFilteredOrganizations(filteredOrganizations);
+          } else {
+            filteredOrganizations = await findOrganizations({ tenantId: tenant.id });
+          }
+          const organization =
+            filteredOrganizations.length === 1 ? filteredOrganizations[0] : undefined;
 
-          const operatingSystems = await findOperatingSystemItems({
-            tenantId: tenant.id,
-            organizationId: organization?.id,
-          });
+          // We filter server items before operating system items because the relationship belongs to the server item.
+          let filteredServerItems: IServerItemModel[];
+          if (serverItems.length) {
+            filteredServerItems = serverItems.filter((server) => server.tenantId === tenant.id);
+            setFilteredServerItems(filteredServerItems);
+          } else {
+            filteredServerItems = await findServerItems({
+              tenantId: tenant.id,
+              organizationId: organization?.id,
+            });
+          }
+          const serverItem = filteredServerItems?.length === 1 ? filteredServerItems[0] : undefined;
+
+          let filteredOperatingSystems: IOperatingSystemItemModel[];
+          if (operatingSystemItems.length) {
+            // Only return operating system items that match available server items.
+            const osIds = filteredServerItems
+              .map((server) => server.operatingSystemItemId)
+              .filter((id, index, array) => !!id && array.indexOf(id) === index);
+            filteredOperatingSystems = operatingSystemItems.filter((os) =>
+              osIds.some((id) => id === os.id),
+            );
+            setFilteredOperatingSystemItems(filteredOperatingSystems);
+          } else {
+            filteredOperatingSystems = await findOperatingSystemItems({
+              tenantId: tenant.id,
+              organizationId: organization?.id,
+            });
+          }
           const operatingSystemItem =
-            operatingSystems.length === 1 ? operatingSystems[0] : undefined;
+            filteredOperatingSystems.length === 1 ? filteredOperatingSystems[0] : undefined;
 
-          const serverItems = await onChange?.(
-            tenant,
-            organizations.length === 1 ? organizations[0] : organization,
-            operatingSystems.length === 1 ? operatingSystems[0] : operatingSystemItem,
-          );
-          const serverItem = serverItems?.length === 1 ? serverItems[0] : undefined;
-
-          setFilteredServerItems(serverItems ?? []);
+          setFilteredServerItems(filteredServerItems ?? []);
           setValues((state) => ({ tenant, organization, operatingSystemItem, serverItem }));
         } else {
           setFilteredOrganizations(organizations);
           setFilteredOperatingSystemItems(operatingSystemItems);
-
-          const serverItems = await onChange?.(tenant);
-          setFilteredServerItems(serverItems ?? []);
+          setFilteredServerItems(serverItems);
         }
         setLoading(false);
       }}

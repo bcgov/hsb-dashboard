@@ -15,8 +15,8 @@ metadata:
     DataClass: Low
 spec:
   # ttlSecondsAfterFinished: 100
-  schedule: "0 1 * * *" # Every day at 1:00am
-  # schedule: "*/5 * * * *" # Immediately
+  schedule: CRON_TZ=America/Vancouver 0 1 * * * # Every day at 1:00am
+  # schedule: CRON_TZ=America/Vancouver */5 * * * * # Immediately
   jobTemplate:
     spec:
       template:

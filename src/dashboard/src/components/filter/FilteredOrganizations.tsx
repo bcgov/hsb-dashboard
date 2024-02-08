@@ -1,32 +1,23 @@
 'use client';
 
 import { Select } from '@/components';
-import {
-  IOperatingSystemItemModel,
-  IOrganizationModel,
-  IServerItemModel,
-  ITenantModel,
-  useAuth,
-} from '@/hooks';
+import { IServerItemModel, useAuth } from '@/hooks';
 import { useOperatingSystemItems, useOrganizations, useServerItems } from '@/hooks/data';
-import { useFilteredOperatingSystemItems, useFilteredOrganizations } from '@/hooks/filter';
+import {
+  useFilteredOperatingSystemItems,
+  useFilteredOrganizations,
+  useFilteredServerItems,
+} from '@/hooks/filter';
 import { useFilteredStore } from '@/store';
 import React from 'react';
 
-export interface IFilteredOrganizationsProps {
-  /** Event fires when the selected tenant changes. */
-  onChange?: (
-    tenant?: ITenantModel,
-    organization?: IOrganizationModel,
-    operatingSystemItem?: IOperatingSystemItemModel,
-  ) => Promise<IServerItemModel[]>;
-}
+export interface IFilteredOrganizationsProps {}
 
-export const FilteredOrganizations = ({ onChange }: IFilteredOrganizationsProps) => {
+export const FilteredOrganizations = ({}: IFilteredOrganizationsProps) => {
   const { isHSB } = useAuth();
-  const { isReady: organizationsReady, organizations } = useOrganizations({ init: true });
+  const { isReady: organizationsReady, organizations } = useOrganizations();
   const { operatingSystemItems } = useOperatingSystemItems();
-  const { isReady: serverItemsReady } = useServerItems();
+  const { isReady: serverItemsReady, serverItems } = useServerItems();
 
   const values = useFilteredStore((state) => state.values);
   const setValues = useFilteredStore((state) => state.setValues);
@@ -41,6 +32,9 @@ export const FilteredOrganizations = ({ onChange }: IFilteredOrganizationsProps)
   const { findOperatingSystemItems } = useFilteredOperatingSystemItems();
 
   const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
+  const { findServerItems } = useFilteredServerItems({
+    useSimple: true,
+  });
 
   const enableOrganizations = isHSB || organizations.length > 0;
 
@@ -72,15 +66,45 @@ export const FilteredOrganizations = ({ onChange }: IFilteredOrganizationsProps)
           const operatingSystemItem =
             operatingSystems.length === 1 ? operatingSystems[0] : undefined;
 
-          const serverItems = await onChange?.(values.tenant, organization, operatingSystemItem);
-          const serverItem = serverItems?.length === 1 ? serverItems[0] : undefined;
+          let filteredServerItems: IServerItemModel[];
+          if (serverItems.length) {
+            filteredServerItems = serverItems.filter(
+              (server) =>
+                (values.tenant ? server.tenantId === values.tenant.id : true) &&
+                server.organizationId === organization.id &&
+                (values.operatingSystemItem
+                  ? server.operatingSystemItemId === values.operatingSystemItem.id
+                  : true),
+            );
+          } else {
+            filteredServerItems = await findServerItems({
+              tenantId: values.tenant?.id,
+              organizationId: organization?.id,
+              operatingSystemItemId: operatingSystemItem?.id,
+            });
+          }
+          const serverItem = filteredServerItems?.length === 1 ? filteredServerItems[0] : undefined;
 
-          setFilteredServerItems(serverItems ?? []);
+          setFilteredServerItems(filteredServerItems ?? []);
           setValues((state) => ({ ...state, organization, operatingSystemItem, serverItem }));
         } else {
           setFilteredOperatingSystemItems(operatingSystemItems);
-          const serverItems = await onChange?.(values.tenant, organization);
-          setFilteredServerItems(serverItems ?? []);
+          let filteredServerItems: IServerItemModel[];
+          if (serverItems.length) {
+            filteredServerItems = serverItems.filter(
+              (server) =>
+                (values.tenant ? server.tenantId === values.tenant.id : true) &&
+                (values.operatingSystemItem
+                  ? server.operatingSystemItemId === values.operatingSystemItem.id
+                  : true),
+            );
+          } else {
+            filteredServerItems = await findServerItems({
+              tenantId: values.tenant?.id,
+              operatingSystemItemId: values.operatingSystemItem?.id,
+            });
+          }
+          setFilteredServerItems(filteredServerItems ?? []);
         }
         setLoading(false);
       }}
