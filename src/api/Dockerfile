@@ -2,7 +2,7 @@ ARG ASPNETCORE_ENVIRONMENT=Release
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 
 RUN apt-get update && apt-get -y upgrade
-RUN apt -y install curl libc6-dev libgdiplus
+RUN apt-get -y install curl libc6-dev libgdiplus
 RUN apt-get clean
 
 EXPOSE 443 8080

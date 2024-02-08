@@ -95,6 +95,11 @@ spec:
                 secretKeyRef:
                   name: keycloak
                   key: KEYCLOAK_CLIENT_SECRET
+            - name: KEYCLOAK_TOKEN_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: keycloak
+                  key: KEYCLOAK_TOKEN_URL
             - name: KEYCLOAK_END_SESSION_PATH
               valueFrom:
                 configMapKeyRef:
