@@ -58,6 +58,7 @@ export const FilteredOperatingSystemItems = ({}: IFilteredOperatingSystemItemsPr
                 (values.organization ? server.organizationId === values.organization.id : true) &&
                 server.operatingSystemItemId === operatingSystemItem.id,
             );
+            setFilteredServerItems(filteredServerItems ?? []);
           } else {
             filteredServerItems = await findServerItems({
               tenantId: values.tenant?.id,
@@ -67,23 +68,21 @@ export const FilteredOperatingSystemItems = ({}: IFilteredOperatingSystemItemsPr
           }
           const serverItem = filteredServerItems?.length === 1 ? filteredServerItems[0] : undefined;
 
-          setFilteredServerItems(serverItems ?? []);
           setValues((state) => ({ ...state, operatingSystemItem, serverItem }));
         } else {
-          let filteredServerItems: IServerItemModel[];
           if (serverItems.length) {
-            filteredServerItems = serverItems.filter(
+            const filteredServerItems = serverItems.filter(
               (server) =>
                 (values.tenant ? server.tenantId === values.tenant.id : true) &&
                 (values.organization ? server.organizationId === values.organization.id : true),
             );
+            setFilteredServerItems(filteredServerItems ?? []);
           } else {
-            filteredServerItems = await findServerItems({
+            await findServerItems({
               tenantId: values.tenant?.id,
               organizationId: values.organization?.id,
             });
           }
-          setFilteredServerItems(filteredServerItems ?? []);
         }
         setLoading(false);
       }}

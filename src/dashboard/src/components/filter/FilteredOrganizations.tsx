@@ -1,7 +1,7 @@
 'use client';
 
 import { Select } from '@/components';
-import { IServerItemModel, useAuth } from '@/hooks';
+import { IOperatingSystemItemModel, IServerItemModel, useAuth } from '@/hooks';
 import { useOperatingSystemItems, useOrganizations, useServerItems } from '@/hooks/data';
 import {
   useFilteredOperatingSystemItems,
@@ -59,13 +59,6 @@ export const FilteredOrganizations = ({}: IFilteredOrganizationsProps) => {
         setValues((state) => ({ ...state, organization }));
 
         if (organization) {
-          const operatingSystems = await findOperatingSystemItems({
-            tenantId: values.tenant?.id,
-            organizationId: organization.id,
-          });
-          const operatingSystemItem =
-            operatingSystems.length === 1 ? operatingSystems[0] : undefined;
-
           let filteredServerItems: IServerItemModel[];
           if (serverItems.length) {
             filteredServerItems = serverItems.filter(
@@ -76,35 +69,52 @@ export const FilteredOrganizations = ({}: IFilteredOrganizationsProps) => {
                   ? server.operatingSystemItemId === values.operatingSystemItem.id
                   : true),
             );
+            setFilteredServerItems(filteredServerItems);
           } else {
             filteredServerItems = await findServerItems({
               tenantId: values.tenant?.id,
               organizationId: organization?.id,
-              operatingSystemItemId: operatingSystemItem?.id,
             });
           }
           const serverItem = filteredServerItems?.length === 1 ? filteredServerItems[0] : undefined;
 
-          setFilteredServerItems(filteredServerItems ?? []);
+          let filteredOperatingSystemItems: IOperatingSystemItemModel[];
+          if (operatingSystemItems.length) {
+            // Only return operating system items that match available server items.
+            const osIds = filteredServerItems
+              .map((server) => server.operatingSystemItemId)
+              .filter((id, index, array) => !!id && array.indexOf(id) === index);
+            filteredOperatingSystemItems = operatingSystemItems.filter((os) =>
+              osIds.some((id) => id === os.id),
+            );
+            setFilteredOperatingSystemItems(filteredOperatingSystemItems);
+          } else {
+            filteredOperatingSystemItems = await findOperatingSystemItems({
+              tenantId: values.tenant?.id,
+              organizationId: organization.id,
+            });
+          }
+          const operatingSystemItem =
+            filteredOperatingSystemItems.length === 1 ? filteredOperatingSystemItems[0] : undefined;
+
           setValues((state) => ({ ...state, organization, operatingSystemItem, serverItem }));
         } else {
           setFilteredOperatingSystemItems(operatingSystemItems);
-          let filteredServerItems: IServerItemModel[];
           if (serverItems.length) {
-            filteredServerItems = serverItems.filter(
+            const filteredServerItems = serverItems.filter(
               (server) =>
                 (values.tenant ? server.tenantId === values.tenant.id : true) &&
                 (values.operatingSystemItem
                   ? server.operatingSystemItemId === values.operatingSystemItem.id
                   : true),
             );
+            setFilteredServerItems(filteredServerItems ?? []);
           } else {
-            filteredServerItems = await findServerItems({
+            await findServerItems({
               tenantId: values.tenant?.id,
               operatingSystemItemId: values.operatingSystemItem?.id,
             });
           }
-          setFilteredServerItems(filteredServerItems ?? []);
         }
         setLoading(false);
       }}

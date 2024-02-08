@@ -59,11 +59,11 @@ spec:
               protocol: TCP
           resources:
             limits:
-              cpu: 200m
-              memory: 1Gi
+              cpu: 100m
+              memory: 1500Mi
             requests:
               cpu: 50m
-              memory: 100Mi
+              memory: 500Mi
           env:
             - name: ASPNETCORE_URLS
               value: http://+:8080
