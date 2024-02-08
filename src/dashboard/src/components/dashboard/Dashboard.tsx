@@ -10,6 +10,7 @@ import {
   StorageTrendsChart,
   TotalStorage,
 } from '@/components/charts';
+import { IOperatingSystemItemModel, IServerItemModel } from '@/hooks';
 import {
   useDashboardOperatingSystemItems,
   useDashboardOrganizations,
@@ -21,7 +22,11 @@ import {
   useServerItems,
   useTenants,
 } from '@/hooks/data';
-import { useFilteredFileSystemItems } from '@/hooks/filter';
+import {
+  useFilteredFileSystemItems,
+  useFilteredOperatingSystemItems,
+  useFilteredServerItems,
+} from '@/hooks/filter';
 import { useFilteredStore } from '@/store';
 import React from 'react';
 import { useDashboardFilter } from '.';
@@ -37,13 +42,24 @@ export const Dashboard = () => {
     init: true,
     includeTenants: true,
   });
-  const { isReady: isReadyOperatingSystemItems } = useOperatingSystemItems({
+
+  const { isReady: isReadyOperatingSystemItems, operatingSystemItems } = useOperatingSystemItems({
     init: true,
   });
-  const { isReady: isReadyServerItems } = useServerItems({
+  const setFilteredOperatingSystemItems = useFilteredStore(
+    (state) => state.setOperatingSystemItems,
+  );
+
+  const { findOperatingSystemItems } = useFilteredOperatingSystemItems();
+  const { isReady: isReadyServerItems, serverItems } = useServerItems({
     init: true,
     useSimple: true,
   });
+  const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
+  const { findServerItems } = useFilteredServerItems({
+    useSimple: true,
+  });
+
   const { organization: dashboardOrganization, organizations: dashboardOrganizations } =
     useDashboardOrganizations();
   const {
@@ -118,8 +134,46 @@ export const Dashboard = () => {
           serverItems={dashboardServerItems}
           loading={!isReadyOperatingSystemItems || !isReadyServerItems}
           onClick={async (operatingSystemItem) => {
-            setValues((state) => ({ operatingSystemItem }));
-            await updateDashboard({ operatingSystemItem });
+            if (operatingSystemItem) {
+              let filteredServerItems: IServerItemModel[];
+              if (serverItems.length) {
+                filteredServerItems = serverItems.filter(
+                  (server) =>
+                    (values.tenant ? server.tenantId === values.tenant.id : true) &&
+                    (values.organization
+                      ? server.organizationId === values.organization.id
+                      : true) &&
+                    server.operatingSystemItemId === operatingSystemItem.id,
+                );
+                setFilteredServerItems(filteredServerItems ?? []);
+              } else {
+                filteredServerItems = await findServerItems({
+                  tenantId: values.tenant?.id,
+                  organizationId: values.organization?.id,
+                  operatingSystemItemId: operatingSystemItem.id,
+                });
+              }
+
+              setValues((state) => ({ operatingSystemItem }));
+              await updateDashboard({ operatingSystemItem, applyFilter: true });
+            } else {
+              if (serverItems.length) {
+                const filteredServerItems = serverItems.filter(
+                  (server) =>
+                    (values.tenant ? server.tenantId === values.tenant.id : true) &&
+                    (values.organization ? server.organizationId === values.organization.id : true),
+                );
+                setFilteredServerItems(filteredServerItems ?? []);
+              } else {
+                await findServerItems({
+                  tenantId: values.tenant?.id,
+                  organizationId: values.organization?.id,
+                });
+              }
+
+              setValues((state) => ({}));
+              await updateDashboard({});
+            }
           }}
         />
       )}
@@ -144,8 +198,71 @@ export const Dashboard = () => {
           serverItems={dashboardServerItems}
           loading={!isReadyOrganizations || !isReadyServerItems}
           onClick={async (organization) => {
-            setValues((state) => ({ organization }));
-            await updateDashboard({ organization });
+            if (organization) {
+              let filteredServerItems: IServerItemModel[];
+              if (serverItems.length) {
+                filteredServerItems = serverItems.filter(
+                  (server) =>
+                    (values.tenant ? server.tenantId === values.tenant.id : true) &&
+                    server.organizationId === organization.id &&
+                    (values.operatingSystemItem
+                      ? server.operatingSystemItemId === values.operatingSystemItem.id
+                      : true),
+                );
+                setFilteredServerItems(filteredServerItems);
+              } else {
+                filteredServerItems = await findServerItems({
+                  tenantId: values.tenant?.id,
+                  organizationId: organization?.id,
+                });
+              }
+              const serverItem =
+                filteredServerItems?.length === 1 ? filteredServerItems[0] : undefined;
+
+              let filteredOperatingSystemItems: IOperatingSystemItemModel[];
+              if (operatingSystemItems.length) {
+                // Only return operating system items that match available server items.
+                const osIds = filteredServerItems
+                  .map((server) => server.operatingSystemItemId)
+                  .filter((id, index, array) => !!id && array.indexOf(id) === index);
+                filteredOperatingSystemItems = operatingSystemItems.filter((os) =>
+                  osIds.some((id) => id === os.id),
+                );
+                setFilteredOperatingSystemItems(filteredOperatingSystemItems);
+              } else {
+                filteredOperatingSystemItems = await findOperatingSystemItems({
+                  tenantId: values.tenant?.id,
+                  organizationId: organization.id,
+                });
+              }
+              const operatingSystemItem =
+                filteredOperatingSystemItems.length === 1
+                  ? filteredOperatingSystemItems[0]
+                  : undefined;
+
+              setValues((state) => ({ organization, operatingSystemItem, serverItem }));
+              await updateDashboard({ organization, applyFilter: true });
+            } else {
+              setFilteredOperatingSystemItems(operatingSystemItems);
+              if (serverItems.length) {
+                const filteredServerItems = serverItems.filter(
+                  (server) =>
+                    (values.tenant ? server.tenantId === values.tenant.id : true) &&
+                    (values.operatingSystemItem
+                      ? server.operatingSystemItemId === values.operatingSystemItem.id
+                      : true),
+                );
+                setFilteredServerItems(filteredServerItems ?? []);
+              } else {
+                await findServerItems({
+                  tenantId: values.tenant?.id,
+                  operatingSystemItemId: values.operatingSystemItem?.id,
+                });
+              }
+
+              setValues((state) => ({}));
+              await updateDashboard({});
+            }
           }}
         />
       )}
