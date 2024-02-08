@@ -66,13 +66,13 @@ patches:
         value: 50m
       - op: replace
         path: /spec/template/spec/containers/0/resources/requests/memory
-        value: 100Mi
+        value: 500Mi
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/cpu
-        value: 200m
+        value: 100m
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/memory
-        value: 1Gi
+        value: 1500Mi
       - op: replace
         path: /spec/triggers/1/imageChangeParams/from/name
         value: api:dev

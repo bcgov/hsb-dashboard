@@ -32,15 +32,15 @@ import { useDashboardFilter } from '.';
  * @returns Component
  */
 export const Dashboard = () => {
-  const { isReady: isReadyTenants, tenants } = useTenants({ init: true });
-  const { isReady: isReadyOrganizations, organizations } = useOrganizations({
+  const { isReady: isReadyTenants } = useTenants({ init: true });
+  const { isReady: isReadyOrganizations } = useOrganizations({
     init: true,
     includeTenants: true,
   });
-  const { isReady: isReadyOperatingSystemItems, operatingSystemItems } = useOperatingSystemItems({
+  const { isReady: isReadyOperatingSystemItems } = useOperatingSystemItems({
     init: true,
   });
-  const { isReady: isReadyServerItems, serverItems } = useServerItems({
+  const { isReady: isReadyServerItems } = useServerItems({
     init: true,
     useSimple: true,
   });
@@ -54,6 +54,7 @@ export const Dashboard = () => {
     useDashboardServerItems();
   const { isLoading: fileSystemItemsIsLoading, fileSystemItems } = useFilteredFileSystemItems();
   const values = useFilteredStore((state) => state.values);
+  const setValues = useFilteredStore((state) => state.setValues);
 
   const updateDashboard = useDashboardFilter();
 
@@ -106,7 +107,7 @@ export const Dashboard = () => {
       {/* Single Organization total storage */}
       {showTotalStorage && (
         <TotalStorage
-          serverItems={dashboardServerItems}
+          serverItems={dashboardServerItem ? [dashboardServerItem] : dashboardServerItems}
           loading={!isReadyOrganizations || !isReadyServerItems}
         />
       )}
@@ -117,6 +118,7 @@ export const Dashboard = () => {
           serverItems={dashboardServerItems}
           loading={!isReadyOperatingSystemItems || !isReadyServerItems}
           onClick={async (operatingSystemItem) => {
+            setValues((state) => ({ operatingSystemItem }));
             await updateDashboard({ operatingSystemItem });
           }}
         />
@@ -142,6 +144,7 @@ export const Dashboard = () => {
           serverItems={dashboardServerItems}
           loading={!isReadyOrganizations || !isReadyServerItems}
           onClick={async (organization) => {
+            setValues((state) => ({ organization }));
             await updateDashboard({ organization });
           }}
         />
@@ -152,6 +155,7 @@ export const Dashboard = () => {
           serverItems={dashboardServerItems}
           loading={!isReadyServerItems || !isReadyOperatingSystemItems}
           onClick={async (serverItem) => {
+            setValues((state) => ({ serverItem }));
             await updateDashboard({ serverItem });
           }}
         />
