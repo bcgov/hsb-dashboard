@@ -1,31 +1,17 @@
 'use client';
 
 import { Select } from '@/components';
-import {
-  IOperatingSystemItemModel,
-  IOrganizationModel,
-  IServerItemModel,
-  ITenantModel,
-} from '@/hooks';
+import { IServerItemModel } from '@/hooks';
 import { useOperatingSystemItems, useServerItems } from '@/hooks/data';
-import { useFilteredOperatingSystemItems } from '@/hooks/filter';
+import { useFilteredOperatingSystemItems, useFilteredServerItems } from '@/hooks/filter';
 import { useFilteredStore } from '@/store';
 import React from 'react';
 
-export interface IFilteredOperatingSystemItemsProps {
-  /** Event fires when the selected tenant changes. */
-  onChange?: (
-    tenant?: ITenantModel,
-    organization?: IOrganizationModel,
-    operatingSystemItem?: IOperatingSystemItemModel,
-  ) => Promise<IServerItemModel[]>;
-}
+export interface IFilteredOperatingSystemItemsProps {}
 
-export const FilteredOperatingSystemItems = ({ onChange }: IFilteredOperatingSystemItemsProps) => {
-  const { isReady: operatingSystemItemsReady, operatingSystemItems } = useOperatingSystemItems({
-    init: true,
-  });
-  const { isReady: serverItemsReady } = useServerItems({
+export const FilteredOperatingSystemItems = ({}: IFilteredOperatingSystemItemsProps) => {
+  const { isReady: operatingSystemItemsReady, operatingSystemItems } = useOperatingSystemItems();
+  const { isReady: serverItemsReady, serverItems } = useServerItems({
     useSimple: true,
   });
 
@@ -39,6 +25,9 @@ export const FilteredOperatingSystemItems = ({ onChange }: IFilteredOperatingSys
   const { options: filteredOperatingSystemItemOptions } = useFilteredOperatingSystemItems();
 
   const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
+  const { findServerItems } = useFilteredServerItems({
+    useSimple: true,
+  });
 
   React.useEffect(() => {
     if (operatingSystemItems.length) setFilteredOperatingSystemItems(operatingSystemItems);
@@ -61,22 +50,40 @@ export const FilteredOperatingSystemItems = ({ onChange }: IFilteredOperatingSys
         setValues((state) => ({ ...state, operatingSystemItem }));
 
         if (operatingSystemItem) {
-          const serverItems = await onChange?.(
-            values.tenant,
-            values.organization,
-            operatingSystemItem,
-          );
-          const serverItem = serverItems?.length === 1 ? serverItems[0] : undefined;
+          let filteredServerItems: IServerItemModel[];
+          if (serverItems.length) {
+            filteredServerItems = serverItems.filter(
+              (server) =>
+                (values.tenant ? server.tenantId === values.tenant.id : true) &&
+                (values.organization ? server.organizationId === values.organization.id : true) &&
+                server.operatingSystemItemId === operatingSystemItem.id,
+            );
+          } else {
+            filteredServerItems = await findServerItems({
+              tenantId: values.tenant?.id,
+              organizationId: values.organization?.id,
+              operatingSystemItemId: operatingSystemItem.id,
+            });
+          }
+          const serverItem = filteredServerItems?.length === 1 ? filteredServerItems[0] : undefined;
 
           setFilteredServerItems(serverItems ?? []);
           setValues((state) => ({ ...state, operatingSystemItem, serverItem }));
         } else {
-          const serverItems = await onChange?.(
-            values.tenant,
-            values.organization,
-            operatingSystemItem,
-          );
-          setFilteredServerItems(serverItems ?? []);
+          let filteredServerItems: IServerItemModel[];
+          if (serverItems.length) {
+            filteredServerItems = serverItems.filter(
+              (server) =>
+                (values.tenant ? server.tenantId === values.tenant.id : true) &&
+                (values.organization ? server.organizationId === values.organization.id : true),
+            );
+          } else {
+            filteredServerItems = await findServerItems({
+              tenantId: values.tenant?.id,
+              organizationId: values.organization?.id,
+            });
+          }
+          setFilteredServerItems(filteredServerItems ?? []);
         }
         setLoading(false);
       }}

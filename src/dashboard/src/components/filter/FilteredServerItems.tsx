@@ -9,7 +9,6 @@ import React from 'react';
 export const FilteredServerItems = () => {
   const { isReady: serverItemsReady, serverItems } = useServerItems({
     useSimple: true,
-    init: true,
   });
 
   const values = useFilteredStore((state) => state.values);

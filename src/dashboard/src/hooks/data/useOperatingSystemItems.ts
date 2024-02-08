@@ -4,9 +4,15 @@ import { IOperatingSystemItemModel, useApiOperatingSystemItems, useAuth } from '
 
 export interface IOperatingSystemItemsProps {
   init?: boolean;
+  includeOrganizations?: boolean;
+  includeTenants?: boolean;
 }
 
-export const useOperatingSystemItems = ({ init }: IOperatingSystemItemsProps = {}) => {
+export const useOperatingSystemItems = ({
+  init,
+  includeOrganizations,
+  includeTenants,
+}: IOperatingSystemItemsProps = {}) => {
   const { status } = useAuth();
   const { find } = useApiOperatingSystemItems();
   const operatingSystemItems = useAppStore((state) => state.operatingSystemItems);
@@ -47,6 +53,8 @@ export const useOperatingSystemItems = ({ init }: IOperatingSystemItemsProps = {
     isLoading,
     isReady,
     init,
+    includeOrganizations,
+    includeTenants,
   ]);
 
   return { isReady, operatingSystemItems };

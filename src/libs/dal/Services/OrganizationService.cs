@@ -18,8 +18,7 @@ public class OrganizationService : BaseService<Organization>, IOrganizationServi
     #endregion
 
     #region Methods
-    public IEnumerable<Organization> Find(
-        Models.Filters.OrganizationFilter filter)
+    public IEnumerable<Organization> Find(Models.Filters.OrganizationFilter filter)
     {
         var query = from org in this.Context.Organizations
                     select org;

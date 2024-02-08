@@ -122,8 +122,8 @@ export const useDashboardFilter = () => {
         });
       }
 
-      // TODO: Because useEffects cannot be awaited this will result in bad behaviour.
-      // It would be nice to be able to react to URL parameters and state variables, but both don't work together.
+      // Add parameters to URL.
+      // This will cause an infinite loop regrettably.
       // router.push(`${path}?${currentParams.toString()}`);
     },
     [

@@ -89,7 +89,7 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
 
     /// <summary>
     /// Add a new file system item record to the database.
-    /// Update the owning server with the volume space information.
+    /// Update the owning server with the volume space information.  We do this so that when the app requests servers it does not also need to request all file systems to get storage totals.
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>
@@ -101,8 +101,8 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
         {
             // TODO: File system items need to be removed otherwise this formula will be invalid over time.
             var volumes = this.Context.FileSystemItems.AsNoTracking().Where(fsi => fsi.ServerItemServiceNowKey == entity.ServerItemServiceNowKey).ToArray();
-            server.Capacity = volumes.Sum(v => v.SizeBytes / 1024 / 1024);
-            server.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes / 1024 / 1024);
+            server.Capacity = volumes.Sum(v => v.SizeBytes / 1024 / 1024) + (entity.SizeBytes / 1024 / 1024);
+            server.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes / 1024 / 1024) + (entity.FreeSpaceBytes / 1024 / 1024);
             this.Context.Entry(server).State = EntityState.Modified;
 
             // Update current historical record too.
@@ -110,8 +110,8 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
             var history = this.Context.ServerHistoryItems.FirstOrDefault(shi => shi.ServiceNowKey == server.ServiceNowKey && shi.HistoryKey == server.HistoryKey);
             if (history != null)
             {
-                history.Capacity = volumes.Sum(v => v.SizeBytes / 1024 / 1024);
-                history.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes / 1024 / 1024);
+                history.Capacity = server.Capacity;
+                history.AvailableSpace = server.AvailableSpace;
                 this.Context.Entry(history).State = EntityState.Modified;
             }
         }
@@ -125,7 +125,7 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
 
     /// <summary>
     /// Update the file system item record in the database.
-    /// Update the owning server with the volume space information.
+    /// Update the owning server with the volume space information.  We do this so that when the app requests servers it does not also need to request all file systems to get storage totals.
     /// </summary>
     /// <param name="entity"></param>
     /// <returns></returns>
@@ -137,8 +137,8 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
         {
             // TODO: File system items need to be removed otherwise this formula will be invalid over time.
             var volumes = this.Context.FileSystemItems.AsNoTracking().Where(fsi => fsi.ServerItemServiceNowKey == entity.ServerItemServiceNowKey).ToArray();
-            server.Capacity = volumes.Sum(v => v.SizeBytes / 1024 / 1024);
-            server.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes / 1024 / 1024);
+            server.Capacity = volumes.Sum(v => v.SizeBytes / 1024 / 1024) + (entity.SizeBytes / 1024 / 1024);
+            server.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes / 1024 / 1024) + (entity.FreeSpaceBytes / 1024 / 1024);
             this.Context.Entry(server).State = EntityState.Modified;
 
             // Update current historical record too.
@@ -146,8 +146,8 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
             var history = this.Context.ServerHistoryItems.FirstOrDefault(shi => shi.ServiceNowKey == server.ServiceNowKey && shi.HistoryKey == server.HistoryKey);
             if (history != null)
             {
-                history.Capacity = volumes.Sum(v => v.SizeBytes / 1024 / 1024);
-                history.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes / 1024 / 1024);
+                history.Capacity = server.Capacity;
+                history.AvailableSpace = server.AvailableSpace;
                 this.Context.Entry(history).State = EntityState.Modified;
             }
         }

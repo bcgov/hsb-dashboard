@@ -60,7 +60,7 @@ public class ServerItemController : ControllerBase
 
     #region Endpoints
     /// <summary>
-    ///
+    /// Find all server items for the specified 'filter'.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "GetServerItems-Dashboard")]
@@ -92,7 +92,8 @@ public class ServerItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Find all server items for the specified 'filter'.
+    /// Return the simple details for each server item.
     /// </summary>
     /// <returns></returns>
     [HttpGet("simple", Name = "GetSimpleServerItems-Dashboard")]
