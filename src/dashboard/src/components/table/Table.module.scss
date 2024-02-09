@@ -19,33 +19,31 @@
   }
 
   .tableRows {
-    padding: 0 1rem;
     max-height: 450px;
     overflow-y: scroll;
     @include scrollBar;
     border-bottom: solid 1px $medium-gray;
+  }
 
-    .tableRow {
-      position: relative;
-      display: flex;
-      flex-direction: row;
-      gap: 1rem;
-      min-height: 60px;
-      padding: 0.5rem;
-      border-bottom: solid 1px $medium-gray;
-      align-items: center;
-      position: relative;
+  .tableRow {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    min-height: 60px;
+    padding: 0.5rem;
+    border-bottom: solid 1px $medium-gray;
+    align-items: center;
+    position: relative;
 
-      &:hover {
-        background-color: $light-gray;
-      }
-
-      >div:not(.loadingAnimation) {
-        flex: 1;
-        position: relative;
-      }
+    &:hover {
+      background-color: $light-gray;
     }
 
+    >div:not(.loadingAnimation) {
+      flex: 1;
+      position: relative;
+    }
   }
 
   .tableFooter {
