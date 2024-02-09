@@ -70,3 +70,39 @@
     flex: 1.5;
   }
 }
+
+.newRow {
+  background-color: $light-gray;
+  color: $info-gray;
+  font-weight: bold;
+  font-size: $font-size-small;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 16px;
+  border-bottom: 1px solid $medium-gray;
+  cursor: pointer;
+
+  &:hover {
+    color: $bc-black;
+  }
+
+  span {
+    font-size: $font-size-medium;
+  }
+}
+
+.addNewRow {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid $medium-gray;
+  padding: 0 .5rem;
+
+  &:hover {
+    background-color: rgba($light-gray, 0.4);
+  }
+  
+  div {
+    flex: 1;
+  }
+}
