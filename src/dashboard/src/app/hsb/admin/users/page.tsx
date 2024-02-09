@@ -25,11 +25,18 @@ export default function Page() {
   const [filteredUsers, setFilteredUsers] = React.useState<number[]>([]);
   const [filter, setFilter] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [newRows, setNewRows] = React.useState<React.ReactNode[]>([]);
 
   const dialogRef = React.useRef<HTMLDialogElement>(null);
   const [dialog, setDialog] = React.useState<{ user: IUserForm; variant: UserDialogVariant }>();
 
   const isDirty = formUsers.some((u) => u.isDirty);
+
+  const handleAddNewRow = () => {
+    const newRowKey = `newRow-${newRows.length}`;
+    const newRowElement = <AddNewRow key={newRowKey} />;
+    setNewRows([newRowElement, ...newRows]);
+  };  
 
   React.useEffect(() => {
     setLoading(!isReadyUsers && !isReadyGroups);
@@ -149,6 +156,14 @@ export default function Page() {
                 <div>Roles, Tenants, Organizations</div>
               </>
             }
+            addNew={
+              <>
+              <div className={styles.newRow} onClick={handleAddNewRow}>
+                <span>+</span> Add new user
+              </div>
+                {newRows.map(newRow => newRow)}
+              </>
+            }
           >
             {({ data }) => {
               return (
@@ -219,3 +234,42 @@ export default function Page() {
     </Sheet>
   );
 }
+
+const AddNewRow = () => {
+  return (
+    <div className={styles.addNewRow}>
+    <div><Text placeholder="Username" /></div>
+    <div><Text placeholder="Email" /></div>
+    <div><Text placeholder="Name" /></div>
+    <div className={styles.checkbox}><Checkbox /></div>
+    <div className={styles.selectRow}>
+      <div>
+        <p>
+          <span>Roles: </span>
+        </p>
+        <Button variant="secondary">
+          Edit
+        </Button>
+      </div>
+      <div>
+        <p>
+          <span>Organizations: </span>
+        </p>
+        <Button
+          variant="secondary"
+        >
+          Edit
+        </Button>
+      </div>
+      <div>
+        <p>
+          <span>Tenant: </span>
+        </p>
+        <Button variant="secondary">
+          Edit
+        </Button>
+      </div>
+    </div>
+  </div>
+  );
+};

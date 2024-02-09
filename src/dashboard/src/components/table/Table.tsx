@@ -1,6 +1,7 @@
 import { LoadingAnimation } from '..';
 import { ITableFooterProps } from './ITableFooterProps';
 import { ITableHeaderProps } from './ITableHeaderProps';
+import { ITableAddNewProps } from './ITableAddNewProps';
 import { ITableRowProps } from './ITableRowProps';
 import styles from './Table.module.scss';
 
@@ -9,7 +10,9 @@ export interface ITableProps<T extends object> {
   rows?: ITableRowProps<T>[];
   rowKey?: keyof T | ((data: T, index: number) => React.Key | null | undefined);
   showHeader?: boolean;
+  showAddNew?: boolean;
   header?: React.ReactNode | ((props: ITableHeaderProps<T>) => React.ReactNode);
+  addNew?: React.ReactNode | ((props: ITableAddNewProps<T>) => React.ReactNode);
   children?: React.ReactNode | ((props: ITableRowProps<T>) => React.ReactNode);
   showFooter?: boolean;
   footer?: React.ReactNode | ((props: ITableFooterProps<T>) => React.ReactNode);
@@ -19,7 +22,9 @@ export const Table = <T extends object>({
   data,
   rows: initRows,
   showHeader = true,
+  showAddNew = true,
   header,
+  addNew,
   rowKey = (_, index) => index,
   children,
   showFooter,
@@ -42,6 +47,16 @@ export const Table = <T extends object>({
         </div>
       )}
       <div className={styles.tableRows}>
+        {showAddNew && (
+          <>
+            {typeof addNew === 'function'
+            ? (addNew as (props: ITableAddNewProps<T>) => React.ReactNode)({
+                data: rows.map((r) => r.data),
+              })
+            : addNew}
+          </>
+        )}
+        
         {rows.map((row, index) => {
           return (
             <div
