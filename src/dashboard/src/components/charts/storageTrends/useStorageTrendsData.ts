@@ -48,7 +48,7 @@ export const useStorageTrendsData = (): ((
           values
             .map((i) => i.capacity)
             .reduce((result, value) => (result ?? 0) + (value ?? 0), 0) ?? 0,
-          'MB',
+          'B',
           'TB',
           { type: 'number' },
         );
@@ -56,7 +56,7 @@ export const useStorageTrendsData = (): ((
           values
             .map((i) => i.availableSpace)
             .reduce((result, value) => (result ?? 0) + (value ?? 0), 0) ?? 0,
-          'MB',
+          'B',
           'TB',
           { type: 'number' },
         );

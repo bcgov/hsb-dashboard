@@ -40,7 +40,7 @@ export const TotalStorage = ({ serverItems, loading }: ITotalStorageProps) => {
                       let labelIndex = context.dataIndex;
                       let label = data.chart.labels?.[labelIndex] || '';
                       let value = context.parsed;
-                      return `${label}: ${convertToStorageSize(value, 'MB', 'TB')}`;
+                      return `${label}: ${convertToStorageSize(value, 'B', 'TB')}`;
                     },
                     title: function () {
                       return ''; // Return an empty string to remove the title for tooltips

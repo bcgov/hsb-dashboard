@@ -10,9 +10,9 @@ interface IBarRowProps extends Omit<IBarChartRowData<unknown>, 'label'> {
 export const BarRow: React.FC<IBarRowProps> = ({ label, capacity, available }) => {
   const used = capacity - available;
   const percentageUsed = capacity ? Math.round((used / capacity) * 100) : 0;
-  const capacityValue = convertToStorageSize(capacity, 'MB', 'TB');
-  const usedValue = convertToStorageSize(used, 'MB', 'TB');
-  const availableValue = convertToStorageSize(available, 'MB', 'TB');
+  const capacityValue = convertToStorageSize(capacity, 'B', 'TB');
+  const usedValue = convertToStorageSize(used, 'B', 'TB');
+  const availableValue = convertToStorageSize(available, 'B', 'TB');
 
   return (
     <div className={styles.row}>

@@ -21,10 +21,10 @@ export const BarChart: React.FC<IBarChartProps> = ({
     ? Math.min(100, Math.max(0, Math.round(((totalStorage - availableSpace) / totalStorage) * 100)))
     : 0;
   const usedStorage = totalStorage - availableSpace;
-  const usedStorageLabel = convertToStorageSize(usedStorage, 'MB', 'TB', {
+  const usedStorageLabel = convertToStorageSize(usedStorage, 'B', 'TB', {
     formula: (value) => Number(value.toFixed(2)),
   });
-  const totalStorageLabel = convertToStorageSize(totalStorage, 'MB', 'TB', {
+  const totalStorageLabel = convertToStorageSize(totalStorage, 'B', 'TB', {
     formula: (value) => Number(value.toFixed(2)),
   });
 

@@ -170,28 +170,32 @@ export default function Page() {
             >
               Search
             </Button>
-            <Select
-              options={tenantOptions}
-              placeholder="Select Tenant"
-              value={tenantOptions.find((o) => o.value == selectedTenant?.id)?.value ?? ''}
-              onChange={(value) => {
-                const tenant = userinfo?.tenants.find((t) => t.id == value);
-                setSelectedTenant(tenant);
-                doSearch(formUsers, filter, tenant, selectedOrganization);
-              }}
-            />
-            <Select
-              options={organizationOptions}
-              placeholder="Select Organization"
-              value={
-                organizationOptions.find((o) => o.value == selectedOrganization?.id)?.value ?? ''
-              }
-              onChange={(value) => {
-                const organization = userinfo?.organizations.find((t) => t.id == value);
-                setSelectedOrganization(organization);
-                doSearch(formUsers, filter, selectedTenant, organization);
-              }}
-            />
+            {!!tenantOptions.length && (
+              <Select
+                options={tenantOptions}
+                placeholder="Select Tenant"
+                value={tenantOptions.find((o) => o.value == selectedTenant?.id)?.value ?? ''}
+                onChange={(value) => {
+                  const tenant = userinfo?.tenants.find((t) => t.id == value);
+                  setSelectedTenant(tenant);
+                  doSearch(formUsers, filter, tenant, selectedOrganization);
+                }}
+              />
+            )}
+            {!!organizationOptions.length && (
+              <Select
+                options={organizationOptions}
+                placeholder="Select Organization"
+                value={
+                  organizationOptions.find((o) => o.value == selectedOrganization?.id)?.value ?? ''
+                }
+                onChange={(value) => {
+                  const organization = userinfo?.organizations.find((t) => t.id == value);
+                  setSelectedOrganization(organization);
+                  doSearch(formUsers, filter, selectedTenant, organization);
+                }}
+              />
+            )}
           </div>
           <Info>
             Enable user access to tenants and/or organizations, and make users administrators.

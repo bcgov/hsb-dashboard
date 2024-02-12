@@ -11,13 +11,13 @@ export const generateDoughnutChart = (
   const availablePercent = space ? (available / space) * 100 : 0;
 
   return {
-    space: convertToStorageSize<string>(space, 'MB', 'TB', {
+    space: convertToStorageSize<string>(space, 'B', 'TB', {
       formula: Math.trunc,
     }),
-    used: convertToStorageSize<string>(used, 'MB', 'TB', {
+    used: convertToStorageSize<string>(used, 'B', 'TB', {
       formula: Math.trunc,
     }),
-    available: convertToStorageSize<string>(available, 'MB', 'TB', {
+    available: convertToStorageSize<string>(available, 'B', 'TB', {
       formula: Math.trunc,
     }),
     usedPercent,
