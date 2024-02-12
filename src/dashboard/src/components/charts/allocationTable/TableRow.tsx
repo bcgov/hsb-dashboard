@@ -22,8 +22,8 @@ export const TableRow: React.FC<TableRowProps> = ({
   onClick,
 }) => {
   const percentageUsed = capacity ? Math.round(((capacity - available) / capacity) * 100) : 0;
-  const capacityValue = convertToStorageSize<string>(capacity, 'MB', 'TB');
-  const availableValue = convertToStorageSize<string>(available, 'MB', 'TB');
+  const capacityValue = convertToStorageSize<string>(capacity, 'B', 'TB');
+  const availableValue = convertToStorageSize<string>(available, 'B', 'TB');
 
   return (
     <div className={styles.row}>
@@ -39,8 +39,12 @@ export const TableRow: React.FC<TableRowProps> = ({
         </p>
         {showTenant ? <p title={tenant}>{tenant}</p> : ''}
         <p title={os}>{os}</p>
-        <p className={styles.centered} title={capacityValue}>{capacityValue}</p>
-        <p className={styles.centered} title={availableValue}>{availableValue}</p>
+        <p className={styles.centered} title={capacityValue}>
+          {capacityValue}
+        </p>
+        <p className={styles.centered} title={availableValue}>
+          {availableValue}
+        </p>
       </div>
       <div className={styles.barChart}>
         <div className={styles.bar}>

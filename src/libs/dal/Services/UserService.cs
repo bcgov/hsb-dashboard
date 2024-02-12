@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using HSB.Core.Exceptions;
 using HSB.DAL.Extensions;
 using HSB.Entities;
 using LinqKit;
@@ -107,16 +108,31 @@ public class UserService : BaseService<User>, IUserService
 
     public override EntityEntry<User> Update(User entity)
     {
+        var isSystemAdmin = Keycloak.Extensions.IdentityExtensions.HasClientRole(this.Principal, HSB.Keycloak.ClientRole.SystemAdministrator);
+        var isOrganizationAdmin = Keycloak.Extensions.IdentityExtensions.HasClientRole(this.Principal, HSB.Keycloak.ClientRole.OrganizationAdministrator);
+        var organizationAdminGroup = this.Context.Groups.FirstOrDefault(g => g.Name == Core.Extensions.EnumExtensions.GetName(HSB.Keycloak.ClientRole.OrganizationAdministrator));
+
+        // A organization admin can only add the Organization Admin and Client role to users within the tenant or organization they belong to.
+        var username = Core.Extensions.IdentityExtensions.GetUsername(this.Principal) ?? throw new NotAuthorizedException("Username is missing");
+        var user = Find(new HSB.Models.Filters.UserFilter() { Username = username, IncludePermissions = true }).FirstOrDefault() ?? throw new NotAuthorizedException($"User [{username}] does not exist");
+        var allowedTenants = user.TenantsManyToMany.Select(t => t.TenantId).ToArray();
+        var allowedOrganizations = user.OrganizationsManyToMany.Select(o => o.OrganizationId).ToArray().Concat(this.Context.TenantOrganizations.Where(to => allowedTenants.Contains(to.TenantId)).Select(to => to.OrganizationId).ToArray()).Distinct();
+
         // Update groups
         var originalGroups = this.Context.UserGroups.Where(ug => ug.UserId == entity.Id).ToArray();
         originalGroups.Except(entity.GroupsManyToMany).ForEach((group) =>
         {
-            this.Context.Entry(group).State = EntityState.Deleted;
+            // Only allowed to remove organization admin if the user performing the action is an organization admin.
+            if (isSystemAdmin || (isOrganizationAdmin && group.GroupId == organizationAdminGroup?.Id))
+            {
+                this.Context.Entry(group).State = EntityState.Deleted;
+            }
         });
         entity.GroupsManyToMany.ForEach((group) =>
         {
             var originalGroup = originalGroups.FirstOrDefault(s => s.GroupId == group.GroupId);
-            if (originalGroup == null)
+            // Only allowed to add organization admin if the user performing the action is an organization admin.
+            if (originalGroup == null && (isSystemAdmin || (isOrganizationAdmin && group.GroupId == organizationAdminGroup?.Id)))
             {
                 group.UserId = entity.Id;
                 this.Context.Entry(group).State = EntityState.Added;
@@ -127,12 +143,17 @@ public class UserService : BaseService<User>, IUserService
         var originalOrganizations = this.Context.UserOrganizations.Where(ut => ut.UserId == entity.Id).ToArray();
         originalOrganizations.Except(entity.OrganizationsManyToMany).ForEach((organization) =>
         {
-            this.Context.Entry(organization).State = EntityState.Deleted;
+            // Only allow to remove organization if the user performing the action is member of this organization.
+            if (isSystemAdmin || (isOrganizationAdmin && allowedOrganizations.Contains(organization.OrganizationId)))
+            {
+                this.Context.Entry(organization).State = EntityState.Deleted;
+            }
         });
         entity.OrganizationsManyToMany.ForEach((organization) =>
         {
             var originalOrganization = originalOrganizations.FirstOrDefault(s => s.OrganizationId == organization.OrganizationId);
-            if (originalOrganization == null)
+            // Only allowed to add organization if the user performing the action is an organization admin and is a member of this organization.
+            if (originalOrganization == null && (isSystemAdmin || (isOrganizationAdmin && allowedOrganizations.Contains(organization.OrganizationId))))
             {
                 organization.UserId = entity.Id;
                 this.Context.Entry(organization).State = EntityState.Added;
@@ -143,12 +164,17 @@ public class UserService : BaseService<User>, IUserService
         var originalTenants = this.Context.UserTenants.Where(ut => ut.UserId == entity.Id).ToArray();
         originalTenants.Except(entity.TenantsManyToMany).ForEach((tenant) =>
         {
-            this.Context.Entry(tenant).State = EntityState.Deleted;
+            // Only allow to remove tenant if the user performing the action is member of this tenant.
+            if (isSystemAdmin || (isOrganizationAdmin && allowedTenants.Contains(tenant.TenantId)))
+            {
+                this.Context.Entry(tenant).State = EntityState.Deleted;
+            }
         });
         entity.TenantsManyToMany.ForEach((tenant) =>
         {
             var originalTenant = originalTenants.FirstOrDefault(s => s.TenantId == tenant.TenantId);
-            if (originalTenant == null)
+            // Only allowed to add tenant if the user performing the action is an organization admin and is a member of this tenant.
+            if (originalTenant == null && (isSystemAdmin || (isOrganizationAdmin && allowedTenants.Contains(tenant.TenantId))))
             {
                 tenant.UserId = entity.Id;
                 this.Context.Entry(tenant).State = EntityState.Added;

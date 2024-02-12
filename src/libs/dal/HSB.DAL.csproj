@@ -13,6 +13,7 @@
     <ProjectReference Include="..\core\HSB.Core.csproj" />
     <ProjectReference Include="..\entities\HSB.Entities.csproj" />
     <ProjectReference Include="..\models\HSB.Models.csproj" />
+    <ProjectReference Include="..\keycloak\HSB.Keycloak.csproj" />
   </ItemGroup>
 
   <ItemGroup>

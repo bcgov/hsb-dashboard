@@ -118,13 +118,13 @@ export const useStorageTrendsData = (): ((
               const items = group.items.filter((i) => i.serviceNowKey === volume.serviceNowKey);
               const capacity = convertToStorageSize<number>(
                 items.length ? items[items.length - 1].capacity : 0,
-                'MB',
+                'B',
                 'GB',
                 { type: 'number' },
               );
               const available = convertToStorageSize<number>(
                 items.length ? items[items.length - 1].availableSpace : 0,
-                'MB',
+                'B',
                 'GB',
                 { type: 'number' },
               );
@@ -141,11 +141,11 @@ export const useStorageTrendsData = (): ((
             // The second dataset is an array of unused space grouped by month.
             return [
               {
-                label: `Used ${volume.name} (${convertToStorageSize(volume.capacity, 'MB', 'GB', {
+                label: `Used ${volume.name} (${convertToStorageSize(volume.capacity, 'B', 'GB', {
                   formula: (value) => Number(value.toFixed(1)),
                 })})`,
                 name: volume.name,
-                capacity: convertToStorageSize(volume.capacity, 'MB', 'GB', {
+                capacity: convertToStorageSize(volume.capacity, 'B', 'GB', {
                   formula: (value) => Number(value.toFixed(1)),
                 }),
                 data: groupData.map((group) => group.used), // Record of the volume data for each group (month).
@@ -153,11 +153,11 @@ export const useStorageTrendsData = (): ((
                 stack: `Stack ${index - 1}`,
               },
               {
-                label: `Unused ${volume.name} (${convertToStorageSize(volume.capacity, 'MB', 'GB', {
+                label: `Unused ${volume.name} (${convertToStorageSize(volume.capacity, 'B', 'GB', {
                   formula: (value) => Number(value.toFixed(1)),
                 })})`,
                 name: volume.name,
-                capacity: convertToStorageSize(volume.capacity, 'MB', 'GB', {
+                capacity: convertToStorageSize(volume.capacity, 'B', 'GB', {
                   formula: (value) => Number(value.toFixed(1)),
                 }),
                 data: groupData.map((group) => group.available), // Record of the volume data for each group (month).

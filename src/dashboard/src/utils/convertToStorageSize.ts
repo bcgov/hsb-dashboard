@@ -8,8 +8,8 @@
  */
 export const convertToStorageSize = <T extends string | number>(
   value: number,
-  input: 'TB' | 'GB' | 'MB' | 'KB' | '' = '',
-  output: 'TB' | 'GB' | 'MB' | 'KB' | '' = '',
+  input: 'TB' | 'GB' | 'MB' | 'KB' | 'B' | '' = '',
+  output: 'TB' | 'GB' | 'MB' | 'KB' | 'B' | '' = '',
   options?:
     | ({
         formula?: (value: number) => number;
@@ -24,22 +24,31 @@ export const convertToStorageSize = <T extends string | number>(
     if (output === 'GB') result = value * 1024;
     else if (output === 'MB') result = value * Math.pow(1024, 2);
     else if (output === 'KB') result = value * Math.pow(1024, 3);
+    else if (output === 'B') result = value * Math.pow(1024, 4);
     else if (output === '') result = value * Math.pow(1024, 4);
   } else if (input === 'GB') {
     if (output === 'TB') result = value / 1024;
     else if (output === 'MB') result = value * Math.pow(1024, 2);
     else if (output === 'KB') result = value * Math.pow(1024, 3);
+    else if (output === 'B') result = value * Math.pow(1024, 4);
     else if (output === '') result = value * Math.pow(1024, 4);
   } else if (input === 'MB') {
     if (output === 'TB') result = value / Math.pow(1024, 2);
     else if (output === 'GB') result = value / 1024;
     else if (output === 'KB') result = value * Math.pow(1024, 3);
+    else if (output === 'B') result = value * Math.pow(1024, 4);
     else if (output === '') result = value * Math.pow(1024, 4);
   } else if (input === 'KB') {
     if (output === 'TB') result = value / Math.pow(1024, 3);
     else if (output === 'GB') result = value / Math.pow(1024, 2);
     else if (output === 'MB') result = value / 1024;
+    else if (output === 'B') result = value * Math.pow(1024, 4);
     else if (output === '') result = value * Math.pow(1024, 4);
+  } else if (input === 'B') {
+    if (output === 'TB') result = value / Math.pow(1024, 4);
+    else if (output === 'GB') result = value / Math.pow(1024, 3);
+    else if (output === 'MB') result = value / Math.pow(1024, 2);
+    else if (output === 'KB') result = value / 1024;
   } else if (input === '') {
     if (output === 'TB') result = value / Math.pow(1024, 4);
     else if (output === 'GB') result = value / Math.pow(1024, 3);
@@ -68,8 +77,8 @@ export const convertToStorageSize = <T extends string | number>(
 
 export const reduceToType = (
   value: number,
-  type: 'TB' | 'GB' | 'MB' | 'KB' | '' = '',
-): { value: number; type: 'TB' | 'GB' | 'MB' | 'KB' | '' } => {
+  type: 'TB' | 'GB' | 'MB' | 'KB' | 'B' | '' = '',
+): { value: number; type: 'TB' | 'GB' | 'MB' | 'KB' | 'B' | '' } => {
   if (value >= 1) return { value, type };
   // Downsize to the smaller type.
   if (type === 'TB') {

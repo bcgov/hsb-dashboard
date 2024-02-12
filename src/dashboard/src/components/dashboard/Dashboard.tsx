@@ -155,7 +155,11 @@ export const Dashboard = () => {
               }
 
               setValues((state) => ({ operatingSystemItem }));
-              await updateDashboard({ operatingSystemItem, applyFilter: true });
+              await updateDashboard({
+                operatingSystemItem,
+                serverItems: filteredServerItems,
+                applyFilter: true,
+              });
             } else {
               if (serverItems.length) {
                 const filteredServerItems = serverItems.filter(
@@ -241,7 +245,12 @@ export const Dashboard = () => {
                   : undefined;
 
               setValues((state) => ({ organization, operatingSystemItem, serverItem }));
-              await updateDashboard({ organization, applyFilter: true });
+              await updateDashboard({
+                organization,
+                serverItems: filteredServerItems,
+                operatingSystemItems: filteredOperatingSystemItems,
+                applyFilter: true,
+              });
             } else {
               setFilteredOperatingSystemItems(operatingSystemItems);
               if (serverItems.length) {

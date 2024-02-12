@@ -94,6 +94,7 @@ public class UserController : ControllerBase
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
+    [ClientRoleAuthorize(ClientRole.SystemAdministrator)]
     [HttpPost(Name = "AddUser-SystemAdmin")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(UserModel), (int)HttpStatusCode.Created)]
@@ -151,6 +152,7 @@ public class UserController : ControllerBase
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
+    [ClientRoleAuthorize(ClientRole.SystemAdministrator)]
     [HttpDelete("{id}", Name = "RemoveUser-SystemAdmin")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(UserModel), (int)HttpStatusCode.OK)]
