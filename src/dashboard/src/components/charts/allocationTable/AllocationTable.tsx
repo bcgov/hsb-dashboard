@@ -5,7 +5,7 @@ import { Text } from '@/components/forms/text';
 import { IServerItemModel } from '@/hooks';
 import classNames from 'classnames';
 import { debounce } from 'lodash';
-import React from 'react';
+import React, { ChangeEvent }  from 'react';
 import { LoadingAnimation } from '../../loadingAnimation';
 import styles from './AllocationTable.module.scss';
 import { Dropdown } from './Dropdown';
@@ -76,7 +76,7 @@ export const AllocationTable = ({
 
   React.useEffect(() => () => debouncedSearch.cancel(), [debouncedSearch]);
 
-  const handleFilterChange = (e) => {
+  const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setKeyword(value);
     debouncedSearch(value);
@@ -115,7 +115,7 @@ export const AllocationTable = ({
           iconType={'filter'}
           value={keyword}
           onChange={handleFilterChange}
-          onKeyDown={(e) => {
+          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
             if (e.code === 'Enter') {
               setFilter(keyword);
               setShowDropdown(false);
