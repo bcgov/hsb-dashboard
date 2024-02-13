@@ -40,7 +40,7 @@ export const AllocationTable = ({
   const [rows, setRows] = React.useState<ITableRowData<IServerItemModel>[]>([]);
   const [filteredServerItems, setFilteredServerItems] = React.useState<IServerItemModel[]>([]);
   const [showDropdown, setShowDropdown] = React.useState(false);
-  const wrapperRef = React.useRef(null);
+  const wrapperRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const sorting = sort.split(':');
@@ -74,13 +74,11 @@ export const AllocationTable = ({
         si.operatingSystemItem.name.toLowerCase().includes(searchKeyword.toLowerCase()))
     );
     
-    // Set the filtered list for the dropdown
     setFilteredServerItems(filtered);
     setShowDropdown(true);
   }, 300), [serverItems]);
 
   React.useEffect(() => {
-    // Make sure to cancel the debounced event when the component is unmounted
     return () => {
       debouncedSearch.cancel();
     };
@@ -95,7 +93,7 @@ export const AllocationTable = ({
   const selectFromDropdown = (item: IServerItemModel) => {
     setKeyword(item.name);
     setFilter(item.name);
-    setShowDropdown(false); // Close the dropdown after selection
+    setShowDropdown(false);
   };
 
   const handleClickOutside = (e) => {
@@ -105,10 +103,8 @@ export const AllocationTable = ({
   };
   
   React.useEffect(() => {
-    // Bind the event listener
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      // Unbind the event listener on clean up
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
@@ -135,11 +131,10 @@ export const AllocationTable = ({
           }}
         />
         {showDropdown && (
-          <div className={styles.dropdownMenu}>
+          <div className={styles.filteredDropdown}>
             {filteredServerItems.map((item, index) => (
               <div
                 key={index}
-                className={styles.dropdownItem}
                 onClick={() => selectFromDropdown(item)}
               >
                 {item.name}
