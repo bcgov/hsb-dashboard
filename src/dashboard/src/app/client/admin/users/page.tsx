@@ -77,7 +77,6 @@ export default function Page() {
       }),
     );
     setFilteredUsers(searchUsers(users, filter).map((u) => u.id));
-    setOrganization('Example Organization');
     // Only apply the 'filter' when the button is pressed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users]);

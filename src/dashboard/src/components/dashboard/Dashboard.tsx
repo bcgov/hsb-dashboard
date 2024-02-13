@@ -74,6 +74,8 @@ export const Dashboard = () => {
 
   const updateDashboard = useDashboardFilter();
 
+  const [init, setInit] = React.useState(true);
+
   // Total storage is for a single organization
   const showTotalStorage =
     !!dashboardServerItem || (!!dashboardOrganization && !dashboardOperatingSystemItem);
@@ -96,17 +98,24 @@ export const Dashboard = () => {
     // When no filter is selected use all values available.
     if (
       isReadyTenants &&
-      !values.tenant &&
       isReadyOrganizations &&
-      !values.organization &&
       isReadyOperatingSystemItems &&
-      !values.operatingSystemItem &&
-      isReadyServerItems &&
-      !values.serverItem
+      isReadyServerItems
     ) {
-      updateDashboard({ reset: true });
+      if (
+        !values.tenant &&
+        !values.organization &&
+        !values.operatingSystemItem &&
+        !values.serverItem
+      ) {
+        updateDashboard({ reset: true });
+      } else if (init) {
+        updateDashboard({ applyFilter: true });
+      }
+      setInit(false);
     }
   }, [
+    init,
     isReadyOperatingSystemItems,
     isReadyOrganizations,
     isReadyServerItems,

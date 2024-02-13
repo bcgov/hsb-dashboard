@@ -136,12 +136,26 @@ export const Filter: React.FC = () => {
       <button
         className={styles.reset}
         onClick={async () => {
-          setValues(() => ({}));
+          const tenant = tenants.length === 1 ? tenants[0] : undefined;
+          const organization = organizations.length === 1 ? organizations[0] : undefined;
+          const operatingSystemItem =
+            operatingSystemItems.length === 1 ? operatingSystemItems[0] : undefined;
+          const serverItem = serverItems.length === 1 ? serverItems[0] : undefined;
+          setValues(() => ({ tenant, organization, operatingSystemItem, serverItem }));
           setFilteredTenants(tenants);
           setFilteredOrganizations(organizations);
           setFilteredOperatingSystemItems(operatingSystemItems);
           setFilteredServerItems(serverItems);
-          await updateDashboard({ reset: true });
+          await updateDashboard({
+            tenant,
+            organization,
+            operatingSystemItem,
+            serverItem,
+            tenants,
+            organizations,
+            operatingSystemItems,
+            serverItems,
+          });
         }}
       >
         Reset Filters
