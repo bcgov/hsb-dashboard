@@ -172,6 +172,8 @@ export const Dashboard = () => {
 
               setValues((state) => ({ operatingSystemItem }));
               await updateDashboard({
+                tenant: values.tenant,
+                organization: values.organization,
                 operatingSystemItem,
                 serverItems: filteredServerItems,
                 applyFilter: true,
@@ -262,6 +264,7 @@ export const Dashboard = () => {
 
               setValues((state) => ({ organization, operatingSystemItem, serverItem }));
               await updateDashboard({
+                tenant: values.tenant,
                 organization,
                 serverItems: filteredServerItems,
                 operatingSystemItems: filteredOperatingSystemItems,
@@ -305,7 +308,7 @@ export const Dashboard = () => {
               (operatingSystemItem) => operatingSystemItem.id === serverItem?.operatingSystemItemId,
             );
             setValues((state) => ({ serverItem, tenant, organization, operatingSystemItem }));
-            await updateDashboard({ serverItem });
+            await updateDashboard({ tenant, organization, operatingSystemItem, serverItem });
           }}
         />
       )}
