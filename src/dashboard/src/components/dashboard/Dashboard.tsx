@@ -37,8 +37,8 @@ import { useDashboardFilter } from '.';
  * @returns Component
  */
 export const Dashboard = () => {
-  const { isReady: isReadyTenants } = useTenants({ init: true });
-  const { isReady: isReadyOrganizations } = useOrganizations({
+  const { isReady: isReadyTenants, tenants } = useTenants({ init: true });
+  const { isReady: isReadyOrganizations, organizations } = useOrganizations({
     init: true,
     includeTenants: true,
   });
@@ -88,7 +88,8 @@ export const Dashboard = () => {
   // A single server
   const showAllocationByVolume = !!dashboardServerItem;
   // All servers within available organizations
-  const showAllocationByStorageVolume = !dashboardOrganization && !dashboardServerItem;
+  const showAllocationByStorageVolume =
+    !dashboardOrganization && !dashboardOperatingSystemItem && !dashboardServerItem;
   // All servers with OS
   const showAllocationTable = !!dashboardOperatingSystemItem && !dashboardServerItem;
   // Show each drive over time for server
@@ -110,7 +111,13 @@ export const Dashboard = () => {
       ) {
         updateDashboard({ reset: true });
       } else if (init) {
-        updateDashboard({ applyFilter: true });
+        updateDashboard({
+          tenant: values.tenant,
+          organization: values.organization,
+          operatingSystemItem: values.operatingSystemItem,
+          serverItem: values.serverItem,
+          applyFilter: true,
+        });
       }
       setInit(false);
     }
@@ -290,7 +297,14 @@ export const Dashboard = () => {
           serverItems={dashboardServerItems}
           loading={!isReadyServerItems || !isReadyOperatingSystemItems}
           onClick={async (serverItem) => {
-            setValues((state) => ({ serverItem }));
+            const tenant = tenants.find((tenant) => tenant.id === serverItem?.tenantId);
+            const organization = organizations.find(
+              (organization) => organization.id === serverItem?.organizationId,
+            );
+            const operatingSystemItem = operatingSystemItems.find(
+              (operatingSystemItem) => operatingSystemItem.id === serverItem?.operatingSystemItemId,
+            );
+            setValues((state) => ({ serverItem, tenant, organization, operatingSystemItem }));
             await updateDashboard({ serverItem });
           }}
         />
