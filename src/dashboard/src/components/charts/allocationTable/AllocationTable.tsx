@@ -62,27 +62,19 @@ export const AllocationTable = ({
   const showTenants = React.useMemo(() => rows.some((data) => data.tenant), [rows]);
   const columns = React.useMemo(() => getColumns(showTenants), [showTenants]);
 
-  const debounceChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => debounce(() => setKeyword(e.target.value), 500),
-    [],
+  const debouncedSearch = React.useCallback(
+    debounce((searchKeyword: string) => {
+      const filtered = serverItems.filter((si) => 
+        si.name.toLowerCase().includes(searchKeyword.toLowerCase())
+      );
+      setFilteredServerItems(filtered);
+      setShowDropdown(true);
+    }, 300),
+    []
   );
+  
 
-  const debouncedSearch = React.useMemo(() => debounce((searchKeyword) => {
-    const filtered = serverItems.filter(si =>
-      si.name.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-      (!!si.operatingSystemItem &&
-        si.operatingSystemItem.name.toLowerCase().includes(searchKeyword.toLowerCase()))
-    );
-    
-    setFilteredServerItems(filtered);
-    setShowDropdown(true);
-  }, 300), [serverItems]);
-
-  React.useEffect(() => {
-    return () => {
-      debouncedSearch.cancel();
-    };
-  }, [debouncedSearch]);
+  React.useEffect(() => () => debouncedSearch.cancel(), [debouncedSearch]);
 
   const handleFilterChange = (e) => {
     const value = e.target.value;
@@ -96,8 +88,8 @@ export const AllocationTable = ({
     setShowDropdown(false);
   };
 
-  const handleClickOutside = (e) => {
-    if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+  const handleClickOutside = (e: MouseEvent) => {
+    if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
       setShowDropdown(false);
     }
   };
