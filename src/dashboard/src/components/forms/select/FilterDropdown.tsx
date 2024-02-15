@@ -50,7 +50,7 @@ export const FilterDropdown = <T extends unknown>({
 
     React.useEffect(() => {
         const selectedOption = options.find((option) => option.value === selected);
-        setSelectedLabel(selectedOption ? selectedOption.label : undefined);
+        setSelectedLabel(typeof selectedOption?.label === 'string' ? selectedOption.label : undefined);
       }, [selected, options]);
   
     React.useEffect(() => {
