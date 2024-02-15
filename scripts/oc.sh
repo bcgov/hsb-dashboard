@@ -95,6 +95,25 @@ oc-deploy () {
   elif [ "$image" = "data-service" ]; then
     # buid and deploy data-service
     oc tag $image:$tag $image:$env
+  elif [ "$image" = "db" ]; then
+    # buid and deploy app
+    image=db-migration
+    oc tag $image:$tag $image:$env
+  fi
+}
+
+oc-run () {
+  image=${1-}
+  env=${2-'dev'}
+
+  # Extract the random characters of the project namespace.
+  project=$(oc project --short); project=${project//-[a-z]*/}; echo $project
+  # Change the current environment
+  oc project $project-tools
+  # login
+  docker login -u $(oc whoami) -p $(oc whoami -t) $IMAGE_REGISTRY/$project-tools
+
+  if [ "$image" = "data-service" ]; then
     echo "Running data-service in $project-$env"
     overrides="{
         \"apiVersion\":\"v1\",
@@ -234,9 +253,8 @@ oc-deploy () {
   elif [ "$image" = "db" ]; then
     # buid and deploy app
     image=db-migration
-    migration=${4-}
+    migration=${3-}
 
-    oc tag $image:$tag $image:$env
     echo "Running database migration '$migration' in $project-$env"
     overrides="{
         \"apiVersion\":\"v1\",
@@ -309,4 +327,3 @@ oc-deploy () {
       --overrides="$overrides"
   fi
 }
-

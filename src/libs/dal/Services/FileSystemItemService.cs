@@ -100,7 +100,9 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
         if (server != null)
         {
             // TODO: File system items need to be removed otherwise this formula will be invalid over time.
-            var volumes = this.Context.FileSystemItems.AsNoTracking().Where(fsi => fsi.ServerItemServiceNowKey == entity.ServerItemServiceNowKey).ToArray();
+            // Grab all file system items for this server so that space can be calculated.
+            // The downside to this implementation is that the calculation will include the prior synced data until all file system items have been synced up.
+            var volumes = this.Context.FileSystemItems.AsNoTracking().Where(fsi => fsi.ServerItemServiceNowKey == entity.ServerItemServiceNowKey && fsi.ServiceNowKey != entity.ServiceNowKey).ToArray();
             server.Capacity = volumes.Sum(v => v.SizeBytes) + entity.SizeBytes;
             server.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes) + entity.FreeSpaceBytes;
             this.Context.Entry(server).State = EntityState.Modified;
@@ -136,7 +138,9 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
         if (server != null)
         {
             // TODO: File system items need to be removed otherwise this formula will be invalid over time.
-            var volumes = this.Context.FileSystemItems.AsNoTracking().Where(fsi => fsi.ServerItemServiceNowKey == entity.ServerItemServiceNowKey).ToArray();
+            // Grab all file system items for this server so that space can be calculated.
+            // The downside to this implementation is that the calculation will include the prior synced data until all file system items have been synced up.
+            var volumes = this.Context.FileSystemItems.AsNoTracking().Where(fsi => fsi.ServerItemServiceNowKey == entity.ServerItemServiceNowKey && fsi.ServiceNowKey != entity.ServiceNowKey).ToArray();
             server.Capacity = volumes.Sum(v => v.SizeBytes) + entity.SizeBytes;
             server.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes) + entity.FreeSpaceBytes;
             this.Context.Entry(server).State = EntityState.Modified;
@@ -152,9 +156,9 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
             }
         }
 
-        // Add original item to history before making updates.
+        // Move original item to history if created more than 12 hours ago.
         var original = this.Context.FileSystemItems.AsNoTracking().FirstOrDefault(fsi => fsi.ServiceNowKey == entity.ServiceNowKey);
-        if (original != null)
+        if (original != null && original.CreatedOn.AddHours(12).ToUniversalTime() <= DateTimeOffset.UtcNow)
             this.Context.FileSystemHistoryItems.Add(new FileSystemHistoryItem(original));
 
         return base.Update(entity);

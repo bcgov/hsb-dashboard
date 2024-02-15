@@ -57,6 +57,7 @@ public class Program
             .AddHSBServices(builder)
             .AddScoped<IAuthorizationHelper, AuthorizationHelper>()
             .AddScoped<IXlsExporter, XlsExporter>()
+            .AddMemoryCache()
             .AddCors(options =>
             {
                 var withOrigins = config.GetSection("Cors:WithOrigins").Value?.Split(" ") ?? Array.Empty<string>();

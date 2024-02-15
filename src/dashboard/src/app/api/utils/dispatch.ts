@@ -31,6 +31,7 @@ export const dispatch = async (
   return await fetch(`${process.env.API_URL}${input}`, {
     ...init,
     headers: {
+      ...init?.headers,
       Accept: accept,
       'Content-Type': contentType,
       Authorization: authorization,

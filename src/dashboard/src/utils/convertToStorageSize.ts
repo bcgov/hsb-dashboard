@@ -75,6 +75,12 @@ export const convertToStorageSize = <T extends string | number>(
   ) as T;
 };
 
+/**
+ *
+ * @param value value to reduce if less than 1.
+ * @param type The type the value is currently in.
+ * @returns
+ */
 export const reduceToType = (
   value: number,
   type: 'TB' | 'GB' | 'MB' | 'KB' | 'B' | '' = '',
@@ -99,7 +105,7 @@ export const reduceToType = (
   } else if (type === 'KB') {
     return {
       value: value * 1024,
-      type: '',
+      type: 'B',
     };
   }
   return { value, type };

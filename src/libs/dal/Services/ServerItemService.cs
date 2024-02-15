@@ -179,16 +179,19 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
 
     public override EntityEntry<ServerItem> Update(ServerItem entity)
     {
-        // This key provides a way to link only the current history record.
-        var key = Guid.NewGuid();
-        entity.HistoryKey = key;
-
-        // Move original to history.
+        // Move original to history if created more than 12 hours ago.
         var original = this.Context.ServerItems.AsNoTracking().FirstOrDefault(si => si.ServiceNowKey == entity.ServiceNowKey);
-        if (original != null)
+        if (original != null && original.CreatedOn.AddHours(12).ToUniversalTime() <= DateTimeOffset.UtcNow)
         {
+            // This key provides a way to link the current server item record with the one in history.
+            var key = Guid.NewGuid();
+            entity.HistoryKey = key;
             original.HistoryKey = key;
             this.Context.ServerHistoryItems.Add(new ServerHistoryItem(original));
+        }
+        else
+        {
+            entity.HistoryKey = original?.HistoryKey ?? Guid.NewGuid();
         }
 
         return base.Update(entity);

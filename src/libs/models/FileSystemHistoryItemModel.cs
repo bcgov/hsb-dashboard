@@ -11,6 +11,7 @@ public class FileSystemHistoryItemModel : AuditableModel
     public JsonDocument RawData { get; set; } = JsonDocument.Parse("{}");
     public JsonDocument RawDataCI { get; set; } = JsonDocument.Parse("{}");
     public string ServiceNowKey { get; set; } = "";
+    public string ServerItemServiceNowKey { get; set; } = "";
     public string ClassName { get; set; } = "";
     public string Name { get; set; } = "";
     public string Label { get; set; } = "";
@@ -40,6 +41,7 @@ public class FileSystemHistoryItemModel : AuditableModel
         this.RawData = entity.RawData;
 
         this.ServiceNowKey = entity.ServiceNowKey;
+        this.ServerItemServiceNowKey = entity.ServerItemServiceNowKey;
         this.ClassName = entity.ClassName;
         this.Name = entity.Name;
         this.Label = entity.Label;
@@ -59,6 +61,7 @@ public class FileSystemHistoryItemModel : AuditableModel
     }
 
     public FileSystemHistoryItemModel(
+        string ServerItemServiceNowKey,
         ServiceNow.ResultModel<ServiceNow.FileSystemModel> fileSystemItemModel,
         ServiceNow.ResultModel<ServiceNow.ConfigurationItemModel> configurationItemModel)
     {
@@ -69,6 +72,7 @@ public class FileSystemHistoryItemModel : AuditableModel
         this.RawDataCI = configurationItemModel.RawData;
 
         this.ServiceNowKey = fileSystemItemModel.Data.Id;
+        this.ServerItemServiceNowKey = ServerItemServiceNowKey;
 
         this.ClassName = fileSystemItemModel.Data.ClassName ?? "";
         this.Name = fileSystemItemModel.Data.Name ?? "";
@@ -99,7 +103,7 @@ public class FileSystemHistoryItemModel : AuditableModel
     {
         if (model.RawData == null) throw new InvalidOperationException("Property 'RawData' is required.");
 
-        return new FileSystemHistoryItem(model.RawData, model.RawDataCI)
+        return new FileSystemHistoryItem(model.ServerItemServiceNowKey, model.RawData, model.RawDataCI)
         {
             Id = model.Id,
             ServiceNowKey = model.ServiceNowKey,

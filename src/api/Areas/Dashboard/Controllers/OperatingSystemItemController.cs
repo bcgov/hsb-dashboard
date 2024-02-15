@@ -11,6 +11,7 @@ using HSB.Keycloak.Extensions;
 using HSB.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace HSB.API.Areas.Hsb.Controllers;
 
@@ -31,6 +32,8 @@ public class OperatingSystemItemController : ControllerBase
     private readonly IOperatingSystemItemService _service;
     private readonly IAuthorizationHelper _authorization;
     private readonly IXlsExporter _exporter;
+    private readonly IMemoryCache _memoryCache;
+    private const string HSB_CACHE_KEY = "operatingSystemItems-hsb";
     #endregion
 
     #region Constructors
@@ -38,16 +41,19 @@ public class OperatingSystemItemController : ControllerBase
     /// Creates a new instance of a OperatingSystemItemController.
     /// </summary>
     /// <param name="service"></param>
+    /// <param name="memoryCache"></param>
     /// <param name="authorization"></param>
     /// <param name="exporter"></param>
     /// <param name="logger"></param>
     public OperatingSystemItemController(
         IOperatingSystemItemService service,
+        IMemoryCache memoryCache,
         IAuthorizationHelper authorization,
         IXlsExporter exporter,
         ILogger<OperatingSystemItemController> logger)
     {
         _service = service;
+        _memoryCache = memoryCache;
         _authorization = authorization;
         _exporter = exporter;
         _logger = logger;
@@ -56,7 +62,7 @@ public class OperatingSystemItemController : ControllerBase
 
     #region Endpoints
     /// <summary>
-    ///
+    /// Find all the operating system items for the specified query string parameter filter.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "GetOperatingSystemItems-Dashboard")]
@@ -73,8 +79,18 @@ public class OperatingSystemItemController : ControllerBase
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
         {
+            if (_memoryCache.TryGetValue(HSB_CACHE_KEY, out IEnumerable<OperatingSystemItemModel>? cachedItems))
+            {
+                return new JsonResult(cachedItems);
+            }
             var result = _service.Find(filter.GeneratePredicate(), filter.Sort);
-            return new JsonResult(result.Select(fsi => new OperatingSystemItemModel(fsi)));
+            var model = result.Select(ci => new OperatingSystemItemModel(ci));
+            var cacheOptions = new MemoryCacheEntryOptions()
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60)
+            };
+            _memoryCache.Set(HSB_CACHE_KEY, model, cacheOptions);
+            return new JsonResult(model);
         }
         else
         {
@@ -88,7 +104,7 @@ public class OperatingSystemItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Get the operating system item for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -121,7 +137,7 @@ public class OperatingSystemItemController : ControllerBase
     // TODO: Complete functionality
     // TODO: Limit based on role and tenant.
     /// <summary>
-    ///
+    /// Export the operating system items to Excel.
     /// </summary>
     /// <param name="format"></param>
     /// <param name="name"></param>

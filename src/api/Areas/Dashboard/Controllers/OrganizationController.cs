@@ -11,6 +11,7 @@ using HSB.Keycloak.Extensions;
 using HSB.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace HSB.API.Areas.Hsb.Controllers;
 
@@ -30,6 +31,8 @@ public class OrganizationController : ControllerBase
     private readonly ILogger _logger;
     private readonly IOrganizationService _service;
     private readonly IAuthorizationHelper _authorization;
+    private readonly IMemoryCache _memoryCache;
+    private const string HSB_CACHE_KEY = "organizations-hsb";
     #endregion
 
     #region Constructors
@@ -37,14 +40,17 @@ public class OrganizationController : ControllerBase
     /// Creates a new instance of a OrganizationController.
     /// </summary>
     /// <param name="service"></param>
+    /// <param name="memoryCache"></param>
     /// <param name="authorization"></param>
     /// <param name="logger"></param>
     public OrganizationController(
         IOrganizationService service,
+        IMemoryCache memoryCache,
         IAuthorizationHelper authorization,
         ILogger<OrganizationController> logger)
     {
         _service = service;
+        _memoryCache = memoryCache;
         _authorization = authorization;
         _logger = logger;
     }
@@ -70,8 +76,18 @@ public class OrganizationController : ControllerBase
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
         {
+            if (_memoryCache.TryGetValue(HSB_CACHE_KEY, out IEnumerable<OrganizationModel>? cachedItems))
+            {
+                return new JsonResult(cachedItems);
+            }
             var result = _service.Find(filter);
-            return new JsonResult(result.Select(o => new OrganizationModel(o, true)));
+            var model = result.Select(ci => new OrganizationModel(ci, true));
+            var cacheOptions = new MemoryCacheEntryOptions()
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60)
+            };
+            _memoryCache.Set(HSB_CACHE_KEY, model, cacheOptions);
+            return new JsonResult(model);
         }
         else
         {

@@ -11,6 +11,7 @@ using HSB.Keycloak.Extensions;
 using HSB.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace HSB.API.Areas.Hsb.Controllers;
 
@@ -30,6 +31,8 @@ public class TenantController : ControllerBase
     private readonly ILogger _logger;
     private readonly ITenantService _tenantService;
     private readonly IAuthorizationHelper _authorization;
+    private readonly IMemoryCache _memoryCache;
+    private const string HSB_CACHE_KEY = "tenants-hsb";
     #endregion
 
     #region Constructors
@@ -37,14 +40,17 @@ public class TenantController : ControllerBase
     /// Creates a new instance of a TenantController.
     /// </summary>
     /// <param name="tenantService"></param>
+    /// <param name="memoryCache"></param>
     /// <param name="authorization"></param>
     /// <param name="logger"></param>
     public TenantController(
         ITenantService tenantService,
+        IMemoryCache memoryCache,
         IAuthorizationHelper authorization,
         ILogger<TenantController> logger)
     {
         _tenantService = tenantService;
+        _memoryCache = memoryCache;
         _authorization = authorization;
         _logger = logger;
     }
@@ -52,7 +58,7 @@ public class TenantController : ControllerBase
 
     #region Endpoints
     /// <summary>
-    ///
+    /// Find all tenants for the specified query string filter.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "GetTenants-Dashboard")]
@@ -69,8 +75,18 @@ public class TenantController : ControllerBase
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
         {
+            if (_memoryCache.TryGetValue(HSB_CACHE_KEY, out IEnumerable<TenantModel>? cachedItems))
+            {
+                return new JsonResult(cachedItems);
+            }
             var result = _tenantService.Find(filter.GeneratePredicate(), filter.Sort);
-            return new JsonResult(result.Select(ci => new TenantModel(ci, true)));
+            var model = result.Select(ci => new TenantModel(ci, true));
+            var cacheOptions = new MemoryCacheEntryOptions()
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60)
+            };
+            _memoryCache.Set(HSB_CACHE_KEY, model, cacheOptions);
+            return new JsonResult(model);
         }
         else
         {
@@ -84,7 +100,7 @@ public class TenantController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Get the tenant for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>

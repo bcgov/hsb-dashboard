@@ -18,6 +18,7 @@ public class DataService : IDataService
     private readonly Dictionary<string, Hsb.OperatingSystemItemModel> _operatingSystemItems = new();
     private readonly Dictionary<string, Hsb.ServerItemModel> _serverItems = new();
     private readonly List<Hsb.DataSyncModel> _dataSync = new();
+    private const int UPDATE_LIMITER = 12;
     #endregion
 
     #region Properties
@@ -218,7 +219,7 @@ public class DataService : IDataService
             if (option.Id != 0)
             {
                 // Update the current offset so that if it fails we'll pick up at this point.
-                option.Offset += limit;
+                option.Offset = offset;
                 var update = await this.HsbApi.UpdateDataSyncAsync(option) ?? throw new InvalidOperationException($"Failed to return data sync from HSB: {option.Name}");
                 option.Version = update.Version;
             }
@@ -271,7 +272,7 @@ public class DataService : IDataService
             }
             _serverItems.Add(serverItem.ServiceNowKey, serverItem);
         }
-        else if (serverItem.UpdatedOn.AddDays(1) < DateTime.UtcNow) // Don't update records less than a day old.
+        else if (serverItem.UpdatedOn.AddHours(UPDATE_LIMITER).ToUniversalTime() < DateTime.UtcNow)
         {
             // Update the server item in HSB.
             this.Logger.LogDebug("Update Server Item: '{id}'", configurationItemSN.Data?.Id);
@@ -380,7 +381,7 @@ public class DataService : IDataService
             this.Logger.LogDebug("Add File System Item: '{id}'", configurationItemSN.Data?.Id);
             fileSystemItem = await this.HsbApi.AddFileSystemItemAsync(new Hsb.FileSystemItemModel(serverItem.ServiceNowKey, fileSystemItemSN, configurationItemSN));
         }
-        else if (fileSystemItem.UpdatedOn.AddDays(1) < DateTime.UtcNow) // Don't update records less than a day old.
+        else if (fileSystemItem.UpdatedOn.AddHours(UPDATE_LIMITER).ToUniversalTime() <= DateTime.UtcNow)
         {
             // Update the server item to HSB.
             this.Logger.LogDebug("Update File System Item: '{id}'", configurationItemSN.Data?.Id);
@@ -457,7 +458,7 @@ public class DataService : IDataService
             }
             _tenants.Add(tenantKey, tenant);
         }
-        else if (tenant.UpdatedOn.AddDays(1) < DateTime.UtcNow)
+        else if (tenant.UpdatedOn.AddHours(UPDATE_LIMITER).ToUniversalTime() < DateTime.UtcNow)
         {
             this.Logger.LogInformation("Updating tenant '{id}'", tenant.ServiceNowKey);
 
@@ -561,7 +562,25 @@ public class DataService : IDataService
                 return null;
             }
 
-            organization = await this.HsbApi.AddOrganizationAsync(new Hsb.OrganizationModel(organizationSN));
+            organization = new Hsb.OrganizationModel(organizationSN);
+
+            // Need to first check if an organization with the same name exists.
+            var organizationNames = _organizations.Select(o => o.Value.Name);
+            if (organizationNames.Contains(organization.Name))
+            {
+                this.Logger.LogWarning("Duplicate named organization '{key}:{name}'", organizationKey, organization.Name);
+                organization.Name = GenerateUniqueName(organization.Name, organizationNames);
+            }
+
+            // Need to first check if an organization with the same code exists.
+            var organizationCodes = _organizations.Select(o => o.Value.Code);
+            if (organizationCodes.Contains(organization.Code))
+            {
+                this.Logger.LogWarning("Duplicate code organization '{key}:{code}'", organizationKey, organization.Code);
+                organization.Code = GenerateUniqueName(organization.Code, organizationCodes);
+            }
+
+            organization = await this.HsbApi.AddOrganizationAsync(organization);
             if (organization == null)
             {
                 this.Logger.LogError("Organization was not returned from HSB: {id}", organizationKey);
@@ -570,7 +589,7 @@ public class DataService : IDataService
 
             _organizations.Add(organizationKey, organization);
         }
-        else if (organization.UpdatedOn.AddDays(1) < DateTime.UtcNow)
+        else if (organization.UpdatedOn.AddHours(UPDATE_LIMITER).ToUniversalTime() < DateTime.UtcNow)
         {
             this.Logger.LogInformation("Updating organization '{id}'", organization.ServiceNowKey);
 
@@ -582,9 +601,15 @@ public class DataService : IDataService
                 return null;
             }
 
+            // Need to first check if an organization with the same name exists.
+            // Keep the originally added name, unless ServiceNow has updated the name and made it unique.
+            var organizationNames = _organizations.Select(o => o.Value.Name);
+            var organizationCodes = _organizations.Select(o => o.Value.Code);
             var update = new Hsb.OrganizationModel(organizationSN)
             {
                 Id = organization.Id,
+                Name = organizationNames.Contains(organization.Name) ? organization.Name : organizationSN.Data.Name ?? organization.Name,
+                Code = organizationCodes.Contains(organization.Code) ? organization.Code : organizationSN.Data.OrganizationCode ?? Guid.NewGuid().ToString(),
                 Version = organization.Version,
             };
             organization = await this.HsbApi.UpdateOrganizationAsync(update);
@@ -599,6 +624,20 @@ public class DataService : IDataService
             this.Logger.LogDebug("Organization data has not changed '{id}", organization.ServiceNowKey);
 
         return organization;
+    }
+
+    /// <summary>
+    /// Generate a unique name out of the possible names already assigned.
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="names"></param>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    private static string GenerateUniqueName(string name, IEnumerable<string> names, int index = 0)
+    {
+        if (index == 0 && !names.Contains(name)) return name;
+        if (!names.Contains($"{name}-{index}")) return $"{name}-{index}";
+        return GenerateUniqueName(name, names, index + 1);
     }
 
     /// <summary>

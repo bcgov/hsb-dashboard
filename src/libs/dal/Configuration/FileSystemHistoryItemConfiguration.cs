@@ -17,6 +17,7 @@ public class FileSystemHistoryItemConfiguration : AuditableConfiguration<FileSys
         builder.Property(m => m.RawDataCI).IsRequired().HasColumnType("jsonb").HasDefaultValueSql("'{}'::jsonb");
 
         builder.Property(m => m.ServiceNowKey).IsRequired().HasMaxLength(100);
+        builder.Property(m => m.ServerItemServiceNowKey).IsRequired().HasMaxLength(100);
         builder.Property(m => m.ClassName).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
         builder.Property(m => m.Name).IsRequired().HasMaxLength(200);
         builder.Property(m => m.Label).IsRequired().HasMaxLength(100);
@@ -37,8 +38,7 @@ public class FileSystemHistoryItemConfiguration : AuditableConfiguration<FileSys
         builder.HasOne(m => m.FileSystemItem).WithMany(m => m.History).HasForeignKey(m => m.ServiceNowKey).OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(m => new { m.CreatedOn }, "IX_FileSystemHistoryItem_CreatedOn");
-        builder.HasIndex(m => new { m.ServiceNowKey }, "IX_FileSystemHistoryItem_ServiceNowKey");
-
+        builder.HasIndex(m => new { m.ServiceNowKey, m.ServerItemServiceNowKey }, "IX_FileSystemHistoryItem_ServiceNowKey_ServerItemServiceNowKey");
 
         base.Configure(builder);
     }
