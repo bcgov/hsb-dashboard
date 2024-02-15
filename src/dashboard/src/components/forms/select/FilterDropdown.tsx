@@ -117,7 +117,12 @@ export const FilterDropdown = <T extends unknown>({
                     selected === option.value ||
                     (Array.isArray(selected) && selected.includes(option.value)),
                 })}
-                onClick={() => handleSelectChange(option.value, option.label)}
+                onClick={() => 
+                    (typeof option.value === 'string' || typeof option.value === 'number') &&
+                    (typeof option.label === 'string')
+                    ? handleSelectChange(option.value, option.label ?? '')
+                    : null
+                }
               >
                 {option.label}
               </li>
