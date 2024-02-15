@@ -263,11 +263,11 @@
   position: absolute;
   left: 0;
   width: 100%;
-  max-height: 300px;
+  max-height: 380px;
   overflow-y: scroll;
   @include scrollBar;
   background: $light-gray;
-  @include dropshadow;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
   list-style: none;
   padding: 0;
   z-index: 1;
