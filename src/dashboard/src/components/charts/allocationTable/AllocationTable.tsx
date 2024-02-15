@@ -5,7 +5,7 @@ import { Text } from '@/components/forms/text';
 import { IServerItemModel } from '@/hooks';
 import classNames from 'classnames';
 import { debounce } from 'lodash';
-import React from 'react';
+import React, { ChangeEvent }  from 'react';
 import { LoadingAnimation } from '../../loadingAnimation';
 import styles from './AllocationTable.module.scss';
 import { Dropdown } from './Dropdown';
@@ -38,6 +38,9 @@ export const AllocationTable = ({
   const [filter, setFilter] = React.useState(keyword);
   const [sort, setSort] = React.useState<string>('server:asc');
   const [rows, setRows] = React.useState<ITableRowData<IServerItemModel>[]>([]);
+  const [filteredServerItems, setFilteredServerItems] = React.useState<IServerItemModel[]>([]);
+  const [showDropdown, setShowDropdown] = React.useState(false);
+  const wrapperRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const sorting = sort.split(':');
@@ -59,10 +62,44 @@ export const AllocationTable = ({
   const showTenants = React.useMemo(() => rows.some((data) => data.tenant), [rows]);
   const columns = React.useMemo(() => getColumns(showTenants), [showTenants]);
 
-  const debounceChange = React.useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => debounce(() => setKeyword(e.target.value), 500),
-    [],
+  const debouncedSearch = React.useCallback(
+    debounce((searchKeyword: string) => {
+      const filtered = serverItems.filter((si) => 
+        si.name.toLowerCase().includes(searchKeyword.toLowerCase())
+      );
+      setFilteredServerItems(filtered);
+      setShowDropdown(true);
+    }, 300),
+    []
   );
+  
+
+  React.useEffect(() => () => debouncedSearch.cancel(), [debouncedSearch]);
+
+  const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setKeyword(value);
+    debouncedSearch(value);
+  };
+
+  const selectFromDropdown = (item: IServerItemModel) => {
+    setKeyword(item.name);
+    setFilter(item.name);
+    setShowDropdown(false);
+  };
+
+  const handleClickOutside = (e: MouseEvent) => {
+    if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+      setShowDropdown(false);
+    }
+  };
+  
+  React.useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className={styles.panel} style={margin ? { marginTop: margin } : {}}>
@@ -72,15 +109,31 @@ export const AllocationTable = ({
           ? `Allocation by Storage Volume - All ${getLabel(osClassName)}`
           : 'All Servers'}
       </h1>
-      <div className={styles.filter}>
+      <div className={styles.filter} ref={wrapperRef}>
         <Text
           placeholder="Filter by server name, OS version"
           iconType={'filter'}
-          onChange={(e) => debounceChange(e)()}
-          onKeyDown={(e) => {
-            if (e.code === 'Enter') setFilter(keyword);
+          value={keyword}
+          onChange={handleFilterChange}
+          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.code === 'Enter') {
+              setFilter(keyword);
+              setShowDropdown(false);
+            }
           }}
         />
+        {showDropdown && (
+          <div className={styles.filteredDropdown}>
+            {filteredServerItems.map((item, index) => (
+              <div
+                key={index}
+                onClick={() => selectFromDropdown(item)}
+              >
+                {item.name}
+              </div>
+            ))}
+          </div>
+        )}
         <Button variant="secondary" onClick={() => setFilter(keyword)}>
           Apply
         </Button>

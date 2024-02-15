@@ -228,3 +228,25 @@
 .link {
   cursor: pointer;
 }
+
+.filteredDropdown {
+    @include dropshadow;
+    @include scrollBar;
+    max-height: 200px;
+    width: 100%;
+    max-width: 40%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    position: absolute;
+    background: $white;
+    z-index: 1;
+
+    div {
+        padding: 5px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: $light-gray;
+        }
+    }
+}
