@@ -56,7 +56,7 @@ export const FilterDropdown = <T extends unknown>({
     React.useEffect(() => {
         const lowercasedFilter = searchTerm.toLowerCase();
         const filteredData = options.filter((item) =>
-          item.label.toLowerCase().includes(lowercasedFilter)
+          typeof item.label === 'string' && item.label.toLowerCase().includes(lowercasedFilter)
         );
         setFilteredOptions(filteredData);
       }, [options, searchTerm]);
