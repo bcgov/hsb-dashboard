@@ -2,10 +2,17 @@
 
 import { Button } from '@/components/buttons';
 import { Checkbox } from '@/components/forms/checkbox';
-import { Select } from '@/components/forms/select';
+import { Select, FilterDropdown } from '@/components/forms/select';
 import { Text } from '@/components/forms/text';
 import { Toggle } from '@/components/forms/toggle';
 import styles from './StyleGuide.module.scss';
+
+// Mock data for FilterDropdown
+const mockOptions = [
+  { value: 'option1', label: 'Option 1' },
+  { value: 'option2', label: 'Option 2' },
+  { value: 'option3', label: 'Option 3' },
+];
 
 export default function Page() {
   return (
@@ -66,9 +73,16 @@ export default function Page() {
         </div>
         <div>
           <h2 className={styles.heading}>Select Dropdown</h2>
+          <FilterDropdown
+            title="custom filter dropdown example"
+            options={mockOptions}
+            label="Custom Filter dropdown"
+            placeholder="Choose option"
+          />
+          <br />
           <Select
             variant="filter"
-            title="filter dropdown example"
+            title="filter dropdown example using select"
             options={[]}
             label="Filter dropdown"
             placeholder="Default option"

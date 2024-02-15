@@ -84,7 +84,7 @@
     }
   }
 
-  select {
+  .filterDropdown, select {
     background-color: $light-gray;
     padding: 30px 16px 10px;
     border-radius: 6px;
@@ -246,6 +246,67 @@
         @extend %arrow-style;
         right: 16px;
         top: 15px;
+      }
+    }
+  }
+}
+
+.filterDropdown {
+  >p {
+    font-size: $font-size-small;
+    max-width: 220px;
+    @include ellipsis;
+  }
+}
+
+.dropdownList {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: scroll;
+  @include scrollBar;
+  background: $light-gray;
+  @include dropshadow;
+  list-style: none;
+  padding: 0;
+  z-index: 1;
+  border-radius: 3px;
+
+  li {
+    padding: 5px;
+    margin-left: 5px;
+    font-size: $font-size-small;
+
+    &:hover {
+      background-color: $white
+    }
+
+    &:first-child {
+      padding-left: 0;
+
+      &:hover {
+        background-color: unset;
+      }
+    }
+
+    &.selected {
+      background-color: $white;
+      color: $bc-black;
+    }
+
+    input {
+      width: 94.5%;
+      height: 30px;
+      font-size: $font-size-small;
+      padding: 0 8px;
+      border: 1px solid $medium-gray;
+      border-radius: 5px;
+      background-color: $white;
+
+      &:focus {
+        border: 1px solid $medium-gray;
+        outline: 0;
       }
     }
   }
