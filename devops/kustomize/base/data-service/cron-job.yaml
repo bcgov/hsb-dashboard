@@ -15,8 +15,9 @@ metadata:
     DataClass: Low
 spec:
   # ttlSecondsAfterFinished: 100
-  schedule: CRON_TZ=America/Vancouver 0 1 * * * # Every day at 1:00am
-  # schedule: CRON_TZ=America/Vancouver */5 * * * * # Immediately
+  timeZone: America/Vancouver
+  schedule: 0 1 * * * # Every day at 1:00am
+  # schedule: */5 * * * * # Immediately
   jobTemplate:
     spec:
       template:
@@ -37,7 +38,7 @@ spec:
           containers:
             - name: data-service
               image: image-registry.apps.emerald.devops.gov.bc.ca/e89443-tools/data-service:dev
-              imagePullPolicy: IfNotPresent
+              imagePullPolicy: Always
               resources:
                 requests:
                   cpu: 50m

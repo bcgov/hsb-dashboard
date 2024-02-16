@@ -16,6 +16,11 @@ public class FileSystemHistoryItem : Auditable
     public string ServiceNowKey { get; set; } = "";
 
     /// <summary>
+    /// get/set - Foreign key to server that owns this file system item.
+    /// </summary>
+    public string ServerItemServiceNowKey { get; set; } = "";
+
+    /// <summary>
     /// get/set - The file system this is a history of.
     /// </summary>
     public FileSystemItem? FileSystemItem { get; set; }
@@ -45,8 +50,10 @@ public class FileSystemHistoryItem : Auditable
     #region Constructors
     protected FileSystemHistoryItem() { }
 
-    public FileSystemHistoryItem(JsonDocument fileSystemItemData, JsonDocument configurationItemData)
+    public FileSystemHistoryItem(string serverItemId, JsonDocument fileSystemItemData, JsonDocument configurationItemData)
     {
+        this.ServerItemServiceNowKey = serverItemId;
+
         this.RawData = fileSystemItemData;
         this.RawDataCI = configurationItemData;
 
@@ -72,6 +79,7 @@ public class FileSystemHistoryItem : Auditable
     public FileSystemHistoryItem(FileSystemItem entity)
     {
         this.ServiceNowKey = entity.ServiceNowKey;
+        this.ServerItemServiceNowKey = entity.ServerItemServiceNowKey;
 
         this.RawData = entity.RawData;
         this.RawDataCI = entity.RawDataCI;

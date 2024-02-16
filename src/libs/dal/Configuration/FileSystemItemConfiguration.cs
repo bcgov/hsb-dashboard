@@ -16,6 +16,7 @@ public class FileSystemConfiguration : AuditableConfiguration<FileSystemItem>
         builder.Property(m => m.RawData).IsRequired().HasColumnType("jsonb").HasDefaultValueSql("'{}'::jsonb");
         builder.Property(m => m.RawDataCI).IsRequired().HasColumnType("jsonb").HasDefaultValueSql("'{}'::jsonb");
 
+        builder.Property(m => m.ServerItemServiceNowKey).IsRequired().HasMaxLength(100);
         builder.Property(m => m.ClassName).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
         builder.Property(m => m.Name).IsRequired().HasMaxLength(200);
         builder.Property(m => m.Label).IsRequired().HasMaxLength(100);
@@ -35,8 +36,7 @@ public class FileSystemConfiguration : AuditableConfiguration<FileSystemItem>
 
         builder.HasOne(m => m.ServerItem).WithMany(m => m.FileSystemItems).HasForeignKey(m => m.ServerItemServiceNowKey).OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasIndex(m => new { m.Name }, "IX_FileSystemItem_Name");
-
+        builder.HasIndex(m => new { m.Name, m.ServerItemServiceNowKey }, "IX_FileSystemItem_Name_ServerItemServiceNowKey");
 
         base.Configure(builder);
     }

@@ -11,6 +11,7 @@ using HSB.Keycloak.Extensions;
 using HSB.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace HSB.API.Areas.Hsb.Controllers;
 
@@ -32,6 +33,9 @@ public class ServerItemController : ControllerBase
     private readonly IServerHistoryItemService _serverHistoryItemService;
     private readonly IAuthorizationHelper _authorization;
     private readonly IXlsExporter _exporter;
+    private readonly IMemoryCache _memoryCache;
+    private const string HSB_CACHE_KEY = "serverItems-hsb";
+    private const string HSB_SMALL_CACHE_KEY = "serverItemsSmall-hsb";
     #endregion
 
     #region Constructors
@@ -40,18 +44,21 @@ public class ServerItemController : ControllerBase
     /// </summary>
     /// <param name="serverItemService"></param>
     /// <param name="serverHistoryItemService"></param>
+    /// <param name="memoryCache"></param>
     /// <param name="authorization"></param>
     /// <param name="exporter"></param>
     /// <param name="logger"></param>
     public ServerItemController(
         IServerItemService serverItemService,
         IServerHistoryItemService serverHistoryItemService,
+        IMemoryCache memoryCache,
         IAuthorizationHelper authorization,
         IXlsExporter exporter,
         ILogger<ServerItemController> logger)
     {
         _serverItemService = serverItemService;
         _serverHistoryItemService = serverHistoryItemService;
+        _memoryCache = memoryCache;
         _authorization = authorization;
         _exporter = exporter;
         _logger = logger;
@@ -77,8 +84,18 @@ public class ServerItemController : ControllerBase
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
         {
+            if (_memoryCache.TryGetValue(HSB_CACHE_KEY, out IEnumerable<ServerItemModel>? cachedItems))
+            {
+                return new JsonResult(cachedItems);
+            }
             var result = _serverItemService.Find(filter);
-            return new JsonResult(result.Select(si => new ServerItemModel(si)));
+            var model = result.Select(ci => new ServerItemModel(ci));
+            var cacheOptions = new MemoryCacheEntryOptions()
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60)
+            };
+            _memoryCache.Set(HSB_CACHE_KEY, model, cacheOptions);
+            return new JsonResult(model);
         }
         else
         {
@@ -110,7 +127,16 @@ public class ServerItemController : ControllerBase
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
         {
+            if (_memoryCache.TryGetValue(HSB_SMALL_CACHE_KEY, out IEnumerable<ServerItemSmallModel>? cachedItems))
+            {
+                return new JsonResult(cachedItems);
+            }
             var result = _serverItemService.FindSimple(filter);
+            var cacheOptions = new MemoryCacheEntryOptions()
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60)
+            };
+            _memoryCache.Set(HSB_SMALL_CACHE_KEY, result, cacheOptions);
             return new JsonResult(result);
         }
         else
@@ -125,7 +151,7 @@ public class ServerItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Get the server item for the specified 'serviceNowKey'.
     /// </summary>
     /// <param name="serviceNowKey"></param>
     /// <param name="includeFileSystemItems"></param>
@@ -156,15 +182,15 @@ public class ServerItemController : ControllerBase
         }
     }
 
-    // TODO: Limit based on role and tenant.
     /// <summary>
-    ///
+    /// Find all history for the specified query string parameter filter.
     /// </summary>
     /// <returns></returns>
     [HttpGet("history", Name = "GetServerHistoryItems-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<ServerItemModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Server Item" })]
+    [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 1200)]
     public IActionResult FindHistory()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -191,7 +217,7 @@ public class ServerItemController : ControllerBase
     // TODO: Complete functionality
     // TODO: Limit based on role and tenant.
     /// <summary>
-    ///
+    /// Export the server items to Excel.
     /// </summary>
     /// <param name="format"></param>
     /// <param name="name"></param>

@@ -15,7 +15,7 @@ INSERT INTO public."DataSync" (
   , '' -- Description
   , true -- IsEnabled
   , 0 -- Offset
-  , 'sys_class_name=cmdb_ci_server' -- Query
+  , 'sys_class_name=cmdb_ci_server^install_status=1' -- Query
   , false -- IsActive
   , 0 -- SortOrder
   , '' -- CreatedBy
@@ -27,7 +27,7 @@ INSERT INTO public."DataSync" (
   , '' -- Description
   , true -- IsEnabled
   , 0 -- Offset
-  , 'sys_class_name=cmdb_ci_win_server' -- Query
+  , 'sys_class_name=cmdb_ci_win_server^install_status=1' -- Query
   , false -- IsActive
   , 0 -- SortOrder
   , '' -- CreatedBy
@@ -39,7 +39,7 @@ INSERT INTO public."DataSync" (
   , '' -- Description
   , true -- IsEnabled
   , 0 -- Offset
-  , 'sys_class_name=cmdb_ci_solaris_server' -- Query
+  , 'sys_class_name=cmdb_ci_solaris_server^install_status=1' -- Query
   , false -- IsActive
   , 0 -- SortOrder
   , '' -- CreatedBy
@@ -51,7 +51,7 @@ INSERT INTO public."DataSync" (
   , '' -- Description
   , true -- IsEnabled
   , 0 -- Offset
-  , 'sys_class_name=cmdb_ci_linux_server' -- Query
+  , 'sys_class_name=cmdb_ci_linux_server^install_status=1' -- Query
   , false -- IsActive
   , 0 -- SortOrder
   , '' -- CreatedBy
@@ -63,7 +63,7 @@ INSERT INTO public."DataSync" (
   , '' -- Description
   , true -- IsEnabled
   , 0 -- Offset
-  , 'sys_class_name=cmdb_ci_unix_server' -- Query
+  , 'sys_class_name=cmdb_ci_unix_server^install_status=1' -- Query
   , false -- IsActive
   , 0 -- SortOrder
   , '' -- CreatedBy
@@ -75,7 +75,7 @@ INSERT INTO public."DataSync" (
   , '' -- Description
   , true -- IsEnabled
   , 0 -- Offset
-  , 'sys_class_name=cmdb_ci_esx_server' -- Query
+  , 'sys_class_name=cmdb_ci_esx_server^install_status=1' -- Query
   , false -- IsActive
   , 0 -- SortOrder
   , '' -- CreatedBy
@@ -87,7 +87,7 @@ INSERT INTO public."DataSync" (
   , '' -- Description
   , true -- IsEnabled
   , 0 -- Offset
-  , 'sys_class_name=cmdb_ci_aix_server' -- Query
+  , 'sys_class_name=cmdb_ci_aix_server^install_status=1' -- Query
   , false -- IsActive
   , 0 -- SortOrder
   , '' -- CreatedBy
@@ -99,7 +99,7 @@ INSERT INTO public."DataSync" (
   , '' -- Description
   , true -- IsEnabled
   , 0 -- Offset
-  , 'sys_class_name=u_cmdb_ci_appliance' -- Query
+  , 'sys_class_name=u_cmdb_ci_appliance^install_status=1' -- Query
   , false -- IsActive
   , 0 -- SortOrder
   , '' -- CreatedBy
@@ -111,7 +111,7 @@ INSERT INTO public."DataSync" (
   , '' -- Description
   , true -- IsEnabled
   , 0 -- Offset
-  , 'sys_class_name=cmdb_ci_pc_hardware' -- Query
+  , 'sys_class_name=cmdb_ci_pc_hardware^install_status=1' -- Query
   , false -- IsActive
   , 0 -- SortOrder
   , '' -- CreatedBy
@@ -123,7 +123,7 @@ INSERT INTO public."DataSync" (
   , '' -- Description
   , true -- IsEnabled
   , 0 -- Offset
-  , 'sys_class_name=u_openvms' -- Query
+  , 'sys_class_name=u_openvms^install_status=1' -- Query
   , false -- IsActive
   , 0 -- SortOrder
   , '' -- CreatedBy
@@ -135,7 +135,7 @@ INSERT INTO public."DataSync" (
   , '' -- Description
   , true -- IsEnabled
   , 0 -- Offset
-  , 'sys_class_name=cmdb_ci_file_system' -- Query
+  , 'sys_class_name=cmdb_ci_file_system^install_status=1' -- Query
   , false -- IsActive
   , 99 -- SortOrder
   , '' -- CreatedBy

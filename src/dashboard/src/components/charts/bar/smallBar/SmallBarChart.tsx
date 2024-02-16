@@ -19,6 +19,11 @@ export interface ISmallBarChartProps<T extends IBarChartRowData<unknown>> {
   loading?: boolean;
 }
 
+/**
+ * Provides a component that displays a bar chart for the data provided.
+ * @param param0 Component properties
+ * @returns Component
+ */
 export const SmallBarChart = <T extends IBarChartRowData<unknown>>({
   title,
   data,

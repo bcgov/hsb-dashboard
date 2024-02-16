@@ -7,6 +7,11 @@ interface IBarRowProps extends Omit<IBarChartRowData<unknown>, 'label'> {
   label: React.ReactNode;
 }
 
+/**
+ * Provides a single bar that displays percentage used.
+ * @param param0 Component properties
+ * @returns Component
+ */
 export const BarRow: React.FC<IBarRowProps> = ({ label, capacity, available }) => {
   const used = capacity - available;
   const percentageUsed = capacity ? Math.round((used / capacity) * 100) : 0;

@@ -76,8 +76,8 @@ export const useStorageTrendsData = (): ((
         (item) => ({
           serviceNowKey: item.serviceNowKey,
           name: item.name,
-          capacity: item.capacity,
-          availableSpace: item.availableSpace,
+          capacity: item.sizeBytes,
+          availableSpace: item.freeSpaceBytes,
           createdOn: item.createdOn,
         }),
       );

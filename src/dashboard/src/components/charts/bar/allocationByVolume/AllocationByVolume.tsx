@@ -27,8 +27,8 @@ export const AllocationByVolume = ({
           .map<IBarChartRowData<IFileSystemItemModel>>((fsi) => ({
             key: fsi.name,
             label: fsi.name,
-            capacity: fsi.sizeBytes / 1024 / 1024,
-            available: fsi.freeSpaceBytes / 1024 / 1024,
+            capacity: fsi.sizeBytes,
+            available: fsi.freeSpaceBytes,
             data: fsi,
           }))
           .sort((a, b) =>
@@ -57,7 +57,9 @@ export const AllocationByVolume = ({
                     {os.label}
                   </label>
                 ) : (
-                  <label className={styles.linkStatic} title={os.label}>{os.label}</label>
+                  <label className={styles.linkStatic} title={os.label}>
+                    {os.label}
+                  </label>
                 )}
               </p>
             }

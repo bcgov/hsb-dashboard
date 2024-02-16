@@ -60,7 +60,7 @@ public class FileSystemItemController : ControllerBase
 
     #region Endpoints
     /// <summary>
-    ///
+    /// Find all file system items for the specified query string parameter filter.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "GetFileSystemItems-Dashboard")]
@@ -91,7 +91,7 @@ public class FileSystemItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Get the file system item for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -122,13 +122,14 @@ public class FileSystemItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Find all file system item history for the specified query string parameter filter.
     /// </summary>
     /// <returns></returns>
     [HttpGet("history", Name = "GetFileSystemHistoryItems-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<FileSystemHistoryItemModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "File System Item" })]
+    [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 1200)]
     public IActionResult FindHistory()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -155,7 +156,7 @@ public class FileSystemItemController : ControllerBase
     // TODO: Complete functionality
     // TODO: Limit based on role and tenant.
     /// <summary>
-    ///
+    /// Export the file system items to Excel.
     /// </summary>
     /// <param name="format"></param>
     /// <param name="name"></param>

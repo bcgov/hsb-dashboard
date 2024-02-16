@@ -8,6 +8,7 @@ export interface IFileSystemHistoryItemModel extends IAuditableModel {
   rawDataCI?: any;
 
   serviceNowKey: string;
+  serverItemServiceNowKey: string;
 
   className: string;
   name: string;
