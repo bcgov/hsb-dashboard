@@ -133,7 +133,6 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
     public ServerItem? FindForId(string key, bool includeFileSystemItems = false)
     {
         var query = from si in this.Context.ServerItems
-                    join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
                     where si.ServiceNowKey == key
                     select si;
 
@@ -147,18 +146,27 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
 
     public ServerItem? FindForId(string key, long userId, bool includeFileSystemItems = false)
     {
+        var userOrganizationQuery = from uo in this.Context.UserOrganizations
+                                    join o in this.Context.Organizations on uo.OrganizationId equals o.Id
+                                    where uo.UserId == userId
+                                        && o.IsEnabled
+                                    select uo.OrganizationId;
+        var userTenants = from ut in this.Context.UserTenants
+                          join t in this.Context.Tenants on ut.TenantId equals t.Id
+                          where ut.UserId == userId
+                            && t.IsEnabled
+                          select ut.TenantId;
+
         var query = from si in this.Context.ServerItems
-                    join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
-                    join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
                     where si.ServiceNowKey == key
-                       && usert.UserId == userId
+                        && userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
                     select si;
 
         if (includeFileSystemItems)
             query = query.Include(m => m.FileSystemItems);
 
         return query
-            .AsSingleQuery()
+            .AsSplitQuery()
             .FirstOrDefault();
     }
 
@@ -179,6 +187,15 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
 
     public override EntityEntry<ServerItem> Update(ServerItem entity)
     {
+        // If the install status has changed from being installed, also set the same status on all related children.
+        if (entity.InstallStatus != 1)
+        {
+            this.Context.FileSystemHistoryItems.FromSqlRaw("UPDATE public.\"FileSystemHistoryItem\" SET \"InstallStatus\" = {1} WHERE \"ServerItemServiceNowKey\" = '{0}'", entity.ServiceNowKey, entity.InstallStatus);
+            this.Context.FileSystemItems.FromSqlRaw("UPDATE public.\"FileSystemItem\" SET \"InstallStatus\" = {1} WHERE \"ServerItemServiceNowKey\" = '{0}'", entity.ServiceNowKey, entity.InstallStatus);
+            this.Context.ServerHistoryItems.FromSqlRaw("UPDATE public.\"ServerHistoryItem\" SET \"InstallStatus\" = {1} WHERE \"ServiceNowKey\" = '{0}'", entity.ServiceNowKey, entity.InstallStatus);
+            this.Context.CommitTransaction();
+        }
+
         // Move original to history if created more than 12 hours ago.
         var original = this.Context.ServerItems.AsNoTracking().FirstOrDefault(si => si.ServiceNowKey == entity.ServiceNowKey);
         if (original != null && original.CreatedOn.AddHours(12).ToUniversalTime() <= DateTimeOffset.UtcNow)
@@ -195,6 +212,14 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
         }
 
         return base.Update(entity);
+    }
+
+    public override EntityEntry<ServerItem> Remove(ServerItem entity)
+    {
+        this.Context.FileSystemHistoryItems.FromSqlRaw("DELETE FROM public.\"FileSystemHistoryItem\" WHERE \"ServerItemServiceNowKey\" = '{0}'", entity.ServiceNowKey);
+        this.Context.FileSystemItems.FromSqlRaw("DELETE FROM public.\"FileSystemItem\" WHERE \"ServerItemServiceNowKey\" = '{0}'", entity.ServiceNowKey);
+        this.Context.ServerHistoryItems.FromSqlRaw("DELETE FROM public.\"ServerHistoryItem\" WHERE \"ServiceNowKey\" = '{0}'", entity.ServiceNowKey);
+        return base.Remove(entity);
     }
     #endregion
 }

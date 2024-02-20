@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using HSB.Core.Http;
 using System.Net.Http.Json;
+using HSB.Core.Extensions;
 
 namespace HSB.DataService;
 
@@ -290,13 +291,15 @@ public class HsbApiService : IHsbApiService
     /// <summary>
     /// Fetch all server items from HSB.
     /// </summary>
+    /// <param name="filter"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<ServerItemModel>> FetchServerItemsAsync()
+    public async Task<IEnumerable<ServerItemModel>> FetchServerItemsAsync(Models.Filters.ServerItemFilter? filter = null)
     {
         this.Logger.LogDebug("HSB - Fetching all server items");
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
         {
-            Path = this.Options.Endpoints.ServerItems
+            Path = this.Options.Endpoints.ServerItems,
+            Query = filter?.GetQueryString() ?? "",
         };
         var results = await HsbSendAsync<IEnumerable<ServerItemModel>>(HttpMethod.Get, builder.Uri);
         return results ?? Array.Empty<ServerItemModel>();
@@ -332,6 +335,22 @@ public class HsbApiService : IHsbApiService
         };
         var results = await HsbSendAsync<ServerItemModel>(HttpMethod.Put, builder.Uri, JsonContent.Create(model));
         return results;
+    }
+
+    /// <summary>
+    /// Delete server item in HSB.
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    public async Task<ServerItemModel> DeleteServerItemAsync(ServerItemModel model)
+    {
+        this.Logger.LogDebug("HSB - Delete server item");
+        var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
+        {
+            Path = $"{this.Options.Endpoints.ServerItems}/{model.ServiceNowKey}"
+        };
+        var results = await HsbSendAsync<ServerItemModel>(HttpMethod.Delete, builder.Uri, JsonContent.Create(model));
+        return results ?? model;
     }
     #endregion
 

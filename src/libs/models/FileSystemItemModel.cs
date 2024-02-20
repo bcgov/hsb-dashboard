@@ -13,6 +13,7 @@ public class FileSystemItemModel : AuditableModel
     public JsonDocument RawDataCI { get; set; } = JsonDocument.Parse("{}");
     public string ClassName { get; set; } = "";
     public string Name { get; set; } = "";
+    public int InstallStatus { get; set; }
     public string Label { get; set; } = "";
     public string Category { get; set; } = "";
     public string Subcategory { get; set; } = "";
@@ -42,6 +43,7 @@ public class FileSystemItemModel : AuditableModel
 
         this.ClassName = entity.ClassName;
         this.Name = entity.Name;
+        this.InstallStatus = entity.InstallStatus;
         this.Label = entity.Label;
         this.Category = entity.Category;
         this.Subcategory = entity.Subcategory;
@@ -73,6 +75,7 @@ public class FileSystemItemModel : AuditableModel
 
         this.ClassName = fileSystemItemModel.Data.ClassName ?? "";
         this.Name = fileSystemItemModel.Data.Name ?? "";
+        this.InstallStatus = int.Parse(fileSystemItemModel.Data.InstallStatus ?? "0");
         this.Label = fileSystemItemModel.Data.Label ?? "";
         this.Category = fileSystemItemModel.Data.Category ?? "";
         this.Subcategory = fileSystemItemModel.Data.Subcategory ?? "";
@@ -105,6 +108,7 @@ public class FileSystemItemModel : AuditableModel
             ServiceNowKey = model.ServiceNowKey,
             ClassName = model.ClassName,
             Name = model.Name,
+            InstallStatus = model.InstallStatus,
             Label = model.Label,
             Category = model.Category,
             Subcategory = model.Subcategory,

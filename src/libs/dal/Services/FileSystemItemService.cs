@@ -76,12 +76,21 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
 
     public FileSystemItem? FindForId(string key, long userId)
     {
+        var userOrganizationQuery = from uo in this.Context.UserOrganizations
+                                    join o in this.Context.Organizations on uo.OrganizationId equals o.Id
+                                    where uo.UserId == userId
+                                        && o.IsEnabled
+                                    select uo.OrganizationId;
+        var userTenants = from ut in this.Context.UserTenants
+                          join t in this.Context.Tenants on ut.TenantId equals t.Id
+                          where ut.UserId == userId
+                            && t.IsEnabled
+                          select ut.TenantId;
+
         return (from fsi in this.Context.FileSystemItems
                 join si in this.Context.ServerItems on fsi.ServerItemServiceNowKey equals si.ServiceNowKey
-                join tenant in this.Context.Tenants on si.TenantId equals tenant.Id
-                join usert in this.Context.UserTenants on tenant.Id equals usert.TenantId
-                where usert.UserId == userId
-                   && fsi.ServiceNowKey == key
+                where fsi.ServiceNowKey == key
+                   && userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
                 select fsi)
                     .AsSplitQuery()
                     .FirstOrDefault();

@@ -54,6 +54,7 @@ public class ServerItem : Auditable
     public string Name { get; set; } = "";
     public string Category { get; set; } = "";
     public string Subcategory { get; set; } = "";
+    public int InstallStatus { get; set; }
     public string DnsDomain { get; set; } = "";
     public string Platform { get; set; } = "";
     public string IPAddress { get; set; } = "";
@@ -100,6 +101,7 @@ public class ServerItem : Auditable
         this.ServiceNowKey = serverData.GetElementValue<string>(".sys_id") ?? "";
         this.ClassName = serverData.GetElementValue<string>(".sys_class_name") ?? "";
         this.Name = serverData.GetElementValue<string>(".name") ?? "";
+        this.InstallStatus = serverData.GetElementValue<int>(".install_status");
         this.Category = serverData.GetElementValue<string>(".category") ?? "";
         this.Subcategory = serverData.GetElementValue<string>(".subcategory") ?? "";
         this.DnsDomain = serverData.GetElementValue<string>(".dns_domain") ?? "";

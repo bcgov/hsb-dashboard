@@ -22,6 +22,7 @@ public class ServerItemModel : AuditableModel
     public JsonDocument RawDataCI { get; set; } = JsonDocument.Parse("{}");
     public string ClassName { get; set; } = "";
     public string Name { get; set; } = "";
+    public int InstallStatus { get; set; }
     public string Category { get; set; } = "";
     public string Subcategory { get; set; } = "";
     public string DnsDomain { get; set; } = "";
@@ -57,6 +58,7 @@ public class ServerItemModel : AuditableModel
 
         this.ClassName = entity.ClassName;
         this.Name = entity.Name;
+        this.InstallStatus = entity.InstallStatus;
         this.Category = entity.Category;
         this.Subcategory = entity.Subcategory;
         this.DnsDomain = entity.DnsDomain;
@@ -92,6 +94,7 @@ public class ServerItemModel : AuditableModel
 
         this.ClassName = serverModel.Data.ClassName ?? "";
         this.Name = serverModel.Data.Name ?? "";
+        this.InstallStatus = int.Parse(serverModel.Data.InstallStatus ?? "0");
         this.Category = serverModel.Data.Category ?? "";
         this.Subcategory = serverModel.Data.Subcategory ?? "";
         this.DnsDomain = serverModel.Data.DnsDomain ?? "";
@@ -117,6 +120,7 @@ public class ServerItemModel : AuditableModel
             ServiceNowKey = model.ServiceNowKey,
             ClassName = model.ClassName,
             Name = model.Name,
+            InstallStatus = model.InstallStatus,
             Category = model.Category,
             Subcategory = model.Subcategory,
             DnsDomain = model.DnsDomain,
