@@ -6,6 +6,7 @@ using HSB.Core.Models;
 using System.Net;
 using HSB.DAL.Services;
 using HSB.Keycloak;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace HSB.API.Areas.Services.Controllers;
 
@@ -56,7 +57,11 @@ public class ServerItemController : ControllerBase
     [SwaggerOperation(Tags = new[] { "Server Item" })]
     public IActionResult Find()
     {
-        var serverItems = _serverItemService.Find(o => true);
+        var uri = new Uri(this.Request.GetDisplayUrl());
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        var filter = new HSB.Models.Filters.ServerItemFilter(query);
+
+        var serverItems = _serverItemService.Find(filter);
         return new JsonResult(serverItems.Select(ci => new ServerItemModel(ci)));
     }
 
@@ -113,6 +118,23 @@ public class ServerItemController : ControllerBase
         _serverItemService.Update(entity);
         _serverItemService.CommitTransaction();
         return new JsonResult(new ServerItemModel(entity));
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    [HttpDelete("{id}", Name = "DeleteServerItem-Services")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(ServerItemModel), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
+    [SwaggerOperation(Tags = new[] { "Server Item" })]
+    public IActionResult Delete(ServerItemModel model)
+    {
+        _serverItemService.Remove(model.ToEntity());
+        _serverItemService.CommitTransaction();
+        return new JsonResult(model);
     }
 
     /// <summary>

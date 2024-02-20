@@ -16,6 +16,7 @@ public class ServerHistoryItemConfiguration : AuditableConfiguration<ServerHisto
         builder.Property(m => m.OrganizationId);
         builder.Property(m => m.OperatingSystemItemId);
         builder.Property(m => m.HistoryKey);
+        builder.Property(m => m.InstallStatus).IsRequired();
 
         builder.Property(m => m.RawData).IsRequired().HasColumnType("jsonb").HasDefaultValueSql("'{}'::jsonb");
         builder.Property(m => m.RawDataCI).IsRequired().HasColumnType("jsonb").HasDefaultValueSql("'{}'::jsonb");
@@ -40,7 +41,7 @@ public class ServerHistoryItemConfiguration : AuditableConfiguration<ServerHisto
         builder.HasOne(m => m.OperatingSystemItem).WithMany().HasForeignKey(m => m.OperatingSystemItemId).OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(m => new { m.CreatedOn }, "IX_ServerHistoryItem_CreatedOn");
-        builder.HasIndex(m => new { m.ServiceNowKey }, "IX_ServerHistoryItem_ServiceNowKey");
+        builder.HasIndex(m => new { m.InstallStatus, m.ServiceNowKey }, "IX_ServerHistoryItem_InstallStatus_ServiceNowKey");
         builder.HasIndex(m => new { m.HistoryKey }, "IX_ServerHistoryItem_HistoryKey");
 
         base.Configure(builder);

@@ -16,6 +16,7 @@ public class ServerItemConfiguration : AuditableConfiguration<ServerItem>
         builder.Property(m => m.OrganizationId);
         builder.Property(m => m.OperatingSystemItemId);
         builder.Property(m => m.HistoryKey);
+        builder.Property(m => m.InstallStatus).IsRequired();
 
         builder.Property(m => m.RawData).IsRequired().HasColumnType("jsonb").HasDefaultValueSql("'{}'::jsonb");
         builder.Property(m => m.RawDataCI).IsRequired().HasColumnType("jsonb").HasDefaultValueSql("'{}'::jsonb");
@@ -37,7 +38,7 @@ public class ServerItemConfiguration : AuditableConfiguration<ServerItem>
         builder.HasOne(m => m.Organization).WithMany(m => m.ServerItems).HasForeignKey(m => m.OrganizationId).OnDelete(DeleteBehavior.Cascade);
         builder.HasOne(m => m.OperatingSystemItem).WithMany(m => m.ServerItems).HasForeignKey(m => m.OperatingSystemItemId).OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasIndex(m => new { m.Name }, "IX_ServerItem_Name");
+        builder.HasIndex(m => new { m.InstallStatus, m.UpdatedOn }, "IX_ServerItem_InstallStatus_UpdatedOn");
 
         base.Configure(builder);
     }

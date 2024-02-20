@@ -25,6 +25,7 @@ public class FileSystemItem : Auditable
     public JsonDocument RawData { get; set; } = JsonDocument.Parse("{}");
     public JsonDocument RawDataCI { get; set; } = JsonDocument.Parse("{}");
     public string Name { get; set; } = "";
+    public int InstallStatus { get; set; }
     public string Label { get; set; } = "";
     public string Category { get; set; } = "";
     public string Subcategory { get; set; } = "";
@@ -67,6 +68,7 @@ public class FileSystemItem : Auditable
         this.ServiceNowKey = fileSystemItemData.GetElementValue<string>(".sys_id") ?? "";
         this.ClassName = fileSystemItemData.GetElementValue<string>(".sys_class_name") ?? "";
         this.Name = fileSystemItemData.GetElementValue<string>(".name") ?? "";
+        this.InstallStatus = fileSystemItemData.GetElementValue<int>(".install_status");
         this.Label = fileSystemItemData.GetElementValue<string>(".label") ?? "";
         this.Category = fileSystemItemData.GetElementValue<string>(".category") ?? "";
         this.Subcategory = fileSystemItemData.GetElementValue<string>(".subcategory") ?? "";

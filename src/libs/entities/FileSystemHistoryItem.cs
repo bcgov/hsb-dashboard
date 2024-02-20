@@ -29,6 +29,7 @@ public class FileSystemHistoryItem : Auditable
     public JsonDocument RawData { get; set; } = JsonDocument.Parse("{}");
     public JsonDocument RawDataCI { get; set; } = JsonDocument.Parse("{}");
     public string Name { get; set; } = "";
+    public int InstallStatus { get; set; }
     public string Label { get; set; } = "";
     public string Category { get; set; } = "";
     public string Subcategory { get; set; } = "";
@@ -60,6 +61,7 @@ public class FileSystemHistoryItem : Auditable
         this.ServiceNowKey = fileSystemItemData.GetElementValue<string>(".sys_id") ?? "";
         this.ClassName = fileSystemItemData.GetElementValue<string>(".sys_class_name") ?? "";
         this.Name = fileSystemItemData.GetElementValue<string>(".name") ?? "";
+        this.InstallStatus = fileSystemItemData.GetElementValue<int>(".install_status");
         this.Label = fileSystemItemData.GetElementValue<string>(".label") ?? "";
         this.Category = fileSystemItemData.GetElementValue<string>(".category") ?? "";
         this.Subcategory = fileSystemItemData.GetElementValue<string>(".subcategory") ?? "";
@@ -86,6 +88,7 @@ public class FileSystemHistoryItem : Auditable
 
         this.ClassName = entity.ClassName;
         this.Name = entity.Name;
+        this.InstallStatus = entity.InstallStatus;
         this.Label = entity.Label;
         this.Category = entity.Category;
         this.Subcategory = entity.Subcategory;

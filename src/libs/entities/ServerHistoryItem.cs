@@ -28,6 +28,7 @@ public class ServerHistoryItem : Auditable
     public JsonDocument RawDataCI { get; set; } = JsonDocument.Parse("{}");
     public string ClassName { get; set; } = "";
     public string Name { get; set; } = "";
+    public int InstallStatus { get; set; }
     public string Category { get; set; } = "";
     public string Subcategory { get; set; } = "";
     public string DnsDomain { get; set; } = "";
@@ -66,6 +67,7 @@ public class ServerHistoryItem : Auditable
         this.ServiceNowKey = serverData.GetElementValue<string>(".sys_id") ?? "";
         this.ClassName = serverData.GetElementValue<string>(".sys_class_name") ?? "";
         this.Name = serverData.GetElementValue<string>(".name") ?? "";
+        this.InstallStatus = serverData.GetElementValue<int>(".install_status");
         this.Category = serverData.GetElementValue<string>(".category") ?? "";
         this.Subcategory = serverData.GetElementValue<string>(".subcategory") ?? "";
         this.DnsDomain = serverData.GetElementValue<string>(".dns_domain") ?? "";
@@ -89,6 +91,7 @@ public class ServerHistoryItem : Auditable
 
         this.ClassName = entity.ClassName;
         this.Name = entity.Name;
+        this.InstallStatus = entity.InstallStatus;
         this.Category = entity.Category;
         this.Subcategory = entity.Subcategory;
         this.DnsDomain = entity.DnsDomain;

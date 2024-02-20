@@ -20,6 +20,7 @@ public class ServerHistoryItemModel : AuditableModel
     public string ServiceNowKey { get; set; } = "";
     public string ClassName { get; set; } = "";
     public string Name { get; set; } = "";
+    public int InstallStatus { get; set; }
     public string Category { get; set; } = "";
     public string Subcategory { get; set; } = "";
     public string DnsDomain { get; set; } = "";
@@ -56,6 +57,7 @@ public class ServerHistoryItemModel : AuditableModel
         this.ServiceNowKey = entity.ServiceNowKey;
         this.ClassName = entity.ClassName;
         this.Name = entity.Name;
+        this.InstallStatus = entity.InstallStatus;
         this.Category = entity.Category;
         this.Subcategory = entity.Subcategory;
         this.DnsDomain = entity.DnsDomain;
@@ -88,6 +90,7 @@ public class ServerHistoryItemModel : AuditableModel
         this.ServiceNowKey = serverModel.Data.Id;
         this.ClassName = serverModel.Data.ClassName ?? "";
         this.Name = serverModel.Data.Name ?? "";
+        this.InstallStatus = int.Parse(serverModel.Data.InstallStatus ?? "0");
         this.Category = serverModel.Data.Category ?? "";
         this.Subcategory = serverModel.Data.Subcategory ?? "";
         this.DnsDomain = serverModel.Data.DnsDomain ?? "";
@@ -114,6 +117,7 @@ public class ServerHistoryItemModel : AuditableModel
             ServiceNowKey = model.ServiceNowKey,
             ClassName = model.ClassName,
             Name = model.Name,
+            InstallStatus = model.InstallStatus,
             Category = model.Category,
             Subcategory = model.Subcategory,
             DnsDomain = model.DnsDomain,

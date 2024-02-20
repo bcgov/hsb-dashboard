@@ -19,6 +19,7 @@ public class FileSystemConfiguration : AuditableConfiguration<FileSystemItem>
         builder.Property(m => m.ServerItemServiceNowKey).IsRequired().HasMaxLength(100);
         builder.Property(m => m.ClassName).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
         builder.Property(m => m.Name).IsRequired().HasMaxLength(200);
+        builder.Property(m => m.InstallStatus).IsRequired();
         builder.Property(m => m.Label).IsRequired().HasMaxLength(100);
         builder.Property(m => m.Category).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
         builder.Property(m => m.Subcategory).IsRequired().HasMaxLength(100).HasDefaultValueSql("''");
@@ -36,7 +37,7 @@ public class FileSystemConfiguration : AuditableConfiguration<FileSystemItem>
 
         builder.HasOne(m => m.ServerItem).WithMany(m => m.FileSystemItems).HasForeignKey(m => m.ServerItemServiceNowKey).OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasIndex(m => new { m.Name, m.ServerItemServiceNowKey }, "IX_FileSystemItem_Name_ServerItemServiceNowKey");
+        builder.HasIndex(m => new { m.InstallStatus, m.ServerItemServiceNowKey }, "IX_FileSystemItem_InstallStatus_ServerItemServiceNowKey");
 
         base.Configure(builder);
     }

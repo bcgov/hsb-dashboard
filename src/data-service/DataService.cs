@@ -107,6 +107,8 @@ public class DataService : IDataService
             }
         }
 
+        await ServerItemCleanupProcessAsync();
+
         this.Logger.LogInformation("Data Sync Service Completed");
     }
 
@@ -244,13 +246,35 @@ public class DataService : IDataService
         if (serverItemSN.Data == null) throw new ArgumentNullException(nameof(serverItemSN));
         if (configurationItemSN.Data == null) throw new ArgumentNullException(nameof(configurationItemSN));
 
+        var serviceNowKey = serverItemSN.Data.Id;
+
         if (serverItemSN.Data.InstallStatus != "1")
         {
             this.Logger.LogDebug("Server item install status: {status}", serverItemSN.Data.InstallStatus);
+
+            // Need to update with the latest status.
+            if (_serverItems.TryGetValue(serviceNowKey, out Hsb.ServerItemModel? serverItemHSB))
+            {
+                // Update the server item in HSB.
+                this.Logger.LogDebug("Update Server Item: '{id}'", configurationItemSN.Data?.Id);
+
+                serverItemHSB.RawData = serverItemSN.RawData;
+                serverItemHSB.RawDataCI = configurationItemSN.RawData;
+                serverItemHSB.InstallStatus = int.Parse(serverItemSN.Data.InstallStatus ?? "0");
+
+                serverItemHSB = await this.HsbApi.UpdateServerItemAsync(serverItemHSB);
+                if (serverItemHSB == null)
+                {
+                    this.Logger.LogError("Server Item was not returned from HSB: {id}", serviceNowKey);
+                    return null;
+                }
+                _serverItems[serverItemHSB.ServiceNowKey] = serverItemHSB;
+                return serverItemHSB;
+            }
+
             return null;
         }
 
-        var serviceNowKey = serverItemSN.Data.Id;
         var tenant = await ProcessTenantAsync(configurationItemSN.RawData, serverItemSN.RawData);
         var organization = await ProcessOrganizationAsync(configurationItemSN.RawData, serverItemSN.RawData);
         if (organization == null)
@@ -319,13 +343,13 @@ public class DataService : IDataService
         if (fileSystemItemSN.Data == null) throw new ArgumentNullException(nameof(fileSystemItemSN));
         if (configurationItemSN.Data == null) throw new ArgumentNullException(nameof(configurationItemSN));
 
+        var serviceNowKey = fileSystemItemSN.Data.Id;
+
         if (fileSystemItemSN.Data.InstallStatus != "1")
         {
             this.Logger.LogDebug("Server item install status: {status}", fileSystemItemSN.Data.InstallStatus);
             return null;
         }
-
-        var serviceNowKey = fileSystemItemSN.Data.Id;
 
         // Server does not currently exist, add it.
         if (!_serverItems.TryGetValue(serviceNowKey, out Hsb.ServerItemModel? serverItem))
@@ -393,6 +417,7 @@ public class DataService : IDataService
 
             fileSystemItem.ClassName = fileSystemItemSN.Data.ClassName ?? "";
             fileSystemItem.Name = fileSystemItemSN.Data.Name ?? "";
+            fileSystemItem.InstallStatus = int.Parse(fileSystemItemSN.Data.InstallStatus ?? "0");
             fileSystemItem.Label = fileSystemItemSN.Data.Label ?? "";
             fileSystemItem.Category = fileSystemItemSN.Data.Category ?? "";
             fileSystemItem.Subcategory = fileSystemItemSN.Data.Subcategory ?? "";
@@ -689,6 +714,51 @@ public class DataService : IDataService
         return operatingSystem;
     }
 
+    /// <summary>
+    /// Fetch all servers that were not updated in the prior run.
+    /// Make a request to ServiceNow to determine if these servers should be removed.
+    /// </summary>
+    /// <returns></returns>
+    private async Task ServerItemCleanupProcessAsync()
+    {
+        this.Logger.LogInformation("Starting servers cleanup process");
+        var filter = new Hsb.Filters.ServerItemFilter()
+        {
+            InstallStatus = 1, // Only fetch server items that are currently marked as installed.
+            UpdatedBeforeDate = DateTime.UtcNow.AddDays(-1), // Only fetch server items that haven't been updated in over a day.
+        };
+        var serverItems = await this.HsbApi.FetchServerItemsAsync(filter);
+        foreach (var serverItem in serverItems)
+        {
+            try
+            {
+                // For each server item make a request to ServiceNow to determine if it is still installed.
+                var serverItemSN = await this.ServiceNowApi.GetTableItemAsync<ServiceNow.BaseItemModel>(serverItem.ClassName, serverItem.ServiceNowKey);
+                if (serverItemSN?.Data == null)
+                {
+                    await this.HsbApi.DeleteServerItemAsync(serverItem);
+                }
+                else
+                {
+                    // Fetch the configuration item now.
+                    var configurationItemSN = await this.ServiceNowApi.GetTableItemAsync<ServiceNow.ConfigurationItemModel>(this.ServiceNowApi.Options.TableNames.ConfigurationItem, serverItem.ServiceNowKey);
+                    if (configurationItemSN != null)
+                    {
+                        // Update the server item with the latest information.
+                        await this.ProcessServerItemAsync(serverItemSN, configurationItemSN);
+                    }
+                    else
+                    {
+                        this.Logger.LogWarning("Configuration item could not be found: {key}", serverItem.ServiceNowKey);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                this.Logger.LogError(ex, "Failed to fetch server item: {key}", serverItem.ServiceNowKey);
+            }
+        }
+    }
     #endregion
 }
 
