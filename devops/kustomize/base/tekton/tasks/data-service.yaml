@@ -1,0 +1,206 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: data-service
+  description: >-
+    This task runs the data service in the specified environment.
+  annotations:
+    tekton.dev/displayName: Run Data Service
+    tekton.dev/pipelines.minVersion: 0.12.1
+    tekton.dev/tags: docker
+  labels:
+    name: data-service
+    part-of: hsb
+    version: 1.0.0
+    component: task
+    managed-by: kustomize
+    DataClass: Low
+spec:
+  params:
+    - name: PROJECT_SHORTNAME
+      description: The shortname of the project namespace.
+      type: string
+      default: e89443
+
+    - name: IMAGE_REGISTRY
+      description: The image registry
+      type: string
+      default: image-registry.apps.emerald.devops.gov.bc.ca
+
+    - name: IMAGE
+      description: The name of the database migration image.
+      type: string
+      default: data-service
+
+    - name: IMAGE_TAG
+      description: The tag given to the built image.
+      type: string
+      default: latest
+
+    - name: DEPLOY_TO
+      description: Which environment to deploy to
+      type: string
+      default: dev
+
+  steps:
+    - name: run
+      image: "image-registry.openshift-image-registry.svc:5000/openshift/cli:latest"
+      env:
+        - name: HTTP_PROXY
+          value: http://swpxkam.gov.bc.ca:8080
+        - name: HTTPS_PROXY
+          value: http://swpxkam.gov.bc.ca:8080
+        - name: NO_PROXY
+          value: .cluster.local,.svc,10.91.0.0/16,172.30.0.0/16,127.0.0.1,localhost,.gov.bc.ca,api
+      securityContext:
+        capabilities:
+          add:
+            - SETFCAP
+        runAsUser: 0
+      resources:
+        requests:
+          memory: 250Mi
+          cpu: 500m
+        limits:
+          memory: 1500Mi
+          cpu: 1000m
+      script: |
+        #!/usr/bin/env bash
+        set -e
+
+        echo "Running data-service in $(params.PROJECT_SHORTNAME)-$(params.DEPLOY_TO)"
+        overrides="{
+            \"apiVersion\":\"v1\",
+            \"spec\":{
+              \"containers\":[
+                {
+                  \"name\":\"$(params.IMAGE)\",
+                  \"image\":\"$(params.IMAGE_REGISTRY)/$(params.PROJECT_SHORTNAME)-tools/$(params.IMAGE):$(params.DEPLOY_TO)\",
+                  \"env\":[
+                    {
+                      \"name\":\"Logging__LogLevel__HSB\",
+                      \"value\":\"Debug\"
+                    },
+                    {
+                      \"name\":\"HTTP_PROXY\",
+                      \"value\":\"http://swpxkam.gov.bc.ca:8080\"
+                    },
+                    {
+                      \"name\":\"HTTPS_PROXY\",
+                      \"value\":\"http://swpxkam.gov.bc.ca:8080\"
+                    },
+                    {
+                      \"name\":\"NO_PROXY\",
+                      \"value\":\".cluster.local,.svc,10.91.0.0/16,172.30.0.0/16,127.0.0.1,localhost,.gov.bc.ca,api\"
+                    },
+                    {
+                      \"name\":\"Keycloak__Authority\",
+                      \"valueFrom\":{
+                        \"configMapKeyRef\":{
+                          \"name\":\"keycloak\",
+                          \"key\":\"KEYCLOAK_AUTHORITY\"
+                        }
+                      }
+                    },
+                    {
+                      \"name\":\"Keycloak__Audience\",
+                      \"valueFrom\":{
+                        \"configMapKeyRef\":{
+                          \"name\":\"keycloak\",
+                          \"key\":\"KEYCLOAK_AUDIENCE\"
+                        }
+                      }
+                    },
+                    {
+                      \"name\":\"Keycloak__Issuer\",
+                      \"valueFrom\":{
+                        \"configMapKeyRef\":{
+                          \"name\":\"keycloak\",
+                          \"key\":\"KEYCLOAK_ISSUER\"
+                        }
+                      }
+                    },
+                    {
+                      \"name\":\"Keycloak__Secret\",
+                      \"valueFrom\":{
+                        \"secretKeyRef\":{
+                          \"name\":\"keycloak\",
+                          \"key\":\"KEYCLOAK_CLIENT_SECRET\"
+                        }
+                      }
+                    },
+                    {
+                      \"name\":\"Service__ApiUrl\",
+                      \"valueFrom\":{
+                        \"configMapKeyRef\":{
+                          \"name\":\"data-service\",
+                          \"key\":\"API_URL\"
+                        }
+                      }
+                    },
+                    {
+                      \"name\":\"ServiceNow__ApiUrl\",
+                      \"valueFrom\":{
+                        \"secretKeyRef\":{
+                          \"name\":\"service-now\",
+                          \"key\":\"URL\"
+                        }
+                      }
+                    },
+                    {
+                      \"name\":\"ServiceNow__Instance\",
+                      \"valueFrom\":{
+                        \"secretKeyRef\":{
+                          \"name\":\"service-now\",
+                          \"key\":\"INSTANCE\"
+                        }
+                      }
+                    },
+                    {
+                      \"name\":\"ServiceNow__Username\",
+                      \"valueFrom\":{
+                        \"secretKeyRef\":{
+                          \"name\":\"service-now\",
+                          \"key\":\"USERNAME\"
+                        }
+                      }
+                    },
+                    {
+                      \"name\":\"ServiceNow__Password\",
+                      \"valueFrom\":{
+                        \"secretKeyRef\":{
+                          \"name\":\"service-now\",
+                          \"key\":\"PASSWORD\"
+                        }
+                      }
+                    }
+                  ],
+                  \"labels\":{
+                    \"name\":\"data-service\",\"part-of\":\"hsb\",\"component\":\"service\",\"DataClass\":\"Low\"
+                    },
+                  \"resources\":{
+                    \"requests\":{
+                      \"memory\":\"250Mi\",
+                      \"cpu\":\"50m\"
+                    },
+                    \"limits\":{
+                      \"memory\":\"1Gi\",
+                      \"cpu\":\"500m\"
+                    }
+                  },
+                  \"imagePullPolicy\": \"Always\"
+                }
+              ]
+            }
+          }"
+        oc run $(params.IMAGE) \
+          -n $(params.PROJECT_SHORTNAME)-$(params.DEPLOY_TO) \
+          --image=$(params.IMAGE) \
+          --image-pull-policy=Always \
+          --attach \
+          --rm \
+          --labels='name=data-service,part-of=hsb,component=service,DataClass=Low' \
+          --restart=Never \
+          --timeout=10m \
+          --override-type='merge' \
+          --overrides="$overrides"

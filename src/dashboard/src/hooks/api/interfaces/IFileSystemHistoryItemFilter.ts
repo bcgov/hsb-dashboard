@@ -10,4 +10,6 @@ export interface IFileSystemHistoryItemFilter {
   className?: string;
   startDate?: string;
   endDate?: string;
+  installStatus?: number;
+  notInstallStatus?: number;
 }

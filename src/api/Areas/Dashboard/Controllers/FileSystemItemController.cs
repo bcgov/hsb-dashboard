@@ -76,7 +76,7 @@ public class FileSystemItemController : ControllerBase
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
         {
-            var result = _fileSystemItemService.Find(filter.GeneratePredicate(), filter.Sort);
+            var result = _fileSystemItemService.Find(filter);
             return new JsonResult(result.Select(fsi => new FileSystemItemModel(fsi)));
         }
         else

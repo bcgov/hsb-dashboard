@@ -72,6 +72,7 @@ export const FilteredOrganizations = ({}: IFilteredOrganizationsProps) => {
             setFilteredServerItems(filteredServerItems);
           } else {
             filteredServerItems = await findServerItems({
+              installStatus: 1,
               tenantId: values.tenant?.id,
               organizationId: organization?.id,
             });
@@ -111,6 +112,7 @@ export const FilteredOrganizations = ({}: IFilteredOrganizationsProps) => {
             setFilteredServerItems(filteredServerItems ?? []);
           } else {
             await findServerItems({
+              installStatus: 1,
               tenantId: values.tenant?.id,
               operatingSystemItemId: values.operatingSystemItem?.id,
             });

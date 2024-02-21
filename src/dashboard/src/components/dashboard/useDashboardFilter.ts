@@ -119,6 +119,7 @@ export const useDashboardFilter = () => {
       if (values?.serverItem) {
         await findFileSystemItems({
           serverItemServiceNowKey: values?.serverItem.serviceNowKey,
+          installStatus: 1,
         });
       }
 

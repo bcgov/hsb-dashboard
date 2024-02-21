@@ -56,7 +56,7 @@ export const AllocationByStorageVolume = ({
   return (
     <div className={styles.panel}>
       {loading && <LoadingAnimation />}
-      <h1>Allocation by Storage Volume - All Organizations</h1>
+      <h1>Allocation by Storage Volume - All {items.length.toLocaleString()} Organizations</h1>
       <div className={styles.sort}>
         <Select
           id="allocation"

@@ -6,4 +6,6 @@ export interface IServerHistoryItemFilter {
   tenantId?: number;
   startDate?: string;
   endDate?: string;
+  installStatus?: number;
+  notInstallStatus?: number;
 }
