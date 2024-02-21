@@ -87,6 +87,7 @@ export const FilteredTenants = ({}: IFilteredTenantsProps) => {
             setFilteredServerItems(filteredServerItems);
           } else {
             filteredServerItems = await findServerItems({
+              installStatus: 1,
               tenantId: tenant.id,
               organizationId: organization?.id,
             });

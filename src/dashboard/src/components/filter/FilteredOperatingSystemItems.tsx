@@ -61,6 +61,7 @@ export const FilteredOperatingSystemItems = ({}: IFilteredOperatingSystemItemsPr
             setFilteredServerItems(filteredServerItems ?? []);
           } else {
             filteredServerItems = await findServerItems({
+              installStatus: 1,
               tenantId: values.tenant?.id,
               organizationId: values.organization?.id,
               operatingSystemItemId: operatingSystemItem.id,
@@ -79,6 +80,7 @@ export const FilteredOperatingSystemItems = ({}: IFilteredOperatingSystemItemsPr
             setFilteredServerItems(filteredServerItems ?? []);
           } else {
             await findServerItems({
+              installStatus: 1,
               tenantId: values.tenant?.id,
               organizationId: values.organization?.id,
             });

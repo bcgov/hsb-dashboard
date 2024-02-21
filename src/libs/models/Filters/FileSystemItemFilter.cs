@@ -20,6 +20,8 @@ public class FileSystemItemFilter : PageFilter
 
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
+    public int? InstallStatus { get; set; }
+    public int? NotInstallStatus { get; set; }
 
     public string[] Sort { get; set; } = Array.Empty<string>();
     #endregion
@@ -42,6 +44,8 @@ public class FileSystemItemFilter : PageFilter
         this.ServerItemServiceNowKey = filter.GetStringValue(nameof(this.ServerItemServiceNowKey));
         this.StartDate = filter.GetDateTimeNullValue(nameof(this.StartDate));
         this.EndDate = filter.GetDateTimeNullValue(nameof(this.EndDate));
+        this.InstallStatus = filter.GetIntNullValue(nameof(this.InstallStatus));
+        this.NotInstallStatus = filter.GetIntNullValue(nameof(this.NotInstallStatus));
 
         this.Sort = filter.GetStringArrayValue(nameof(this.Sort), new[] { nameof(FileSystemItemModel.Name) });
     }
@@ -69,6 +73,10 @@ public class FileSystemItemFilter : PageFilter
             predicate = predicate.And((u) => u.ServerItem!.OperatingSystemItemId == this.OperatingSystemItemId);
         if (this.ServerItemServiceNowKey != null)
             predicate = predicate.And((u) => EF.Functions.Like(u.ServerItemServiceNowKey, this.ServerItemServiceNowKey));
+        if (this.InstallStatus != null)
+            predicate = predicate.And((u) => u.InstallStatus == this.InstallStatus);
+        if (this.NotInstallStatus != null)
+            predicate = predicate.And((u) => u.InstallStatus != this.NotInstallStatus);
         if (this.StartDate != null)
             predicate = predicate.And((u) => u.CreatedOn >= this.StartDate.Value.ToUniversalTime());
         if (this.EndDate != null)

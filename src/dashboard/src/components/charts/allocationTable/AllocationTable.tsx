@@ -5,7 +5,7 @@ import { Text } from '@/components/forms/text';
 import { IServerItemModel } from '@/hooks';
 import classNames from 'classnames';
 import { debounce } from 'lodash';
-import React, { ChangeEvent }  from 'react';
+import React, { ChangeEvent } from 'react';
 import { LoadingAnimation } from '../../loadingAnimation';
 import styles from './AllocationTable.module.scss';
 import { Dropdown } from './Dropdown';
@@ -64,15 +64,14 @@ export const AllocationTable = ({
 
   const debouncedSearch = React.useCallback(
     debounce((searchKeyword: string) => {
-      const filtered = serverItems.filter((si) => 
-        si.name.toLowerCase().includes(searchKeyword.toLowerCase())
+      const filtered = serverItems.filter((si) =>
+        si.name.toLowerCase().includes(searchKeyword.toLowerCase()),
       );
       setFilteredServerItems(filtered);
       setShowDropdown(true);
     }, 300),
-    []
+    [],
   );
-  
 
   React.useEffect(() => () => debouncedSearch.cancel(), [debouncedSearch]);
 
@@ -93,11 +92,11 @@ export const AllocationTable = ({
       setShowDropdown(false);
     }
   };
-  
+
   React.useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
@@ -106,8 +105,10 @@ export const AllocationTable = ({
       {loading && <LoadingAnimation />}
       <h1>
         {osClassName
-          ? `Allocation by Storage Volume - All ${getLabel(osClassName)}`
-          : 'All Servers'}
+          ? `Allocation by Storage Volume - All ${serverItems.length.toLocaleString()} ${getLabel(
+              osClassName,
+            )}`
+          : `All ${serverItems.length.toLocaleString()} Servers`}
       </h1>
       <div className={styles.filter} ref={wrapperRef}>
         <Text
@@ -125,10 +126,7 @@ export const AllocationTable = ({
         {showDropdown && (
           <div className={styles.filteredDropdown}>
             {filteredServerItems.map((item, index) => (
-              <div
-                key={index}
-                onClick={() => selectFromDropdown(item)}
-              >
+              <div key={index} onClick={() => selectFromDropdown(item)}>
                 {item.name}
               </div>
             ))}

@@ -74,6 +74,8 @@ elif [ "$action" = "oc-push" ]; then
   oc-push ${2-} ${3-}
 elif [ "$action" = "oc-deploy" ]; then
   oc-deploy ${2-} ${3-} ${4-} ${5-}
+elif [ "$action" = "oc-run" ]; then
+  oc-run ${2-} ${3-} ${4-}
 
 # Services
 elif [ "$action" = "data-service" ]; then

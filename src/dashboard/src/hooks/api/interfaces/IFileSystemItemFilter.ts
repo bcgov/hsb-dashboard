@@ -10,4 +10,6 @@ export interface IFileSystemItemFilter {
   className?: string;
   startDate?: string;
   endDate?: string;
+  installStatus?: number;
+  notInstallStatus?: number;
 }

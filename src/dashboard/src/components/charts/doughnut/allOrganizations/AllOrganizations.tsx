@@ -35,7 +35,7 @@ export const AllOrganizations = ({
       <h1>All Organizations</h1>
       <div className={styles.chartContainer}>
         <div className={styles.info}>
-          <h2>Totals for {organizations.length} organizations</h2>
+          <h2>Totals for {organizations.length.toLocaleString()} organizations</h2>
           <div>
             <p>
               Allocated <span>{data.space}</span>

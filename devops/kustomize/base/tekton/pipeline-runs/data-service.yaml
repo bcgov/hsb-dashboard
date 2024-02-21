@@ -1,0 +1,34 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: run-data-service-
+  namespace: e89443-tools
+  annotations:
+    chains.tekton.dev/signed: "true"
+    pipeline.openshift.io/started-by: jeremy.1.foster@gov.bc.ca
+    tekton.dev/displayName: Run Data Service in specified environment
+    tekton.dev/pipelines.minVersion: 0.17.0
+    tekton.dev/tags: deploy
+  labels:
+    DataClass: Low
+    component: pipeline
+    managed-by: kustomize
+    name: run-data-service
+    part-of: hsb
+    tekton.dev/pipeline: run-data-service
+    version: 1.0.0
+spec:
+  params:
+    - name: PROJECT_SHORTNAME
+      value: e89443
+    - name: IMAGE
+      value: data-service
+    - name: IMAGE_TAG
+      value: latest
+    - name: DEPLOY_TO
+      value: dev
+  pipelineRef:
+    name: run-data-service
+  serviceAccountName: pipeline
+  timeouts:
+    pipeline: 4h0m0s

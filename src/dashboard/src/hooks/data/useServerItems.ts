@@ -24,7 +24,7 @@ export const useServerItems = (
       setIsLoading(true);
       setIsReady(false);
       if (useSimple) {
-        findSimple()
+        findSimple({ installStatus: 1 })
           .then(async (res) => {
             const serverItems: IServerItemModel[] = await res.json();
             setServerItems(serverItems);
@@ -37,7 +37,7 @@ export const useServerItems = (
             setIsLoading(false);
           });
       } else {
-        find()
+        find({ installStatus: 1 })
           .then(async (res) => {
             const serverItems: IServerItemModel[] = await res.json();
             setServerItems(serverItems);
