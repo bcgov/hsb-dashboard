@@ -1,0 +1,36 @@
+@import '@/styles/utils.scss';
+
+.breadcrumbs {
+    display: flex;
+    width: 100%;
+    max-width: 1310px;
+    margin: 0 auto 34px auto;
+    padding-left: 22px;
+    font-weight: bold;
+    gap: 3rem;
+
+    >div:not(:first-of-type) {
+        position: relative;
+        max-width: 34%;
+
+        &::before {
+            content: "";
+            height: 8px;
+            width: 8px;
+            border-right: 2px solid #313132;
+            border-bottom: 2px solid #313132;
+            display: block;
+            position: absolute;
+            left: -30px;
+            top: 9px;
+            transform: rotate(-45deg);
+            pointer-events: none;
+        }
+    }
+
+    p {
+        font-size: $font-size-20;
+        color: $bc-black;
+        @include ellipsis;
+    }
+}

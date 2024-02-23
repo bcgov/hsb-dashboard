@@ -118,7 +118,7 @@
 
   .storage,
   .admin {
-    @include nav-icon('../../../public/images/home-icon.png');
+    @include nav-icon('../../../public/images/dashboard-icon.png');
   }
 
   .admin::before {
@@ -150,8 +150,12 @@
   right: 0;
   top: 4px;
   font-weight: 300;
-  text-decoration: underline;
   color: $white;
+  @include nav-icon('../../../public/images/server-icon.png');
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .navLine {

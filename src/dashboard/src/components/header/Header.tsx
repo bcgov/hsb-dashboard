@@ -82,7 +82,7 @@ export const Header: React.FC = () => {
                               path.startsWith(`/${rootPath}/dashboard`) && style.active
                             } ${style.storage}`}
                           >
-                            Storage
+                            Dashboard
                           </ConfirmLink>
                           {(isOrganizationAdmin || isSystemAdmin) && showAdminNav && (
                             <ConfirmLink
@@ -97,7 +97,7 @@ export const Header: React.FC = () => {
                         </nav>
                         {(isDashboardView || isServerView) && (
                           <ConfirmLink href={`/${rootPath}/servers`} className={style.allServers}>
-                            See all servers
+                            All servers
                           </ConfirmLink>
                         )}
                         {isSystemAdmin && !isDashboardView && !isServerView && isAdminView && (

@@ -32,7 +32,7 @@ export const AllOrganizations = ({
   return (
     <div className={styles.panel}>
       {loading && <LoadingAnimation />}
-      <h1>All Organizations</h1>
+      <h1>All Storage</h1>
       <div className={styles.chartContainer}>
         <div className={styles.info}>
           <h2>Totals for {organizations.length} organizations</h2>
