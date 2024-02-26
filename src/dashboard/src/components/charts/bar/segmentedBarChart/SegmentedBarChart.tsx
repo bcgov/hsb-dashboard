@@ -9,6 +9,7 @@ import { useStorageTrendsStore } from '@/store';
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, Title, Tooltip } from 'chart.js';
 import moment from 'moment';
 import React from 'react';
+import { toast } from 'react-toastify';
 import { LoadingAnimation } from '../../../loadingAnimation';
 import { defaultOptions } from './defaultOptions';
 import { useFileSystemHistoryItems } from './hooks';
@@ -63,7 +64,9 @@ export const SegmentedBarChart = ({
         serverItemServiceNowKey: serverItem.serviceNowKey,
         startDate: values[0] ? values[0] : undefined,
         endDate: values[1] ? values[1] : undefined,
-      }).catch((error) => {
+      }).catch((ex) => {
+        const error = ex as Error;
+        toast.error(error.message);
         console.error(error);
       });
     }
@@ -116,7 +119,9 @@ export const SegmentedBarChart = ({
                 startDate: values[0] ? values[0] : undefined,
                 endDate: values[1] ? values[1] : undefined,
               });
-            } catch (error) {
+            } catch (ex) {
+              const error = ex as Error;
+              toast.error(error.message);
               console.error(error);
             }
           }}

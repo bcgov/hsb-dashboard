@@ -2,7 +2,7 @@
 
 import styles from './Users.module.scss';
 
-import { AdminLoadingAnimation, Button, Checkbox, Info, Sheet, Table, Text } from '@/components';
+import { AdminLoadingAnimation, Button, Info, Sheet, Table, Text } from '@/components';
 import { IUserForm, UserDialog, UserDialogVariant } from '@/components/admin';
 import { LoadingAnimation } from '@/components/loadingAnimation';
 import { useAuth } from '@/hooks';
@@ -12,12 +12,17 @@ import { useNavigateStore } from '@/store';
 import { searchUsers } from '@/utils';
 import { redirect } from 'next/navigation';
 import React from 'react';
+import { toast } from 'react-toastify';
+import { AddNewUserRow } from './AddNewUserRow';
+import { EditUserRow } from './EditUserRow';
+import { defaultUser } from './defaultUser';
+import { validateUser } from './validateUser';
 
 export default function Page() {
   const state = useAuth();
   const { isReady: isReadyUsers, users } = useUsers({ includePermissions: true, init: true });
   const { isReady: isReadyGroups } = useGroups({ init: true });
-  const { update: updateUser } = useApiUsers();
+  const { update: updateUser, add: addUser } = useApiUsers();
   const setEnableNavigate = useNavigateStore((state) => state.setEnableNavigate);
 
   const [loading, setLoading] = React.useState(true);
@@ -25,18 +30,14 @@ export default function Page() {
   const [filteredUsers, setFilteredUsers] = React.useState<number[]>([]);
   const [filter, setFilter] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [newRows, setNewRows] = React.useState<React.ReactNode[]>([]);
+  const [errors, setErrors] = React.useState<{
+    [key: string]: { [K in keyof IUserForm]?: string };
+  }>({});
 
   const dialogRef = React.useRef<HTMLDialogElement>(null);
   const [dialog, setDialog] = React.useState<{ user: IUserForm; variant: UserDialogVariant }>();
 
   const isDirty = formUsers.some((u) => u.isDirty);
-
-  const handleAddNewRow = () => {
-    const newRowKey = `newRow-${newRows.length}`;
-    const newRowElement = <AddNewRow key={newRowKey} />;
-    setNewRows([newRowElement, ...newRows]);
-  };  
 
   React.useEffect(() => {
     setLoading(!isReadyUsers && !isReadyGroups);
@@ -59,28 +60,41 @@ export default function Page() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [users]);
 
-  const handleSearch = React.useCallback(() => {
-    setFilteredUsers(searchUsers(formUsers, filter).map((u) => u.id));
-  }, [filter, formUsers]);
+  const handleSearch = React.useCallback(
+    (users: IUserForm[]) => {
+      setFilteredUsers(searchUsers(users, filter).map((u) => u.id));
+    },
+    [filter],
+  );
+
+  const handleAddNewRow = React.useCallback((users: IUserForm[]) => {
+    var newUsers = [defaultUser(), ...users];
+    setFormUsers(newUsers);
+    searchUsers(newUsers);
+  }, []);
 
   const handleUpdate = React.useCallback(async () => {
     setIsSubmitting(true);
     const update = formUsers.map(async (user) => {
       if (user.isDirty) {
-        let result = user;
-        try {
-          setFormUsers((users) =>
-            users.map((fu) => (fu.id === user.id ? { ...result, isSubmitting: true } : fu)),
-          );
-          const res = await updateUser(user);
-          result = await res.json();
-          return { ...result, isDirty: false };
-        } catch (error) {
-          console.error(error);
-        } finally {
-          setFormUsers((users) =>
-            users.map((fu) => (fu.id === user.id ? { ...result, isSubmitting: false } : fu)),
-          );
+        if (validateUser(user, setErrors)) {
+          let result = user;
+          try {
+            setFormUsers((users) =>
+              users.map((fu) => (fu.key === user.key ? { ...result, isSubmitting: true } : fu)),
+            );
+            const res = user.id ? await updateUser(user) : await addUser(user);
+            result = await res.json();
+            return { ...result, isDirty: false };
+          } catch (ex) {
+            const error = ex as Error;
+            toast.error(error.message);
+            console.error(error);
+          } finally {
+            setFormUsers((users) =>
+              users.map((fu) => (fu.key === user.key ? { ...result, isSubmitting: false } : fu)),
+            );
+          }
         }
       }
       return user;
@@ -89,10 +103,11 @@ export default function Page() {
     setIsSubmitting(false);
     setFormUsers((users) =>
       users.map((user) => {
-        return results.find((u) => u.id === user.id) ?? user;
+        return results.find((u) => u.key === user.key) ?? user;
       }),
     );
-  }, [updateUser, formUsers]);
+    handleSearch(results);
+  }, [formUsers, handleSearch, updateUser, addUser]);
 
   const handleEditClick = (user: IUserForm, variant: UserDialogVariant) => {
     setDialog({ user, variant });
@@ -109,9 +124,10 @@ export default function Page() {
         ref={dialogRef}
         user={dialog?.user}
         variant={dialog?.variant}
+        cancelLabel="Close"
         onChange={(data) =>
           setFormUsers((formUsers) =>
-            formUsers.map((u) => (u.id === data.id ? { ...data, isDirty: true } : u)),
+            formUsers.map((u) => (u.key === data.key ? { ...data, isDirty: true } : u)),
           )
         }
         onSave={async () => {
@@ -133,10 +149,10 @@ export default function Page() {
               iconType="search"
               onChange={(e) => setFilter(e.target.value)}
               onKeyDown={(e) => {
-                if (e.code === 'Enter') handleSearch();
+                if (e.code === 'Enter') handleSearch(formUsers);
               }}
             />
-            <Button variant="secondary" onClick={() => handleSearch()}>
+            <Button variant="secondary" onClick={() => handleSearch(formUsers)}>
               Search
             </Button>
           </div>
@@ -144,9 +160,14 @@ export default function Page() {
 
         <div className={styles.table}>
           <Table
+            rowKey={(item) => item.key}
             rows={formUsers
-              .filter((u) => filteredUsers.some((user) => user === u.id))
-              .map((user, index) => ({ data: user, index, loading: user.isSubmitting }))}
+              .filter((u) => !u.id || filteredUsers.some((userId) => userId === u.id))
+              .map((user, index) => ({
+                data: user,
+                index,
+                loading: user.isSubmitting,
+              }))}
             header={
               <>
                 <div>Username</div>
@@ -157,68 +178,44 @@ export default function Page() {
               </>
             }
             addNew={
-              <>
-              <div className={styles.newRow} onClick={handleAddNewRow}>
+              <div className={styles.newRow} onClick={() => handleAddNewRow(formUsers)}>
                 <span>+</span> Add new user
               </div>
-                {newRows.map(newRow => newRow)}
-              </>
             }
           >
-            {({ data }) => {
-              return (
-                <>
-                  <div>{data.username}</div>
-                  <div>{data.email}</div>
-                  <div>{data.displayName}</div>
-                  <div className={styles.checkbox}>
-                    <Checkbox
-                      checked={data.isEnabled}
-                      onChange={(e) => {
-                        setFormUsers((formUsers) =>
-                          formUsers.map((r) =>
-                            r.id === data.id
-                              ? { ...data, isEnabled: e.target.checked, isDirty: true }
-                              : r,
-                          ),
-                        );
-                      }}
-                    />
-                  </div>
-                  <div className={styles.selectRow}>
-                    <div>
-                      <p>
-                        <span>Roles: </span>
-                        {data.groups?.map((org) => org.name).join(', ')}
-                      </p>
-                      <Button variant="secondary" onClick={() => handleEditClick(data, 'group')}>
-                        Edit
-                      </Button>
-                    </div>
-                    <div>
-                      <p>
-                        <span>Organizations: </span>
-                        {data.organizations?.map((org) => org.name).join(', ')}
-                      </p>
-                      <Button
-                        variant="secondary"
-                        onClick={() => handleEditClick(data, 'organization')}
-                      >
-                        Edit
-                      </Button>
-                    </div>
-                    <div>
-                      <p>
-                        <span>Tenant: </span>
-                        {data.tenants?.map((org) => org.name).join(', ')}
-                      </p>
-                      <Button variant="secondary" onClick={() => handleEditClick(data, 'tenant')}>
-                        Edit
-                      </Button>
-                    </div>
-                  </div>
-                </>
-              );
+            {({ data, index }) => {
+              if (!data.id) {
+                return (
+                  <AddNewUserRow
+                    index={index}
+                    values={data}
+                    errors={errors[data.key]}
+                    onChange={(values) => {
+                      setFormUsers((users) =>
+                        users.map((u) => (u.key === values.key ? values : u)),
+                      );
+                    }}
+                    onEditGroups={(values) => handleEditClick(values, 'group')}
+                    onEditOrganizations={(values) => handleEditClick(values, 'organization')}
+                    onEditTenants={(values) => handleEditClick(values, 'tenant')}
+                  />
+                );
+              } else {
+                return (
+                  <EditUserRow
+                    index={index}
+                    values={data}
+                    onChange={(values) => {
+                      setFormUsers((users) =>
+                        users.map((u, i) => (u.id === values.id ? values : u)),
+                      );
+                    }}
+                    onEditGroups={(values) => handleEditClick(values, 'group')}
+                    onEditOrganizations={(values) => handleEditClick(values, 'organization')}
+                    onEditTenants={(values) => handleEditClick(values, 'tenant')}
+                  />
+                );
+              }
             }}
           </Table>
         </div>
@@ -234,42 +231,3 @@ export default function Page() {
     </Sheet>
   );
 }
-
-const AddNewRow = () => {
-  return (
-    <div className={styles.addNewRow}>
-    <div><Text placeholder="Username" /></div>
-    <div><Text placeholder="Email" /></div>
-    <div><Text placeholder="Name" /></div>
-    <div className={styles.checkbox}><Checkbox /></div>
-    <div className={styles.selectRow}>
-      <div>
-        <p>
-          <span>Roles: </span>
-        </p>
-        <Button variant="secondary">
-          Edit
-        </Button>
-      </div>
-      <div>
-        <p>
-          <span>Organizations: </span>
-        </p>
-        <Button
-          variant="secondary"
-        >
-          Edit
-        </Button>
-      </div>
-      <div>
-        <p>
-          <span>Tenant: </span>
-        </p>
-        <Button variant="secondary">
-          Edit
-        </Button>
-      </div>
-    </div>
-  </div>
-  );
-};

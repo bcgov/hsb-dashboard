@@ -3,6 +3,8 @@ import '@/styles/_fonts.scss';
 import '@/styles/globals.scss';
 import type { Metadata } from 'next';
 import React from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const metadata: Metadata = {
   title: 'Hosting Storage Dashboard',
@@ -18,9 +20,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </head>
         <body className="bg-gray">
           <Header />
-          <div className="dashboardContainer">
-            {children}
-          </div>
+          <div className="dashboardContainer">{children}</div>
+          <ToastContainer />
           <Footer />
         </body>
       </SessionProviderWrapper>

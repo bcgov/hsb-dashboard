@@ -1,6 +1,7 @@
 import { IOption } from '@/components';
 import { useAppStore } from '@/store';
 import React from 'react';
+import { toast } from 'react-toastify';
 import { IRoleModel, useAuth } from '..';
 import { useApiRoles } from '../api/admin';
 
@@ -27,7 +28,9 @@ export const useRoles = ({ init }: IUsersProps = {}) => {
           const roles: IRoleModel[] = await res.json();
           setRoles(roles);
         })
-        .catch((error) => {
+        .catch((ex) => {
+          const error = ex as Error;
+          toast.error(error.message);
           console.error(error);
         })
         .finally(() => {

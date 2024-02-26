@@ -1,6 +1,7 @@
 import { useAppStore } from '@/store';
 import { getUserOptions } from '@/utils';
 import React from 'react';
+import { toast } from 'react-toastify';
 import { IUserModel, useAuth } from '..';
 import { useApiUsers } from '../api/admin';
 
@@ -29,7 +30,9 @@ export const useUsers = ({ includePermissions, init }: IUserProps = {}) => {
           const users: IUserModel[] = await res.json();
           setUsers(users);
         })
-        .catch((error) => {
+        .catch((ex) => {
+          const error = ex as Error;
+          toast.error(error.message);
           console.error(error);
         })
         .finally(() => {
@@ -50,7 +53,9 @@ export const useUsers = ({ includePermissions, init }: IUserProps = {}) => {
             const user = await response.json();
             setUsers(users.map((u) => (u.id === userInfo.id ? user : u)));
           })
-          .catch((error) => {
+          .catch((ex) => {
+            const error = ex as Error;
+            toast.error(error.message);
             console.error(error);
           });
       }

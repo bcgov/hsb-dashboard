@@ -10,3 +10,4 @@ export * from './searchOrganizations';
 export * from './searchUsers';
 export * from './sessionTokenAccessor';
 export * from './toQueryString';
+export * from './validateEmail';

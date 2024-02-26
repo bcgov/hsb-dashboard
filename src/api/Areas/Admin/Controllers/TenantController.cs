@@ -94,7 +94,7 @@ public class TenantController : ControllerBase
         _service.Add(entity);
         _service.CommitTransaction();
 
-        var result = _service.FindForId(model.Id, true);
+        var result = _service.FindForId(entity.Id, true);
         if (result == null) return new BadRequestObjectResult(new ErrorResponseModel("Tenant does not exist"));
         return CreatedAtAction(nameof(GetForId), new { id = result.Id }, new TenantModel(result, true));
     }

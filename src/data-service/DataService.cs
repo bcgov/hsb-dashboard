@@ -404,6 +404,23 @@ public class DataService : IDataService
             // Add the server item to HSB.
             this.Logger.LogDebug("Add File System Item: '{id}'", configurationItemSN.Data?.Id);
             fileSystemItem = await this.HsbApi.AddFileSystemItemAsync(new Hsb.FileSystemItemModel(serverItem.ServiceNowKey, fileSystemItemSN, configurationItemSN));
+            if (fileSystemItem != null)
+            {
+                // Fetch the updated Server Item.
+                var serverItemHsb = await this.HsbApi.GetServerItemAsync(fileSystemItem.ServerItemServiceNowKey);
+                if (serverItemHsb != null)
+                {
+                    if (_serverItems.ContainsKey(fileSystemItem.ServerItemServiceNowKey))
+                    {
+                        _serverItems[fileSystemItem.ServerItemServiceNowKey] = serverItemHsb;
+                    }
+                    else
+                    {
+                        _serverItems.Add(fileSystemItem.ServerItemServiceNowKey, serverItemHsb);
+                    }
+                }
+
+            }
         }
         else if (fileSystemItem.UpdatedOn.AddHours(UPDATE_LIMITER).ToUniversalTime() <= DateTime.UtcNow)
         {
@@ -434,6 +451,23 @@ public class DataService : IDataService
             fileSystemItem.FreeSpaceBytes = !String.IsNullOrWhiteSpace(fileSystemItemSN.Data.FreeSpaceBytes) ? long.Parse(fileSystemItemSN.Data.FreeSpaceBytes) : 0;
 
             fileSystemItem = await this.HsbApi.UpdateFileSystemItemAsync(fileSystemItem);
+            if (fileSystemItem != null)
+            {
+                // Fetch the updated Server Item.
+                var serverItemHsb = await this.HsbApi.GetServerItemAsync(fileSystemItem.ServerItemServiceNowKey);
+                if (serverItemHsb != null)
+                {
+                    if (_serverItems.ContainsKey(fileSystemItem.ServerItemServiceNowKey))
+                    {
+                        _serverItems[fileSystemItem.ServerItemServiceNowKey] = serverItemHsb;
+                    }
+                    else
+                    {
+                        _serverItems.Add(fileSystemItem.ServerItemServiceNowKey, serverItemHsb);
+                    }
+                }
+
+            }
         }
 
         return fileSystemItem;
@@ -752,6 +786,14 @@ public class DataService : IDataService
                         this.Logger.LogWarning("Configuration item could not be found: {key}", serverItem.ServiceNowKey);
                     }
                 }
+            }
+            catch (HttpRequestException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    await this.HsbApi.DeleteServerItemAsync(serverItem);
+                }
+                this.Logger.LogError(ex, "Failed to fetch server item: {key}", serverItem.ServiceNowKey);
             }
             catch (Exception ex)
             {

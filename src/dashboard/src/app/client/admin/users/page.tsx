@@ -21,6 +21,7 @@ import { useGroups, useTenants, useUsers } from '@/hooks/data';
 import { useAppStore, useNavigateStore } from '@/store';
 import { redirect } from 'next/navigation';
 import React from 'react';
+import { toast } from 'react-toastify';
 import { getOrganizationOptions, getTenantOptions, searchUsers } from './utils';
 
 export default function Page() {
@@ -105,7 +106,9 @@ export default function Page() {
           const res = await updateUser(user);
           result = await res.json();
           return { ...result, isDirty: false };
-        } catch (error) {
+        } catch (ex) {
+          const error = ex as Error;
+          toast.error(error.message);
           console.error(error);
         } finally {
           setFormUsers((users) =>

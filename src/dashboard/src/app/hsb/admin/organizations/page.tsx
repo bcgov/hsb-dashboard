@@ -11,6 +11,7 @@ import { useAppStore, useNavigateStore } from '@/store';
 import { searchOrganizations } from '@/utils';
 import { redirect } from 'next/navigation';
 import React from 'react';
+import { toast } from 'react-toastify';
 import { IOrganizationForm } from './IOrganizationForm';
 
 export default function Page() {
@@ -64,7 +65,9 @@ export default function Page() {
           const res = await updateOrganization(organization);
           const result: IOrganizationModel = await res.json();
           return { ...result, isDirty: false };
-        } catch (error) {
+        } catch (ex) {
+          const error = ex as Error;
+          toast.error(error.message);
           console.error(error);
         }
       }

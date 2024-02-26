@@ -1,7 +1,7 @@
 import { LoadingAnimation } from '..';
+import { ITableAddNewProps } from './ITableAddNewProps';
 import { ITableFooterProps } from './ITableFooterProps';
 import { ITableHeaderProps } from './ITableHeaderProps';
-import { ITableAddNewProps } from './ITableAddNewProps';
 import { ITableRowProps } from './ITableRowProps';
 import styles from './Table.module.scss';
 
@@ -50,13 +50,13 @@ export const Table = <T extends object>({
         {showAddNew && (
           <>
             {typeof addNew === 'function'
-            ? (addNew as (props: ITableAddNewProps<T>) => React.ReactNode)({
-                data: rows.map((r) => r.data),
-              })
-            : addNew}
+              ? (addNew as (props: ITableAddNewProps<T>) => React.ReactNode)({
+                  data: rows.map((r) => r.data),
+                })
+              : addNew}
           </>
         )}
-        
+
         {rows.map((row, index) => {
           return (
             <div

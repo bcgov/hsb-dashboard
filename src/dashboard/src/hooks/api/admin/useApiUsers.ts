@@ -19,6 +19,17 @@ export const useApiUsers = () => {
       ): Promise<Response> => {
         return await dispatch(`/api/admin/users/${id}?${toQueryString(options)}`);
       },
+      add: async (model: IUserModel): Promise<Response> => {
+        const url = `/api/admin/users`;
+        const res = await dispatch(url, {
+          method: 'POST',
+          headers: {
+            'Content-type': 'application/json',
+          },
+          body: JSON.stringify(model),
+        });
+        return res;
+      },
       update: async (model: IUserModel): Promise<Response> => {
         const url = `/api/admin/users/${model.id}`;
         const res = await dispatch(url, {
@@ -28,7 +39,6 @@ export const useApiUsers = () => {
           },
           body: JSON.stringify(model),
         });
-        if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
         return res;
       },
     }),

@@ -95,14 +95,12 @@
 .addNewRow {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid $medium-gray;
-  padding: 0.5rem;
   gap: 1rem;
 
   &:hover {
     background-color: rgba($light-gray, 0.4);
   }
-  
+
   div {
     flex: 1;
   }

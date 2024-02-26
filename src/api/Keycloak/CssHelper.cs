@@ -188,7 +188,6 @@ public class CssHelper : ICssHelper
 
                 // Apply the preapproved roles to the user.
                 var roles = await UpdateUserRolesAsync(key.ToString(), preapprovedRoles);
-                // user.Roles = String.Join(",", roles.Select(r => $"[{r}]"));
                 _userService.Update(user);
                 return user;
             }

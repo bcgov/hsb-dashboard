@@ -15,6 +15,7 @@ import {
 } from 'chart.js';
 import moment from 'moment';
 import React from 'react';
+import { toast } from 'react-toastify';
 import { LineChart } from '../line';
 import styles from './StorageTrendsChart.module.scss';
 import { useServerHistoryItems } from './hooks';
@@ -73,7 +74,9 @@ export const StorageTrendsChart: React.FC<LineChartProps> = ({
         serviceNowKey: serverItemKey,
         startDate: values[0],
         endDate: values[1] ? values[1] : undefined,
-      }).catch((error) => {
+      }).catch((ex) => {
+        const error = ex as Error;
+        toast.error(error.message);
         console.error(error);
       });
     }

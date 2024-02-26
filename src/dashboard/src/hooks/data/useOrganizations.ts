@@ -1,5 +1,6 @@
 import { useAppStore } from '@/store';
 import React from 'react';
+import { toast } from 'react-toastify';
 import { IOrganizationModel, useApiOrganizations, useAuth } from '..';
 
 export interface IOrganizationsProps {
@@ -26,7 +27,9 @@ export const useOrganizations = ({ init, includeTenants }: IOrganizationsProps =
           const organizations: IOrganizationModel[] = await res.json();
           setOrganizations(organizations);
         })
-        .catch((error) => {
+        .catch((ex) => {
+          const error = ex as Error;
+          toast.error(error.message);
           console.error(error);
         })
         .finally(() => {

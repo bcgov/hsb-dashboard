@@ -49,29 +49,38 @@ export const authOptions: AuthOptions = {
       token,
       account,
       user,
+      trigger,
+      session,
     }: {
       token: JWT;
       account: Account | null;
       user: User | null;
+      trigger?: 'signIn' | 'update' | 'signUp' | undefined;
+      session?: any;
     }) {
       const nowTimeStamp = Math.floor(Date.now() / 1000);
       const aToken = token as any;
 
-      if (account && user) {
-        token.access_token = account.access_token;
-        token.id_token = account.id_token;
-        token.expires_at = account.expires_at;
-        token.refresh_token = account.refresh_token;
-        const decodedToken = jwtDecode(`${account.access_token}`) as any;
-        token.decoded = decodedToken;
-        token.roles = decodedToken?.resource_access?.['registry-web']?.roles;
-        return token;
-      } else if (nowTimeStamp < aToken.expires_at) {
-        // Token has not expired.
+      if (trigger === 'update') {
+        token.roles = session.user.roles;
         return token;
       } else {
-        const refreshToken = await refreshAccessToken(token);
-        return refreshToken;
+        if (account && user) {
+          token.access_token = account.access_token;
+          token.id_token = account.id_token;
+          token.expires_at = account.expires_at;
+          token.refresh_token = account.refresh_token;
+          const decodedToken = jwtDecode(`${account.access_token}`) as any;
+          token.decoded = decodedToken;
+          token.roles = decodedToken?.resource_access?.['registry-web']?.roles;
+          return token;
+        } else if (nowTimeStamp < aToken.expires_at) {
+          // Token has not expired.
+          return token;
+        } else {
+          const refreshToken = await refreshAccessToken(token);
+          return refreshToken;
+        }
       }
     },
     async signIn({ user, account }) {

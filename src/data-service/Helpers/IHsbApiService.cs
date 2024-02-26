@@ -104,6 +104,13 @@ public interface IHsbApiService
     Task<IEnumerable<ServerItemModel>> FetchServerItemsAsync(Models.Filters.ServerItemFilter? filter = null);
 
     /// <summary>
+    /// Get server item from HSB.
+    /// </summary>
+    /// <param name="serviceNowKey"></param>
+    /// <returns></returns>
+    Task<ServerItemModel?> GetServerItemAsync(string serviceNowKey);
+
+    /// <summary>
     /// Add server item to HSB.
     /// </summary>
     /// <param name="model"></param>
