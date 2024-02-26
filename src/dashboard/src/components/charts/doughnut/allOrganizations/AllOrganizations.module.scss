@@ -69,6 +69,11 @@
     width: 53%;
     padding: 10px 0 0 45px;
     position: relative;
+
+    canvas {
+        position: relative;
+        z-index: 1;
+    }
 }
 
 .total {

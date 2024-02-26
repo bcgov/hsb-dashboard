@@ -34,7 +34,7 @@
   }
 
   &.filterPadding {
-    margin-bottom: 78px;
+    margin-bottom: 61px;
     min-height: 260px;
   }
 
@@ -80,6 +80,7 @@
   margin: 20px 0 20px;
   font-size: $font-size-normal;
   font-weight: 300;
+  min-height: 48px;
 
   p {
     font-size: $font-size-18;
@@ -152,6 +153,13 @@
   font-weight: 300;
   color: $white;
   @include nav-icon('../../../public/images/server-icon.png');
+
+  &::before {
+    background-size: contain;
+    height: 18px;
+    width: 18px;
+    top: 3px;
+  }
 
   &:hover {
     text-decoration: underline;
