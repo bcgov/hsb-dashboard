@@ -10,6 +10,7 @@ import {
   StorageTrendsChart,
   TotalStorage,
 } from '@/components/charts';
+import { Breadcrumbs } from '@/components/breadcrumbs';
 import { IOperatingSystemItemModel, IServerItemModel } from '@/hooks';
 import {
   useDashboardOperatingSystemItems,
@@ -136,6 +137,7 @@ export const Dashboard = () => {
 
   return (
     <>
+      <Breadcrumbs multipleOrganizations={organizations.length > 1} />
       {/* Single Organization total storage */}
       {showTotalStorage && (
         <TotalStorage

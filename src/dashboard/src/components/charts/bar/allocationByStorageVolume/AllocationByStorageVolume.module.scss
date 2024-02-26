@@ -26,8 +26,6 @@
   max-height: 345px;
   overflow-y: scroll;
   padding-right: 8px;
-  scrollbar-width: thin;
-  scrollbar-color: $chart-gray $light-gray;
 
   @include scrollBar;
 }
