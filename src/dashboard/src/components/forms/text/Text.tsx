@@ -16,6 +16,8 @@ interface TextProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string;
   /** Control the input */
   disabled?: boolean;
+  /** An error */
+  error?: string;
   /** Event fires when input changes. */
   onChange?: ChangeEventHandler<HTMLInputElement>;
   //** Event fires when input blurs */
@@ -32,6 +34,7 @@ export const Text: React.FC<TextProps> = ({
   iconType,
   className = '',
   disabled,
+  error,
   onChange,
   value: initValue = '',
   ...rest
@@ -66,6 +69,7 @@ export const Text: React.FC<TextProps> = ({
         }}
         {...rest}
       />
+      {error && <div className={`${styles.error} frm-in-error`}>{error}</div>}
     </>
   );
 };

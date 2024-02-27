@@ -1,5 +1,6 @@
 import { useAppStore } from '@/store';
 import React from 'react';
+import { toast } from 'react-toastify';
 import { IOperatingSystemItemModel, useApiOperatingSystemItems, useAuth } from '..';
 
 export interface IOperatingSystemItemsProps {
@@ -37,7 +38,9 @@ export const useOperatingSystemItems = ({
           const operatingSystemItems: IOperatingSystemItemModel[] = await res.json();
           setOperatingSystemItems(operatingSystemItems);
         })
-        .catch((error) => {
+        .catch((ex) => {
+          const error = ex as Error;
+          toast.error(error.message);
           console.error(error);
         })
         .finally(() => {

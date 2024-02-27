@@ -102,12 +102,12 @@ public class UserController : ControllerBase
     [SwaggerOperation(Tags = new[] { "User" })]
     public IActionResult Add(UserModel model)
     {
-        var user = (Entities.User)model;
-        if (String.IsNullOrWhiteSpace(user.Key) || user.Key == Guid.Empty.ToString()) user.Key = Guid.NewGuid().ToString();
-        var entry = _userService.Add(user);
+        var entity = (Entities.User)model;
+        if (String.IsNullOrWhiteSpace(entity.Key) || entity.Key == Guid.Empty.ToString()) entity.Key = Guid.NewGuid().ToString();
+        var entry = _userService.Add(entity);
         _userService.CommitTransaction();
 
-        var result = _userService.FindForId(model.Id, true);
+        var result = _userService.FindForId(entity.Id, true);
         if (result == null) return new BadRequestObjectResult(new ErrorResponseModel("User does not exist"));
         return CreatedAtAction(nameof(GetForId), new { id = result.Id }, new UserModel(result));
     }

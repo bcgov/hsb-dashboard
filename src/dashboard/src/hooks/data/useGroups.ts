@@ -1,6 +1,7 @@
 import { IOption } from '@/components';
 import { useAppStore } from '@/store';
 import React from 'react';
+import { toast } from 'react-toastify';
 import { IGroupModel, useAuth } from '..';
 import { useApiGroups } from '../api/admin';
 
@@ -27,7 +28,9 @@ export const useGroups = ({ init }: IGroupsProps = {}) => {
           const groups: IGroupModel[] = await res.json();
           setGroups(groups);
         })
-        .catch((error) => {
+        .catch((ex) => {
+          const error = ex as Error;
+          toast.error(error.message);
           console.error(error);
         })
         .finally(() => {

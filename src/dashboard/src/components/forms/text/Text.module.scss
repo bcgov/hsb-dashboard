@@ -1,6 +1,12 @@
 @import '@/styles/utils.scss';
 
 .textInput {
-    font-family: "BCSans";
-    font-size: $font-size-normal;
+  font-family: "BCSans";
+  font-size: $font-size-normal;
+}
+
+.error {
+  color: red;
+  font-size: 0.8rem;
+  position: absolute;
 }

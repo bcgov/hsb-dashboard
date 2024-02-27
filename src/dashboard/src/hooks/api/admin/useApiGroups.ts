@@ -22,7 +22,6 @@ export const useApiGroups = () => {
           },
           body: JSON.stringify(model),
         });
-        if (!res.ok) throw new Error(`${res.status}: ${res.statusText}`);
         return res;
       },
     }),

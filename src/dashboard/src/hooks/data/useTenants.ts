@@ -1,5 +1,6 @@
 import { useAppStore } from '@/store';
 import React from 'react';
+import { toast } from 'react-toastify';
 import { ITenantModel, useApiTenants, useAuth } from '..';
 
 export interface ITenantsProps {
@@ -25,7 +26,9 @@ export const useTenants = ({ init }: ITenantsProps = {}) => {
           const tenants: ITenantModel[] = await res.json();
           setTenants(tenants);
         })
-        .catch((error) => {
+        .catch((ex) => {
+          const error = ex as Error;
+          toast.error(error.message);
           console.error(error);
         })
         .finally(() => {

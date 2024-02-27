@@ -1,5 +1,6 @@
 import { useAppStore } from '@/store';
 import React from 'react';
+import { toast } from 'react-toastify';
 import { IServerItemModel, useApiServerItems, useAuth } from '..';
 
 export interface IServerItemsProps {
@@ -29,7 +30,9 @@ export const useServerItems = (
             const serverItems: IServerItemModel[] = await res.json();
             setServerItems(serverItems);
           })
-          .catch((error) => {
+          .catch((ex) => {
+            const error = ex as Error;
+            toast.error(error.message);
             console.error(error);
           })
           .finally(() => {
@@ -42,7 +45,9 @@ export const useServerItems = (
             const serverItems: IServerItemModel[] = await res.json();
             setServerItems(serverItems);
           })
-          .catch((error) => {
+          .catch((ex) => {
+            const error = ex as Error;
+            toast.error(error.message);
             console.error(error);
           })
           .finally(() => {

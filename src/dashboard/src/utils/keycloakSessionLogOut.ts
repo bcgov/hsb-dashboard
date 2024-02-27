@@ -1,4 +1,5 @@
 import { signOut } from 'next-auth/react';
+import { toast } from 'react-toastify';
 
 export const keycloakSessionLogOut = async () => {
   try {
@@ -6,7 +7,9 @@ export const keycloakSessionLogOut = async () => {
     const body = await res.text();
     if (res.status === 500) throw new Error(body);
     await signOut({ redirect: true, callbackUrl: '/' });
-  } catch (error) {
+  } catch (ex) {
+    const error = ex as Error;
+    toast.error(error.message);
     console.error(error);
   }
 };

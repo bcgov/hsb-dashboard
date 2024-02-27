@@ -9,6 +9,15 @@ export const dispatch = async (
   if (response.status === 401) signOut();
 
   // Throw an error so that it bubbles out.
-  if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`);
+  if (!response.ok) {
+    let message = response.statusText;
+
+    try {
+      const error = await response.json();
+      if (!!error.error) message = error.error;
+    } catch {}
+
+    throw new Error(`${response.status}: ${message}`);
+  }
   return response;
 };

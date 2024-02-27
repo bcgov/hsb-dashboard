@@ -306,6 +306,21 @@ public class HsbApiService : IHsbApiService
     }
 
     /// <summary>
+    /// Get server item from HSB.
+    /// </summary>
+    /// <param name="serviceNowKey"></param>
+    /// <returns></returns>
+    public async Task<ServerItemModel?> GetServerItemAsync(string serviceNowKey)
+    {
+        this.Logger.LogDebug("HSB - Get server item: {serviceNowKey}", serviceNowKey);
+        var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
+        {
+            Path = $"{this.Options.Endpoints.ServerItems}/{serviceNowKey}"
+        };
+        return await HsbSendAsync<ServerItemModel?>(HttpMethod.Get, builder.Uri);
+    }
+
+    /// <summary>
     /// Add server item to HSB.
     /// </summary>
     /// <param name="model"></param>
