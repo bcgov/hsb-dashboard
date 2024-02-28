@@ -7,6 +7,10 @@
     >button {
         @include export-btn;
     }
+
+    h2 {
+        margin: 12px 0 16px;
+    }
 }
 
 .filter {
