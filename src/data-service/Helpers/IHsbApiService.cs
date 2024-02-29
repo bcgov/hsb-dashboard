@@ -121,8 +121,9 @@ public interface IHsbApiService
     /// Update server item in HSB.
     /// </summary>
     /// <param name="model"></param>
+    /// <param name="updateTotals"></param>
     /// <returns></returns>
-    Task<ServerItemModel?> UpdateServerItemAsync(ServerItemModel model);
+    Task<ServerItemModel?> UpdateServerItemAsync(ServerItemModel model, bool updateTotals = false);
 
     /// <summary>
     /// Delete server item in HSB.
@@ -143,8 +144,9 @@ public interface IHsbApiService
     ///Get the file system item from HSB for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="name"></param>
     /// <returns></returns>
-    Task<FileSystemItemModel?> GetFileSystemItemAsync(string id);
+    Task<FileSystemItemModel?> GetFileSystemItemAsync(string id, string? name = null);
 
     /// <summary>
     /// Add file system item to HSB.
@@ -159,5 +161,12 @@ public interface IHsbApiService
     /// <param name="model"></param>
     /// <returns></returns>
     Task<FileSystemItemModel?> UpdateFileSystemItemAsync(FileSystemItemModel model);
+
+    /// <summary>
+    /// Delete file system item in HSB.
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    Task<FileSystemItemModel?> DeleteFileSystemItemAsync(FileSystemItemModel model);
     #endregion
 }

@@ -340,13 +340,14 @@ public class HsbApiService : IHsbApiService
     /// Update server item in HSB.
     /// </summary>
     /// <param name="model"></param>
+    /// <param name="updateTotals"></param>
     /// <returns></returns>
-    public async Task<ServerItemModel?> UpdateServerItemAsync(ServerItemModel model)
+    public async Task<ServerItemModel?> UpdateServerItemAsync(ServerItemModel model, bool updateTotals = false)
     {
         this.Logger.LogDebug("HSB - Update server item");
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
         {
-            Path = $"{this.Options.Endpoints.ServerItems}/{model.ServiceNowKey}"
+            Path = $"{this.Options.Endpoints.ServerItems}/{model.ServiceNowKey}?updateTotals={updateTotals}"
         };
         var results = await HsbSendAsync<ServerItemModel>(HttpMethod.Put, builder.Uri, JsonContent.Create(model));
         return results;
@@ -389,12 +390,14 @@ public class HsbApiService : IHsbApiService
     /// Get the file system item from HSB for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="name"></param>
     /// <returns></returns>
-    public async Task<FileSystemItemModel?> GetFileSystemItemAsync(string id)
+    public async Task<FileSystemItemModel?> GetFileSystemItemAsync(string id, string? name = null)
     {
         this.Logger.LogDebug("HSB - Get file system item");
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
         {
+            Query = !String.IsNullOrWhiteSpace(name) ? $"name={name}" : "",
             Path = $"{this.Options.Endpoints.FileSystemItems}/{id}"
         };
         var results = await HsbSendAsync<FileSystemItemModel>(HttpMethod.Get, builder.Uri);
@@ -430,6 +433,22 @@ public class HsbApiService : IHsbApiService
             Path = $"{this.Options.Endpoints.FileSystemItems}/{model.ServiceNowKey}"
         };
         var results = await HsbSendAsync<FileSystemItemModel>(HttpMethod.Put, builder.Uri, JsonContent.Create(model));
+        return results;
+    }
+
+    /// <summary>
+    /// Delete file system item in HSB.
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    public async Task<FileSystemItemModel?> DeleteFileSystemItemAsync(FileSystemItemModel model)
+    {
+        this.Logger.LogDebug("HSB - Delete file system item");
+        var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
+        {
+            Path = $"{this.Options.Endpoints.FileSystemItems}/{model.ServiceNowKey}"
+        };
+        var results = await HsbSendAsync<FileSystemItemModel>(HttpMethod.Delete, builder.Uri, JsonContent.Create(model));
         return results;
     }
     #endregion

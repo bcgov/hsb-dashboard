@@ -1,6 +1,7 @@
 using HSB.Entities;
 using HSB.Models;
 using HSB.Models.Filters;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace HSB.DAL.Services;
 
@@ -17,4 +18,6 @@ public interface IServerItemService : IBaseService<ServerItem>
     IEnumerable<ServerItemSmallModel> FindSimple(ServerItemFilter filter);
 
     IEnumerable<ServerItemSmallModel> FindSimpleForUser(long userId, ServerItemFilter filter);
+
+    EntityEntry<ServerItem> Update(ServerItem entity, bool updateTotals);
 }

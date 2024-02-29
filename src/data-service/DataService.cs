@@ -18,7 +18,6 @@ public class DataService : IDataService
     private readonly Dictionary<string, Hsb.OperatingSystemItemModel> _operatingSystemItems = new();
     private readonly Dictionary<string, Hsb.ServerItemModel> _serverItems = new();
     private readonly List<Hsb.DataSyncModel> _dataSync = new();
-    private const int UPDATE_LIMITER = 12;
     #endregion
 
     #region Properties
@@ -112,6 +111,10 @@ public class DataService : IDataService
         this.Logger.LogInformation("Data Sync Service Completed");
     }
 
+    /// <summary>
+    /// If the configuration does not have an override, make a request to HSB API to determine which data should be synced.
+    /// </summary>
+    /// <returns></returns>
     private async Task GetConfiguration()
     {
         // If the configuration specifies which data syncs to run, use them.
@@ -144,6 +147,11 @@ public class DataService : IDataService
         }
     }
 
+    /// <summary>
+    /// Make requests to HSB API to get our current lists.
+    /// These lists are used to reduce the amount of work needed to update.
+    /// </summary>
+    /// <returns></returns>
     private async Task InitLookups()
     {
         var tenants = await this.HsbApi.FetchTenantsAsync();
@@ -266,7 +274,7 @@ public class DataService : IDataService
                 if (serverItemHSB == null)
                 {
                     this.Logger.LogError("Server Item was not returned from HSB: {id}", serviceNowKey);
-                    return null;
+                    throw new InvalidOperationException($"Server Item was not returned from HSB: {serviceNowKey}");
                 }
                 _serverItems[serverItemHSB.ServiceNowKey] = serverItemHSB;
                 return serverItemHSB;
@@ -284,6 +292,13 @@ public class DataService : IDataService
         }
         var operatingSystem = await ProcessOperatingSystemAsync(configurationItemSN.RawData, serverItemSN.RawData);
 
+        // If it's on an exclude list don't add.
+        if (this.Options.ExcludeTenants.Contains(tenant?.Name) || this.Options.ExcludeOrganizations.Contains(organization.Name) || this.Options.ExcludeOperatingSystemItems.Contains(operatingSystem?.Name))
+        {
+            this.Logger.LogDebug("Server Item was on an exclude list: {id}", serviceNowKey);
+            return null;
+        }
+
         if (!_serverItems.TryGetValue(serviceNowKey, out Hsb.ServerItemModel? serverItem))
         {
             // Add the server item to HSB.
@@ -292,11 +307,11 @@ public class DataService : IDataService
             if (serverItem == null)
             {
                 this.Logger.LogError("Server Item was not returned from HSB: {id}", serviceNowKey);
-                return null;
+                throw new InvalidOperationException($"Server Item was not returned from HSB: {serviceNowKey}");
             }
             _serverItems.Add(serverItem.ServiceNowKey, serverItem);
         }
-        else if (serverItem.UpdatedOn.AddHours(UPDATE_LIMITER).ToUniversalTime() < DateTime.UtcNow)
+        else if (serverItem.UpdatedOn.AddHours(this.Options.AllowUpdateAfterXHours).ToUniversalTime() < DateTime.UtcNow)
         {
             // Update the server item in HSB.
             this.Logger.LogDebug("Update Server Item: '{id}'", configurationItemSN.Data?.Id);
@@ -320,7 +335,7 @@ public class DataService : IDataService
             if (serverItem == null)
             {
                 this.Logger.LogError("Server Item was not returned from HSB: {id}", serviceNowKey);
-                return null;
+                throw new InvalidOperationException($"Server Item was not returned from HSB: {serviceNowKey}");
             }
             _serverItems[serverItem.ServiceNowKey] = serverItem;
         }
@@ -348,6 +363,12 @@ public class DataService : IDataService
         if (fileSystemItemSN.Data.InstallStatus != "1")
         {
             this.Logger.LogDebug("Server item install status: {status}", fileSystemItemSN.Data.InstallStatus);
+            return null;
+        }
+
+        if (this.Options.ExcludeFileSystemItems.Contains(fileSystemItemSN.Data.Name))
+        {
+            this.Logger.LogWarning("File System Item name is on the exclude list: '{id}:{name}'", serviceNowKey, fileSystemItemSN.Data.Name);
             return null;
         }
 
@@ -391,38 +412,31 @@ public class DataService : IDataService
             serverItem = await ProcessServerItemAsync(serverItemSN, configurationItemSN);
             if (serverItem == null)
             {
-                this.Logger.LogError("Server Item was not returned from HSB: {id}", computerKey);
+                // Without a server item the file system cannot be added.
+                // This can be null if the server was excluded by configured rules.
                 return null;
             }
         }
 
         // Check if file system item exists in HSB.
         // TODO: This is noisy, but we don't want to keep all of them in memory.
-        var fileSystemItem = await this.HsbApi.GetFileSystemItemAsync(serviceNowKey);
+        var fileSystemItem = await this.HsbApi.GetFileSystemItemAsync(serviceNowKey, fileSystemItemSN.Data.Name);
         if (fileSystemItem == null)
         {
             // Add the server item to HSB.
-            this.Logger.LogDebug("Add File System Item: '{id}'", configurationItemSN.Data?.Id);
+            this.Logger.LogDebug("Add File System Item: '{id}'", configurationItemSN.Data.Id);
             fileSystemItem = await this.HsbApi.AddFileSystemItemAsync(new Hsb.FileSystemItemModel(serverItem.ServiceNowKey, fileSystemItemSN, configurationItemSN));
-            if (fileSystemItem != null)
-            {
-                // Fetch the updated Server Item.
-                var serverItemHsb = await this.HsbApi.GetServerItemAsync(fileSystemItem.ServerItemServiceNowKey);
-                if (serverItemHsb != null)
-                {
-                    if (_serverItems.ContainsKey(fileSystemItem.ServerItemServiceNowKey))
-                    {
-                        _serverItems[fileSystemItem.ServerItemServiceNowKey] = serverItemHsb;
-                    }
-                    else
-                    {
-                        _serverItems.Add(fileSystemItem.ServerItemServiceNowKey, serverItemHsb);
-                    }
-                }
-
-            }
         }
-        else if (fileSystemItem.UpdatedOn.AddHours(UPDATE_LIMITER).ToUniversalTime() <= DateTime.UtcNow)
+        else if (fileSystemItem.ServiceNowKey != configurationItemSN.Data.Id)
+        {
+            // Service Now has changed the primary key for some reason.
+            this.Logger.LogDebug("Replacing File System Item: '{old}:{new}'", fileSystemItem.ServiceNowKey, configurationItemSN.Data.Id);
+
+            // Delete the current one and replace it with the new one.
+            await this.HsbApi.DeleteFileSystemItemAsync(fileSystemItem);
+            fileSystemItem = await this.HsbApi.AddFileSystemItemAsync(new Hsb.FileSystemItemModel(serverItem.ServiceNowKey, fileSystemItemSN, configurationItemSN));
+        }
+        else if (fileSystemItem.UpdatedOn.AddHours(this.Options.AllowUpdateAfterXHours).ToUniversalTime() <= DateTime.UtcNow)
         {
             // Update the server item to HSB.
             this.Logger.LogDebug("Update File System Item: '{id}'", configurationItemSN.Data?.Id);
@@ -451,23 +465,6 @@ public class DataService : IDataService
             fileSystemItem.FreeSpaceBytes = !String.IsNullOrWhiteSpace(fileSystemItemSN.Data.FreeSpaceBytes) ? long.Parse(fileSystemItemSN.Data.FreeSpaceBytes) : 0;
 
             fileSystemItem = await this.HsbApi.UpdateFileSystemItemAsync(fileSystemItem);
-            if (fileSystemItem != null)
-            {
-                // Fetch the updated Server Item.
-                var serverItemHsb = await this.HsbApi.GetServerItemAsync(fileSystemItem.ServerItemServiceNowKey);
-                if (serverItemHsb != null)
-                {
-                    if (_serverItems.ContainsKey(fileSystemItem.ServerItemServiceNowKey))
-                    {
-                        _serverItems[fileSystemItem.ServerItemServiceNowKey] = serverItemHsb;
-                    }
-                    else
-                    {
-                        _serverItems.Add(fileSystemItem.ServerItemServiceNowKey, serverItemHsb);
-                    }
-                }
-
-            }
         }
 
         return fileSystemItem;
@@ -509,15 +506,20 @@ public class DataService : IDataService
                 return null;
             }
 
+            if (this.Options.ExcludeTenants.Contains(tenant.Name))
+            {
+                return tenant;
+            }
+
             tenant = await this.HsbApi.AddTenantAsync(tenant);
             if (tenant == null)
             {
                 this.Logger.LogError("Tenant was not returned from HSB: {id}", tenantKey);
-                return null;
+                throw new InvalidOperationException($"Tenant was not returned from HSB: {tenantKey}");
             }
             _tenants.Add(tenantKey, tenant);
         }
-        else if (tenant.UpdatedOn.AddHours(UPDATE_LIMITER).ToUniversalTime() < DateTime.UtcNow)
+        else if (tenant.UpdatedOn.AddHours(this.Options.AllowUpdateAfterXHours).ToUniversalTime() < DateTime.UtcNow)
         {
             this.Logger.LogInformation("Updating tenant '{id}'", tenant.ServiceNowKey);
 
@@ -533,7 +535,7 @@ public class DataService : IDataService
             if (tenant == null)
             {
                 this.Logger.LogError("Tenant was not returned from HSB: {id}", tenantKey);
-                return null;
+                throw new InvalidOperationException($"Tenant was not returned from HSB: {tenantKey}");
             }
             _tenants[tenantKey] = tenant;
         }
@@ -573,7 +575,7 @@ public class DataService : IDataService
                     if (organization == null)
                     {
                         this.Logger.LogError("Organization was not returned from HSB: {id}", organizationKey);
-                        return null;
+                        throw new InvalidOperationException($"Organization was not returned from HSB: {organizationKey}");
                     }
                     _organizations.Add(organizationKey, organization);
                 }
@@ -639,16 +641,21 @@ public class DataService : IDataService
                 organization.Code = GenerateUniqueName(organization.Code, organizationCodes);
             }
 
+            if (this.Options.ExcludeOrganizations.Contains(organization.Name))
+            {
+                return organization;
+            }
+
             organization = await this.HsbApi.AddOrganizationAsync(organization);
             if (organization == null)
             {
                 this.Logger.LogError("Organization was not returned from HSB: {id}", organizationKey);
-                return null;
+                throw new InvalidOperationException($"Organization was not returned from HSB: {organizationKey}");
             }
 
             _organizations.Add(organizationKey, organization);
         }
-        else if (organization.UpdatedOn.AddHours(UPDATE_LIMITER).ToUniversalTime() < DateTime.UtcNow)
+        else if (organization.UpdatedOn.AddHours(this.Options.AllowUpdateAfterXHours).ToUniversalTime() < DateTime.UtcNow)
         {
             this.Logger.LogInformation("Updating organization '{id}'", organization.ServiceNowKey);
 
@@ -675,7 +682,7 @@ public class DataService : IDataService
             if (organization == null)
             {
                 this.Logger.LogError("Organization was not returned from HSB: {id}", organizationKey);
-                return null;
+                throw new InvalidOperationException($"Organization was not returned from HSB: {organizationKey}");
             }
             _organizations[organizationKey] = organization;
         }
@@ -736,11 +743,16 @@ public class DataService : IDataService
                 return null;
             }
 
+            if (this.Options.ExcludeOperatingSystemItems.Contains(operatingSystem?.Name))
+            {
+                return operatingSystem;
+            }
+
             operatingSystem = await this.HsbApi.AddOperatingSystemItemAsync(new Hsb.OperatingSystemItemModel(operatingSystemSN));
             if (operatingSystem == null)
             {
                 this.Logger.LogError("Operating System Item was not returned from HSB: {id}", operatingSystemKey);
-                return null;
+                throw new InvalidOperationException($"Operating System Item was not returned from HSB: {operatingSystemKey}");
             }
             _operatingSystemItems.Add(operatingSystemKey, operatingSystem);
         }
@@ -774,17 +786,22 @@ public class DataService : IDataService
                 }
                 else
                 {
-                    // Fetch the configuration item now.
-                    var configurationItemSN = await this.ServiceNowApi.GetTableItemAsync<ServiceNow.ConfigurationItemModel>(this.ServiceNowApi.Options.TableNames.ConfigurationItem, serverItem.ServiceNowKey);
-                    if (configurationItemSN != null)
+                    if (serverItemSN.Data.InstallStatus != "1")
                     {
-                        // Update the server item with the latest information.
-                        await this.ProcessServerItemAsync(serverItemSN, configurationItemSN);
+                        this.Logger.LogDebug("Server item install status changed: {status}", serverItemSN.Data.InstallStatus);
+                        serverItem.InstallStatus = int.Parse(serverItemSN.Data.InstallStatus ?? "0");
+                    }
+
+                    // This is noisy as we'll be updating every server record in the database.
+                    // However they all need their totals updated after the Data Service has synced file system items.
+                    serverItem.RawData = serverItemSN.RawData;
+                    var serverItemHSB = await this.HsbApi.UpdateServerItemAsync(serverItem, true);
+                    if (serverItemHSB == null)
+                    {
+                        this.Logger.LogError("Server Item was not returned from HSB: {id}", serverItem.ServiceNowKey);
                     }
                     else
-                    {
-                        this.Logger.LogWarning("Configuration item could not be found: {key}", serverItem.ServiceNowKey);
-                    }
+                        _serverItems[serverItem.ServiceNowKey] = serverItemHSB;
                 }
             }
             catch (HttpRequestException ex)

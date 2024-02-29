@@ -30,5 +30,30 @@ public class ServiceOptions
     /// get/set - An array of table names that represent servers/devices/computers.
     /// </summary>
     public string[] ServerTableNames { get; set; } = Array.Empty<string>();
+
+    /// <summary>
+    /// get/set - An array of tenant names to exclude from importing from Service Now.
+    /// </summary>
+    public string[] ExcludeTenants { get; set; } = Array.Empty<string>();
+
+    /// <summary>
+    /// get/set - An array of organization names to exclude from importing from Service Now.
+    /// </summary>
+    public string[] ExcludeOrganizations { get; set; } = Array.Empty<string>();
+
+    /// <summary>
+    /// get/set - An array of operating system item names to exclude from importing from Service Now.
+    /// </summary>
+    public string[] ExcludeOperatingSystemItems { get; set; } = Array.Empty<string>();
+
+    /// <summary>
+    /// get/set - An array of file system item names to exclude from importing from Service Now.
+    /// </summary>
+    public string[] ExcludeFileSystemItems { get; set; } = Array.Empty<string>();
+
+    /// <summary>
+    /// get/set - Number of hours before an update will be allowed to be applied.  This is used to reduce the number or changes that can occur when running the process multiple times.
+    /// </summary>
+    public int AllowUpdateAfterXHours { get; set; } = 12;
     #endregion
 }

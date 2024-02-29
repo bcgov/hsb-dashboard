@@ -10,4 +10,5 @@ public interface IFileSystemItemService : IBaseService<FileSystemItem>
     IEnumerable<FileSystemItem> FindForUser(long userId, FileSystemItemFilter filter);
 
     FileSystemItem? FindForId(string key, long userId);
+    FileSystemItem? FindForName(string name);
 }
