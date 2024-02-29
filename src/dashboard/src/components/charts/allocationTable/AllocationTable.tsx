@@ -13,7 +13,7 @@ import { ITableRowData } from './ITableRowData';
 import { TableRow } from './TableRow';
 import { useAllocationByOS } from './hooks';
 import { getColumns, getLabel } from './utils';
-import { convertToStorageSize } from './../../../utils/convertToStorageSize';
+import { convertToStorageSize } from '@/utils/convertToStorageSize';
 export interface IAllocationTableProps {
   /** Filter servers by their OS */
   osClassName?: string;
