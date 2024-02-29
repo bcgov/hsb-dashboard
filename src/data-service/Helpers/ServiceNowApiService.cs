@@ -140,7 +140,7 @@ public class ServiceNowApiService : IServiceNowApiService
         query.Add("sysparm_limit", $"{limit}");
         if (!String.IsNullOrWhiteSpace(filter))
         {
-            var filterQuery = HttpUtility.ParseQueryString(filter);
+            var filterQuery = HttpUtility.ParseQueryString($"sysparm_query={filter}");
             query.Add(filterQuery);
         }
         builder.Query = query.ToString();

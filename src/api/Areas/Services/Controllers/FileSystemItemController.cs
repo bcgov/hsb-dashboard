@@ -47,7 +47,7 @@ public class FileSystemItemController : ControllerBase
 
     #region Endpoints
     /// <summary>
-    ///
+    /// Find all the file system items for the specified 'filter'.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "FindFileSystemItems-Services")]
@@ -61,18 +61,23 @@ public class FileSystemItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Get the file system item for the specified 'id' or 'name'.
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="name"></param>
     /// <returns></returns>
     [HttpGet("{id}", Name = "GetFileSystemItem-Services")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(FileSystemItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [SwaggerOperation(Tags = new[] { "File System Item" })]
-    public IActionResult GetForId(string id)
+    public IActionResult GetForId(string id, string? name = null)
     {
         var entity = _fileSystemItemService.FindForId(id);
+
+        // Service Now will change the primary key of these file system items, as such we need to also search based on the friendly name.
+        if (entity == null && !String.IsNullOrEmpty(name))
+            entity = _fileSystemItemService.FindForName(name);
 
         if (entity == null) return new NoContentResult();
 
@@ -80,7 +85,7 @@ public class FileSystemItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Add the provided file system item to the database.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -98,7 +103,7 @@ public class FileSystemItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Update the provided file system item in the database.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -116,7 +121,25 @@ public class FileSystemItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Delete the provided file system item from the database.
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    [HttpDelete("{id}", Name = "DeleteFileSystemItem-Services")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(FileSystemItemModel), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
+    [SwaggerOperation(Tags = new[] { "File System Item" })]
+    public IActionResult Delete(FileSystemItemModel model)
+    {
+        var entity = model.ToEntity();
+        _fileSystemItemService.Remove(entity);
+        _fileSystemItemService.CommitTransaction();
+        return new JsonResult(new FileSystemItemModel(entity));
+    }
+
+    /// <summary>
+    /// Add the provided file system history item to the database.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>

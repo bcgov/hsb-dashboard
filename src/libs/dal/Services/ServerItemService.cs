@@ -185,6 +185,32 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
         return result;
     }
 
+    public EntityEntry<ServerItem> Update(ServerItem entity, bool updateTotals)
+    {
+        if (updateTotals)
+        {
+            // TODO: File system items need to be removed otherwise this formula will be invalid over time.
+            // Grab all file system items for this server so that space can be calculated.
+            // The downside to this implementation is that the calculation will include the prior synced data until all file system items have been synced up.
+            var volumes = this.Context.FileSystemItems.AsNoTracking().Where(fsi => fsi.ServerItemServiceNowKey == entity.ServiceNowKey).ToArray();
+            entity.Capacity = volumes.Sum(v => v.SizeBytes);
+            entity.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes);
+            this.Context.Entry(entity).State = EntityState.Modified;
+
+            // Update current historical record too.
+            // TODO: File system items need to be removed otherwise this formula will be invalid over time.
+            var history = this.Context.ServerHistoryItems.FirstOrDefault(shi => shi.ServiceNowKey == entity.ServiceNowKey && shi.HistoryKey == entity.HistoryKey);
+            if (history != null)
+            {
+                history.Capacity = entity.Capacity;
+                history.AvailableSpace = entity.AvailableSpace;
+                this.Context.Entry(history).State = EntityState.Modified;
+            }
+        }
+
+        return this.Update(entity);
+    }
+
     public override EntityEntry<ServerItem> Update(ServerItem entity)
     {
         // If the install status has changed from being installed, also set the same status on all related children.

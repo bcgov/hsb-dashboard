@@ -74,6 +74,11 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
             .ToArray();
     }
 
+    public FileSystemItem? FindForName(string name)
+    {
+        return this.Context.FileSystemItems.FirstOrDefault(fsi => fsi.Name == name);
+    }
+
     public FileSystemItem? FindForId(string key, long userId)
     {
         var userOrganizationQuery = from uo in this.Context.UserOrganizations
@@ -104,28 +109,6 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
     /// <returns></returns>
     public override EntityEntry<FileSystemItem> Add(FileSystemItem entity)
     {
-        // Sum up all file system items for the server and update the server.
-        var server = this.Context.ServerItems.FirstOrDefault(si => si.ServiceNowKey == entity.ServerItemServiceNowKey);
-        if (server != null)
-        {
-            // TODO: File system items need to be removed otherwise this formula will be invalid over time.
-            // Grab all file system items for this server so that space can be calculated.
-            // The downside to this implementation is that the calculation will include the prior synced data until all file system items have been synced up.
-            var volumes = this.Context.FileSystemItems.AsNoTracking().Where(fsi => fsi.ServerItemServiceNowKey == entity.ServerItemServiceNowKey && fsi.ServiceNowKey != entity.ServiceNowKey).ToArray();
-            server.Capacity = volumes.Sum(v => v.SizeBytes) + entity.SizeBytes;
-            server.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes) + entity.FreeSpaceBytes;
-            this.Context.Entry(server).State = EntityState.Modified;
-
-            // Update current historical record too.
-            // TODO: File system items need to be removed otherwise this formula will be invalid over time.
-            var history = this.Context.ServerHistoryItems.FirstOrDefault(shi => shi.ServiceNowKey == server.ServiceNowKey && shi.HistoryKey == server.HistoryKey);
-            if (history != null)
-            {
-                history.Capacity = server.Capacity;
-                history.AvailableSpace = server.AvailableSpace;
-                this.Context.Entry(history).State = EntityState.Modified;
-            }
-        }
         var result = base.Add(entity);
 
         // Add item to history.
@@ -142,29 +125,6 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
     /// <returns></returns>
     public override EntityEntry<FileSystemItem> Update(FileSystemItem entity)
     {
-        // Sum up all file system items for the server and update the server.
-        var server = this.Context.ServerItems.FirstOrDefault(si => si.ServiceNowKey == entity.ServerItemServiceNowKey);
-        if (server != null)
-        {
-            // TODO: File system items need to be removed otherwise this formula will be invalid over time.
-            // Grab all file system items for this server so that space can be calculated.
-            // The downside to this implementation is that the calculation will include the prior synced data until all file system items have been synced up.
-            var volumes = this.Context.FileSystemItems.AsNoTracking().Where(fsi => fsi.ServerItemServiceNowKey == entity.ServerItemServiceNowKey && fsi.ServiceNowKey != entity.ServiceNowKey).ToArray();
-            server.Capacity = volumes.Sum(v => v.SizeBytes) + entity.SizeBytes;
-            server.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes) + entity.FreeSpaceBytes;
-            this.Context.Entry(server).State = EntityState.Modified;
-
-            // Update current historical record too.
-            // TODO: File system items need to be removed otherwise this formula will be invalid over time.
-            var history = this.Context.ServerHistoryItems.FirstOrDefault(shi => shi.ServiceNowKey == server.ServiceNowKey && shi.HistoryKey == server.HistoryKey);
-            if (history != null)
-            {
-                history.Capacity = server.Capacity;
-                history.AvailableSpace = server.AvailableSpace;
-                this.Context.Entry(history).State = EntityState.Modified;
-            }
-        }
-
         // Move original item to history if created more than 12 hours ago.
         var original = this.Context.FileSystemItems.AsNoTracking().FirstOrDefault(fsi => fsi.ServiceNowKey == entity.ServiceNowKey);
         if (original != null && original.CreatedOn.AddHours(12).ToUniversalTime() <= DateTimeOffset.UtcNow)

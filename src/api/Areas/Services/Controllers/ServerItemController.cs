@@ -106,16 +106,17 @@ public class ServerItemController : ControllerBase
     ///
     /// </summary>
     /// <param name="model"></param>
+    /// <param name="updateTotals"></param>
     /// <returns></returns>
     [HttpPut("{id}", Name = "UpdateServerItem-Services")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(ServerItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
     [SwaggerOperation(Tags = new[] { "Server Item" })]
-    public IActionResult Update(ServerItemModel model)
+    public IActionResult Update(ServerItemModel model, bool updateTotals = false)
     {
         var entity = model.ToEntity();
-        _serverItemService.Update(entity);
+        _serverItemService.Update(entity, updateTotals);
         _serverItemService.CommitTransaction();
         return new JsonResult(new ServerItemModel(entity));
     }
