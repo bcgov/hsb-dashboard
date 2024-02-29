@@ -35,6 +35,8 @@
 
 .footer {
     display: flex;
+    justify-content: space-between;
+    gap: 0;
     margin-top: 10px;
     font-size: $font-size-small;
 
@@ -52,9 +54,7 @@
         border-radius: 50%;
     }
 
-    p:last-child {
-        margin-left: 25px;
-
+    p:last-child {        
         &::before {
             opacity: .4;
         }

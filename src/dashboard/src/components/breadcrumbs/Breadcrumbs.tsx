@@ -1,12 +1,20 @@
 import styles from './Breadcrumbs.module.scss';
-import { useFilteredStore } from '@/store';
+import { useDashboardStore } from '@/store';
 
 interface BreadcrumbsProps {
     multipleOrganizations: boolean;
 }
 
 export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ multipleOrganizations }) => {
-  const values = useFilteredStore((state) => state.values);
+  const {
+    organization,
+    operatingSystemItem,
+    serverItem,
+  } = useDashboardStore(state => ({
+    organization: state.organization,
+    operatingSystemItem: state.operatingSystemItem,
+    serverItem: state.serverItem,
+  }));
 
   return (
     <div className={styles.breadcrumbs}>
@@ -15,19 +23,19 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ multipleOrganizations 
             <p>All Organizations</p>
         </div>
        )}
-      {!!values.organization && (
+      {!!organization && (
         <div>
-          <p title={values.organization.name}>{values.organization.name}</p>
+          <p title={organization.name}>{organization.name}</p>
         </div>
       )}
-      {!!values.operatingSystemItem && (
+      {!!operatingSystemItem && (
         <div>
-          <p title={values.operatingSystemItem.name}>{values.operatingSystemItem.name}</p>
+          <p title={operatingSystemItem.name}>{operatingSystemItem.name}</p>
         </div>
       )}
-      {!!values.serverItem && (
+      {!!serverItem && (
         <div>
-          <p title={values.serverItem.name}>{values.serverItem.name}</p>
+          <p title={serverItem.name}>{serverItem.name}</p>
         </div>
       )}
     </div>

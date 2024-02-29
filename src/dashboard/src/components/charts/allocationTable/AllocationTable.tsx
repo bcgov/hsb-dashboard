@@ -13,7 +13,7 @@ import { ITableRowData } from './ITableRowData';
 import { TableRow } from './TableRow';
 import { useAllocationByOS } from './hooks';
 import { getColumns, getLabel } from './utils';
-
+import { convertToStorageSize } from '@/utils/convertToStorageSize';
 export interface IAllocationTableProps {
   /** Filter servers by their OS */
   osClassName?: string;
@@ -59,6 +59,12 @@ export const AllocationTable = ({
     setRows(rows);
   }, [serverItems, filter, getServerItems, sort]);
 
+  const totalCapacity = rows.reduce((acc, row) => acc + (row.capacity || 0), 0);
+  const capacityValue = convertToStorageSize<string>(totalCapacity, 'B', 'TB');
+
+  const totalUnused = rows.reduce((acc, row) => acc + (row.available || 0), 0);
+  const unusedValue = convertToStorageSize<string>(totalUnused, 'B', 'TB');
+
   const showTenants = React.useMemo(() => rows.some((data) => data.tenant), [rows]);
   const columns = React.useMemo(() => getColumns(showTenants), [showTenants]);
 
@@ -100,6 +106,18 @@ export const AllocationTable = ({
     };
   }, []);
 
+  // Check if all servers have the same OS and return that OS name
+  const getCommonOSName = (serverRows: ITableRowData<IServerItemModel>[]): string | null => {
+    if (serverRows.length === 0) return null; // Early exit if no servers
+  
+    const firstOS = serverRows[0].os;
+    const commonOS = serverRows.every(row => row.os === firstOS);
+  
+    return commonOS ? firstOS : null;
+  };
+
+  const commonOSName = React.useMemo(() => getCommonOSName(rows), [rows]);
+
   return (
     <div className={styles.panel} style={margin ? { marginTop: margin } : {}}>
       {loading && <LoadingAnimation />}
@@ -108,8 +126,9 @@ export const AllocationTable = ({
           ? `Allocation by Storage Volume - All ${serverItems.length.toLocaleString()} ${getLabel(
               osClassName,
             )}`
-          : `All ${serverItems.length.toLocaleString()} Servers`}
+          : `${serverItems.length.toLocaleString()} Servers ${commonOSName ? `using OS: "${commonOSName}"` : ''}`}
       </h1>
+      <h2>Allocated Storage: {capacityValue} &nbsp;|&nbsp; Unused Storage: {unusedValue}</h2>
       <div className={styles.filter} ref={wrapperRef}>
         <Text
           placeholder="Filter by server name, OS version"
