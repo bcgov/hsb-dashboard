@@ -65,6 +65,9 @@ export const AllocationTable = ({
   const totalUnused = rows.reduce((acc, row) => acc + (row.available || 0), 0);
   const unusedValue = convertToStorageSize<string>(totalUnused, 'B', 'TB');
 
+  const totalUsed = totalCapacity - totalUnused;
+  const usedValue = convertToStorageSize<string>(totalUsed, 'B', 'TB');
+
   const showTenants = React.useMemo(() => rows.some((data) => data.tenant), [rows]);
   const columns = React.useMemo(() => getColumns(showTenants), [showTenants]);
 
@@ -128,7 +131,7 @@ export const AllocationTable = ({
             )}`
           : `${serverItems.length.toLocaleString()} Servers ${commonOSName ? `using OS: "${commonOSName}"` : ''}`}
       </h1>
-      <h2>Allocated Storage: {capacityValue} &nbsp;|&nbsp; Unused Storage: {unusedValue}</h2>
+      <h2>Total Allocated: {capacityValue} <span></span> Used: {usedValue} <span></span> Unused: {unusedValue}</h2>
       <div className={styles.filter} ref={wrapperRef}>
         <Text
           placeholder="Filter by server name, OS version"

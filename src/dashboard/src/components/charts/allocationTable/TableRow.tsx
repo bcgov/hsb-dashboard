@@ -25,12 +25,24 @@ export const TableRow: React.FC<TableRowProps> = ({
   const capacityValue = convertToStorageSize<string>(capacity, 'B', 'TB');
   const availableValue = convertToStorageSize<string>(available, 'B', 'TB');
 
+  const handleClick = (e: React.MouseEvent<HTMLLabelElement, MouseEvent>) => {
+    if(onClick) {
+      onClick(e);
+    }
+
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+  };
+
   return (
     <div className={styles.row}>
       <div className={styles.info}>
         <p>
           {onClick ? (
-            <label className={styles.link} onClick={(e) => onClick?.(e)}>
+            <label className={styles.link} onClick={handleClick}>
               {server}
             </label>
           ) : (
