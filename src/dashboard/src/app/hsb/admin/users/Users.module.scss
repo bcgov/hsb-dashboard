@@ -23,10 +23,6 @@
     padding: 5px 0;
     border-radius: 4px;
 
-    &:hover {
-      background-color: $white;
-    }
-
     >p {
       width: 100%;
       margin: 0 5px;
@@ -46,7 +42,7 @@
       margin-right: 10px;
 
       &:hover {
-        background-color: $chart-blue;
+        background-color: $bc-blue;
         color: $white;
       }
     }
