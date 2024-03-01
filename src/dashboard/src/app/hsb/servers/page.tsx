@@ -8,8 +8,8 @@ import {
   useOrganizations,
   useServerItems,
   useTenants,
-} from '@/hooks/data';
-import { useDashboardStore, useFilteredStore } from '@/store';
+} from '@/hooks/lists';
+import { useFilteredStore } from '@/store';
 import { redirect, useRouter } from 'next/navigation';
 
 export default function Page() {
@@ -23,9 +23,10 @@ export default function Page() {
   const { operatingSystemItems } = useOperatingSystemItems({
     init: true,
   });
-  const { isReady, serverItems } = useServerItems({ useSimple: true, init: true });
-  const setValues = useFilteredStore((state) => state.setValues);
-  const setDashboardServerItems = useDashboardStore((state) => state.setServerItems);
+  const { isReady, serverItems } = useServerItems({ init: true });
+  const setFilteredValues = useFilteredStore((state) => state.setValues);
+  const setFilteredOrganizations = useFilteredStore((state) => state.setOrganizations);
+  const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
 
   const updateDashboard = useDashboardFilter();
 
@@ -47,13 +48,28 @@ export default function Page() {
           const operatingSystemItem = operatingSystemItems.find(
             (operatingSystemItem) => operatingSystemItem.id === serverItem?.operatingSystemItemId,
           );
-          setValues((state) => ({ serverItem, tenant, organization, operatingSystemItem }));
+          const filteredOrganizations = tenant
+            ? organizations.filter((o) => o.tenants?.some((t) => t.id === tenant?.id))
+            : organizations;
+          const filteredServerItems = serverItems.filter(
+            (si) =>
+              (!tenant || si.tenantId === tenant.id) &&
+              (!organization || si.organizationId === organization.id) &&
+              (!operatingSystemItem || si.operatingSystemItemId === operatingSystemItem.id),
+          );
+          setFilteredOrganizations(filteredOrganizations);
+          setFilteredServerItems(filteredServerItems);
+          setFilteredValues((state) => ({ serverItem, tenant, organization, operatingSystemItem }));
           await updateDashboard({
             tenant,
+            tenants,
             organization,
+            organizations: filteredOrganizations,
             operatingSystemItem,
+            operatingSystemItems,
             serverItem,
-            applyFilter: true,
+            serverItems: filteredServerItems,
+            fetchFileSystemItems: false,
           });
           router.push(`/hsb/dashboard?serverItem=${serverItem?.serviceNowKey}`);
         }

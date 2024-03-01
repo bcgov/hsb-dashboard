@@ -1,7 +1,7 @@
 import { useAppStore } from '@/store';
 import React from 'react';
 import { toast } from 'react-toastify';
-import { ITenantModel, useApiTenants, useAuth } from '..';
+import { ITenantListModel, useApiTenants, useAuth } from '..';
 
 export interface ITenantsProps {
   init?: boolean;
@@ -23,7 +23,7 @@ export const useTenants = ({ init }: ITenantsProps = {}) => {
       setIsReady(false);
       find()
         .then(async (res) => {
-          const tenants: ITenantModel[] = await res.json();
+          const tenants: ITenantListModel[] = await res.json();
           setTenants(tenants);
         })
         .catch((ex) => {

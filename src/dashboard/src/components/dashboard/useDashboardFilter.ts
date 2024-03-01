@@ -1,10 +1,10 @@
 'use client';
 
 import {
-  IOperatingSystemItemModel,
-  IOrganizationModel,
-  IServerItemModel,
-  ITenantModel,
+  IOperatingSystemItemListModel,
+  IOrganizationListModel,
+  IServerItemListModel,
+  ITenantListModel,
 } from '@/hooks';
 import { useFilteredFileSystemItems } from '@/hooks/filter';
 import { useAppStore, useDashboardStore, useFilteredStore } from '@/store';
@@ -12,16 +12,28 @@ import { useSearchParams } from 'next/navigation';
 import React from 'react';
 
 export interface IDashboardValues {
-  tenant?: ITenantModel;
-  tenants?: ITenantModel[];
-  organization?: IOrganizationModel;
-  organizations?: IOrganizationModel[];
-  operatingSystemItem?: IOperatingSystemItemModel;
-  operatingSystemItems?: IOperatingSystemItemModel[];
-  serverItem?: IServerItemModel;
-  serverItems?: IServerItemModel[];
+  /** Set the selected tenant. */
+  tenant?: ITenantListModel;
+  /** Set the selected tenants. */
+  tenants?: ITenantListModel[];
+  /** Set the selected organization. */
+  organization?: IOrganizationListModel;
+  /** Set the selected organizations. */
+  organizations?: IOrganizationListModel[];
+  /** Set the selected operating system item. */
+  operatingSystemItem?: IOperatingSystemItemListModel;
+  /** Set the selected operating system items. */
+  operatingSystemItems?: IOperatingSystemItemListModel[];
+  /** Set the selected server item. */
+  serverItem?: IServerItemListModel;
+  /** Set the selected server items. */
+  serverItems?: IServerItemListModel[];
+  /** Apply the current filter values to the dashboard. */
   applyFilter?: boolean;
+  /** Update all dashboard values with original lists in memory. */
   reset?: boolean;
+  /** Whether to make a request for the file system items. Defaults to true. */
+  fetchFileSystemItems?: boolean;
 }
 
 /**
@@ -67,58 +79,66 @@ export const useDashboardFilter = () => {
 
   return React.useCallback(
     async (values?: IDashboardValues) => {
+      const options: IDashboardValues = values
+        ? {
+            ...values,
+            fetchFileSystemItems:
+              values.fetchFileSystemItems !== undefined ? values.fetchFileSystemItems : true,
+          }
+        : {};
+
       // Update the URL
-      if (values?.tenant) {
-        currentParams.set('tenant', values.tenant.id.toString());
+      if (options.tenant) {
+        currentParams.set('tenant', options.tenant.id.toString());
       } else {
         currentParams.delete('tenant');
       }
-      if (values?.organization) {
-        currentParams.set('organization', values.organization.id.toString());
+      if (options.organization) {
+        currentParams.set('organization', options.organization.id.toString());
       } else {
         currentParams.delete('organization');
       }
-      if (values?.operatingSystemItem) {
-        currentParams.set('operatingSystemItem', values.operatingSystemItem.id.toString());
+      if (options.operatingSystemItem) {
+        currentParams.set('operatingSystemItem', options.operatingSystemItem.id.toString());
       } else {
         currentParams.delete('operatingSystemItem');
       }
-      if (values?.serverItem) {
-        currentParams.set('serverItem', values.serverItem.serviceNowKey);
+      if (options.serverItem) {
+        currentParams.set('serverItem', options.serverItem.serviceNowKey);
       } else {
         currentParams.delete('serverItem');
       }
 
-      setDashboardTenant(values?.tenant);
+      setDashboardTenant(options.tenant);
       setDashboardTenants(
-        values?.tenants ?? (values?.reset ? tenants : values?.applyFilter ? filteredTenants : []),
+        options.tenants ?? (options.reset ? tenants : options.applyFilter ? filteredTenants : []),
       );
 
-      setDashboardOrganization(values?.organization);
+      setDashboardOrganization(options.organization);
       setDashboardOrganizations(
-        values?.organizations ??
-          (values?.reset ? organizations : values?.applyFilter ? filteredOrganizations : []),
+        options.organizations ??
+          (options.reset ? organizations : options.applyFilter ? filteredOrganizations : []),
       );
 
-      setDashboardOperatingSystemItem(values?.operatingSystemItem);
+      setDashboardOperatingSystemItem(options.operatingSystemItem);
       setDashboardOperatingSystemItems(
-        values?.operatingSystemItems ??
-          (values?.reset
+        options.operatingSystemItems ??
+          (options.reset
             ? operatingSystemItems
-            : values?.applyFilter
+            : options.applyFilter
             ? filteredOperatingSystemItems
             : []),
       );
 
-      setDashboardServerItem(values?.serverItem);
+      setDashboardServerItem(options.serverItem);
       setDashboardServerItems(
-        values?.serverItems ??
-          (values?.reset ? serverItems : values?.applyFilter ? filteredServerItems : []),
+        options.serverItems ??
+          (options.reset ? serverItems : options.applyFilter ? filteredServerItems : []),
       );
 
-      if (values?.serverItem) {
+      if (options.serverItem && options.fetchFileSystemItems) {
         await findFileSystemItems({
-          serverItemServiceNowKey: values?.serverItem.serviceNowKey,
+          serverItemServiceNowKey: options.serverItem.serviceNowKey,
           installStatus: 1,
         });
       }

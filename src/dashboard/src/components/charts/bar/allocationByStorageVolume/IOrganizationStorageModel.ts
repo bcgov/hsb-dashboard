@@ -1,6 +1,6 @@
-import { IOrganizationModel } from '@/hooks';
+import { IOrganizationListModel } from '@/hooks';
 
-export interface IOrganizationStorageModel extends IOrganizationModel {
+export interface IOrganizationStorageModel extends IOrganizationListModel {
   capacity: number;
   availableSpace: number;
   percentage: number;

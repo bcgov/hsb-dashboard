@@ -55,5 +55,10 @@ public class ServiceOptions
     /// get/set - Number of hours before an update will be allowed to be applied.  This is used to reduce the number or changes that can occur when running the process multiple times.
     /// </summary>
     public int AllowUpdateAfterXHours { get; set; } = 12;
+
+    /// <summary>
+    /// get/set - An array of actions to perform.  Leave empty to perform all actions. [sync, clean]
+    /// </summary>
+    public string[] Actions { get; set; } = Array.Empty<string>();
     #endregion
 }

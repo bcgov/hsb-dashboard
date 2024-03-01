@@ -1,38 +1,38 @@
 import {
   IFileSystemItemModel,
-  IOperatingSystemItemModel,
-  IOrganizationModel,
-  IServerItemModel,
-  ITenantModel,
+  IOperatingSystemItemListModel,
+  IOrganizationListModel,
+  IServerItemListModel,
+  ITenantListModel,
 } from '@/hooks/api';
 import { create } from 'zustand';
 
 export interface IDashboardStoreState {
   // Tenants
-  tenant?: ITenantModel;
-  setTenant: (value?: ITenantModel) => void;
-  tenants: ITenantModel[];
-  setTenants: (values: ITenantModel[]) => void;
+  tenant?: ITenantListModel;
+  setTenant: (value?: ITenantListModel) => void;
+  tenants: ITenantListModel[];
+  setTenants: (values: ITenantListModel[]) => void;
 
   // Organizations
-  organization?: IOrganizationModel;
-  setOrganization: (value?: IOrganizationModel) => void;
-  organizations: IOrganizationModel[];
-  setOrganizations: (values: IOrganizationModel[]) => void;
+  organization?: IOrganizationListModel;
+  setOrganization: (value?: IOrganizationListModel) => void;
+  organizations: IOrganizationListModel[];
+  setOrganizations: (values: IOrganizationListModel[]) => void;
 
   // Operating System Items
-  operatingSystemItem?: IOperatingSystemItemModel;
-  setOperatingSystemItem: (value?: IOperatingSystemItemModel) => void;
-  operatingSystemItems: IOperatingSystemItemModel[];
-  setOperatingSystemItems: (values: IOperatingSystemItemModel[]) => void;
+  operatingSystemItem?: IOperatingSystemItemListModel;
+  setOperatingSystemItem: (value?: IOperatingSystemItemListModel) => void;
+  operatingSystemItems: IOperatingSystemItemListModel[];
+  setOperatingSystemItems: (values: IOperatingSystemItemListModel[]) => void;
 
   // Server Items
   serverItemsReady?: boolean;
   setServerItemsReady: (value?: boolean) => void;
-  serverItem?: IServerItemModel;
-  setServerItem: (value?: IServerItemModel) => void;
-  serverItems: IServerItemModel[];
-  setServerItems: (values: IServerItemModel[]) => void;
+  serverItem?: IServerItemListModel;
+  setServerItem: (value?: IServerItemListModel) => void;
+  serverItems: IServerItemListModel[];
+  setServerItems: (values: IServerItemListModel[]) => void;
 
   // File System Items
   fileSystemItemsReady?: boolean;

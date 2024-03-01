@@ -3,7 +3,7 @@
 import styles from './AllOrganizations.module.scss';
 
 import { Button } from '@/components/buttons';
-import { IOrganizationModel, IServerItemModel } from '@/hooks';
+import { IOrganizationListModel, IServerItemListModel } from '@/hooks';
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js';
 import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
@@ -13,8 +13,8 @@ import { generateAllOrganizationsDoughnutChart } from './utils';
 ChartJS.register(ArcElement, Tooltip);
 
 export interface IAllOrganizationsProps {
-  organizations: IOrganizationModel[];
-  serverItems: IServerItemModel[];
+  organizations: IOrganizationListModel[];
+  serverItems: IServerItemListModel[];
   loading?: boolean;
 }
 

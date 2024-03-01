@@ -30,19 +30,19 @@ oc-build () {
 
   if [ "$image" = "api" ]; then
     # buid api
-    docker build -f src/api/Dockerfile -t $IMAGE_REGISTRY/$project-tools/$image:$tag .
+    docker build --no-cache -f src/api/Dockerfile -t $IMAGE_REGISTRY/$project-tools/$image:$tag .
   elif [ "$image" = "app" ]; then
     # buid app
     image=dashboard
-    docker build -f src/dashboard/Dockerfile.prod -t $IMAGE_REGISTRY/$project-tools/$image:$tag ./src/dashboard
+    docker build --no-cache -f src/dashboard/Dockerfile.prod -t $IMAGE_REGISTRY/$project-tools/$image:$tag ./src/dashboard
   elif [ "$image" = "db" ]; then
     # buid app
     image=db-migration
-    docker build -f src/libs/Dockerfile -t $IMAGE_REGISTRY/$project-tools/$image:$tag ./src/libs
+    docker build --no-cache -f src/libs/Dockerfile -t $IMAGE_REGISTRY/$project-tools/$image:$tag ./src/libs
   elif [ "$image" = "data-service" ]; then
     # buid data-service
     image=data-service
-    docker build -f src/data-service/Dockerfile -t $IMAGE_REGISTRY/$project-tools/$image:$tag .
+    docker build --no-cache -f src/data-service/Dockerfile -t $IMAGE_REGISTRY/$project-tools/$image:$tag .
   fi
 }
 

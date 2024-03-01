@@ -15,9 +15,9 @@ public interface IServerItemService : IBaseService<ServerItem>
 
     ServerItem? FindForId(string key, long userId, bool includeFileSystemItems = false);
 
-    IEnumerable<ServerItemSmallModel> FindSimple(ServerItemFilter filter);
+    IEnumerable<ServerItemListModel> FindList(ServerItemFilter filter);
 
-    IEnumerable<ServerItemSmallModel> FindSimpleForUser(long userId, ServerItemFilter filter);
+    IEnumerable<ServerItemListModel> FindListForUser(long userId, ServerItemFilter filter);
 
     EntityEntry<ServerItem> Update(ServerItem entity, bool updateTotals);
 }

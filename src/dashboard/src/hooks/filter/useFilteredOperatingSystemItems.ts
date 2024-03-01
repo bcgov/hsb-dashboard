@@ -3,12 +3,12 @@ import { useFilteredStore } from '@/store';
 import React from 'react';
 import {
   IOperatingSystemItemFilter,
-  IOperatingSystemItemModel,
+  IOperatingSystemItemListModel,
   useApiOperatingSystemItems,
 } from '..';
 
 export const useFilteredOperatingSystemItems = () => {
-  const { find } = useApiOperatingSystemItems();
+  const { findList } = useApiOperatingSystemItems();
   const { operatingSystemItem } = useFilteredStore((state) => state.values);
   const operatingSystemItems = useFilteredStore((state) => state.operatingSystemItems);
   const setOperatingSystemItems = useFilteredStore((state) => state.setOperatingSystemItems);
@@ -19,8 +19,8 @@ export const useFilteredOperatingSystemItems = () => {
     async (filter: IOperatingSystemItemFilter) => {
       try {
         setIsLoading(true);
-        const res = await find(filter);
-        const operatingSystemItems: IOperatingSystemItemModel[] = await res.json();
+        const res = await findList(filter);
+        const operatingSystemItems: IOperatingSystemItemListModel[] = await res.json();
         setOperatingSystemItems(operatingSystemItems);
         return operatingSystemItems;
       } catch (error) {
@@ -29,14 +29,14 @@ export const useFilteredOperatingSystemItems = () => {
         setIsLoading(false);
       }
     },
-    [find, setOperatingSystemItems],
+    [findList, setOperatingSystemItems],
   );
 
   const options = React.useMemo(
     () =>
       operatingSystemItems
         .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
-        .map<IOption<IOperatingSystemItemModel>>((t) => ({
+        .map<IOption<IOperatingSystemItemListModel>>((t) => ({
           label: t.name,
           value: t.id,
           data: t,

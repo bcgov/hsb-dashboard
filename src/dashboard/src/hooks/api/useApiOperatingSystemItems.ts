@@ -13,6 +13,11 @@ export const useApiOperatingSystemItems = () => {
       find: async (filter: IOperatingSystemItemFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/dashboard/operating-system-items?${toQueryString(filter)}`);
       },
+      findList: async (filter: IOperatingSystemItemFilter | undefined = {}): Promise<Response> => {
+        return await dispatch(
+          `/api/dashboard/operating-system-items/list?${toQueryString(filter)}`,
+        );
+      },
     }),
     [],
   );

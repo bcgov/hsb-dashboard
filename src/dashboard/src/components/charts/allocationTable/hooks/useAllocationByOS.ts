@@ -1,5 +1,5 @@
-import { IServerItemModel } from '@/hooks';
-import { useOperatingSystemItems, useTenants } from '@/hooks/data';
+import { IServerItemListModel } from '@/hooks';
+import { useOperatingSystemItems, useTenants } from '@/hooks/lists';
 import React from 'react';
 import { ITableRowData } from '../ITableRowData';
 
@@ -15,9 +15,9 @@ export const useAllocationByOS = (osClassName?: string, operatingSystemId?: numb
 
   return React.useCallback(
     (
-      serverItems: IServerItemModel[],
-      filter: (serverItem: IServerItemModel) => boolean = () => true,
-      sort: keyof ITableRowData<IServerItemModel> = 'server',
+      serverItems: IServerItemListModel[],
+      filter: (serverItem: IServerItemListModel) => boolean = () => true,
+      sort: keyof ITableRowData<IServerItemListModel> = 'server',
       direction: 'asc' | 'desc' = 'asc',
     ) => {
       const data = serverItems
@@ -29,14 +29,14 @@ export const useAllocationByOS = (osClassName?: string, operatingSystemId?: numb
           tenant: tenants.find((t) => t.id === si.tenantId),
         }))
         .filter((si) => {
-          const className = si.operatingSystemItem?.rawData.u_class;
+          const className = si.operatingSystemItem?.className;
           return (
             (!osClassName || className === osClassName) &&
             (!operatingSystemId || si.operatingSystemItem?.id === operatingSystemId) &&
             filter(si)
           );
         })
-        .map<ITableRowData<IServerItemModel>>((si) => {
+        .map<ITableRowData<IServerItemListModel>>((si) => {
           return {
             server: si.name.length ? si.name : '[NO NAME]',
             os: si.operatingSystemItem?.name ?? '',

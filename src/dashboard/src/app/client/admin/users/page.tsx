@@ -15,10 +15,10 @@ import {
 import { IUserForm, UserDialog, UserDialogVariant } from '@/components/admin';
 import { LoadingAnimation } from '@/components/loadingAnimation';
 import { IUserModel, RoleName, useAuth } from '@/hooks';
+import { useAdminGroups, useAdminTenants, useAdminUsers } from '@/hooks/admin';
 import { useApiUsers } from '@/hooks/api/admin';
 import { IOrganizationModel, ITenantModel } from '@/hooks/api/interfaces/auth';
-import { useGroups, useTenants, useUsers } from '@/hooks/data';
-import { useAppStore, useNavigateStore } from '@/store';
+import { useAdminStore, useNavigateStore } from '@/store';
 import { redirect } from 'next/navigation';
 import React from 'react';
 import { toast } from 'react-toastify';
@@ -26,12 +26,12 @@ import { getOrganizationOptions, getTenantOptions, searchUsers } from './utils';
 
 export default function Page() {
   const state = useAuth();
-  const userinfo = useAppStore((state) => state.userinfo);
+  const userinfo = useAdminStore((state) => state.userinfo);
   const setEnableNavigate = useNavigateStore((state) => state.setEnableNavigate);
 
-  const { isReady: isReadyTenants } = useTenants({ init: true });
-  const { isReady: isReadyUsers, users } = useUsers({ includePermissions: true, init: true });
-  const { isReady: isReadyGroups, groups } = useGroups({ init: true });
+  const { isReady: isReadyTenants } = useAdminTenants({ init: true });
+  const { isReady: isReadyUsers, users } = useAdminUsers({ includePermissions: true, init: true });
+  const { isReady: isReadyGroups, groups } = useAdminGroups({ init: true });
   const { update: updateUser } = useApiUsers();
 
   const dialogRef = React.useRef<HTMLDialogElement>(null);

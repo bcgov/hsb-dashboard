@@ -1,18 +1,18 @@
-import { useAppStore } from '@/store';
+import { useAdminStore } from '@/store';
 import React from 'react';
 import { toast } from 'react-toastify';
 import { IOrganizationModel, useApiOrganizations, useAuth } from '..';
 
-export interface IOrganizationsProps {
+export interface IAdminOrganizationsProps {
   init?: boolean;
   includeTenants?: boolean;
 }
 
-export const useOrganizations = ({ init, includeTenants }: IOrganizationsProps = {}) => {
+export const useAdminOrganizations = ({ init, includeTenants }: IAdminOrganizationsProps = {}) => {
   const { status } = useAuth();
   const { find } = useApiOrganizations();
-  const organizations = useAppStore((state) => state.organizations);
-  const setOrganizations = useAppStore((state) => state.setOrganizations);
+  const organizations = useAdminStore((state) => state.organizations);
+  const setOrganizations = useAdminStore((state) => state.setOrganizations);
 
   const [isReady, setIsReady] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);

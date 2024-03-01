@@ -74,12 +74,16 @@ public class FileSystemHistoryItemService : BaseService<FileSystemHistoryItem>, 
 
     public IEnumerable<FileSystemHistoryItem> FindHistoryByMonth(DateTime start, DateTime? end, int? tenantId, int? organizationId, int? operatingSystemId, string? serverServiceKeyNow)
     {
-        return this.Context.FindFileSystemHistoryItemsByMonth(start.ToUniversalTime(), end?.ToUniversalTime(), tenantId, organizationId, operatingSystemId, serverServiceKeyNow).ToArray();
+        return this.Context.FindFileSystemHistoryItemsByMonth(start.ToUniversalTime(), end?.ToUniversalTime(), tenantId, organizationId, operatingSystemId, serverServiceKeyNow)
+            .AsNoTracking()
+            .ToArray();
     }
 
     public IEnumerable<FileSystemHistoryItem> FindHistoryByMonthForUser(int userId, DateTime start, DateTime? end, int? tenantId, int? organizationId, int? operatingSystemId, string? serverServiceKeyNow)
     {
-        return this.Context.FindFileSystemHistoryItemsByMonthForUser(userId, start.ToUniversalTime(), end?.ToUniversalTime(), tenantId, organizationId, operatingSystemId, serverServiceKeyNow).ToArray();
+        return this.Context.FindFileSystemHistoryItemsByMonthForUser(userId, start.ToUniversalTime(), end?.ToUniversalTime(), tenantId, organizationId, operatingSystemId, serverServiceKeyNow)
+            .AsNoTracking()
+            .ToArray();
     }
     #endregion
 }

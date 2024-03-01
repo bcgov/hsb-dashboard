@@ -2,7 +2,8 @@
 
 import { Button } from '@/components/buttons';
 import { Text } from '@/components/forms/text';
-import { IServerItemModel } from '@/hooks';
+import { IServerItemListModel } from '@/hooks';
+import { convertToStorageSize } from '@/utils/convertToStorageSize';
 import classNames from 'classnames';
 import { debounce } from 'lodash';
 import React, { ChangeEvent } from 'react';
@@ -13,14 +14,13 @@ import { ITableRowData } from './ITableRowData';
 import { TableRow } from './TableRow';
 import { useAllocationByOS } from './hooks';
 import { getColumns, getLabel } from './utils';
-import { convertToStorageSize } from '@/utils/convertToStorageSize';
 export interface IAllocationTableProps {
   /** Filter servers by their OS */
   osClassName?: string;
   operatingSystemId?: number;
-  serverItems: IServerItemModel[];
+  serverItems: IServerItemListModel[];
   loading?: boolean;
-  onClick?: (serverItem?: IServerItemModel) => void;
+  onClick?: (serverItem?: IServerItemListModel) => void;
   margin?: number;
 }
 
@@ -37,8 +37,8 @@ export const AllocationTable = ({
   const [keyword, setKeyword] = React.useState('');
   const [filter, setFilter] = React.useState(keyword);
   const [sort, setSort] = React.useState<string>('server:asc');
-  const [rows, setRows] = React.useState<ITableRowData<IServerItemModel>[]>([]);
-  const [filteredServerItems, setFilteredServerItems] = React.useState<IServerItemModel[]>([]);
+  const [rows, setRows] = React.useState<ITableRowData<IServerItemListModel>[]>([]);
+  const [filteredServerItems, setFilteredServerItems] = React.useState<IServerItemListModel[]>([]);
   const [showDropdown, setShowDropdown] = React.useState(false);
   const wrapperRef = React.useRef<HTMLDivElement>(null);
 
@@ -53,7 +53,7 @@ export const AllocationTable = ({
           : '[NO NAME]'.toLocaleLowerCase().includes(filter.toLocaleLowerCase())) ||
         (!!si.operatingSystemItem &&
           si.operatingSystemItem.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())),
-      sorting[0] as keyof ITableRowData<IServerItemModel>,
+      sorting[0] as keyof ITableRowData<IServerItemListModel>,
       sorting[1] as any,
     );
     setRows(rows);
@@ -71,6 +71,7 @@ export const AllocationTable = ({
   const showTenants = React.useMemo(() => rows.some((data) => data.tenant), [rows]);
   const columns = React.useMemo(() => getColumns(showTenants), [showTenants]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = React.useCallback(
     debounce((searchKeyword: string) => {
       const filtered = serverItems.filter((si) =>
@@ -90,7 +91,7 @@ export const AllocationTable = ({
     debouncedSearch(value);
   };
 
-  const selectFromDropdown = (item: IServerItemModel) => {
+  const selectFromDropdown = (item: IServerItemListModel) => {
     setKeyword(item.name);
     setFilter(item.name);
     setShowDropdown(false);
@@ -110,12 +111,12 @@ export const AllocationTable = ({
   }, []);
 
   // Check if all servers have the same OS and return that OS name
-  const getCommonOSName = (serverRows: ITableRowData<IServerItemModel>[]): string | null => {
+  const getCommonOSName = (serverRows: ITableRowData<IServerItemListModel>[]): string | null => {
     if (serverRows.length === 0) return null; // Early exit if no servers
-  
+
     const firstOS = serverRows[0].os;
-    const commonOS = serverRows.every(row => row.os === firstOS);
-  
+    const commonOS = serverRows.every((row) => row.os === firstOS);
+
     return commonOS ? firstOS : null;
   };
 
@@ -129,9 +130,14 @@ export const AllocationTable = ({
           ? `Allocation by Storage Volume - All ${serverItems.length.toLocaleString()} ${getLabel(
               osClassName,
             )}`
-          : `${serverItems.length.toLocaleString()} Servers ${commonOSName ? `using OS: "${commonOSName}"` : ''}`}
+          : `${serverItems.length.toLocaleString()} Servers ${
+              commonOSName ? `using OS: "${commonOSName}"` : ''
+            }`}
       </h1>
-      <h2>Total Allocated: {capacityValue} <span></span> Used: {usedValue} <span></span> Unused: {unusedValue}</h2>
+      <h2>
+        Total Allocated: {capacityValue} <span></span> Used: {usedValue} <span></span> Unused:{' '}
+        {unusedValue}
+      </h2>
       <div className={styles.filter} ref={wrapperRef}>
         <Text
           placeholder="Filter by server name, OS version"

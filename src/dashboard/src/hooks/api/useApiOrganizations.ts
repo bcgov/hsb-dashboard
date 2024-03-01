@@ -13,6 +13,9 @@ export const useApiOrganizations = () => {
       find: async (filter: IOrganizationFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/dashboard/organizations?${toQueryString(filter)}`);
       },
+      findList: async (filter: IOrganizationFilter | undefined = {}): Promise<Response> => {
+        return await dispatch(`/api/dashboard/organizations/list?${toQueryString(filter)}`);
+      },
     }),
     [],
   );

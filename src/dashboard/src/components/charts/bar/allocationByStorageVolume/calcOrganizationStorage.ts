@@ -1,10 +1,10 @@
-import { IOrganizationModel, IServerItemModel } from '@/hooks';
+import { IOrganizationListModel, IServerItemListModel } from '@/hooks';
 import { IOrganizationStorageModel } from './IOrganizationStorageModel';
 import { SortOptions } from './sortOptions';
 
 export const calcOrganizationStorage = (
-  organizations: IOrganizationModel[],
-  serverItems: IServerItemModel[],
+  organizations: IOrganizationListModel[],
+  serverItems: IServerItemListModel[],
   sort: SortOptions,
 ): IOrganizationStorageModel[] => {
   return organizations

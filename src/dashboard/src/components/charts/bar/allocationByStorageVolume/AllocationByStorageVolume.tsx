@@ -3,7 +3,7 @@
 import { Button } from '@/components/buttons';
 import { Select } from '@/components/forms/select';
 import { Text } from '@/components/forms/text';
-import { IOrganizationModel, IServerItemModel } from '@/hooks';
+import { IOrganizationListModel, IServerItemListModel } from '@/hooks';
 import React from 'react';
 import { LoadingAnimation } from '../../../loadingAnimation';
 import styles from './AllocationByStorageVolume.module.scss';
@@ -14,10 +14,10 @@ import { calcOrganizationStorage } from './calcOrganizationStorage';
 import { SortOptions, sortOptions } from './sortOptions';
 
 export interface IAllocationByStorageVolumeProps {
-  organizations: IOrganizationModel[];
-  serverItems: IServerItemModel[];
+  organizations: IOrganizationListModel[];
+  serverItems: IServerItemListModel[];
   loading?: boolean;
-  onClick?: (organization: IOrganizationModel) => void;
+  onClick?: (organization: IOrganizationListModel) => void;
 }
 
 export const AllocationByStorageVolume = ({
@@ -39,8 +39,8 @@ export const AllocationByStorageVolume = ({
   const filterOrganizations = React.useCallback(
     (
       value: string,
-      organizations: IOrganizationModel[],
-      serverItems: IServerItemModel[],
+      organizations: IOrganizationListModel[],
+      serverItems: IServerItemListModel[],
       sort: SortOptions,
     ) => {
       const orgs = value

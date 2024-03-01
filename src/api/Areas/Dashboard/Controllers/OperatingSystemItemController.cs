@@ -34,6 +34,7 @@ public class OperatingSystemItemController : ControllerBase
     private readonly IXlsExporter _exporter;
     private readonly IMemoryCache _memoryCache;
     private const string HSB_CACHE_KEY = "operatingSystemItems-hsb";
+    private const string HSB_LIST_CACHE_KEY = "operatingSystemItemsList-hsb";
     #endregion
 
     #region Constructors
@@ -98,8 +99,50 @@ public class OperatingSystemItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var result = _service.FindForUser(user.Id, filter.GeneratePredicate(), filter.Sort);
+            var result = _service.FindForUser(user.Id, filter);
             return new JsonResult(result.Select(fsi => new OperatingSystemItemModel(fsi)));
+        }
+    }
+
+    /// <summary>
+    /// Find all operating system items for the specified 'filter'.
+    /// Return the simple details for each operating system item.
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("list", Name = "GetOperatingSystemItemLists-Dashboard")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<OperatingSystemItemListModel>), (int)HttpStatusCode.OK)]
+    [SwaggerOperation(Tags = new[] { "Operating System Item" })]
+    [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
+    public IActionResult FindList()
+    {
+        var uri = new Uri(this.Request.GetDisplayUrl());
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        var filter = new HSB.Models.Filters.OperatingSystemItemFilter(query);
+
+        var isHSB = this.User.HasClientRole(ClientRole.HSB);
+        if (isHSB)
+        {
+            if (_memoryCache.TryGetValue(HSB_LIST_CACHE_KEY, out IEnumerable<OperatingSystemItemListModel>? cachedItems))
+            {
+                return new JsonResult(cachedItems);
+            }
+            var result = _service.FindList(filter);
+            var cacheOptions = new MemoryCacheEntryOptions()
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60)
+            };
+            _memoryCache.Set(HSB_LIST_CACHE_KEY, result, cacheOptions);
+            return new JsonResult(result);
+        }
+        else
+        {
+            // Only return operating system items this user has access to.
+            var user = _authorization.GetUser();
+            if (user == null) return Forbid();
+
+            var result = _service.FindListForUser(user.Id, filter);
+            return new JsonResult(result);
         }
     }
 
@@ -128,7 +171,7 @@ public class OperatingSystemItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var entity = _service.FindForUser(user.Id, (t) => t.Id == id, osi => osi.Id).FirstOrDefault();
+            var entity = _service.FindForUser(user.Id, new HSB.Models.Filters.OperatingSystemItemFilter() { Id = id }).FirstOrDefault();
             if (entity == null) return Forbid();
             return new JsonResult(new OperatingSystemItemModel(entity));
         }

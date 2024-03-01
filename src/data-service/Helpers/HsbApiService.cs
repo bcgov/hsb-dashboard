@@ -327,7 +327,7 @@ public class HsbApiService : IHsbApiService
     /// <returns></returns>
     public async Task<ServerItemModel?> AddServerItemAsync(ServerItemModel model)
     {
-        this.Logger.LogDebug("HSB - Add server item");
+        this.Logger.LogDebug("HSB - Add server item: {key}", model.ServiceNowKey);
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
         {
             Path = this.Options.Endpoints.ServerItems
@@ -344,10 +344,11 @@ public class HsbApiService : IHsbApiService
     /// <returns></returns>
     public async Task<ServerItemModel?> UpdateServerItemAsync(ServerItemModel model, bool updateTotals = false)
     {
-        this.Logger.LogDebug("HSB - Update server item");
+        this.Logger.LogDebug("HSB - Update server item: {key}", model.ServiceNowKey);
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
         {
-            Path = $"{this.Options.Endpoints.ServerItems}/{model.ServiceNowKey}?updateTotals={updateTotals}"
+            Query = $"updateTotals={updateTotals}",
+            Path = $"{this.Options.Endpoints.ServerItems}/{model.ServiceNowKey}"
         };
         var results = await HsbSendAsync<ServerItemModel>(HttpMethod.Put, builder.Uri, JsonContent.Create(model));
         return results;
@@ -360,7 +361,7 @@ public class HsbApiService : IHsbApiService
     /// <returns></returns>
     public async Task<ServerItemModel> DeleteServerItemAsync(ServerItemModel model)
     {
-        this.Logger.LogDebug("HSB - Delete server item");
+        this.Logger.LogDebug("HSB - Delete server item: {key}", model.ServiceNowKey);
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
         {
             Path = $"{this.Options.Endpoints.ServerItems}/{model.ServiceNowKey}"
@@ -394,7 +395,7 @@ public class HsbApiService : IHsbApiService
     /// <returns></returns>
     public async Task<FileSystemItemModel?> GetFileSystemItemAsync(string id, string? name = null)
     {
-        this.Logger.LogDebug("HSB - Get file system item");
+        this.Logger.LogDebug("HSB - Get file system item: {key}", id);
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
         {
             Query = !String.IsNullOrWhiteSpace(name) ? $"name={name}" : "",
@@ -411,7 +412,7 @@ public class HsbApiService : IHsbApiService
     /// <returns></returns>
     public async Task<FileSystemItemModel?> AddFileSystemItemAsync(FileSystemItemModel model)
     {
-        this.Logger.LogDebug("HSB - Add file system item");
+        this.Logger.LogDebug("HSB - Add file system item: {key}", model.ServiceNowKey);
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
         {
             Path = this.Options.Endpoints.FileSystemItems
@@ -427,7 +428,7 @@ public class HsbApiService : IHsbApiService
     /// <returns></returns>
     public async Task<FileSystemItemModel?> UpdateFileSystemItemAsync(FileSystemItemModel model)
     {
-        this.Logger.LogDebug("HSB - Update file system item");
+        this.Logger.LogDebug("HSB - Update file system item: {key}", model.ServiceNowKey);
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
         {
             Path = $"{this.Options.Endpoints.FileSystemItems}/{model.ServiceNowKey}"
@@ -443,7 +444,7 @@ public class HsbApiService : IHsbApiService
     /// <returns></returns>
     public async Task<FileSystemItemModel?> DeleteFileSystemItemAsync(FileSystemItemModel model)
     {
-        this.Logger.LogDebug("HSB - Delete file system item");
+        this.Logger.LogDebug("HSB - Delete file system item: {key}", model.ServiceNowKey);
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
         {
             Path = $"{this.Options.Endpoints.FileSystemItems}/{model.ServiceNowKey}"

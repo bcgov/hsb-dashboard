@@ -1,8 +1,8 @@
-import { IServerItemModel } from '@/hooks';
+import { IServerItemListModel } from '@/hooks';
 import { defaultData } from '../defaultData';
 import { generateDoughnutChart } from './generateDoughnutChart';
 
-export const generateAllOrganizationsDoughnutChart = (serverItems: IServerItemModel[]) => {
+export const generateAllOrganizationsDoughnutChart = (serverItems: IServerItemListModel[]) => {
   if (serverItems.length) {
     const space = serverItems.map((si) => si.capacity!).reduce((a, b) => (a ?? 0) + (b ?? 0));
     const available = serverItems

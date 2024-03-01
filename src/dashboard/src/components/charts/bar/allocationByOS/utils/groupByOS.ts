@@ -1,12 +1,12 @@
-import { IOperatingSystemItemModel, IServerItemModel } from '@/hooks';
+import { IOperatingSystemItemListModel, IServerItemListModel } from '@/hooks';
 import { groupBy } from '@/utils';
 import { IBarChartRowData } from '../../smallBar/IBarChartRowData';
 
 export const groupByOS = (
-  serverItems: IServerItemModel[],
-  operatingSystemItems: IOperatingSystemItemModel[],
+  serverItems: IServerItemListModel[],
+  operatingSystemItems: IOperatingSystemItemListModel[],
 ) => {
-  const groups = groupBy<IServerItemModel, any>(
+  const groups = groupBy<IServerItemListModel, any>(
     serverItems,
     (item) => `${item.operatingSystemItemId ?? 'NA'}`,
     (item) => {
@@ -20,7 +20,7 @@ export const groupByOS = (
   );
 
   const result = Object.keys(groups)
-    .map<IBarChartRowData<IOperatingSystemItemModel | undefined>>((key) => {
+    .map<IBarChartRowData<IOperatingSystemItemListModel | undefined>>((key) => {
       const items = groups[key];
       const capacity = items.reduce((result, item) => result + item.capacity, 0);
       const available = items.reduce((result, item) => result + item.available, 0);

@@ -16,79 +16,127 @@ public class OperatingSystemItemService : BaseService<OperatingSystemItem>, IOpe
     #endregion
 
     #region Methods
-    public IEnumerable<OperatingSystemItem> FindForUser<T>(
-        long userId,
-        System.Linq.Expressions.Expression<Func<OperatingSystemItem, bool>> predicate,
-        System.Linq.Expressions.Expression<Func<OperatingSystemItem, T>>? sort = null,
-        int? take = null,
-        int? skip = null)
+    public IEnumerable<OperatingSystemItem> Find(
+        Models.Filters.OperatingSystemItemFilter filter)
     {
-        var userOrganizationQuery = from uo in this.Context.UserOrganizations
-                                    join o in this.Context.Organizations on uo.OrganizationId equals o.Id
-                                    where uo.UserId == userId
-                                        && o.IsEnabled
-                                    select uo.OrganizationId;
-        var userTenants = from ut in this.Context.UserTenants
-                          join t in this.Context.Tenants on ut.TenantId equals t.Id
-                          where ut.UserId == userId
-                            && t.IsEnabled
-                          select ut.TenantId;
+        var query = from tenant in this.Context.OperatingSystemItems
+                    select tenant;
 
-        var query = (from osi in this.Context.OperatingSystemItems
-                     join si in this.Context.ServerItems on osi.Id equals si.OperatingSystemItemId
-                     where userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
-                     select osi)
-            .Where(predicate)
-            .AsNoTracking()
-            .AsSplitQuery()
-            .Distinct();
+        query = query
+            .Where(filter.GeneratePredicate());
 
-        if (sort != null)
-            query = query.OrderBy(sort);
-        if (take.HasValue)
-            query = query.Take(take.Value);
-        if (skip.HasValue)
-            query = query.Skip(skip.Value);
+        if (filter.Sort?.Any() == true)
+            query = query.OrderByProperty(filter.Sort);
+        else query = query.OrderBy(si => si.Name);
+        if (filter.Quantity.HasValue)
+            query = query.Take(filter.Quantity.Value);
+        if (filter.Page.HasValue && filter.Quantity.HasValue && filter.Page > 1)
+            query = query.Skip(filter.Page.Value * filter.Quantity.Value);
 
         return query
+            .AsNoTracking()
+            .AsSingleQuery()
             .ToArray();
     }
 
     public IEnumerable<OperatingSystemItem> FindForUser(
         long userId,
-        System.Linq.Expressions.Expression<Func<OperatingSystemItem, bool>> predicate,
-        string[] sort,
-        int? take = null,
-        int? skip = null)
+        Models.Filters.OperatingSystemItemFilter filter)
     {
         var userOrganizationQuery = from uo in this.Context.UserOrganizations
                                     join o in this.Context.Organizations on uo.OrganizationId equals o.Id
                                     where uo.UserId == userId
                                         && o.IsEnabled
                                     select uo.OrganizationId;
-        var userTenants = from ut in this.Context.UserTenants
-                          join t in this.Context.Tenants on ut.TenantId equals t.Id
-                          where ut.UserId == userId
-                            && t.IsEnabled
-                          select ut.TenantId;
+        var userTenantQuery = from ut in this.Context.UserTenants
+                              join t in this.Context.Tenants on ut.TenantId equals t.Id
+                              where ut.UserId == userId
+                                && t.IsEnabled
+                              select ut.TenantId;
 
-        var query = (from osi in this.Context.OperatingSystemItems
-                     join si in this.Context.ServerItems on osi.Id equals si.OperatingSystemItemId
-                     where userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
-                     select osi)
-            .Where(predicate)
+        var query = from osi in this.Context.OperatingSystemItems
+                    join si in this.Context.ServerItems on osi.Id equals si.OperatingSystemItemId
+                    where userOrganizationQuery.Contains(si.OrganizationId) || userTenantQuery.Contains(si.TenantId!.Value)
+                    select osi;
+
+        query = query
+            .Where(filter.GeneratePredicate())
             .Distinct();
 
-        if (sort?.Any() == true)
-            query = query.OrderByProperty(sort);
-        if (take.HasValue)
-            query = query.Take(take.Value);
-        if (skip.HasValue)
-            query = query.Skip(skip.Value);
+        if (filter.Sort?.Any() == true)
+            query = query.OrderByProperty(filter.Sort);
+        else query = query.OrderBy(si => si.Name);
+        if (filter.Quantity.HasValue)
+            query = query.Take(filter.Quantity.Value);
+        if (filter.Page.HasValue && filter.Quantity.HasValue && filter.Page > 1)
+            query = query.Skip(filter.Page.Value * filter.Quantity.Value);
 
         return query
             .AsNoTracking()
             .AsSplitQuery()
+            .ToArray();
+    }
+
+    public IEnumerable<Models.OperatingSystemItemListModel> FindList(
+        Models.Filters.OperatingSystemItemFilter filter)
+    {
+        var query = from osi in this.Context.OperatingSystemItems
+                    select osi;
+
+        query = query
+            .Where(filter.GeneratePredicate());
+
+        if (filter.Sort?.Any() == true)
+            query = query.OrderByProperty(filter.Sort);
+        else query = query.OrderBy(si => si.Name);
+        if (filter.Quantity.HasValue)
+            query = query.Take(filter.Quantity.Value);
+        if (filter.Page.HasValue && filter.Quantity.HasValue && filter.Page > 1)
+            query = query.Skip(filter.Page.Value * filter.Quantity.Value);
+
+        return query
+            .AsNoTracking()
+            .AsSingleQuery()
+            .Select(t => new Models.OperatingSystemItemListModel(t))
+            .ToArray();
+    }
+
+    public IEnumerable<Models.OperatingSystemItemListModel> FindListForUser(
+        long userId,
+        Models.Filters.OperatingSystemItemFilter filter)
+    {
+        var userOrganizationQuery = from uo in this.Context.UserOrganizations
+                                    join o in this.Context.Organizations on uo.OrganizationId equals o.Id
+                                    where uo.UserId == userId
+                                        && o.IsEnabled
+                                    select uo.OrganizationId;
+        var userTenantQuery = from ut in this.Context.UserTenants
+                              join t in this.Context.Tenants on ut.TenantId equals t.Id
+                              where ut.UserId == userId
+                                && t.IsEnabled
+                              select ut.TenantId;
+
+        var query = from osi in this.Context.OperatingSystemItems
+                    join si in this.Context.ServerItems on osi.Id equals si.OperatingSystemItemId
+                    where userOrganizationQuery.Contains(si.OrganizationId) || userTenantQuery.Contains(si.TenantId!.Value)
+                    select osi;
+
+        query = query
+            .Where(filter.GeneratePredicate())
+            .Distinct();
+
+        if (filter.Sort?.Any() == true)
+            query = query.OrderByProperty(filter.Sort);
+        else query = query.OrderBy(si => si.Name);
+        if (filter.Quantity.HasValue)
+            query = query.Take(filter.Quantity.Value);
+        if (filter.Page.HasValue && filter.Quantity.HasValue && filter.Page > 1)
+            query = query.Skip(filter.Page.Value * filter.Quantity.Value);
+
+        return query
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Select(t => new Models.OperatingSystemItemListModel(t))
             .ToArray();
     }
     #endregion

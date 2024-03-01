@@ -1,16 +1,12 @@
 import { IOption } from '@/components';
 import { useFilteredStore } from '@/store';
 import React from 'react';
-import { IServerItemFilter, IServerItemModel, useApiServerItems } from '..';
+import { IServerItemFilter, IServerItemListModel, useApiServerItems } from '..';
 
-export interface IFilteredServerItemsProps {
-  useSimple?: boolean;
-}
+export interface IFilteredServerItemsProps {}
 
-export const useFilteredServerItems = (
-  { useSimple = false }: IFilteredServerItemsProps | undefined = { useSimple: false },
-) => {
-  const { find, findSimple } = useApiServerItems();
+export const useFilteredServerItems = ({}: IFilteredServerItemsProps) => {
+  const { findList } = useApiServerItems();
   const serverItems = useFilteredStore((state) => state.serverItems);
   const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
 
@@ -20,8 +16,8 @@ export const useFilteredServerItems = (
     async (filter: IServerItemFilter) => {
       try {
         setIsLoading(true);
-        const res = useSimple ? await findSimple(filter) : await find(filter);
-        const serverItems: IServerItemModel[] = await res.json();
+        const res = await findList(filter);
+        const serverItems: IServerItemListModel[] = await res.json();
         setFilteredServerItems(serverItems);
         return serverItems;
       } catch (error) {
@@ -30,14 +26,14 @@ export const useFilteredServerItems = (
         setIsLoading(false);
       }
     },
-    [find, findSimple, setFilteredServerItems, useSimple],
+    [findList, setFilteredServerItems],
   );
 
   const options = React.useMemo(
     () =>
       serverItems
         .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
-        .map<IOption<IServerItemModel>>((t) => ({
+        .map<IOption<IServerItemListModel>>((t) => ({
           label: t.name ? `${t.name}` : '[NO NAME PROVIDED]',
           value: t.serviceNowKey,
           data: t,

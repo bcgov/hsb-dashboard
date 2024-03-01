@@ -33,6 +33,7 @@ public class OrganizationController : ControllerBase
     private readonly IAuthorizationHelper _authorization;
     private readonly IMemoryCache _memoryCache;
     private const string HSB_CACHE_KEY = "organizations-hsb";
+    private const string HSB_LIST_CACHE_KEY = "organizationsList-hsb";
     #endregion
 
     #region Constructors
@@ -97,6 +98,48 @@ public class OrganizationController : ControllerBase
 
             var result = _service.FindForUser(user.Id, filter);
             return new JsonResult(result.Select(o => new OrganizationModel(o, true)));
+        }
+    }
+
+    /// <summary>
+    /// Find all organizations for the specified 'filter'.
+    /// Return the simple details for each organizations.
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("list", Name = "GetOrganizationLists-Dashboard")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<OrganizationListModel>), (int)HttpStatusCode.OK)]
+    [SwaggerOperation(Tags = new[] { "Organization" })]
+    [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
+    public IActionResult FindList()
+    {
+        var uri = new Uri(this.Request.GetDisplayUrl());
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        var filter = new HSB.Models.Filters.OrganizationFilter(query);
+
+        var isHSB = this.User.HasClientRole(ClientRole.HSB);
+        if (isHSB)
+        {
+            if (_memoryCache.TryGetValue(HSB_LIST_CACHE_KEY, out IEnumerable<OrganizationListModel>? cachedItems))
+            {
+                return new JsonResult(cachedItems);
+            }
+            var result = _service.FindList(filter);
+            var cacheOptions = new MemoryCacheEntryOptions()
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60)
+            };
+            _memoryCache.Set(HSB_LIST_CACHE_KEY, result, cacheOptions);
+            return new JsonResult(result);
+        }
+        else
+        {
+            // Only return organizations this user has access to.
+            var user = _authorization.GetUser();
+            if (user == null) return Forbid();
+
+            var result = _service.FindListForUser(user.Id, filter);
+            return new JsonResult(result);
         }
     }
 

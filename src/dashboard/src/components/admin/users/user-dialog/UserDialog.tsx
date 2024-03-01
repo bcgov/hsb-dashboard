@@ -1,6 +1,6 @@
 import { Button, Checkbox, Dialog, IDialogProps } from '@/components';
 import { Text } from '@/components/forms/text';
-import { useGroups, useOrganizations, useTenants } from '@/hooks/data';
+import { useAdminGroups, useAdminOrganizations, useAdminTenants } from '@/hooks/admin';
 import React from 'react';
 import { IUserForm } from '../';
 import styles from './UserDialog.module.scss';
@@ -18,9 +18,9 @@ export const UserDialog = React.forwardRef<HTMLDialogElement, IUserDialogProps>(
   { variant, user: initUser, header, actions, onChange, onSave, ...rest },
   ref,
 ) {
-  const { groups } = useGroups({ init: true });
-  const { organizations } = useOrganizations({ init: true });
-  const { tenants } = useTenants({ init: true });
+  const { groups } = useAdminGroups({ init: true });
+  const { organizations } = useAdminOrganizations({ init: true });
+  const { tenants } = useAdminTenants({ init: true });
 
   const [filteredGroups, setFilteredGroups] = React.useState(groups);
   const [filteredOrganizations, setFilteredOrganizations] = React.useState(organizations);
