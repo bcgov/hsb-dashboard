@@ -33,6 +33,7 @@ public class TenantController : ControllerBase
     private readonly IAuthorizationHelper _authorization;
     private readonly IMemoryCache _memoryCache;
     private const string HSB_CACHE_KEY = "tenants-hsb";
+    private const string HSB_LIST_CACHE_KEY = "tenantsList-hsb";
     #endregion
 
     #region Constructors
@@ -96,6 +97,48 @@ public class TenantController : ControllerBase
 
             var result = _tenantService.FindForUser(user.Id, filter);
             return new JsonResult(result.Select(ci => new TenantModel(ci, true)));
+        }
+    }
+
+    /// <summary>
+    /// Find all tenants for the specified 'filter'.
+    /// Return the simple details for each tenants.
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("list", Name = "GetTenantLists-Dashboard")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<TenantListModel>), (int)HttpStatusCode.OK)]
+    [SwaggerOperation(Tags = new[] { "Tenant" })]
+    [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
+    public IActionResult FindList()
+    {
+        var uri = new Uri(this.Request.GetDisplayUrl());
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        var filter = new HSB.Models.Filters.TenantFilter(query);
+
+        var isHSB = this.User.HasClientRole(ClientRole.HSB);
+        if (isHSB)
+        {
+            if (_memoryCache.TryGetValue(HSB_LIST_CACHE_KEY, out IEnumerable<TenantListModel>? cachedItems))
+            {
+                return new JsonResult(cachedItems);
+            }
+            var result = _tenantService.FindList(filter);
+            var cacheOptions = new MemoryCacheEntryOptions()
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60)
+            };
+            _memoryCache.Set(HSB_LIST_CACHE_KEY, result, cacheOptions);
+            return new JsonResult(result);
+        }
+        else
+        {
+            // Only return tenants this user has access to.
+            var user = _authorization.GetUser();
+            if (user == null) return Forbid();
+
+            var result = _tenantService.FindListForUser(user.Id, filter);
+            return new JsonResult(result);
         }
     }
 

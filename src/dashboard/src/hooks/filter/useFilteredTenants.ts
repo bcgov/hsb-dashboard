@@ -1,7 +1,7 @@
 import { IOption } from '@/components';
 import { useFilteredStore } from '@/store';
 import React from 'react';
-import { ITenantFilter, ITenantModel, useApiTenants } from '..';
+import { ITenantFilter, ITenantListModel, useApiTenants } from '..';
 
 export interface IFilteredTenants {
   /** Whether to include disabled options */
@@ -9,7 +9,7 @@ export interface IFilteredTenants {
 }
 
 export const useFilteredTenants = ({ includeDisabled }: IFilteredTenants = {}) => {
-  const { find } = useApiTenants();
+  const { findList } = useApiTenants();
   const tenants = useFilteredStore((state) => state.tenants);
   const setTenants = useFilteredStore((state) => state.setTenants);
 
@@ -19,8 +19,8 @@ export const useFilteredTenants = ({ includeDisabled }: IFilteredTenants = {}) =
     async (filter: ITenantFilter) => {
       try {
         setIsLoading(true);
-        const res = await find(filter);
-        const tenants: ITenantModel[] = await res.json();
+        const res = await findList(filter);
+        const tenants: ITenantListModel[] = await res.json();
         setTenants(tenants);
         return tenants;
       } catch (error) {
@@ -29,7 +29,7 @@ export const useFilteredTenants = ({ includeDisabled }: IFilteredTenants = {}) =
         setIsLoading(false);
       }
     },
-    [find, setTenants],
+    [findList, setTenants],
   );
 
   const options = React.useMemo(
@@ -37,7 +37,7 @@ export const useFilteredTenants = ({ includeDisabled }: IFilteredTenants = {}) =
       tenants
         .filter((t) => (includeDisabled ? true : t.isEnabled))
         .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
-        .map<IOption<ITenantModel>>((t) => ({
+        .map<IOption<ITenantListModel>>((t) => ({
           label: t.name,
           value: t.id,
           data: t,

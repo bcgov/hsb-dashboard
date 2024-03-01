@@ -1,23 +1,23 @@
-import { useAppStore } from '@/store';
+import { useAdminStore } from '@/store';
 import React from 'react';
 import { toast } from 'react-toastify';
 import { IOperatingSystemItemModel, useApiOperatingSystemItems, useAuth } from '..';
 
-export interface IOperatingSystemItemsProps {
+export interface IAdminOperatingSystemItemsProps {
   init?: boolean;
   includeOrganizations?: boolean;
   includeTenants?: boolean;
 }
 
-export const useOperatingSystemItems = ({
+export const useAdminOperatingSystemItems = ({
   init,
   includeOrganizations,
   includeTenants,
-}: IOperatingSystemItemsProps = {}) => {
+}: IAdminOperatingSystemItemsProps = {}) => {
   const { status } = useAuth();
   const { find } = useApiOperatingSystemItems();
-  const operatingSystemItems = useAppStore((state) => state.operatingSystemItems);
-  const setOperatingSystemItems = useAppStore((state) => state.setOperatingSystemItems);
+  const operatingSystemItems = useAdminStore((state) => state.operatingSystemItems);
+  const setOperatingSystemItems = useAdminStore((state) => state.setOperatingSystemItems);
 
   const [isReady, setIsReady] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);

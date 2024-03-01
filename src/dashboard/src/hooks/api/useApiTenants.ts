@@ -13,6 +13,9 @@ export const useApiTenants = () => {
       find: async (filter: ITenantFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/dashboard/tenants?${toQueryString(filter)}`);
       },
+      findList: async (filter: ITenantFilter | undefined = {}): Promise<Response> => {
+        return await dispatch(`/api/dashboard/tenants/list?${toQueryString(filter)}`);
+      },
     }),
     [],
   );

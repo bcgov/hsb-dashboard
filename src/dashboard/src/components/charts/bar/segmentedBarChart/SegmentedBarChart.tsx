@@ -4,7 +4,7 @@ import { Button, DateRangePicker } from '@/components';
 import { Bar } from 'react-chartjs-2';
 import styles from './SegmentedBarChart.module.scss';
 
-import { IServerItemModel } from '@/hooks';
+import { IServerItemListModel } from '@/hooks';
 import { useStorageTrendsStore } from '@/store';
 import { BarElement, CategoryScale, Chart as ChartJS, Legend, Title, Tooltip } from 'chart.js';
 import moment from 'moment';
@@ -19,7 +19,7 @@ import { extractVolumeName } from './utils';
 ChartJS.register(CategoryScale, BarElement, Title, Tooltip, Legend);
 
 export interface ISegmentedBarChart {
-  serverItem?: IServerItemModel;
+  serverItem?: IServerItemListModel;
   maxVolumes?: number;
   loading?: boolean;
   dateRange?: string[];

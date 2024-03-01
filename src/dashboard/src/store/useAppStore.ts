@@ -1,11 +1,11 @@
 import {
   IFileSystemItemModel,
   IGroupModel,
-  IOperatingSystemItemModel,
-  IOrganizationModel,
+  IOperatingSystemItemListModel,
+  IOrganizationListModel,
   IRoleModel,
-  IServerItemModel,
-  ITenantModel,
+  IServerItemListModel,
+  ITenantListModel,
   IUserModel,
 } from '@/hooks/api';
 import { IUserInfoModel } from '@/hooks/api/interfaces/auth';
@@ -29,20 +29,20 @@ export interface IAppStoreState {
   setUsers: (values: IUserModel[]) => void;
 
   // Tenants
-  tenants: ITenantModel[];
-  setTenants: (values: ITenantModel[]) => void;
+  tenants: ITenantListModel[];
+  setTenants: (values: ITenantListModel[]) => void;
 
   // Organizations
-  organizations: IOrganizationModel[];
-  setOrganizations: (values: IOrganizationModel[]) => void;
+  organizations: IOrganizationListModel[];
+  setOrganizations: (values: IOrganizationListModel[]) => void;
 
   // Operating System Items
-  operatingSystemItems: IOperatingSystemItemModel[];
-  setOperatingSystemItems: (values: IOperatingSystemItemModel[]) => void;
+  operatingSystemItems: IOperatingSystemItemListModel[];
+  setOperatingSystemItems: (values: IOperatingSystemItemListModel[]) => void;
 
   // Server Items
-  serverItems: IServerItemModel[];
-  setServerItems: (values: IServerItemModel[]) => void;
+  serverItems: IServerItemListModel[];
+  setServerItems: (values: IServerItemListModel[]) => void;
 
   // File System Items
   fileSystemItems: IFileSystemItemModel[];

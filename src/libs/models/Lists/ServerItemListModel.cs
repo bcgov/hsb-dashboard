@@ -2,17 +2,17 @@
 using System.Text.Json.Serialization;
 
 namespace HSB.Models;
-public class ServerItemSmallModel
+public class ServerItemListModel
 {
     #region Properties
     public string ServiceNowKey { get; set; } = "";
 
     public int? TenantId { get; set; }
-    public TenantModel? Tenant { get; set; }
+    public TenantListModel? Tenant { get; set; }
     public int OrganizationId { get; set; }
-    public OrganizationModel? Organization { get; set; }
+    public OrganizationListModel? Organization { get; set; }
     public int? OperatingSystemItemId { get; set; }
-    public OperatingSystemItemModel? OperatingSystem { get; set; }
+    public OperatingSystemItemListModel? OperatingSystem { get; set; }
 
     #region ServiceNow Properties
     public string ClassName { get; set; } = "";
@@ -37,9 +37,9 @@ public class ServerItemSmallModel
     #endregion
 
     #region Constructors
-    public ServerItemSmallModel() { }
+    public ServerItemListModel() { }
 
-    public ServerItemSmallModel(ServerItem entity)
+    public ServerItemListModel(ServerItem entity)
     {
         this.ServiceNowKey = entity.ServiceNowKey;
 
@@ -61,7 +61,7 @@ public class ServerItemSmallModel
         this.AvailableSpace = entity.AvailableSpace;
     }
 
-    public ServerItemSmallModel(
+    public ServerItemListModel(
         int? tenantId,
         int organizationId,
         int? operatingSystemItemId,

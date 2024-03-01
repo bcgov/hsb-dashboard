@@ -1,17 +1,17 @@
 import {
   IFileSystemItemModel,
-  IOperatingSystemItemModel,
-  IOrganizationModel,
-  IServerItemModel,
-  ITenantModel,
+  IOperatingSystemItemListModel,
+  IOrganizationListModel,
+  IServerItemListModel,
+  ITenantListModel,
 } from '@/hooks/api';
 import { create } from 'zustand';
 
 export interface IFilterValues {
-  tenant?: ITenantModel;
-  organization?: IOrganizationModel;
-  operatingSystemItem?: IOperatingSystemItemModel;
-  serverItem?: IServerItemModel;
+  tenant?: ITenantListModel;
+  organization?: IOrganizationListModel;
+  operatingSystemItem?: IOperatingSystemItemListModel;
+  serverItem?: IServerItemListModel;
 }
 
 export interface IFilteredStoreState {
@@ -24,26 +24,26 @@ export interface IFilteredStoreState {
   // Tenants
   tenantsReady?: boolean;
   setTenantsReady: (value?: boolean) => void;
-  tenants: ITenantModel[];
-  setTenants: (values: ITenantModel[]) => void;
+  tenants: ITenantListModel[];
+  setTenants: (values: ITenantListModel[]) => void;
 
   // Organizations
   organizationsReady?: boolean;
   setOrganizationsReady: (value?: boolean) => void;
-  organizations: IOrganizationModel[];
-  setOrganizations: (values: IOrganizationModel[]) => void;
+  organizations: IOrganizationListModel[];
+  setOrganizations: (values: IOrganizationListModel[]) => void;
 
   // Operating System Items
   operatingSystemItemsReady?: boolean;
   setOperatingSystemItemsReady: (value?: boolean) => void;
-  operatingSystemItems: IOperatingSystemItemModel[];
-  setOperatingSystemItems: (values: IOperatingSystemItemModel[]) => void;
+  operatingSystemItems: IOperatingSystemItemListModel[];
+  setOperatingSystemItems: (values: IOperatingSystemItemListModel[]) => void;
 
   // Server Items
   serverItemsReady?: boolean;
   setServerItemsReady: (value?: boolean) => void;
-  serverItems: IServerItemModel[];
-  setServerItems: (values: IServerItemModel[]) => void;
+  serverItems: IServerItemListModel[];
+  setServerItems: (values: IServerItemListModel[]) => void;
 
   // File System Items
   fileSystemItemsReady?: boolean;

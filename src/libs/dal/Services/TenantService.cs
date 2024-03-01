@@ -81,6 +81,71 @@ public class TenantService : BaseService<Tenant>, ITenantService
             .ToArray();
     }
 
+    public IEnumerable<Models.TenantListModel> FindList(
+        Models.Filters.TenantFilter filter)
+    {
+        var query = from tenant in this.Context.Tenants
+                    select tenant;
+
+        if (filter.IncludeOrganizations == true)
+            query = query.Include(o => o.OrganizationsManyToMany).ThenInclude(t => t.Organization);
+
+        query = query
+            .Where(filter.GeneratePredicate());
+
+        if (filter.Sort?.Any() == true)
+            query = query.OrderByProperty(filter.Sort);
+        else query = query.OrderBy(si => si.Name);
+        if (filter.Quantity.HasValue)
+            query = query.Take(filter.Quantity.Value);
+        if (filter.Page.HasValue && filter.Quantity.HasValue && filter.Page > 1)
+            query = query.Skip(filter.Page.Value * filter.Quantity.Value);
+
+        return query
+            .AsNoTracking()
+            .AsSingleQuery()
+            .Select(t => new Models.TenantListModel(t, true))
+            .ToArray();
+    }
+
+    public IEnumerable<Models.TenantListModel> FindListForUser(
+        long userId,
+        Models.Filters.TenantFilter filter)
+    {
+        var userTenantQuery = from uo in this.Context.UserTenants
+                              where uo.UserId == userId
+                              select uo.TenantId;
+        var tenantOrganizationQuery = from tOrg in this.Context.TenantOrganizations
+                                      join ut in this.Context.UserTenants on tOrg.TenantId equals ut.TenantId
+                                      where ut.UserId == userId
+                                      select tOrg.TenantId;
+
+        var query = from tenant in this.Context.Tenants
+                    where userTenantQuery.Contains(tenant.Id) || tenantOrganizationQuery.Contains(tenant.Id)
+                    select tenant;
+
+        if (filter.IncludeOrganizations == true)
+            query = query.Include(o => o.OrganizationsManyToMany).ThenInclude(t => t.Organization);
+
+        query = query
+            .Where(filter.GeneratePredicate())
+            .Distinct();
+
+        if (filter.Sort?.Any() == true)
+            query = query.OrderByProperty(filter.Sort);
+        else query = query.OrderBy(si => si.Name);
+        if (filter.Quantity.HasValue)
+            query = query.Take(filter.Quantity.Value);
+        if (filter.Page.HasValue && filter.Quantity.HasValue && filter.Page > 1)
+            query = query.Skip(filter.Page.Value * filter.Quantity.Value);
+
+        return query
+            .AsNoTracking()
+            .AsSplitQuery()
+            .Select(t => new Models.TenantListModel(t, true))
+            .ToArray();
+    }
+
     public Tenant? FindForId(int id, bool includeOrganizations)
     {
         var query = this.Context.Tenants.Where(u => u.Id == id);

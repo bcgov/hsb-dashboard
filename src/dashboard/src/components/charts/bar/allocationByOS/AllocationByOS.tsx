@@ -1,16 +1,16 @@
 'use client';
 
-import { IOperatingSystemItemModel, IServerItemModel } from '@/hooks';
+import { IOperatingSystemItemListModel, IServerItemListModel } from '@/hooks';
 import { BarRow, SmallBarChart } from '../smallBar';
 import styles from '../smallBar/SmallBarChart.module.scss';
 import defaultData from './defaultData';
 import { groupByOS } from './utils';
 
 export interface IAllocationByOSProps {
-  serverItems: IServerItemModel[];
-  operatingSystemItems: IOperatingSystemItemModel[];
+  serverItems: IServerItemListModel[];
+  operatingSystemItems: IOperatingSystemItemListModel[];
   loading?: boolean;
-  onClick?: (operatingSystemItem?: IOperatingSystemItemModel) => void;
+  onClick?: (operatingSystemItem?: IOperatingSystemItemListModel) => void;
 }
 
 export const AllocationByOS = ({

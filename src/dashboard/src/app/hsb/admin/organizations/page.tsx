@@ -5,9 +5,9 @@ import styles from './Organizations.module.scss';
 import { AdminLoadingAnimation, Button, Checkbox, Info, Sheet, Table, Text } from '@/components';
 import { LoadingAnimation } from '@/components/loadingAnimation';
 import { IOrganizationModel, useAuth } from '@/hooks';
+import { useAdminOrganizations } from '@/hooks/admin';
 import { useApiOrganizations } from '@/hooks/api/admin';
-import { useOrganizations } from '@/hooks/data';
-import { useAppStore, useNavigateStore } from '@/store';
+import { useAdminStore, useNavigateStore } from '@/store';
 import { searchOrganizations } from '@/utils';
 import { redirect } from 'next/navigation';
 import React from 'react';
@@ -16,12 +16,12 @@ import { IOrganizationForm } from './IOrganizationForm';
 
 export default function Page() {
   const state = useAuth();
-  const { isReady: isReadyOrganizations, organizations } = useOrganizations({
+  const { isReady: isReadyOrganizations, organizations } = useAdminOrganizations({
     init: true,
     includeTenants: true,
   });
   const { update: updateOrganization } = useApiOrganizations();
-  const setOrganizations = useAppStore((state) => state.setOrganizations);
+  const setOrganizations = useAdminStore((state) => state.setOrganizations);
   const setEnableNavigate = useNavigateStore((state) => state.setEnableNavigate);
 
   const [loading, setLoading] = React.useState(true);

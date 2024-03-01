@@ -1,13 +1,13 @@
 'use client';
 
 import { Select } from '@/components';
-import { IOperatingSystemItemModel, IServerItemModel, useAuth } from '@/hooks';
-import { useOperatingSystemItems, useOrganizations, useServerItems } from '@/hooks/data';
+import { IOperatingSystemItemListModel, IServerItemListModel, useAuth } from '@/hooks';
 import {
   useFilteredOperatingSystemItems,
   useFilteredOrganizations,
   useFilteredServerItems,
 } from '@/hooks/filter';
+import { useOperatingSystemItems, useOrganizations, useServerItems } from '@/hooks/lists';
 import { useFilteredStore } from '@/store';
 import React from 'react';
 
@@ -23,6 +23,7 @@ export const FilteredOrganizations = ({}: IFilteredOrganizationsProps) => {
   const setValues = useFilteredStore((state) => state.setValues);
   const setLoading = useFilteredStore((state) => state.setLoading);
 
+  const filteredOrganizations = useFilteredStore((state) => state.organizations);
   const setFilteredOrganizations = useFilteredStore((state) => state.setOrganizations);
   const { options: filteredOrganizationOptions } = useFilteredOrganizations();
 
@@ -39,10 +40,11 @@ export const FilteredOrganizations = ({}: IFilteredOrganizationsProps) => {
   const enableOrganizations = isHSB || organizations.length > 0;
 
   React.useEffect(() => {
-    if (organizations.length) setFilteredOrganizations(organizations);
+    if (!filteredOrganizations.length && !!organizations.length)
+      setFilteredOrganizations(organizations);
     if (organizations.length === 1)
       setValues((values) => ({ ...values, organization: organizations[0] }));
-  }, [setFilteredOrganizations, organizations, setValues]);
+  }, [setFilteredOrganizations, organizations, setValues, filteredOrganizations.length]);
 
   return (
     <Select
@@ -59,7 +61,7 @@ export const FilteredOrganizations = ({}: IFilteredOrganizationsProps) => {
         setValues((state) => ({ ...state, organization }));
 
         if (organization) {
-          let filteredServerItems: IServerItemModel[];
+          let filteredServerItems: IServerItemListModel[];
           if (serverItems.length) {
             filteredServerItems = serverItems.filter(
               (server) =>
@@ -79,7 +81,7 @@ export const FilteredOrganizations = ({}: IFilteredOrganizationsProps) => {
           }
           const serverItem = filteredServerItems?.length === 1 ? filteredServerItems[0] : undefined;
 
-          let filteredOperatingSystemItems: IOperatingSystemItemModel[];
+          let filteredOperatingSystemItems: IOperatingSystemItemListModel[];
           if (operatingSystemItems.length) {
             // Only return operating system items that match available server items.
             const osIds = filteredServerItems

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 public class OperatingSystemItemFilter : PageFilter
 {
     #region Properties
+    public int? Id { get; set; }
     public string? Name { get; set; }
     public string? ServiceNowKey { get; set; }
     public int? TenantId { get; set; }
@@ -25,6 +26,7 @@ public class OperatingSystemItemFilter : PageFilter
     {
         var filter = new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>(queryParams, StringComparer.OrdinalIgnoreCase);
 
+        this.Id = filter.GetIntNullValue(nameof(this.Id));
         this.Name = filter.GetStringValue(nameof(this.Name));
         this.ServiceNowKey = filter.GetStringValue(nameof(this.ServiceNowKey));
         this.TenantId = filter.GetIntNullValue(nameof(this.TenantId));
@@ -40,6 +42,8 @@ public class OperatingSystemItemFilter : PageFilter
     public ExpressionStarter<Entities.OperatingSystemItem> GeneratePredicate()
     {
         var predicate = PredicateBuilder.New<Entities.OperatingSystemItem>();
+        if (this.Id != null)
+            predicate = predicate.And((u) => u.Id == this.Id);
         if (this.Name != null)
             predicate = predicate.And((u) => EF.Functions.Like(u.Name, $"%{this.Name}%"));
         if (this.ServiceNowKey != null)

@@ -1,5 +1,6 @@
 'use client';
 
+import { Breadcrumbs } from '@/components/breadcrumbs';
 import {
   AllOrganizations,
   AllocationByOS,
@@ -10,24 +11,23 @@ import {
   StorageTrendsChart,
   TotalStorage,
 } from '@/components/charts';
-import { Breadcrumbs } from '@/components/breadcrumbs';
-import { IOperatingSystemItemModel, IServerItemModel } from '@/hooks';
+import { IOperatingSystemItemListModel, IServerItemListModel } from '@/hooks';
 import {
   useDashboardOperatingSystemItems,
   useDashboardOrganizations,
   useDashboardServerItems,
 } from '@/hooks/dashboard';
 import {
-  useOperatingSystemItems,
-  useOrganizations,
-  useServerItems,
-  useTenants,
-} from '@/hooks/data';
-import {
   useFilteredFileSystemItems,
   useFilteredOperatingSystemItems,
   useFilteredServerItems,
 } from '@/hooks/filter';
+import {
+  useOperatingSystemItems,
+  useOrganizations,
+  useServerItems,
+  useTenants,
+} from '@/hooks/lists';
 import { useFilteredStore } from '@/store';
 import React from 'react';
 import { useDashboardFilter } from '.';
@@ -54,7 +54,6 @@ export const Dashboard = () => {
   const { findOperatingSystemItems } = useFilteredOperatingSystemItems();
   const { isReady: isReadyServerItems, serverItems } = useServerItems({
     init: true,
-    useSimple: true,
   });
   const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
   const { findServerItems } = useFilteredServerItems({
@@ -153,7 +152,7 @@ export const Dashboard = () => {
           loading={!isReadyOperatingSystemItems || !isReadyServerItems}
           onClick={async (operatingSystemItem) => {
             if (operatingSystemItem) {
-              let filteredServerItems: IServerItemModel[];
+              let filteredServerItems: IServerItemListModel[];
               if (serverItems.length) {
                 filteredServerItems = serverItems.filter(
                   (server) =>
@@ -225,7 +224,7 @@ export const Dashboard = () => {
           loading={!isReadyOrganizations || !isReadyServerItems}
           onClick={async (organization) => {
             if (organization) {
-              let filteredServerItems: IServerItemModel[];
+              let filteredServerItems: IServerItemListModel[];
               if (serverItems.length) {
                 filteredServerItems = serverItems.filter(
                   (server) =>
@@ -246,7 +245,7 @@ export const Dashboard = () => {
               const serverItem =
                 filteredServerItems?.length === 1 ? filteredServerItems[0] : undefined;
 
-              let filteredOperatingSystemItems: IOperatingSystemItemModel[];
+              let filteredOperatingSystemItems: IOperatingSystemItemListModel[];
               if (operatingSystemItems.length) {
                 // Only return operating system items that match available server items.
                 const osIds = filteredServerItems

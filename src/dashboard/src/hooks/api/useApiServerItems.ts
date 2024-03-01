@@ -13,8 +13,8 @@ export const useApiServerItems = () => {
       find: async (filter: IServerItemFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/dashboard/server-items?${toQueryString(filter)}`);
       },
-      findSimple: async (filter: IServerItemFilter | undefined = {}): Promise<Response> => {
-        return await dispatch(`/api/dashboard/server-items/simple?${toQueryString(filter)}`);
+      findList: async (filter: IServerItemFilter | undefined = {}): Promise<Response> => {
+        return await dispatch(`/api/dashboard/server-items/list?${toQueryString(filter)}`);
       },
       get: async (
         serviceNowKey: string,

@@ -1,6 +1,6 @@
 'use client';
 
-import { IServerItemModel } from '@/hooks';
+import { IServerItemListModel } from '@/hooks';
 import { convertToStorageSize } from '@/utils';
 import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
@@ -11,7 +11,7 @@ import { useTotalStorageDoughnutChart } from './hooks';
 ChartJS.register(ArcElement, Tooltip);
 
 export interface ITotalStorageProps {
-  serverItems: IServerItemModel[];
+  serverItems: IServerItemListModel[];
   loading?: boolean;
 }
 

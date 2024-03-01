@@ -127,7 +127,7 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
     {
         // Move original item to history if created more than 12 hours ago.
         var original = this.Context.FileSystemItems.AsNoTracking().FirstOrDefault(fsi => fsi.ServiceNowKey == entity.ServiceNowKey);
-        if (original != null && original.CreatedOn.AddHours(12).ToUniversalTime() <= DateTimeOffset.UtcNow)
+        if (original != null && original.CreatedOn.ToUniversalTime().AddHours(12) <= DateTimeOffset.UtcNow.ToUniversalTime())
             this.Context.FileSystemHistoryItems.Add(new FileSystemHistoryItem(original));
 
         return base.Update(entity);

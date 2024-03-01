@@ -78,35 +78,39 @@ public class DataService : IDataService
         await GetConfiguration();
         await InitLookups();
 
-        // If there is an active data sync, start with it and continue where it left off.
-        var dataSyncItems = this.Options.DataSync.Where(o => o.IsEnabled).OrderBy(o => o.SortOrder).ThenBy(o => o.Id).ToList();
-        var index = dataSyncItems.FindIndex(o => o.IsActive);
-        if (index == -1) index = 0;
-
-        for (var i = index; i < dataSyncItems.Count; i++)
+        if (this.Options.Actions.Length == 0 || this.Options.Actions.Contains("sync"))
         {
-            var dataSync = dataSyncItems[i];
-            if (dataSync.Id != 0)
-            {
-                // Make this data sync active.
-                dataSync.IsActive = true;
-                var updated = await this.HsbApi.UpdateDataSyncAsync(dataSync) ?? throw new InvalidOperationException($"Failed to return data sync from HSB: {dataSync.Name}");
-                dataSync.Version = updated.Version;
-            }
+            // If there is an active data sync, start with it and continue where it left off.
+            var dataSyncItems = this.Options.DataSync.Where(o => o.IsEnabled).OrderBy(o => o.SortOrder).ThenBy(o => o.Id).ToList();
+            var index = dataSyncItems.FindIndex(o => o.IsActive);
+            if (index == -1) index = 0;
 
-            await ProcessConfigurationItemsAsync(dataSync);
-
-            if (dataSync.Id != 0)
+            for (var i = index; i < dataSyncItems.Count; i++)
             {
-                // Reset the current offset.
-                dataSync.IsActive = false;
-                dataSync.Offset = 0;
-                var updated = await this.HsbApi.UpdateDataSyncAsync(dataSync) ?? throw new InvalidOperationException($"Failed to return data sync from HSB: {dataSync.Name}");
-                dataSync.Version = updated.Version;
+                var dataSync = dataSyncItems[i];
+                if (dataSync.Id != 0)
+                {
+                    // Make this data sync active.
+                    dataSync.IsActive = true;
+                    var updated = await this.HsbApi.UpdateDataSyncAsync(dataSync) ?? throw new InvalidOperationException($"Failed to return data sync from HSB: {dataSync.Name}");
+                    dataSync.Version = updated.Version;
+                }
+
+                await ProcessConfigurationItemsAsync(dataSync);
+
+                if (dataSync.Id != 0)
+                {
+                    // Reset the current offset.
+                    dataSync.IsActive = false;
+                    dataSync.Offset = 0;
+                    var updated = await this.HsbApi.UpdateDataSyncAsync(dataSync) ?? throw new InvalidOperationException($"Failed to return data sync from HSB: {dataSync.Name}");
+                    dataSync.Version = updated.Version;
+                }
             }
         }
 
-        await ServerItemCleanupProcessAsync();
+        if (this.Options.Actions.Length == 0 || this.Options.Actions.Contains("clean"))
+            await ServerItemCleanupProcessAsync();
 
         this.Logger.LogInformation("Data Sync Service Completed");
     }
@@ -771,9 +775,9 @@ public class DataService : IDataService
         var filter = new Hsb.Filters.ServerItemFilter()
         {
             InstallStatus = 1, // Only fetch server items that are currently marked as installed.
-            UpdatedBeforeDate = DateTime.UtcNow.AddDays(-1), // Only fetch server items that haven't been updated in over a day.
         };
         var serverItems = await this.HsbApi.FetchServerItemsAsync(filter);
+        this.Logger.LogInformation("Processing {count} servers", serverItems.Count());
         foreach (var serverItem in serverItems)
         {
             try
@@ -810,7 +814,7 @@ public class DataService : IDataService
                 {
                     await this.HsbApi.DeleteServerItemAsync(serverItem);
                 }
-                this.Logger.LogError(ex, "Failed to fetch server item: {key}", serverItem.ServiceNowKey);
+                this.Logger.LogError(ex, "Failed to fetch server item: {key} - {data}", serverItem.ServiceNowKey, ex.Data["Body"]);
             }
             catch (Exception ex)
             {

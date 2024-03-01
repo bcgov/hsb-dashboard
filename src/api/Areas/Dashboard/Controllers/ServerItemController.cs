@@ -35,7 +35,7 @@ public class ServerItemController : ControllerBase
     private readonly IXlsExporter _exporter;
     private readonly IMemoryCache _memoryCache;
     private const string HSB_CACHE_KEY = "serverItems-hsb";
-    private const string HSB_SMALL_CACHE_KEY = "serverItemsSmall-hsb";
+    private const string HSB_LIST_CACHE_KEY = "serverItemsList-hsb";
     #endregion
 
     #region Constructors
@@ -113,12 +113,12 @@ public class ServerItemController : ControllerBase
     /// Return the simple details for each server item.
     /// </summary>
     /// <returns></returns>
-    [HttpGet("simple", Name = "GetSimpleServerItems-Dashboard")]
+    [HttpGet("list", Name = "GetServerItemLists-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(typeof(IEnumerable<ServerItemSmallModel>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(IEnumerable<ServerItemListModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Server Item" })]
     [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
-    public IActionResult FindSimple()
+    public IActionResult FindList()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
         var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
@@ -127,16 +127,16 @@ public class ServerItemController : ControllerBase
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
         {
-            if (_memoryCache.TryGetValue(HSB_SMALL_CACHE_KEY, out IEnumerable<ServerItemSmallModel>? cachedItems))
+            if (_memoryCache.TryGetValue(HSB_LIST_CACHE_KEY, out IEnumerable<ServerItemListModel>? cachedItems))
             {
                 return new JsonResult(cachedItems);
             }
-            var result = _serverItemService.FindSimple(filter);
+            var result = _serverItemService.FindList(filter);
             var cacheOptions = new MemoryCacheEntryOptions()
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60)
             };
-            _memoryCache.Set(HSB_SMALL_CACHE_KEY, result, cacheOptions);
+            _memoryCache.Set(HSB_LIST_CACHE_KEY, result, cacheOptions);
             return new JsonResult(result);
         }
         else
@@ -145,7 +145,7 @@ public class ServerItemController : ControllerBase
             var user = _authorization.GetUser();
             if (user == null) return Forbid();
 
-            var result = _serverItemService.FindSimpleForUser(user.Id, filter);
+            var result = _serverItemService.FindListForUser(user.Id, filter);
             return new JsonResult(result);
         }
     }

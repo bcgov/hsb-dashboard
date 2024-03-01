@@ -1,7 +1,7 @@
 import { useFilteredStore } from '@/store';
 import { getOrganizationOptions } from '@/utils';
 import React from 'react';
-import { IOrganizationFilter, IOrganizationModel, useApiOrganizations } from '..';
+import { IOrganizationFilter, IOrganizationListModel, useApiOrganizations } from '..';
 
 export interface IFilteredOrganizations {
   /** Whether to include disabled options */
@@ -9,7 +9,7 @@ export interface IFilteredOrganizations {
 }
 
 export const useFilteredOrganizations = ({ includeDisabled }: IFilteredOrganizations = {}) => {
-  const { find } = useApiOrganizations();
+  const { findList } = useApiOrganizations();
   const organizations = useFilteredStore((state) => state.organizations);
   const setOrganizations = useFilteredStore((state) => state.setOrganizations);
 
@@ -19,8 +19,8 @@ export const useFilteredOrganizations = ({ includeDisabled }: IFilteredOrganizat
     async (filter: IOrganizationFilter) => {
       try {
         setIsLoading(true);
-        const res = await find(filter);
-        const organizations: IOrganizationModel[] = await res.json();
+        const res = await findList(filter);
+        const organizations: IOrganizationListModel[] = await res.json();
         setOrganizations(organizations);
         return organizations;
       } catch (error) {
@@ -29,7 +29,7 @@ export const useFilteredOrganizations = ({ includeDisabled }: IFilteredOrganizat
         setIsLoading(false);
       }
     },
-    [find, setOrganizations],
+    [findList, setOrganizations],
   );
 
   const options = React.useMemo(

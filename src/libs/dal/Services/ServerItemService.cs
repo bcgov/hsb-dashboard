@@ -74,7 +74,7 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
             .ToArray();
     }
 
-    public IEnumerable<ServerItemSmallModel> FindSimple(ServerItemFilter filter)
+    public IEnumerable<ServerItemListModel> FindList(ServerItemFilter filter)
     {
         var query = this.Context.ServerItems
             .Where(filter.GeneratePredicate())
@@ -91,11 +91,11 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
         return query
             .AsNoTracking()
             .AsSplitQuery()
-            .Select(si => new ServerItemSmallModel(si))
+            .Select(si => new ServerItemListModel(si))
             .ToArray();
     }
 
-    public IEnumerable<ServerItemSmallModel> FindSimpleForUser(long userId, ServerItemFilter filter)
+    public IEnumerable<ServerItemListModel> FindListForUser(long userId, ServerItemFilter filter)
     {
         var userOrganizationQuery = from uo in this.Context.UserOrganizations
                                     join o in this.Context.Organizations on uo.OrganizationId equals o.Id
@@ -126,7 +126,7 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
         return query
             .AsNoTracking()
             .AsSplitQuery()
-            .Select(si => new ServerItemSmallModel(si))
+            .Select(si => new ServerItemListModel(si))
             .ToArray();
     }
 
@@ -187,6 +187,15 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
 
     public EntityEntry<ServerItem> Update(ServerItem entity, bool updateTotals)
     {
+        // If the install status has changed from being installed, also set the same status on all related children.
+        if (entity.InstallStatus != 1)
+        {
+            this.Context.FileSystemHistoryItems.FromSqlRaw("UPDATE public.\"FileSystemHistoryItem\" SET \"InstallStatus\" = {1} WHERE \"ServerItemServiceNowKey\" = '{0}'", entity.ServiceNowKey, entity.InstallStatus);
+            this.Context.FileSystemItems.FromSqlRaw("UPDATE public.\"FileSystemItem\" SET \"InstallStatus\" = {1} WHERE \"ServerItemServiceNowKey\" = '{0}'", entity.ServiceNowKey, entity.InstallStatus);
+            this.Context.ServerHistoryItems.FromSqlRaw("UPDATE public.\"ServerHistoryItem\" SET \"InstallStatus\" = {1} WHERE \"ServiceNowKey\" = '{0}'", entity.ServiceNowKey, entity.InstallStatus);
+            this.Context.CommitTransaction();
+        }
+
         if (updateTotals)
         {
             // TODO: File system items need to be removed otherwise this formula will be invalid over time.
@@ -208,23 +217,9 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
             }
         }
 
-        return this.Update(entity);
-    }
-
-    public override EntityEntry<ServerItem> Update(ServerItem entity)
-    {
-        // If the install status has changed from being installed, also set the same status on all related children.
-        if (entity.InstallStatus != 1)
-        {
-            this.Context.FileSystemHistoryItems.FromSqlRaw("UPDATE public.\"FileSystemHistoryItem\" SET \"InstallStatus\" = {1} WHERE \"ServerItemServiceNowKey\" = '{0}'", entity.ServiceNowKey, entity.InstallStatus);
-            this.Context.FileSystemItems.FromSqlRaw("UPDATE public.\"FileSystemItem\" SET \"InstallStatus\" = {1} WHERE \"ServerItemServiceNowKey\" = '{0}'", entity.ServiceNowKey, entity.InstallStatus);
-            this.Context.ServerHistoryItems.FromSqlRaw("UPDATE public.\"ServerHistoryItem\" SET \"InstallStatus\" = {1} WHERE \"ServiceNowKey\" = '{0}'", entity.ServiceNowKey, entity.InstallStatus);
-            this.Context.CommitTransaction();
-        }
-
         // Move original to history if created more than 12 hours ago.
         var original = this.Context.ServerItems.AsNoTracking().FirstOrDefault(si => si.ServiceNowKey == entity.ServiceNowKey);
-        if (original != null && original.CreatedOn.AddHours(12).ToUniversalTime() <= DateTimeOffset.UtcNow)
+        if (original != null && original.CreatedOn.ToUniversalTime().AddHours(12) <= DateTimeOffset.UtcNow.ToUniversalTime())
         {
             // This key provides a way to link the current server item record with the one in history.
             var key = Guid.NewGuid();
@@ -232,12 +227,13 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
             original.HistoryKey = key;
             this.Context.ServerHistoryItems.Add(new ServerHistoryItem(original));
         }
-        else
-        {
-            entity.HistoryKey = original?.HistoryKey ?? Guid.NewGuid();
-        }
 
         return base.Update(entity);
+    }
+
+    public override EntityEntry<ServerItem> Update(ServerItem entity)
+    {
+        return this.Update(entity, false);
     }
 
     public override EntityEntry<ServerItem> Remove(ServerItem entity)

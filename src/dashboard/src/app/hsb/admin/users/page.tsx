@@ -6,8 +6,8 @@ import { AdminLoadingAnimation, Button, Info, Sheet, Table, Text } from '@/compo
 import { IUserForm, UserDialog, UserDialogVariant } from '@/components/admin';
 import { LoadingAnimation } from '@/components/loadingAnimation';
 import { useAuth } from '@/hooks';
+import { useAdminGroups, useAdminUsers } from '@/hooks/admin';
 import { useApiUsers } from '@/hooks/api/admin';
-import { useGroups, useUsers } from '@/hooks/data';
 import { useNavigateStore } from '@/store';
 import { searchUsers } from '@/utils';
 import { redirect } from 'next/navigation';
@@ -20,8 +20,8 @@ import { validateUser } from './validateUser';
 
 export default function Page() {
   const state = useAuth();
-  const { isReady: isReadyUsers, users } = useUsers({ includePermissions: true, init: true });
-  const { isReady: isReadyGroups } = useGroups({ init: true });
+  const { isReady: isReadyUsers, users } = useAdminUsers({ includePermissions: true, init: true });
+  const { isReady: isReadyGroups } = useAdminGroups({ init: true });
   const { update: updateUser, add: addUser } = useApiUsers();
   const setEnableNavigate = useNavigateStore((state) => state.setEnableNavigate);
 
