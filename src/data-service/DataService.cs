@@ -262,26 +262,13 @@ public class DataService : IDataService
 
         if (serverItemSN.Data.InstallStatus != "1")
         {
-            this.Logger.LogDebug("Server item install status: {status}", serverItemSN.Data.InstallStatus);
+            this.Logger.LogDebug("Server item install status changed: {key}:{status}", serviceNowKey, serverItemSN.Data.InstallStatus);
 
             // Need to update with the latest status.
             if (_serverItems.TryGetValue(serviceNowKey, out Hsb.ServerItemModel? serverItemHSB))
             {
-                // Update the server item in HSB.
-                this.Logger.LogDebug("Update Server Item: '{id}'", configurationItemSN.Data?.Id);
-
-                serverItemHSB.RawData = serverItemSN.RawData;
-                serverItemHSB.RawDataCI = configurationItemSN.RawData;
-                serverItemHSB.InstallStatus = int.Parse(serverItemSN.Data.InstallStatus ?? "0");
-
-                serverItemHSB = await this.HsbApi.UpdateServerItemAsync(serverItemHSB);
-                if (serverItemHSB == null)
-                {
-                    this.Logger.LogError("Server Item was not returned from HSB: {id}", serviceNowKey);
-                    throw new InvalidOperationException($"Server Item was not returned from HSB: {serviceNowKey}");
-                }
-                _serverItems[serverItemHSB.ServiceNowKey] = serverItemHSB;
-                return serverItemHSB;
+                await this.HsbApi.DeleteServerItemAsync(serverItemHSB);
+                _serverItems.Remove(serverItemHSB.ServiceNowKey);
             }
 
             return null;
@@ -364,16 +351,37 @@ public class DataService : IDataService
 
         var serviceNowKey = fileSystemItemSN.Data.Id;
 
+        // Check if file system item exists in HSB.
+        // TODO: This is noisy, but we don't want to keep all of them in memory.
+        var fileSystemItem = await this.HsbApi.GetFileSystemItemAsync(serviceNowKey, fileSystemItemSN.Data.Name);
         if (fileSystemItemSN.Data.InstallStatus != "1")
         {
-            this.Logger.LogDebug("Server item install status: {status}", fileSystemItemSN.Data.InstallStatus);
-            return null;
+            if (fileSystemItem == null)
+            {
+                this.Logger.LogDebug("Server item install status: {status}", fileSystemItemSN.Data.InstallStatus);
+                return null;
+            }
+            else
+            {
+                // Delete the file system as it is no longer installed.
+                await this.HsbApi.DeleteFileSystemItemAsync(fileSystemItem);
+                return null;
+            }
         }
 
         if (this.Options.ExcludeFileSystemItems.Contains(fileSystemItemSN.Data.Name))
         {
-            this.Logger.LogWarning("File System Item name is on the exclude list: '{id}:{name}'", serviceNowKey, fileSystemItemSN.Data.Name);
-            return null;
+            if (fileSystemItem == null)
+            {
+                this.Logger.LogWarning("File System Item name is on the exclude list: '{id}:{name}'", serviceNowKey, fileSystemItemSN.Data.Name);
+                return null;
+            }
+            else
+            {
+                // Delete the file system as it is no longer required.
+                await this.HsbApi.DeleteFileSystemItemAsync(fileSystemItem);
+                return null;
+            }
         }
 
         // Server does not currently exist, add it.
@@ -413,18 +421,15 @@ public class DataService : IDataService
             }
 
             // Add the server item to HSB and also process tenant/organization/operating system.
-            serverItem = await ProcessServerItemAsync(serverItemSN, configurationItemSN);
+            serverItem = await ProcessServerItemAsync(serverItemSN, serverConfigurationItemSN);
             if (serverItem == null)
             {
                 // Without a server item the file system cannot be added.
-                // This can be null if the server was excluded by configured rules.
+                // This can be null if the server was excluded by configured rules, or the status changes to not installed.
                 return null;
             }
         }
 
-        // Check if file system item exists in HSB.
-        // TODO: This is noisy, but we don't want to keep all of them in memory.
-        var fileSystemItem = await this.HsbApi.GetFileSystemItemAsync(serviceNowKey, fileSystemItemSN.Data.Name);
         if (fileSystemItem == null)
         {
             // Add the server item to HSB.
@@ -530,7 +535,7 @@ public class DataService : IDataService
             var update = await GetTenantAsync(tenantKey);
             if (update == null)
             {
-                this.Logger.LogError("Tenant was not returned from Servicenow: {id}", tenantKey);
+                this.Logger.LogError("Tenant was not returned from ServiceNow: {id}", tenantKey);
                 return null;
             }
             update.Id = tenant.Id;
