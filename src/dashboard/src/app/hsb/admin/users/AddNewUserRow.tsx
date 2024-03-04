@@ -10,6 +10,7 @@ export interface IAddNewUserRowProps {
   onEditGroups?: (values: IUserForm) => void;
   onEditOrganizations?: (values: IUserForm) => void;
   onEditTenants?: (values: IUserForm) => void;
+  onRemove?: () => void;
 }
 
 /**
@@ -25,9 +26,11 @@ export const AddNewUserRow = ({
   onEditGroups,
   onEditOrganizations,
   onEditTenants,
+  onRemove,
 }: IAddNewUserRowProps) => {
   return (
     <div className={styles.addNewRow}>
+      <Button variant="secondary" onClick={onRemove}>- Remove</Button>
       <div>
         <Text
           name={`${index}.username`}

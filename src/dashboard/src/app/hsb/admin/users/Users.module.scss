@@ -23,10 +23,6 @@
     padding: 5px 0;
     border-radius: 4px;
 
-    &:hover {
-      background-color: $white;
-    }
-
     >p {
       width: 100%;
       margin: 0 5px;
@@ -46,7 +42,7 @@
       margin-right: 10px;
 
       &:hover {
-        background-color: $chart-blue;
+        background-color: $bc-blue;
         color: $white;
       }
     }
@@ -99,6 +95,10 @@
 
   &:hover {
     background-color: rgba($light-gray, 0.4);
+
+    > button {
+      display: block;
+    }
   }
 
   div {
@@ -109,5 +109,19 @@
     width: 100%;
     max-width: 200px;
     margin: 0;
+  }
+
+  > button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: $font-size-small;
+    padding: 5px 8px;
+    display: none;
+
+    &:hover {
+      background-color: $bc-red;
+      color: $white;
+    }
   }
 }

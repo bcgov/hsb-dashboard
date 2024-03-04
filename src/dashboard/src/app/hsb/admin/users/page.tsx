@@ -73,6 +73,10 @@ export default function Page() {
     searchUsers(newUsers);
   }, []);
 
+  const handleRemoveUserRow = React.useCallback((userKey: string) => {
+    setFormUsers((currentUsers) => currentUsers.filter(user => user.key !== userKey));
+  }, []);
+
   const handleUpdate = React.useCallback(async () => {
     setIsSubmitting(true);
     const update = formUsers.map(async (user) => {
@@ -198,6 +202,7 @@ export default function Page() {
                     onEditGroups={(values) => handleEditClick(values, 'group')}
                     onEditOrganizations={(values) => handleEditClick(values, 'organization')}
                     onEditTenants={(values) => handleEditClick(values, 'tenant')}
+                    onRemove={() => handleRemoveUserRow(data.key)}
                   />
                 );
               } else {
