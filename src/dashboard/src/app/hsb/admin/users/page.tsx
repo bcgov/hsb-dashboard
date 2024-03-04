@@ -73,7 +73,7 @@ export default function Page() {
     searchUsers(newUsers);
   }, []);
 
-  const handleRemoveUserRow = React.useCallback((userKey: number) => {
+  const handleRemoveUserRow = React.useCallback((userKey: string) => {
     setFormUsers((currentUsers) => currentUsers.filter(user => user.key !== userKey));
   }, []);
 
