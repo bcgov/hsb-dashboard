@@ -391,14 +391,15 @@ public class HsbApiService : IHsbApiService
     /// Get the file system item from HSB for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="serverItemId"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    public async Task<FileSystemItemModel?> GetFileSystemItemAsync(string id, string? name = null)
+    public async Task<FileSystemItemModel?> GetFileSystemItemAsync(string id, string? serverItemId, string? name = null)
     {
         this.Logger.LogDebug("HSB - Get file system item: {key}", id);
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
         {
-            Query = !String.IsNullOrWhiteSpace(name) ? $"name={name}" : "",
+            Query = !String.IsNullOrWhiteSpace(name) ? $"serverItemServiceNowKey={serverItemId ?? ""}&name={name}" : "",
             Path = $"{this.Options.Endpoints.FileSystemItems}/{id}"
         };
         var results = await HsbSendAsync<FileSystemItemModel>(HttpMethod.Get, builder.Uri);

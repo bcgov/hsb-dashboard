@@ -144,9 +144,10 @@ public interface IHsbApiService
     ///Get the file system item from HSB for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="serverItemId"></param>
     /// <param name="name"></param>
     /// <returns></returns>
-    Task<FileSystemItemModel?> GetFileSystemItemAsync(string id, string? name = null);
+    Task<FileSystemItemModel?> GetFileSystemItemAsync(string id, string? serverItemId, string? name = null);
 
     /// <summary>
     /// Add file system item to HSB.

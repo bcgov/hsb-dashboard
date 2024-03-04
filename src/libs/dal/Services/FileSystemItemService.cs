@@ -74,11 +74,6 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
             .ToArray();
     }
 
-    public FileSystemItem? FindForName(string name)
-    {
-        return this.Context.FileSystemItems.FirstOrDefault(fsi => fsi.Name == name);
-    }
-
     public FileSystemItem? FindForId(string key, long userId)
     {
         var userOrganizationQuery = from uo in this.Context.UserOrganizations
