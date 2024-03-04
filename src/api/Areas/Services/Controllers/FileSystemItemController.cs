@@ -6,6 +6,7 @@ using HSB.Core.Models;
 using System.Net;
 using HSB.DAL.Services;
 using HSB.Keycloak;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace HSB.API.Areas.Services.Controllers;
 
@@ -61,23 +62,26 @@ public class FileSystemItemController : ControllerBase
     }
 
     /// <summary>
-    /// Get the file system item for the specified 'id' or 'name'.
+    /// Get the file system item for the specified 'id' or the query filter.
     /// </summary>
     /// <param name="id"></param>
-    /// <param name="name"></param>
     /// <returns></returns>
     [HttpGet("{id}", Name = "GetFileSystemItem-Services")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(FileSystemItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
     [SwaggerOperation(Tags = new[] { "File System Item" })]
-    public IActionResult GetForId(string id, string? name = null)
+    public IActionResult GetForId(string id)
     {
+        var uri = new Uri(this.Request.GetDisplayUrl());
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        var filter = new HSB.Models.Filters.FileSystemItemFilter(query);
+
         var entity = _fileSystemItemService.FindForId(id);
 
         // Service Now will change the primary key of these file system items, as such we need to also search based on the friendly name.
-        if (entity == null && !String.IsNullOrEmpty(name))
-            entity = _fileSystemItemService.FindForName(name);
+        if (entity == null && !String.IsNullOrEmpty(filter.ServerItemServiceNowKey) && !String.IsNullOrEmpty(filter.Name))
+            entity = _fileSystemItemService.Find(filter).FirstOrDefault();
 
         if (entity == null) return new NoContentResult();
 

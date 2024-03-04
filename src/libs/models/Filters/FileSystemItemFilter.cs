@@ -56,7 +56,7 @@ public class FileSystemItemFilter : PageFilter
     {
         var predicate = PredicateBuilder.New<Entities.FileSystemItem>();
         if (this.Name != null)
-            predicate = predicate.And((u) => EF.Functions.Like(u.Name, $"%{this.Name}%"));
+            predicate = predicate.And((u) => EF.Functions.Like(u.Name, this.Name));
         if (this.ClassName != null)
             predicate = predicate.And((u) => EF.Functions.Like(u.ClassName, this.ClassName));
         if (this.ServiceNowKey != null)

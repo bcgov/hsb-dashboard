@@ -350,10 +350,19 @@ public class DataService : IDataService
         if (configurationItemSN.Data == null) throw new ArgumentNullException(nameof(configurationItemSN));
 
         var serviceNowKey = fileSystemItemSN.Data.Id;
+        var computerKey = configurationItemSN.RawData.GetElementValue<string>(".computer.value")
+            ?? configurationItemSN.RawData.GetElementValue<string>(".computer")
+            ?? fileSystemItemSN.RawData.GetElementValue<string>(".computer.value")
+            ?? fileSystemItemSN.RawData.GetElementValue<string>(".computer");
+        if (String.IsNullOrWhiteSpace(computerKey))
+        {
+            this.Logger.LogWarning("File System Item does not have a Computer: '{id}'", serviceNowKey);
+            return null;
+        }
 
         // Check if file system item exists in HSB.
         // TODO: This is noisy, but we don't want to keep all of them in memory.
-        var fileSystemItem = await this.HsbApi.GetFileSystemItemAsync(serviceNowKey, fileSystemItemSN.Data.Name);
+        var fileSystemItem = await this.HsbApi.GetFileSystemItemAsync(serviceNowKey, computerKey, fileSystemItemSN.Data.Name);
         if (fileSystemItemSN.Data.InstallStatus != "1")
         {
             if (fileSystemItem == null)
@@ -387,15 +396,6 @@ public class DataService : IDataService
         // Server does not currently exist, add it.
         if (!_serverItems.TryGetValue(serviceNowKey, out Hsb.ServerItemModel? serverItem))
         {
-            var computerKey = configurationItemSN.RawData.GetElementValue<string>(".computer.value")
-                ?? configurationItemSN.RawData.GetElementValue<string>(".computer")
-                ?? fileSystemItemSN.RawData.GetElementValue<string>(".computer.value")
-                ?? fileSystemItemSN.RawData.GetElementValue<string>(".computer");
-            if (String.IsNullOrWhiteSpace(computerKey))
-            {
-                this.Logger.LogWarning("File System Item does not have a Computer: '{id}'", serviceNowKey);
-                return null;
-            }
 
             // Get the configuration item for this linked computer.
             var serverConfigurationItemSN = await this.ServiceNowApi.GetTableItemAsync<ServiceNow.ConfigurationItemModel>(this.ServiceNowApi.Options.TableNames.ConfigurationItem, computerKey);
