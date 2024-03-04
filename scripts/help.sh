@@ -25,7 +25,7 @@ db-migration:   {name}                                                Run db-upd
 db-update:      {name}                                                Update to the latest or specified migration
 db-rollback:    {name}                                                Rollback to the specified migration
 db-remove:      {name}                                                Remove the specified migration files
-db-drop:                                                              Drop the databse
+db-drop:                                                              Drop the database
 db-refresh:                                                           Drop and refresh the database
 db-redo:        {name}                                                Rollback and reapply migration
 
