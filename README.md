@@ -124,4 +124,4 @@ Run the database migration.
 
 Run the Data Service.
 
-`bash do oc-run data-service {tag=latest} {env=dev}`
+`bash do oc-run data-service {env=dev}`

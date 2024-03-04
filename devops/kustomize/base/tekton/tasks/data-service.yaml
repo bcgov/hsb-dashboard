@@ -201,6 +201,6 @@ spec:
           --rm \
           --labels='name=data-service,part-of=hsb,component=service,DataClass=Low' \
           --restart=Never \
-          --timeout=10m \
+          --timeout=4h0m0s \
           --override-type='merge' \
           --overrides="$overrides"
