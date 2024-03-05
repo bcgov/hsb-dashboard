@@ -173,9 +173,7 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
     public override EntityEntry<ServerItem> Add(ServerItem entity)
     {
         // This key provides a way to link only the current history record.
-        var key = Guid.NewGuid();
-        entity.HistoryKey = key;
-
+        entity.HistoryKey = Guid.NewGuid();
         var result = base.Add(entity);
 
         // Add item to history.
@@ -198,16 +196,13 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
 
         if (updateTotals)
         {
-            // TODO: File system items need to be removed otherwise this formula will be invalid over time.
             // Grab all file system items for this server so that space can be calculated.
-            // The downside to this implementation is that the calculation will include the prior synced data until all file system items have been synced up.
             var volumes = this.Context.FileSystemItems.AsNoTracking().Where(fsi => fsi.ServerItemServiceNowKey == entity.ServiceNowKey).ToArray();
             entity.Capacity = volumes.Sum(v => v.SizeBytes);
             entity.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes);
             this.Context.Entry(entity).State = EntityState.Modified;
 
             // Update current historical record too.
-            // TODO: File system items need to be removed otherwise this formula will be invalid over time.
             var history = this.Context.ServerHistoryItems.FirstOrDefault(shi => shi.ServiceNowKey == entity.ServiceNowKey && shi.HistoryKey == entity.HistoryKey);
             if (history != null)
             {

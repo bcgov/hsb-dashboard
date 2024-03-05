@@ -4,7 +4,7 @@ import { convertToStorageSize } from '@/utils';
 import { ChartData } from 'chart.js';
 import moment from 'moment';
 import React from 'react';
-import { generateStorageHistoryForDateRange } from '../utils';
+import { generateStorageHistoryForDateRange } from '../../utils';
 
 /**
  * Generates line chart data based on the current filtered server history items.
