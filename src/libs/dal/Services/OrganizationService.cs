@@ -154,5 +154,12 @@ public class OrganizationService : BaseService<Organization>, IOrganizationServi
         return query.FirstOrDefault();
     }
 
+    public IEnumerable<Organization> Cleanup()
+    {
+        var organizations = this.Context.Organizations.Where(o => !o.ServerItems.Any()).ToArray();
+        this.Context.Organizations.RemoveRange(organizations);
+        this.CommitTransaction();
+        return organizations;
+    }
     #endregion
 }
