@@ -361,7 +361,6 @@ public class DataService : IDataService
         }
 
         // Check if file system item exists in HSB.
-        // TODO: This is noisy, but we don't want to keep all of them in memory.
         var fileSystemItem = await this.HsbApi.GetFileSystemItemAsync(serviceNowKey, computerKey, fileSystemItemSN.Data.Name);
         if (fileSystemItemSN.Data.InstallStatus != "1")
         {

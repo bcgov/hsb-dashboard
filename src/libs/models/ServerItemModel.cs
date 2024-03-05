@@ -7,6 +7,7 @@ public class ServerItemModel : AuditableModel
 {
     #region Properties
     public string ServiceNowKey { get; set; } = "";
+    public Guid? HistoryKey { get; set; }
 
     public int? TenantId { get; set; }
     public TenantModel? Tenant { get; set; }
@@ -48,6 +49,7 @@ public class ServerItemModel : AuditableModel
     public ServerItemModel(ServerItem entity) : base(entity)
     {
         this.ServiceNowKey = entity.ServiceNowKey;
+        this.HistoryKey = entity.HistoryKey;
 
         this.TenantId = entity.TenantId;
         this.OrganizationId = entity.OrganizationId;
@@ -118,6 +120,7 @@ public class ServerItemModel : AuditableModel
         return new ServerItem(model.TenantId, model.OrganizationId, model.OperatingSystemItemId, model.RawData, model.RawDataCI)
         {
             ServiceNowKey = model.ServiceNowKey,
+            HistoryKey = model.HistoryKey,
             ClassName = model.ClassName,
             Name = model.Name,
             InstallStatus = model.InstallStatus,

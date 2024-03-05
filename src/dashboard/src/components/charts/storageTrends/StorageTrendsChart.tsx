@@ -18,8 +18,7 @@ import React from 'react';
 import { toast } from 'react-toastify';
 import { LineChart } from '../line';
 import styles from './StorageTrendsChart.module.scss';
-import { useServerHistoryItems } from './hooks';
-import { useStorageTrendsData } from './useStorageTrendsData';
+import { useServerHistoryItems, useStorageTrendsData } from './hooks';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
