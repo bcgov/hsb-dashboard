@@ -120,5 +120,20 @@ public class OrganizationController : ControllerBase
         _service.CommitTransaction();
         return new JsonResult(new OrganizationModel(entity, true));
     }
+
+    /// <summary>
+    /// Cleanup organizations by deleting any that do not have servers.
+    /// </summary>
+    /// <returns></returns>
+    [HttpDelete("clean", Name = "CleanOrganizations-Services")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<OrganizationModel>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
+    [SwaggerOperation(Tags = new[] { "Organization" })]
+    public IActionResult Cleanup()
+    {
+        var organizations = _service.Cleanup();
+        return new JsonResult(organizations.Select(o => new OrganizationModel(o, false)));
+    }
     #endregion
 }

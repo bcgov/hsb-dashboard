@@ -93,6 +93,12 @@ public interface IHsbApiService
     /// <param name="model"></param>
     /// <returns></returns>
     Task<OrganizationModel?> UpdateOrganizationAsync(OrganizationModel model);
+
+    /// <summary>
+    /// Cleanup organizations by deleting any that do not have servers.
+    /// </summary>
+    /// <returns></returns>
+    Task<IEnumerable<OrganizationModel>> CleanupOrganizationsAsync();
     #endregion
 
     #region Servers

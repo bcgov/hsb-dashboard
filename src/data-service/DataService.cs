@@ -109,8 +109,15 @@ public class DataService : IDataService
             }
         }
 
-        if (this.Options.Actions.Length == 0 || this.Options.Actions.Contains("clean"))
+        if (this.Options.Actions.Length == 0 || this.Options.Actions.Contains("clean-servers"))
+        {
             await ServerItemCleanupProcessAsync();
+        }
+
+        if (this.Options.Actions.Length == 0 || this.Options.Actions.Contains("clean-organizations"))
+        {
+            await OrganizationCleanupProcessAsync();
+        }
 
         this.Logger.LogInformation("Data Sync Service Completed");
     }
@@ -825,6 +832,17 @@ public class DataService : IDataService
                 this.Logger.LogError(ex, "Failed to fetch server item: {key}", serverItem.ServiceNowKey);
             }
         }
+    }
+
+    /// <summary>
+    /// Delete organizations that do not have any servers associated with them.
+    /// Need to do this because it's impossible to know this until the whole process completes.
+    /// </summary>
+    /// <returns></returns>
+    private async Task OrganizationCleanupProcessAsync()
+    {
+        this.Logger.LogInformation("Starting organization cleanup process");
+        await this.HsbApi.CleanupOrganizationsAsync();
     }
     #endregion
 }

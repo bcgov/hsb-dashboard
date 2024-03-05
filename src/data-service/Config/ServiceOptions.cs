@@ -57,7 +57,7 @@ public class ServiceOptions
     public int AllowUpdateAfterXHours { get; set; } = 12;
 
     /// <summary>
-    /// get/set - An array of actions to perform.  Leave empty to perform all actions. [sync, clean]
+    /// get/set - An array of actions to perform.  Leave empty to perform all actions. [sync, clean-servers, clean-organizations]
     /// </summary>
     public string[] Actions { get; set; } = Array.Empty<string>();
     #endregion

@@ -285,6 +285,21 @@ public class HsbApiService : IHsbApiService
         var results = await HsbSendAsync<OrganizationModel>(HttpMethod.Put, builder.Uri, JsonContent.Create(model));
         return results;
     }
+
+    /// <summary>
+    /// Cleanup organizations by deleting any that do not have servers.
+    /// </summary>
+    /// <returns></returns>
+    public async Task<IEnumerable<OrganizationModel>> CleanupOrganizationsAsync()
+    {
+        this.Logger.LogDebug("HSB - Cleanup organizations");
+        var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
+        {
+            Path = $"{this.Options.Endpoints.Organizations}/clean"
+        };
+        var results = await HsbSendAsync<IEnumerable<OrganizationModel>>(HttpMethod.Delete, builder.Uri);
+        return results ?? Array.Empty<OrganizationModel>();
+    }
     #endregion
 
     #region Servers
