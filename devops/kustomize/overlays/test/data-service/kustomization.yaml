@@ -25,3 +25,19 @@ patches:
       - op: replace
         path: /data/KEYCLOAK_ISSUER
         value: hsb-dashboard-5128
+  - target:
+      kind: ConfigMap
+      name: ches
+    patch: |-
+      - op: replace
+        path: /data/AUTH_URL
+        value: https://test.loginproxy.gov.bc.ca/auth/realms/comsvcauth/protocol/openid-connect/token
+      - op: replace
+        path: /data/HOST_URI
+        value: https://ches-test.api.gov.bc.ca/api/v1
+      - op: replace
+        path: /data/FROM
+        value: (TEST) Hosting Service Dashboard <hsb@gov.bc.ca>
+      - op: replace
+        path: /data/TO
+        value: jeremy.foster@fosol.ca,michael.tessier@gov.bc.ca

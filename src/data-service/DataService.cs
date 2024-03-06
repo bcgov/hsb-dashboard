@@ -4,6 +4,9 @@ using Hsb = HSB.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
+using HSB.Ches;
+using HSB.Ches.Configuration;
+using HSB.Ches.Models;
 
 namespace HSB.DataService;
 
@@ -37,9 +40,24 @@ public class DataService : IDataService
     protected IHsbApiService HsbApi { get; }
 
     /// <summary>
+    /// get - CHES service.
+    /// </summary>
+    protected IChesService ChesService { get; }
+
+    /// <summary>
+    /// get - CHES options.
+    /// </summary>
+    protected ChesOptions ChesOptions { get; }
+
+    /// <summary>
     /// get - Service now API.
     /// </summary>
     protected IServiceNowApiService ServiceNowApi { get; }
+
+    /// <summary>
+    /// get/set- Number of sequential failures that have occurred.
+    /// </summary>
+    protected int FailureCount { get; set; }
     #endregion
 
     #region Constructors
@@ -48,16 +66,22 @@ public class DataService : IDataService
     /// </summary>
     /// <param name="hsbApi"></param>
     /// <param name="serviceNowApi"></param>
+    /// <param name="chesService"></param>
+    /// <param name="chesOptions"></param>
     /// <param name="serviceOptions"></param>
     /// <param name="logger"></param>
     public DataService(
         IHsbApiService hsbApi,
         IServiceNowApiService serviceNowApi,
+        IChesService chesService,
+        IOptions<ChesOptions> chesOptions,
         IOptions<ServiceOptions> serviceOptions,
         ILogger<IDataService> logger)
     {
         this.HsbApi = hsbApi;
         this.ServiceNowApi = serviceNowApi;
+        this.ChesService = chesService;
+        this.ChesOptions = chesOptions.Value;
         this.Options = serviceOptions.Value;
         this.Logger = logger;
     }
@@ -73,53 +97,78 @@ public class DataService : IDataService
     /// <exception cref="NotImplementedException"></exception>
     public async Task RunAsync()
     {
-        this.Logger.LogInformation("Data Sync Service Started");
-
-        await GetConfiguration();
-        await InitLookups();
-
-        if (this.Options.Actions.Length == 0 || this.Options.Actions.Contains("sync"))
+        try
         {
-            // If there is an active data sync, start with it and continue where it left off.
-            var dataSyncItems = this.Options.DataSync.Where(o => o.IsEnabled).OrderBy(o => o.SortOrder).ThenBy(o => o.Id).ToList();
-            var index = dataSyncItems.FindIndex(o => o.IsActive);
-            if (index == -1) index = 0;
 
-            for (var i = index; i < dataSyncItems.Count; i++)
+            this.Logger.LogInformation("Data Sync Service Started");
+
+            await GetConfiguration();
+            await InitLookups();
+
+            if (this.Options.Actions.Length == 0 || this.Options.Actions.Contains("sync"))
             {
-                var dataSync = dataSyncItems[i];
-                if (dataSync.Id != 0)
-                {
-                    // Make this data sync active.
-                    dataSync.IsActive = true;
-                    var updated = await this.HsbApi.UpdateDataSyncAsync(dataSync) ?? throw new InvalidOperationException($"Failed to return data sync from HSB: {dataSync.Name}");
-                    dataSync.Version = updated.Version;
-                }
+                // If there is an active data sync, start with it and continue where it left off.
+                var dataSyncItems = this.Options.DataSync.Where(o => o.IsEnabled).OrderBy(o => o.SortOrder).ThenBy(o => o.Id).ToList();
+                var index = dataSyncItems.FindIndex(o => o.IsActive);
+                if (index == -1) index = 0;
 
-                await ProcessConfigurationItemsAsync(dataSync);
-
-                if (dataSync.Id != 0)
+                for (var i = index; i < dataSyncItems.Count; i++)
                 {
-                    // Reset the current offset.
-                    dataSync.IsActive = false;
-                    dataSync.Offset = 0;
-                    var updated = await this.HsbApi.UpdateDataSyncAsync(dataSync) ?? throw new InvalidOperationException($"Failed to return data sync from HSB: {dataSync.Name}");
-                    dataSync.Version = updated.Version;
+                    var dataSync = dataSyncItems[i];
+                    if (dataSync.Id != 0)
+                    {
+                        // Make this data sync active.
+                        dataSync.IsActive = true;
+                        var updated = await this.HsbApi.UpdateDataSyncAsync(dataSync) ?? throw new InvalidOperationException($"Failed to return data sync from HSB: {dataSync.Name}");
+                        dataSync.Version = updated.Version;
+                    }
+
+                    await ProcessConfigurationItemsAsync(dataSync);
+
+                    if (dataSync.Id != 0)
+                    {
+                        // Reset the current offset.
+                        dataSync.IsActive = false;
+                        dataSync.Offset = 0;
+                        var updated = await this.HsbApi.UpdateDataSyncAsync(dataSync) ?? throw new InvalidOperationException($"Failed to return data sync from HSB: {dataSync.Name}");
+                        dataSync.Version = updated.Version;
+                    }
                 }
             }
-        }
 
-        if (this.Options.Actions.Length == 0 || this.Options.Actions.Contains("clean-servers"))
+            if (this.Options.Actions.Length == 0 || this.Options.Actions.Contains("clean-servers"))
+            {
+                await ServerItemCleanupProcessAsync();
+            }
+
+            if (this.Options.Actions.Length == 0 || this.Options.Actions.Contains("clean-organizations"))
+            {
+                await OrganizationCleanupProcessAsync();
+            }
+
+            this.Logger.LogInformation("Data Sync Service Completed");
+
+            if (this.Options.SendSuccessEmail)
+                await SendEmail("HSD Data Service - Success", $"Successfully ran Data Service");
+        }
+        catch (Exception ex)
         {
-            await ServerItemCleanupProcessAsync();
+            this.Logger.LogError(ex, "HSD Data Service failed to run");
+            if (this.Options.SendFailureEmail)
+                await SendEmail("HSD Data Service - Failure", $"<div><h1>Error</h1><p>The Data Service failed to run.</p><p>{ex.Message}</p></div>");
         }
+    }
 
-        if (this.Options.Actions.Length == 0 || this.Options.Actions.Contains("clean-organizations"))
-        {
-            await OrganizationCleanupProcessAsync();
-        }
-
-        this.Logger.LogInformation("Data Sync Service Completed");
+    /// <summary>
+    /// Send an email to the configured recipients.
+    /// </summary>
+    /// <param name="subject"></param>
+    /// <param name="body"></param>
+    /// <returns></returns>
+    private async Task SendEmail(string subject, string body)
+    {
+        var email = new EmailModel(this.ChesOptions.From, this.ChesOptions.OverrideTo.Split(","), subject, body);
+        await this.ChesService.SendEmailAsync(email);
     }
 
     /// <summary>
@@ -192,62 +241,77 @@ public class DataService : IDataService
 
         while (keepGoing)
         {
-            var configurationItems = await this.ServiceNowApi.FetchTableItemsAsync<ServiceNow.ConfigurationItemModel>(this.ServiceNowApi.Options.TableNames.ConfigurationItem, limit, offset, query);
-
-            // Iterate over configurations items and send them to HSB API.
-            foreach (var configurationItemSN in configurationItems)
+            try
             {
-                if (configurationItemSN.Data == null) continue;
+                var configurationItems = await this.ServiceNowApi.FetchTableItemsAsync<ServiceNow.ConfigurationItemModel>(this.ServiceNowApi.Options.TableNames.ConfigurationItem, limit, offset, query);
 
-                // Extract the tableName from the configuration item.
-                var tableName = configurationItemSN.Data.ClassName;
-                if (String.IsNullOrWhiteSpace(tableName))
+                // Iterate over configurations items and send them to HSB API.
+                foreach (var configurationItemSN in configurationItems)
                 {
-                    this.Logger.LogError("Configuration class name is missing: {id}", configurationItemSN.Data.Id);
-                    continue;
-                }
+                    if (configurationItemSN.Data == null) continue;
 
-                if (this.Options.VolumeTableNames.Contains(tableName))
-                {
-                    // Get the specific type of item this configuration is for.
-                    var itemSN = await this.ServiceNowApi.GetTableItemAsync<ServiceNow.FileSystemModel>(tableName, configurationItemSN.Data.Id);
-                    if (itemSN == null)
+
+                    // Extract the tableName from the configuration item.
+                    var tableName = configurationItemSN.Data.ClassName;
+                    if (String.IsNullOrWhiteSpace(tableName))
                     {
-                        this.Logger.LogError("Configuration file system item is missing: {tableName}:{id}", tableName, configurationItemSN.Data.Id);
+                        this.Logger.LogError("Configuration class name is missing: {id}", configurationItemSN.Data.Id);
                         continue;
                     }
 
-                    await ProcessFileSystemItemAsync(itemSN, configurationItemSN);
-                }
-                else if (this.Options.ServerTableNames.Contains(tableName))
-                {
-                    // Get the specific type of item this configuration is for.
-                    var itemSN = await this.ServiceNowApi.GetTableItemAsync<ServiceNow.BaseItemModel>(tableName, configurationItemSN.Data.Id);
-                    if (itemSN == null)
+                    if (this.Options.VolumeTableNames.Contains(tableName))
                     {
-                        this.Logger.LogError("Configuration table item is missing: {tableName}:{id}", tableName, configurationItemSN.Data.Id);
-                        continue;
+                        // Get the specific type of item this configuration is for.
+                        var itemSN = await this.ServiceNowApi.GetTableItemAsync<ServiceNow.FileSystemModel>(tableName, configurationItemSN.Data.Id);
+                        if (itemSN == null)
+                        {
+                            this.Logger.LogError("Configuration file system item is missing: {tableName}:{id}", tableName, configurationItemSN.Data.Id);
+                            continue;
+                        }
+
+                        await ProcessFileSystemItemAsync(itemSN, configurationItemSN);
                     }
+                    else if (this.Options.ServerTableNames.Contains(tableName))
+                    {
+                        // Get the specific type of item this configuration is for.
+                        var itemSN = await this.ServiceNowApi.GetTableItemAsync<ServiceNow.BaseItemModel>(tableName, configurationItemSN.Data.Id);
+                        if (itemSN == null)
+                        {
+                            this.Logger.LogError("Configuration table item is missing: {tableName}:{id}", tableName, configurationItemSN.Data.Id);
+                            continue;
+                        }
 
-                    await ProcessServerItemAsync(itemSN, configurationItemSN);
+                        await ProcessServerItemAsync(itemSN, configurationItemSN);
+                    }
+                    else
+                    {
+                        this.Logger.LogWarning("Data Service configuration is not currently configured to support this class name: {tableName}", tableName);
+                    }
                 }
-                else
+
+                if (option.Id != 0)
                 {
-                    this.Logger.LogWarning("Data Service configuration is not currently configured to support this class name: {tableName}", tableName);
+                    // Update the current offset so that if it fails we'll pick up at this point.
+                    option.Offset = offset;
+                    var update = await this.HsbApi.UpdateDataSyncAsync(option) ?? throw new InvalidOperationException($"Failed to return data sync from HSB: {option.Name}");
+                    option.Version = update.Version;
                 }
-            }
 
-            if (option.Id != 0)
+                // We assume that if the results contain the limit, we need to make another request for more.
+                if (configurationItems.Count() < limit) keepGoing = false;
+                offset += limit;
+                this.FailureCount = 0;
+            }
+            catch (Exception ex)
             {
-                // Update the current offset so that if it fails we'll pick up at this point.
-                option.Offset = offset;
-                var update = await this.HsbApi.UpdateDataSyncAsync(option) ?? throw new InvalidOperationException($"Failed to return data sync from HSB: {option.Name}");
-                option.Version = update.Version;
+                // A single configuration item failed to be processed.
+                // Log the error and wait for a X seconds before continuing on.
+                // If sequential errors reaches limit, exit service.
+                this.Logger.LogError(ex, "Failed to process item");
+                this.FailureCount++;
+                if (this.FailureCount >= this.Options.RetryLimit) throw;
+                await Task.Delay(this.Options.DelayAfterFailureMS);
             }
-
-            // We assume that if the results contain the limit, we need to make another request for more.
-            if (configurationItems.Count() < limit) keepGoing = false;
-            offset += limit;
         }
     }
 

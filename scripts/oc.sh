@@ -219,6 +219,86 @@ oc-run () {
                       \"key\":\"PASSWORD\"
                     }
                   }
+                },
+                {
+                  \"name\":\"CHES__AuthUrl\",
+                  \"valueFrom\":{
+                    \"configMapKeyRef\":{
+                      \"name\":\"ches\",
+                      \"key\":\"AUTH_URL\"
+                    }
+                  }
+                },
+                {
+                  \"name\":\"CHES__HostUri\",
+                  \"valueFrom\":{
+                    \"configMapKeyRef\":{
+                      \"name\":\"ches\",
+                      \"key\":\"HOST_URI\"
+                    }
+                  }
+                },
+                {
+                  \"name\":\"CHES__From\",
+                  \"valueFrom\":{
+                    \"configMapKeyRef\":{
+                      \"name\":\"ches\",
+                      \"key\":\"FROM\"
+                    }
+                  }
+                },
+                {
+                  \"name\":\"CHES__OverrideTo\",
+                  \"valueFrom\":{
+                    \"configMapKeyRef\":{
+                      \"name\":\"ches\",
+                      \"key\":\"TO\"
+                    }
+                  }
+                },
+                {
+                  \"name\":\"CHES__EmailEnabled\",
+                  \"valueFrom\":{
+                    \"configMapKeyRef\":{
+                      \"name\":\"ches\",
+                      \"key\":\"EMAIL_ENABLED\"
+                    }
+                  }
+                },
+                {
+                  \"name\":\"CHES__EmailAuthorized\",
+                  \"valueFrom\":{
+                    \"configMapKeyRef\":{
+                      \"name\":\"ches\",
+                      \"key\":\"EMAIL_AUTHORIZED\"
+                    }
+                  }
+                },
+                {
+                  \"name\":\"CHES__Username\",
+                  \"valueFrom\":{
+                    \"secretKeyRef\":{
+                      \"name\":\"ches\",
+                      \"key\":\"USERNAME\"
+                    }
+                  }
+                },
+                {
+                  \"name\":\"CHES__Password\",
+                  \"valueFrom\":{
+                    \"secretKeyRef\":{
+                      \"name\":\"ches\",
+                      \"key\":\"PASSWORD\"
+                    }
+                  }
+                },
+                # {
+                #   \"name\":\"Service__Actions__0\",
+                #   \"value\": \"clean-organizations\"
+                # },
+                {
+                  \"name\":\"Service__SendSuccessEmail\",
+                  \"value\": \"true\"
                 }
               ],
               \"labels\":{

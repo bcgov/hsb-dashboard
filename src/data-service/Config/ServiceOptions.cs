@@ -60,5 +60,25 @@ public class ServiceOptions
     /// get/set - An array of actions to perform.  Leave empty to perform all actions. [sync, clean-servers, clean-organizations]
     /// </summary>
     public string[] Actions { get; set; } = Array.Empty<string>();
+
+    /// <summary>
+    /// get/set - Whether to send an email when the service completes successfully.
+    /// </summary>
+    public bool SendSuccessEmail { get; set; }
+
+    /// <summary>
+    /// get/set - Whether to send an email when the service fails to complete.
+    /// </summary>
+    public bool SendFailureEmail { get; set; } = true;
+
+    /// <summary>
+    /// get/set - Number of sequential failures that are allowed to occur before service stops (default = 3).
+    /// </summary>
+    public int RetryLimit { get; set; } = 3;
+
+    /// <summary>
+    /// get/set - Number of milliseconds to wait before proceeding after a failure (default = 10,000).
+    /// </summary>
+    public int DelayAfterFailureMS { get; set; } = 10000;
     #endregion
 }

@@ -48,3 +48,10 @@ PASSWORD={SERVICE NOW PASSWORD}
 INSTANCE=thehubtest
 URL=https://{instance}.service-now.com
 ```
+
+Create a `ches.env` file with the following records.
+
+```env
+USERNAME={CHES USERNAME}
+PASSWORD={CHES PASSWORD}
+```

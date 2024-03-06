@@ -1,3 +1,4 @@
+---
 kind: ConfigMap
 apiVersion: v1
 metadata:
@@ -14,3 +15,25 @@ metadata:
     created-by: jeremy.foster
 data:
   API_URL: http://api:8080
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: ches
+  namespace: default
+  annotations:
+    description: CHES configuration
+  labels:
+    name: ches
+    part-of: hsb
+    version: 1.0.0
+    component: email
+    managed-by: kustomize
+    created-by: jeremy.foster
+data:
+  AUTH_URL: https://loginproxy.gov.bc.ca/auth/realms/comsvcauth/protocol/openid-connect/token
+  HOST_URI: https://ches.api.gov.bc.ca/api/v1
+  FROM: Hosting Service Dashboard <hsb@gov.bc.ca>
+  TO: jeremy.foster@fosol.ca,michael.tessier@gov.bc.ca
+  EMAIL_ENABLED: "true"
+  EMAIL_AUTHORIZED: "true"
