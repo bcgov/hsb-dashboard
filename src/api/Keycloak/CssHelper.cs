@@ -159,6 +159,7 @@ public class CssHelper : ICssHelper
             if (userRoles.Users.Length > 1) throw new NotAuthorizedException($"Keycloak has multiple users with the same username '{key}'");
             if (user == null)
             {
+                _logger.LogDebug("User activation, New User: {username}:{key}", username, key);
                 // Add the user to the database.
                 user = new Entities.User(username, email, key)
                 {
@@ -170,9 +171,11 @@ public class CssHelper : ICssHelper
                     LastLoginOn = DateTime.UtcNow,
                 };
                 _userService.Add(user);
+                _userService.CommitTransaction();
             }
             else if (user != null)
             {
+                _logger.LogDebug("User activation, Update User: {username}:{key}", username, key);
                 // The user was created in HSB initially, but now the user has logged in and activated their account.
                 user.Username = username;
                 user.DisplayName = principal.GetDisplayName() ?? user.DisplayName;
@@ -189,15 +192,15 @@ public class CssHelper : ICssHelper
                 // Apply the preapproved roles to the user.
                 var roles = await UpdateUserRolesAsync(key.ToString(), preapprovedRoles);
                 _userService.Update(user);
-                return user;
+                _userService.CommitTransaction();
             }
         }
         else
         {
             user.LastLoginOn = DateTime.UtcNow;
             _userService.Update(user);
+            _userService.CommitTransaction();
         }
-        _userService.CommitTransaction();
 
         return user;
     }

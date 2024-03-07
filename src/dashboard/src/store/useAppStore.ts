@@ -13,7 +13,7 @@ import { create } from 'zustand';
 
 export interface IAppStoreState {
   // User
-  userinfo?: IUserInfoModel; // TODO: Replace with interface.
+  userinfo?: IUserInfoModel;
   setUserinfo: (value: IUserInfoModel) => void;
 
   // Roles

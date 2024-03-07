@@ -62,8 +62,10 @@ export const authOptions: AuthOptions = {
       const aToken = token as any;
 
       if (trigger === 'update') {
-        token.roles = session.user.roles;
-        return token;
+        const refreshToken = await refreshAccessToken(token);
+        refreshToken.roles = session.user.roles;
+        refreshToken.decoded = jwtDecode(`${refreshToken.access_token}`) as any;
+        return refreshToken;
       } else {
         if (account && user) {
           token.access_token = account.access_token;

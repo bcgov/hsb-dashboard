@@ -18,6 +18,10 @@ import { EditUserRow } from './EditUserRow';
 import { defaultUser } from './defaultUser';
 import { validateUser } from './validateUser';
 
+/**
+ * Provides a page component which displays all users so that the admin can modify their permissions.
+ * @returns Component
+ */
 export default function Page() {
   const state = useAuth();
   const { isReady: isReadyUsers, users } = useAdminUsers({ includePermissions: true, init: true });
@@ -74,7 +78,7 @@ export default function Page() {
   }, []);
 
   const handleRemoveUserRow = React.useCallback((userKey: string) => {
-    setFormUsers((currentUsers) => currentUsers.filter(user => user.key !== userKey));
+    setFormUsers((currentUsers) => currentUsers.filter((user) => user.key !== userKey));
   }, []);
 
   const handleUpdate = React.useCallback(async () => {

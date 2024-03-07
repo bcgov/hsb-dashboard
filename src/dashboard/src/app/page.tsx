@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks';
 import { redirect } from 'next/navigation';
 
 export default function Page() {
-  const { isClient, isHSB, isAuthorized } = useAuth();
+  const { isClient, isHSB, isAuthorized, session } = useAuth();
 
   // Redirect to default page for each type of user.
   if (isClient) redirect('/client/dashboard');

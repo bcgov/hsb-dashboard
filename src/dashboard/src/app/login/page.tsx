@@ -1,10 +1,18 @@
 'use client';
 
 import { Button } from '@/components';
+import { useAuth } from '@/hooks';
 import { signIn } from 'next-auth/react';
-import styles from './Login.module.scss'
+import { redirect } from 'next/navigation';
+import styles from './Login.module.scss';
 
 export default function Page() {
+  const { isAuthorized } = useAuth();
+
+  // Need this because after activating a pre-authorized user, they get sent to the login page again for some reason.
+  // One downside to this is it is impossible to go to the login page when already authorized.
+  if (isAuthorized) redirect('/');
+
   return (
     <div className={`dashboardContainer ${styles.container}`}>
       <div className={styles.welcome}>

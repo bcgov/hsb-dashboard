@@ -23,6 +23,7 @@ Before running these commands you will need to create and populate configuration
 
 There is a folder for each environment, and within each folder it should contain the following files.
 
+- ches.env
 - css.env
 - dashboard.env
 - database.env
