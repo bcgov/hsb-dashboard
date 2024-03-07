@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using HSB.Ches;
 using HSB.Core.Http;
 using HSB.Core.Http.Configuration;
 using Microsoft.AspNetCore.Builder;
@@ -122,6 +123,7 @@ public class ServiceManager
             .AddTransient<IOpenIdConnectRequestClient, OpenIdConnectRequestClient>()
             .AddScoped<IDataService, DataService>()
             .AddTransient<IServiceNowApiService, ServiceNowApiService>()
+            .AddChesService(this.Configuration.GetSection("CHES"))
             .AddScoped<IHsbApiService, HsbApiService>();
 
         services.AddHttpClient(typeof(DataService).FullName ?? nameof(DataService), client => { });

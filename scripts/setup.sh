@@ -250,7 +250,12 @@ Keycloak__RequireHttpsMetadata=false
 Keycloak__Authority=http://host.docker.internal:$portKeycloakHttp/auth/realms/hsb
 Keycloak__Audience=hsb-app
 Keycloak__Issuer=hsb-app
-Keycloak__Secret={GET FROM KEYCLOAK}" >> ./src/data-service/.env
+Keycloak__Secret={GET FROM KEYCLOAK}
+
+CHES__AuthUrl=https://dev.loginproxy.gov.bc.ca/auth/realms/comsvcauth/protocol/openid-connect/token
+CHES__HostUri=https://ches-dev.api.gov.bc.ca/api/v1
+CHES__Username={GET FROM CHES}
+CHES__Password={GET FROM CHES}" >> ./src/data-service/.env
     echo "./src/data-service/.env created"
   fi
 }

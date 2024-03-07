@@ -20,6 +20,7 @@
     <ProjectReference Include="..\libs\core\HSB.Core.csproj" />
     <ProjectReference Include="..\libs\keycloak\HSB.Keycloak.csproj" />
     <ProjectReference Include="..\libs\models\HSB.Models.csproj" />
+    <ProjectReference Include="..\libs\ches\HSB.Ches.csproj" />
   </ItemGroup>
 
   <ItemGroup>
