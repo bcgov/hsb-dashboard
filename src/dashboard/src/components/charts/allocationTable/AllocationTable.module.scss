@@ -163,15 +163,16 @@
     }
 
     p {
-        width: 21%;
+        width: 41%;
+        min-width: 180px;
         @include ellipsis;
 
         &:first-of-type {
-            width: 34.5%;
+            width: 31%;
             margin-left: 10px;
         }
 
-        &:last-child {
+        &:nth-child(3), &:last-child {
             width: unset;
         }
     }
@@ -223,6 +224,7 @@
 
         p {
             width: 20%;
+            min-width: unset;
 
             &.centered {
                 text-align: center;
