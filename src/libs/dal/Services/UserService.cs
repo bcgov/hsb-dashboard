@@ -106,6 +106,27 @@ public class UserService : BaseService<User>, IUserService
             .FirstOrDefault(u => EF.Functions.Like(u.Username, username));
     }
 
+    public override EntityEntry<User> Add(User entity)
+    {
+        entity.GroupsManyToMany.ForEach((group) =>
+        {
+            group.User = entity;
+            this.Context.Entry(group).State = EntityState.Added;
+        });
+        entity.OrganizationsManyToMany.ForEach((organization) =>
+        {
+            organization.User = entity;
+            this.Context.Entry(organization).State = EntityState.Added;
+        });
+        entity.TenantsManyToMany.ForEach((tenant) =>
+        {
+            tenant.User = entity;
+            this.Context.Entry(tenant).State = EntityState.Added;
+        });
+
+        return base.Add(entity);
+    }
+
     public override EntityEntry<User> Update(User entity)
     {
         var isSystemAdmin = Keycloak.Extensions.IdentityExtensions.HasClientRole(this.Principal, HSB.Keycloak.ClientRole.SystemAdministrator);

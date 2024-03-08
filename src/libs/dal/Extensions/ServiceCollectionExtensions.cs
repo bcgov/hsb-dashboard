@@ -45,7 +45,7 @@ public static class ServiceCollectionExtensions
                 sqlOptions.CommandTimeout((int)TimeSpan.FromMinutes(5).TotalSeconds);
             });
 
-            if (options == null)
+            if (options == null && env.IsDevelopment())
             {
                 var debugLoggerFactory = LoggerFactory.Create(builder => { builder.AddDebug(); });
                 sql.UseLoggerFactory(debugLoggerFactory);
