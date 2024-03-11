@@ -1,7 +1,8 @@
 'use client';
 
 import { useApiUsers, useAuth } from '@/hooks';
-import { useAppStore } from '@/store';
+import { IUserInfoModel } from '@/hooks/api/interfaces/auth';
+import { useAdminStore, useAppStore } from '@/store';
 import { keycloakSessionLogOut } from '@/utils';
 import _ from 'lodash';
 import { signIn, useSession } from 'next-auth/react';
@@ -55,6 +56,8 @@ export const AuthState: React.FC<IAuthState> = ({ showName }) => {
   const setUserinfo = useAppStore((state) => state.setUserinfo);
   const { update } = useSession();
   const router = useRouter();
+  const adminUsers = useAdminStore((state) => state.users);
+  const setAdminUsers = useAdminStore((state) => state.setUsers);
 
   React.useEffect(() => {
     if (!userinfo && status === 'authenticated' && session) {
@@ -62,7 +65,7 @@ export const AuthState: React.FC<IAuthState> = ({ showName }) => {
         if (session.user.roles.length === 0) toast.info('Attempting to preapprove your account');
         getUserinfo()
           .then(async (res) => {
-            const userinfo = await res.json();
+            const userinfo: IUserInfoModel = await res.json();
             // The user activation process can automatically apply roles to a preapproved user.
             const roles = _.uniq(userinfo.groups.concat(session.user.roles));
             if (
@@ -76,6 +79,13 @@ export const AuthState: React.FC<IAuthState> = ({ showName }) => {
             } else {
               setUserinfo(userinfo);
             }
+            setAdminUsers(
+              adminUsers.map((user) =>
+                user.id === userinfo.id
+                  ? { ...user, version: userinfo.version ?? user.version }
+                  : user,
+              ),
+            );
           })
           .catch((error: any) => {
             toast.error('Failed to activate user.  Try to login again');
@@ -84,7 +94,17 @@ export const AuthState: React.FC<IAuthState> = ({ showName }) => {
           });
       }
     }
-  }, [setUserinfo, status, getUserinfo, session, update, userinfo, router]);
+  }, [
+    setUserinfo,
+    status,
+    getUserinfo,
+    session,
+    update,
+    userinfo,
+    router,
+    setAdminUsers,
+    adminUsers,
+  ]);
 
   if (status === 'loading') return <div>loading...</div>;
   else if (status === 'authenticated') {

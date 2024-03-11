@@ -8,6 +8,15 @@ The OCIO’s storage infrastructure offers redundancy, configuration flexibility
 
 This dashboard aims to allow users to visualize their storage allocation and consumption through different views and perspectives to help them understand their current consumption. It will provide dynamic access to server storage consumption and allocation data for client use and HSB use. The goal is to allow users to make data-backed decisions on how to best reduce or optimize their storage utilization.
 
+## Script Help
+
+There are several scripts and commands to help local development and the CI/CD pipeline.
+
+```bash
+# Show all the help commands
+bash do help
+```
+
 ## Get Started Developing
 
 Currently you'll need to install the following.
@@ -45,6 +54,8 @@ The default configuration will initialize the database and run the web applicati
 bash do go
 ```
 
+The Dashboard web application is setup for hot-reload within a Docker container.
+
 ## Database Migrations
 
 Database migrations are built with Entity Framework. Dotnet tooling provides a Code-First approach to database migration, which enables the generation of migrations that apply new versions and perform rollbacks to prior versions. These tools provide a simple repeatable and testable Infrastructure as Code implementation.
@@ -66,17 +77,6 @@ There are a few other helpful database migration commands that can help with dev
 | db-drop      | Drops the database                                          |
 | db-refresh   | Drops the database and runs all the migrations              |
 | db-redo      | Rollback and reapply the migration                          |
-
-## Script Help
-
-There are several scripts and commands to help local development and the CI/CD pipeline.
-
-```bash
-# Show all the help commands
-bash do help
-```
-
-The Dashboard web application is setup for hot-reload within a Docker container.
 
 ### CI/CD Pipelines
 

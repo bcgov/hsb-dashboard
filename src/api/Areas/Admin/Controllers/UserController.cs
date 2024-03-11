@@ -30,6 +30,7 @@ public class UserController : ControllerBase
     private readonly IGroupService _groupService;
     private readonly ICssHelper _cssHelper;
     private readonly JsonSerializerOptions _serializerOptions;
+    private readonly ILogger _logger;
     #endregion
 
     #region Constructors
@@ -40,16 +41,19 @@ public class UserController : ControllerBase
     /// <param name="groupService"></param>
     /// <param name="cssHelper"></param>
     /// <param name="serializerOptions"></param>
+    /// <param name="logger"></param>
     public UserController(
         IUserService userService,
         IGroupService groupService,
         ICssHelper cssHelper,
-        IOptions<JsonSerializerOptions> serializerOptions)
+        IOptions<JsonSerializerOptions> serializerOptions,
+        ILogger<UserController> logger)
     {
         _userService = userService;
         _groupService = groupService;
         _cssHelper = cssHelper;
         _serializerOptions = serializerOptions.Value;
+        _logger = logger;
     }
     #endregion
 
@@ -125,7 +129,12 @@ public class UserController : ControllerBase
     [SwaggerOperation(Tags = new[] { "User" })]
     public async Task<IActionResult> UpdateAsync(UserModel model)
     {
+        // We need to do this because every time a user logs in their account is updated with last login, and thus their version is updated.
+        var original = _userService.FindForId(model.Id);
+        if (original == null) return new BadRequestObjectResult(new ErrorResponseModel("User does not exist"));
+        model.Version = original.Version;
         var entry = _userService.Update((Entities.User)model);
+        _userService.CommitTransaction();
 
         // Fetch groups from database to get roles associated with them.
         var roles = new List<string>();
@@ -138,8 +147,8 @@ public class UserController : ControllerBase
         roles = roles.Distinct().ToList();
 
         // TODO: Only update if roles changed
-        await _cssHelper.UpdateUserRolesAsync(model.Key.ToString(), roles.ToArray());
-        _userService.CommitTransaction();
+        var newRoles = await _cssHelper.UpdateUserRolesAsync(model.Key.ToString(), roles.ToArray());
+        _logger.LogDebug("New Roles: {roles}", String.Join(",", newRoles));
 
         var result = _userService.FindForId(model.Id, true);
         if (result == null) return new BadRequestObjectResult(new ErrorResponseModel("User does not exist"));
