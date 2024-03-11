@@ -4,6 +4,7 @@ import style from './Header.module.scss';
 
 import { Filter } from '@/components/filter';
 import { useAuth } from '@/hooks';
+import { useAppStore } from '@/store';
 import Image from 'next/image';
 import { redirect, usePathname } from 'next/navigation';
 import React from 'react';
@@ -26,13 +27,21 @@ export const Header: React.FC = () => {
     isClient,
     isOrganizationAdmin,
   } = useAuth();
+  const userinfo = useAppStore((state) => state.userinfo);
 
   React.useEffect(() => {
     if (!isLoading) {
-      if (!isAuthenticated && !path.includes('/login')) redirect('/login');
+      if (
+        isAuthenticated &&
+        isAuthorized &&
+        !userinfo?.isEnabled &&
+        !path.includes('/not-authorized')
+      )
+        redirect('/not-authorized');
+      else if (!isAuthenticated && !path.includes('/login')) redirect('/login');
       else if (isAuthenticated && !isAuthorized && !path.includes('/welcome')) redirect('/welcome');
     }
-  }, [isAuthenticated, isAuthorized, isLoading, path]);
+  }, [isAuthenticated, isAuthorized, isLoading, path, userinfo?.isEnabled]);
 
   const isLogin = path.includes('/login');
   const rootPath = isHSB ? 'hsb' : 'client';
@@ -71,7 +80,7 @@ export const Header: React.FC = () => {
                 <Message />
               </div>
               <div className={style.headerBottom}>
-                {isAuthorized && (
+                {isAuthorized && userinfo?.isEnabled && (
                   <>
                     {(isClient || isHSB) && (
                       <>
