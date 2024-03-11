@@ -17,6 +17,8 @@ spec:
     - to:
         - ipBlock:
             cidr: 10.99.8.2/32
+        - ipBlock:
+            cidr: 10.99.8.9/32
       ports:
         - port: 5432
           protocol: TCP

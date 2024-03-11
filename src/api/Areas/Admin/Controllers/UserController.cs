@@ -132,6 +132,7 @@ public class UserController : ControllerBase
         // We need to do this because every time a user logs in their account is updated with last login, and thus their version is updated.
         var original = _userService.FindForId(model.Id);
         if (original == null) return new BadRequestObjectResult(new ErrorResponseModel("User does not exist"));
+        _userService.ClearChangeTracker();
         model.Version = original.Version;
         var entry = _userService.Update((Entities.User)model);
         _userService.CommitTransaction();

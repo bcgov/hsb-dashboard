@@ -99,7 +99,6 @@ public class DataService : IDataService
     {
         try
         {
-
             this.Logger.LogInformation("Data Sync Service Started");
 
             await GetConfiguration();
@@ -234,6 +233,8 @@ public class DataService : IDataService
     /// <returns></returns>
     private async Task ProcessConfigurationItemsAsync(Models.DataSyncModel option)
     {
+        this.Logger.LogInformation("Processing Configuration Items Started");
+
         var limit = this.ServiceNowApi.Options.Limit;
         var offset = option.Offset;
         var query = !String.IsNullOrWhiteSpace(option.Query) ? option.Query : "";
