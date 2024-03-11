@@ -57,8 +57,6 @@ export const TableRow: React.FC<TableRowProps> = ({
         <p className={styles.centered} title={availableValue}>
           {availableValue}
         </p>
-      </div>
-      <div className={styles.barChart}>
         <div className={styles.bar}>
           {/* Applying width as an inline style */}
           <div className={styles.percentage} style={{ width: `${percentageUsed}%` }} />
