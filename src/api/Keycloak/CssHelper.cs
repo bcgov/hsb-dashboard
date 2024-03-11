@@ -225,10 +225,12 @@ public class CssHelper : ICssHelper
 
         // Remove roles that the user currently has but are not in the updated array.
         var removeRoles = userRoles.Roles.Where(r => !updateRoles.Any(ur => ur.Name == r.Name)).ToArray();
+        _logger.LogDebug("Removing Roles: {roles}", String.Join(",", removeRoles.Select(r => r.Name)));
         await removeRoles.ForEachAsync(async r => await _cssService.DeleteUserRoleAsync(username, r.Name));
 
         // Add new roles added to the user.
         var addRoles = updateRoles.Where(ur => !userRoles.Roles.Any(rr => rr.Name == ur.Name)).ToArray();
+        _logger.LogDebug("Adding Roles: {roles}", String.Join(",", addRoles.Select(r => r.Name)));
         await addRoles.ForEachAsync(async r => await _cssService.AddUserRoleAsync(username, r.Name));
 
         var result = await _cssService.GetRolesForUserAsync(username);
