@@ -2,7 +2,7 @@
 
 import { useApiUsers, useAuth } from '@/hooks';
 import { IUserInfoModel } from '@/hooks/api/interfaces/auth';
-import { useAdminStore, useAppStore } from '@/store';
+import { useAppStore } from '@/store';
 import { keycloakSessionLogOut } from '@/utils';
 import _ from 'lodash';
 import { signIn, useSession } from 'next-auth/react';
@@ -56,8 +56,6 @@ export const AuthState: React.FC<IAuthState> = ({ showName }) => {
   const setUserinfo = useAppStore((state) => state.setUserinfo);
   const { update } = useSession();
   const router = useRouter();
-  const adminUsers = useAdminStore((state) => state.users);
-  const setAdminUsers = useAdminStore((state) => state.setUsers);
 
   React.useEffect(() => {
     if (!userinfo && status === 'authenticated' && session) {
@@ -79,13 +77,6 @@ export const AuthState: React.FC<IAuthState> = ({ showName }) => {
             } else {
               setUserinfo(userinfo);
             }
-            setAdminUsers(
-              adminUsers.map((user) =>
-                user.id === userinfo.id
-                  ? { ...user, version: userinfo.version ?? user.version }
-                  : user,
-              ),
-            );
           })
           .catch((error: any) => {
             toast.error('Failed to activate user.  Try to login again');
@@ -94,17 +85,7 @@ export const AuthState: React.FC<IAuthState> = ({ showName }) => {
           });
       }
     }
-  }, [
-    setUserinfo,
-    status,
-    getUserinfo,
-    session,
-    update,
-    userinfo,
-    router,
-    setAdminUsers,
-    adminUsers,
-  ]);
+  }, [setUserinfo, status, getUserinfo, session, update, userinfo, router]);
 
   if (status === 'loading') return <div>loading...</div>;
   else if (status === 'authenticated') {
