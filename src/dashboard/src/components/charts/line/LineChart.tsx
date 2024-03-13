@@ -53,6 +53,7 @@ export const LineChart = <
       {label && <h1>{label}</h1>}
       {filter}
       <div className={styles.chartContainer}>
+      <p className={styles.disclaimer}>*Data shows totals on last available day of each month.</p>
         <Line data={data} options={{ ...options, maintainAspectRatio: !large }} />
       </div>
       {showExport && (

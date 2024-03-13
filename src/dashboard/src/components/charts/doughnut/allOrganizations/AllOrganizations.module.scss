@@ -15,6 +15,11 @@
 
 .chartContainer {
     display: flex;
+    width: 97%;
+    width: fill-available;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .info {

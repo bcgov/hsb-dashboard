@@ -18,7 +18,7 @@ export default function Page() {
       <div className={styles.welcome}>
         <h2>Request Access</h2>
         <p>
-          Please email <a href="mailto:placeholder@gov.bc.ca">placeholder@gov.bc.ca</a> to request
+          Please email <a href="michael.tessier@gov.bc.ca">michael.tessier@gov.bc.ca</a> to request
           access to your organization&apos;s dashboard
         </p>
         {!userinfo && (
