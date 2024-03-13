@@ -1,10 +1,10 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: e89443-test
+namespace: e89443-prod
 
 resources:
-  - ../secrets/test
+  - ../secrets/prod
   - ../../cluster
 
 patches:
@@ -14,10 +14,10 @@ patches:
     patch: |-
       - op: replace
         path: /data/KEYCLOAK_DEBUG
-        value: "true"
+        value: "false"
       - op: replace
         path: /data/KEYCLOAK_AUTHORITY
-        value: https://test.loginproxy.gov.bc.ca/auth/realms/standard
+        value: https://loginproxy.gov.bc.ca/auth/realms/standard
       - op: replace
         path: /data/KEYCLOAK_AUDIENCE
         value: hsb-dashboard-5128
@@ -30,7 +30,7 @@ patches:
     patch: |-
       - op: replace
         path: /data/CSS_ENVIRONMENT
-        value: test
+        value: prod
       - op: replace
         path: /data/CSS_API_URL
         value: https://api.loginproxy.gov.bc.ca
@@ -43,13 +43,13 @@ patches:
     patch: |-
       - op: replace
         path: /data/AUTH_URL
-        value: https://test.loginproxy.gov.bc.ca/auth/realms/comsvcauth/protocol/openid-connect/token
+        value: https://loginproxy.gov.bc.ca/auth/realms/comsvcauth/protocol/openid-connect/token
       - op: replace
         path: /data/HOST_URI
-        value: https://ches-test.api.gov.bc.ca/api/v1
+        value: https://ches.api.gov.bc.ca/api/v1
       - op: replace
         path: /data/FROM
-        value: (TEST) Hosting Service Dashboard <hsb@gov.bc.ca>
+        value: Hosting Service Dashboard <hsb@gov.bc.ca>
       - op: replace
         path: /data/TO
         value: jeremy.foster@fosol.ca,michael.tessier@gov.bc.ca
@@ -59,7 +59,7 @@ patches:
     patch: |-
       - op: replace
         path: /data/NEXTAUTH_URL
-        value: https://test-hsb.apps.emerald.devops.gov.bc.ca
+        value: https://hsb.apps.emerald.devops.gov.bc.ca
 
   - target:
       kind: Route
@@ -67,7 +67,7 @@ patches:
     patch: |-
       - op: replace
         path: /spec/host
-        value: test-api-hsb.apps.emerald.devops.gov.bc.ca
+        value: api-hsb.apps.emerald.devops.gov.bc.ca
   # - target:
   #     kind: Route
   #     name: api-tls
@@ -81,7 +81,7 @@ patches:
     patch: |-
       - op: replace
         path: /spec/host
-        value: test-hsb.apps.emerald.devops.gov.bc.ca
+        value: hsb.apps.emerald.devops.gov.bc.ca
   # - target:
   #     kind: Route
   #     name: dashboard-tls
@@ -96,7 +96,7 @@ patches:
     patch: |-
       - op: replace
         path: /spec/replicas
-        value: 1
+        value: 3
       - op: replace
         path: /spec/template/spec/containers/0/resources/requests/cpu
         value: 50m
@@ -111,14 +111,14 @@ patches:
         value: 1Gi
       - op: replace
         path: /spec/triggers/1/imageChangeParams/from/name
-        value: api:test
+        value: api:prod
   - target:
       kind: DeploymentConfig
       name: dashboard
     patch: |-
       - op: replace
         path: /spec/replicas
-        value: 1
+        value: 3
       - op: replace
         path: /spec/template/spec/containers/0/resources/requests/cpu
         value: 50m
@@ -133,14 +133,14 @@ patches:
         value: 250Mi
       - op: replace
         path: /spec/triggers/1/imageChangeParams/from/name
-        value: dashboard:test
+        value: dashboard:prod
   - target:
       kind: CronJob
       name: data-service
     patch: |-
       - op: replace
         path: /spec/jobTemplate/spec/template/spec/containers/0/image
-        value: image-registry.apps.emerald.devops.gov.bc.ca/e89443-tools/data-service:test
+        value: image-registry.apps.emerald.devops.gov.bc.ca/e89443-tools/data-service:prod
       - op: replace
         path: /spec/jobTemplate/spec/template/spec/containers/0/resources/requests/cpu
         value: 50m
@@ -159,4 +159,4 @@ patches:
     patch: |-
       - op: replace
         path: /roleRef/namespace
-        value: e89443-test
+        value: e89443-prod

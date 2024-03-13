@@ -30,7 +30,7 @@ export const AddNewUserRow = ({
 }: IAddNewUserRowProps) => {
   return (
     <div className={styles.addNewRow}>
-      <Button variant="secondary" onClick={onRemove}>- Remove</Button>
+      <Button variant="secondary" onClick={onRemove}></Button>
       <div>
         <Text
           name={`${index}.username`}

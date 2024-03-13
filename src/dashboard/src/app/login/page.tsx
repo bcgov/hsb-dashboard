@@ -29,7 +29,7 @@ export default function Page() {
         <div>
           <h3>Need access to the Storage Dashboard?</h3>
           <p>
-            Please email <a href="mailto:placeholder@gov.bc.ca">placeholder@gov.bc.ca</a> to request
+            Please email <a href="michael.tessier@gov.bc.ca">michael.tessier@gov.bc.ca</a> to request
             access to your organization&apos;s dashboard.
           </p>
           <h3>If you are a first time user please note:</h3>

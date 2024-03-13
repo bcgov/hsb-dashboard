@@ -39,6 +39,22 @@ patches:
         value: https://loginproxy.gov.bc.ca
   - target:
       kind: ConfigMap
+      name: ches
+    patch: |-
+      - op: replace
+        path: /data/AUTH_URL
+        value: https://dev.loginproxy.gov.bc.ca/auth/realms/comsvcauth/protocol/openid-connect/token
+      - op: replace
+        path: /data/HOST_URI
+        value: https://ches-dev.api.gov.bc.ca/api/v1
+      - op: replace
+        path: /data/FROM
+        value: (DEV) Hosting Service Dashboard <hsb@gov.bc.ca>
+      - op: replace
+        path: /data/TO
+        value: jeremy.foster@fosol.ca
+  - target:
+      kind: ConfigMap
       name: dashboard
     patch: |-
       - op: replace
