@@ -51,14 +51,14 @@ let activator = new Activator();
 
 export const AuthState: React.FC<IAuthState> = ({ showName }) => {
   const { userinfo: getUserinfo } = useApiUsers();
-  const { status, session } = useAuth();
+  const { session, isAuthenticated, isLoading } = useAuth();
   const userinfo = useAppStore((state) => state.userinfo);
   const setUserinfo = useAppStore((state) => state.setUserinfo);
   const { update } = useSession();
   const router = useRouter();
 
   React.useEffect(() => {
-    if (!userinfo && status === 'authenticated' && session) {
+    if (!userinfo && isAuthenticated && session) {
       if (activator.start()) {
         if (session.user.roles.length === 0) toast.info('Attempting to preapprove your account');
         getUserinfo()
@@ -85,10 +85,10 @@ export const AuthState: React.FC<IAuthState> = ({ showName }) => {
           });
       }
     }
-  }, [setUserinfo, status, getUserinfo, session, update, userinfo, router]);
+  }, [setUserinfo, isAuthenticated, getUserinfo, session, update, userinfo, router]);
 
-  if (status === 'loading') return <div>loading...</div>;
-  else if (status === 'authenticated') {
+  if (isLoading) return <div>loading...</div>;
+  else if (isAuthenticated) {
     return (
       <Row className="profile">
         {showName && <div>{session?.user.name}</div>}
