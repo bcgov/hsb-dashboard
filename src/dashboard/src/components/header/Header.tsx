@@ -34,14 +34,15 @@ export const Header: React.FC = () => {
       if (
         isAuthenticated &&
         isAuthorized &&
-        !userinfo?.isEnabled &&
+        userinfo &&
+        !userinfo.isEnabled &&
         !path.includes('/not-authorized')
       )
         redirect('/not-authorized');
       else if (!isAuthenticated && !path.includes('/login')) redirect('/login');
       else if (isAuthenticated && !isAuthorized && !path.includes('/welcome')) redirect('/welcome');
     }
-  }, [isAuthenticated, isAuthorized, isLoading, path, userinfo?.isEnabled]);
+  }, [isAuthenticated, isAuthorized, isLoading, path, userinfo]);
 
   const isLogin = path.includes('/login');
   const rootPath = isHSB ? 'hsb' : 'client';
