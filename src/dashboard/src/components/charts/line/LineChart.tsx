@@ -27,6 +27,7 @@ interface LineChartProps<TData = DefaultDataPoint<'line'>, TLabel = unknown> {
   large?: boolean;
   options?: ChartOptions<'line'>;
   filter?: React.ReactNode;
+  disclaimer?: React.ReactNode;
   data: ChartData<'line', TData, TLabel>;
   showExport?: boolean;
   exportDisabled?: boolean;
@@ -43,6 +44,7 @@ export const LineChart = <
   data,
   options = defaultChartOptions,
   filter,
+  disclaimer,
   showExport,
   exportDisabled,
   loading,
@@ -52,8 +54,8 @@ export const LineChart = <
       {loading && <LoadingAnimation />}
       {label && <h1>{label}</h1>}
       {filter}
+      {disclaimer}
       <div className={styles.chartContainer}>
-      <p className={styles.disclaimer}>*Data shows totals on last available day of each month.</p>
         <Line data={data} options={{ ...options, maintainAspectRatio: !large }} />
       </div>
       {showExport && (

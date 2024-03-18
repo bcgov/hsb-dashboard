@@ -11,6 +11,10 @@
     position: relative;
     top: 5px;
     margin-right: 10px;
+
+    @media (max-width: $mobile) {
+      display: none;
+    }
   }
 }
 
@@ -27,15 +31,27 @@
     flex-direction: column;
     padding: 0 65px;
 
+    @media (max-width: $mobile)  {
+      padding: 0 20px;
+    }
+
     >div {
       display: flex;
       position: relative;
+      
+      @media (max-width: $mobile) {
+        flex-direction: column-reverse;
+      }
     }
   }
 
   &.filterPadding {
     margin-bottom: 61px;
     min-height: 260px;
+
+    @media (max-width: $mobile) {
+      margin-bottom: 30px;
+    }
   }
 
   &.adminPadding {
@@ -55,6 +71,12 @@
   >div {
     display: flex;
     align-items: center;
+
+    @media (max-width: $mobile) {
+      &:last-of-type {
+        justify-content: space-between;
+      }
+    }
   }
 
   h1 {
@@ -62,6 +84,10 @@
     position: relative;
     font-weight: 300;
     font-size: $font-size-medium;
+
+    @media (max-width: $mobile) {
+      font-size: $font-size-20;
+    }
 
     &:after {
       content: '';
@@ -84,6 +110,10 @@
 
   p {
     font-size: $font-size-18;
+
+    @media (max-width: $mobile)  {
+      font-size: $font-size-small;
+    }
   }
 }
 
@@ -111,6 +141,10 @@
     position: relative;
     cursor: pointer;
     color: $white;
+
+    @media (max-width: $mobile) {
+      text-decoration: underline;
+    }
 
     &:hover {
       text-decoration: underline;
@@ -142,6 +176,10 @@
       right: -30px;
       top: 12px;
       pointer-events: none;
+
+      @media (max-width: $mobile) {
+        top: 8px;
+      }
     }
   }
 }
@@ -153,6 +191,11 @@
   font-weight: 300;
   color: $white;
   @include nav-icon('../../../public/images/server-icon.png');
+
+  @media (max-width: $mobile) {
+    top: 0;
+    text-decoration: underline;
+  }
 
   &::before {
     background-size: contain;
