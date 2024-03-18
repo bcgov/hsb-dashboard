@@ -16,12 +16,20 @@
   align-items: center;
   justify-content: center;
 
+  @media (max-width: $mobile) {
+    width: 100%;
+  }
+
   h1 {
     font-size: 4em;
     line-height: 1.2;
     letter-spacing: -2px;
     width: 65%;
     margin-bottom: 40px;
+
+    @media (max-width: $mobile) {
+      font-size: $font-size-32;
+    }
   }
 
   p {
@@ -33,6 +41,10 @@
   width: 50%;
   padding: 0 50px;
   margin: 4% 0;
+
+  @media (max-width: $mobile) {
+    width: 100%;
+  }
 
   h3 {
     font-size: 1.33em;

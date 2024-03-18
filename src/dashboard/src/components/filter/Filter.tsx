@@ -101,6 +101,9 @@ export const Filter: React.FC = () => {
   //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [readyKey, updateDashboard, lockKey]);
 
+  const allFiltersUnchosen =
+    !values.tenant && !values.organization && !values.operatingSystemItem && !values.serverItem;
+
   return (
     <div className={styles.filter}>
       <h1>Filter by:</h1>
@@ -133,7 +136,7 @@ export const Filter: React.FC = () => {
         Update
       </Button>
       <button
-        className={styles.reset}
+        className={`${styles.reset} ${allFiltersUnchosen ? styles.hidden : ''}`}
         onClick={async () => {
           const tenant = tenants.length === 1 ? tenants[0] : undefined;
           const organization = organizations.length === 1 ? organizations[0] : undefined;

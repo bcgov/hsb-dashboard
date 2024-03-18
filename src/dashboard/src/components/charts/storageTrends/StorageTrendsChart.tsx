@@ -101,6 +101,9 @@ export const StorageTrendsChart: React.FC<LineChartProps> = ({
       large={large}
       showExport
       exportDisabled
+      disclaimer={
+        <p className={styles.disclaimer}>*Data shows totals on last available day of each month.</p>
+      }
       filter={
         <div className={styles.date}>
           <DateRangePicker
