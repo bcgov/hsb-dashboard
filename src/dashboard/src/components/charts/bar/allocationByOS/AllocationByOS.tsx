@@ -10,6 +10,9 @@ export interface IAllocationByOSProps {
   serverItems: IServerItemListModel[];
   operatingSystemItems: IOperatingSystemItemListModel[];
   loading?: boolean;
+  showExport?: boolean;
+  exportDisabled?: boolean;
+  onExport?: () => void;
   onClick?: (operatingSystemItem?: IOperatingSystemItemListModel) => void;
 }
 
@@ -17,14 +20,18 @@ export const AllocationByOS = ({
   serverItems,
   operatingSystemItems,
   loading,
+  showExport,
+  exportDisabled,
+  onExport,
   onClick,
 }: IAllocationByOSProps) => {
   return (
     <SmallBarChart
       title="Allocation by OS"
       data={{ ...defaultData, datasets: groupByOS(serverItems, operatingSystemItems) }}
-      exportDisabled={true}
-      onExport={() => {}}
+      showExport={showExport}
+      exportDisabled={exportDisabled}
+      onExport={onExport}
       loading={loading}
     >
       {(data) => {

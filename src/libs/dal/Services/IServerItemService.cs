@@ -7,9 +7,9 @@ namespace HSB.DAL.Services;
 
 public interface IServerItemService : IBaseService<ServerItem>
 {
-    IEnumerable<ServerItem> Find(ServerItemFilter filter);
+    IEnumerable<ServerItem> Find(ServerItemFilter filter, bool includeRelated = false);
 
-    IEnumerable<ServerItem> FindForUser(long userId, ServerItemFilter filter);
+    IEnumerable<ServerItem> FindForUser(long userId, ServerItemFilter filter, bool includeRelated = false);
 
     ServerItem? FindForId(string key, bool includeFileSystemItems = false);
 

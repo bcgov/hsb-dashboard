@@ -31,6 +31,9 @@ interface LineChartProps {
   loading?: boolean;
   /** Date range selected for the filter. */
   dateRange?: string[];
+  showExport?: boolean;
+  exportDisabled?: boolean;
+  onExport?: (startDate?: string, endDate?: string) => void;
 }
 
 /**
@@ -43,6 +46,9 @@ export const StorageTrendsChart: React.FC<LineChartProps> = ({
   loading,
   minColumns,
   dateRange: initDateRange,
+  showExport,
+  exportDisabled,
+  onExport,
 }) => {
   const getStorageTrendsData = useStorageTrendsData();
   const dateRange = useStorageTrendsStore((state) => state.dateRangeServerHistoryItems);
@@ -50,36 +56,36 @@ export const StorageTrendsChart: React.FC<LineChartProps> = ({
   const { isReady: serverHistoryItemsIsReady, findServerHistoryItems } = useServerHistoryItems();
   const { tenantId, organizationId, operatingSystemItemId, serverItemKey } = useDashboard();
 
-  const values = [
-    initDateRange?.length && initDateRange[0]
-      ? initDateRange[0]
-      : moment().add(-1, 'year').format('YYYY-MM-DD'),
-    initDateRange?.length && initDateRange[1] ? initDateRange[1] : '',
-  ];
-
   React.useEffect(() => {
+    const values = [
+      initDateRange?.length && initDateRange[0]
+        ? initDateRange[0]
+        : moment().add(-1, 'year').format('YYYY-MM-DD'),
+      initDateRange?.length && initDateRange[1] ? initDateRange[1] : '',
+    ];
     setDateRange(values);
     // Infinite loop if we use the array instead of individual values.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values[0], values[1], setDateRange]);
+  }, [initDateRange?.[0], initDateRange?.[1], setDateRange]);
 
   React.useEffect(() => {
-    if (values[0]) {
+    if (dateRange[0]) {
       // A single server was selected, fetch the history for this server.
       findServerHistoryItems({
         tenantId: tenantId,
         organizationId: organizationId,
         operatingSystemItemId: operatingSystemItemId,
         serviceNowKey: serverItemKey,
-        startDate: values[0],
-        endDate: values[1] ? values[1] : undefined,
+        startDate: dateRange[0],
+        endDate: dateRange[1] ? dateRange[1] : undefined,
       }).catch((ex) => {
         const error = ex as Error;
         toast.error(error.message);
         console.error(error);
       });
     }
-    // Values array will cause infinite loop, we're only interested in the values.
+    // Values array will cause infinite loop, we're only interested in when values change.
+    // findServerHistoryItems will cause infinite loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     findServerHistoryItems,
@@ -88,9 +94,9 @@ export const StorageTrendsChart: React.FC<LineChartProps> = ({
     operatingSystemItemId,
     serverItemKey,
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    values[0],
+    dateRange[0],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    values[1],
+    dateRange[1],
   ]);
 
   return (
@@ -99,25 +105,18 @@ export const StorageTrendsChart: React.FC<LineChartProps> = ({
       label="Storage Trends"
       loading={loading || !serverHistoryItemsIsReady}
       large={large}
-      showExport
-      exportDisabled
       disclaimer={
         <p className={styles.disclaimer}>*Data shows totals on last available day of each month.</p>
       }
+      showExport={showExport}
+      exportDisabled={exportDisabled}
+      onExport={() => onExport?.(dateRange[0], dateRange[1])}
       filter={
         <div className={styles.date}>
           <DateRangePicker
             values={dateRange}
             onChange={async (values, e) => {
               setDateRange(values);
-              await findServerHistoryItems({
-                tenantId: tenantId,
-                organizationId: organizationId,
-                operatingSystemItemId: operatingSystemItemId,
-                serviceNowKey: serverItemKey,
-                startDate: values[0] ? values[0] : undefined,
-                endDate: values[1] ? values[1] : undefined,
-              });
             }}
             showButton
           />
