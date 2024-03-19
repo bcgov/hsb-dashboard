@@ -24,6 +24,9 @@ export interface ISegmentedBarChart {
   loading?: boolean;
   dateRange?: string[];
   minColumns?: number;
+  showExport?: boolean;
+  exportDisabled?: boolean;
+  onExport?: () => void;
 }
 
 export const SegmentedBarChart = ({
@@ -32,6 +35,9 @@ export const SegmentedBarChart = ({
   loading,
   dateRange: initDateRange,
   minColumns = 12,
+  showExport,
+  exportDisabled,
+  onExport,
 }: ISegmentedBarChart) => {
   const getStorageTrends = useStorageTrendsData();
   const dateRange = useStorageTrendsStore((state) => state.dateRangeFileSystemHistoryItems);
@@ -131,9 +137,16 @@ export const SegmentedBarChart = ({
       <div className={styles.chartContainer}>
         <Bar data={data} options={defaultOptions} />
       </div>
-      <Button variant="secondary" iconPath="/images/download-icon.png" disabled>
-        Export to Excel
-      </Button>
+      {showExport && (
+        <Button
+          variant="secondary"
+          iconPath="/images/download-icon.png"
+          disabled={exportDisabled}
+          onClick={onExport}
+        >
+          Export to Excel
+        </Button>
+      )}
     </div>
   );
 };

@@ -214,8 +214,6 @@ public class ServerItemController : ControllerBase
         }
     }
 
-    // TODO: Complete functionality
-    // TODO: Limit based on role and tenant.
     /// <summary>
     /// Export the server items to Excel.
     /// </summary>
@@ -228,11 +226,72 @@ public class ServerItemController : ControllerBase
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
     [SwaggerOperation(Tags = new[] { "Server Item" })]
-    public IActionResult Export(string format, string name = "service-now")
+    public IActionResult Export(string format = "excel", string name = "service-now")
     {
+        var uri = new Uri(this.Request.GetDisplayUrl());
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        var filter = new HSB.Models.Filters.ServerItemFilter(query);
+
         if (format == "excel")
         {
-            var items = _serverItemService.Find(a => true);
+            IEnumerable<Entities.ServerItem> items;
+            var isHSB = this.User.HasClientRole(ClientRole.HSB);
+            if (isHSB)
+            {
+                items = _serverItemService.Find(filter, true);
+            }
+            else
+            {
+                var user = _authorization.GetUser();
+                if (user == null) return Forbid();
+                items = _serverItemService.FindForUser(user.Id, filter, true);
+            }
+
+            var workbook = _exporter.GenerateExcel(name, items);
+
+            using var stream = new MemoryStream();
+            workbook.Write(stream);
+            var bytes = stream.ToArray();
+
+            return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        }
+
+        throw new NotImplementedException("Format 'csv' not implemented yet");
+    }
+
+    /// <summary>
+    /// Export the server history items to Excel.
+    /// </summary>
+    /// <param name="format"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    [HttpGet("history/export")]
+    [Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")]
+    [ProducesResponseType((int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
+    [SwaggerOperation(Tags = new[] { "Server Item" })]
+    public IActionResult ExportHistory(string format = "excel", string name = "service-now")
+    {
+        var uri = new Uri(this.Request.GetDisplayUrl());
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        var filter = new HSB.Models.Filters.ServerHistoryItemFilter(query);
+
+        if (format == "excel")
+        {
+            IEnumerable<Entities.ServerHistoryItem> items;
+            var isHSB = this.User.HasClientRole(ClientRole.HSB);
+            if (isHSB)
+            {
+                items = _serverHistoryItemService.FindHistoryByMonth(filter.StartDate ?? DateTime.UtcNow, filter.EndDate, filter.TenantId, filter.OrganizationId, filter.OperatingSystemItemId, filter.ServiceNowKey, true);
+            }
+            else
+            {
+                var user = _authorization.GetUser();
+                if (user == null) return Forbid();
+                items = _serverHistoryItemService.FindHistoryByMonthForUser(user.Id, filter.StartDate ?? DateTime.UtcNow, filter.EndDate, filter.TenantId, filter.OrganizationId, filter.OperatingSystemItemId, filter.ServiceNowKey, true);
+            }
+
             var workbook = _exporter.GenerateExcel(name, items);
 
             using var stream = new MemoryStream();

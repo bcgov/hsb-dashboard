@@ -11,7 +11,7 @@ import {
   StorageTrendsChart,
   TotalStorage,
 } from '@/components/charts';
-import { IOperatingSystemItemListModel, IServerItemListModel } from '@/hooks';
+import { IOperatingSystemItemListModel, IServerItemListModel, useApiServerItems } from '@/hooks';
 import {
   useDashboardOperatingSystemItems,
   useDashboardOrganizations,
@@ -28,8 +28,9 @@ import {
   useServerItems,
   useTenants,
 } from '@/hooks/lists';
-import { useFilteredStore } from '@/store';
+import { useDashboardStore, useFilteredStore } from '@/store';
 import React from 'react';
+import { toast } from 'react-toastify';
 import { useDashboardFilter } from '.';
 
 /**
@@ -38,6 +39,7 @@ import { useDashboardFilter } from '.';
  * @returns Component
  */
 export const Dashboard = () => {
+  const { download, downloadHistory } = useApiServerItems();
   const { isReady: isReadyTenants, tenants } = useTenants({ init: true });
   const { isReady: isReadyOrganizations, organizations } = useOrganizations({
     init: true,
@@ -60,6 +62,7 @@ export const Dashboard = () => {
     useSimple: true,
   });
 
+  const dashboardTenant = useDashboardStore((state) => state.tenant);
   const { organization: dashboardOrganization, organizations: dashboardOrganizations } =
     useDashboardOrganizations();
   const {
@@ -200,6 +203,19 @@ export const Dashboard = () => {
               await updateDashboard({});
             }
           }}
+          showExport
+          onExport={async () => {
+            try {
+              await download({
+                tenantId: dashboardTenant?.id,
+                organizationId: dashboardOrganization?.id,
+              });
+            } catch (ex) {
+              const error = ex as Error;
+              toast.error('Failed to download data. ' + error.message);
+              console.error(error);
+            }
+          }}
         />
       )}
       {/* One Server Selected */}
@@ -212,16 +228,46 @@ export const Dashboard = () => {
           organizations={dashboardOrganizations}
           serverItems={dashboardServerItems}
           loading={!isReadyOrganizations || !isReadyServerItems}
+          showExport
+          onExport={async () => {
+            try {
+              await download({
+                tenantId: dashboardTenant?.id,
+              });
+            } catch (ex) {
+              const error = ex as Error;
+              toast.error('Failed to download data. ' + error.message);
+              console.error(error);
+            }
+          }}
         />
       )}
       <StorageTrendsChart
         large={!!dashboardOrganization || !!dashboardOperatingSystemItem || !!dashboardServerItem}
+        showExport
+        onExport={async (startDate, endDate) => {
+          try {
+            await downloadHistory({
+              tenantId: dashboardTenant?.id,
+              organizationId: dashboardOrganization?.id,
+              operatingSystemItemId: dashboardOperatingSystemItem?.id,
+              serviceNowKey: dashboardServerItem?.serviceNowKey,
+              startDate: startDate,
+              endDate: endDate,
+            });
+          } catch (ex) {
+            const error = ex as Error;
+            toast.error('Failed to download data. ' + error.message);
+            console.error(error);
+          }
+        }}
       />
       {showAllocationByStorageVolume && (
         <AllocationByStorageVolume
           organizations={dashboardOrganizations}
           serverItems={dashboardServerItems}
           loading={!isReadyOrganizations || !isReadyServerItems}
+          showExport
           onClick={async (organization) => {
             if (organization) {
               let filteredServerItems: IServerItemListModel[];
@@ -297,6 +343,18 @@ export const Dashboard = () => {
               await updateDashboard({});
             }
           }}
+          onExport={async (search) => {
+            try {
+              await download({
+                tenantId: dashboardTenant?.id,
+                organizationName: search ? search : undefined,
+              });
+            } catch (ex) {
+              const error = ex as Error;
+              toast.error('Failed to download data. ' + error.message);
+              console.error(error);
+            }
+          }}
         />
       )}
       {showAllocationTable && (
@@ -314,6 +372,21 @@ export const Dashboard = () => {
             );
             setValues((state) => ({ serverItem, tenant, organization, operatingSystemItem }));
             await updateDashboard({ tenant, organization, operatingSystemItem, serverItem });
+          }}
+          showExport
+          onExport={async (search) => {
+            try {
+              await download({
+                tenantId: dashboardTenant?.id,
+                organizationId: dashboardOrganization?.id,
+                operatingSystemItemId: dashboardOperatingSystemItem?.id,
+                search: search ? search : undefined,
+              });
+            } catch (ex) {
+              const error = ex as Error;
+              toast.error('Failed to download data. ' + error.message);
+              console.error(error);
+            }
           }}
         />
       )}

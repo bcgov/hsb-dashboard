@@ -29,9 +29,10 @@ interface LineChartProps<TData = DefaultDataPoint<'line'>, TLabel = unknown> {
   filter?: React.ReactNode;
   disclaimer?: React.ReactNode;
   data: ChartData<'line', TData, TLabel>;
+  loading?: boolean;
   showExport?: boolean;
   exportDisabled?: boolean;
-  loading?: boolean;
+  onExport?: () => void;
 }
 
 export const LineChart = <
@@ -45,9 +46,10 @@ export const LineChart = <
   options = defaultChartOptions,
   filter,
   disclaimer,
+  loading,
   showExport,
   exportDisabled,
-  loading,
+  onExport,
 }: LineChartProps<TData, TLabel>) => {
   return (
     <div className={`${styles.lineChart} ${large ? styles.panelLarge : styles.panel}`}>
@@ -59,7 +61,12 @@ export const LineChart = <
         <Line data={data} options={{ ...options, maintainAspectRatio: !large }} />
       </div>
       {showExport && (
-        <Button variant="secondary" iconPath="/images/download-icon.png" disabled={exportDisabled}>
+        <Button
+          variant="secondary"
+          iconPath="/images/download-icon.png"
+          disabled={exportDisabled}
+          onClick={onExport}
+        >
           Export to Excel
         </Button>
       )}

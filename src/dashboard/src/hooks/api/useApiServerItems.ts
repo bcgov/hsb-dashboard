@@ -1,5 +1,6 @@
 import { dispatch, toQueryString } from '@/utils';
 import React from 'react';
+import { useDownload } from '..';
 import { IServerHistoryItemFilter, IServerItemFilter } from './interfaces';
 
 /**
@@ -8,6 +9,8 @@ import { IServerHistoryItemFilter, IServerItemFilter } from './interfaces';
  * @returns API endpoint functions.
  */
 export const useApiServerItems = () => {
+  const download = useDownload();
+
   return React.useMemo(
     () => ({
       find: async (filter: IServerItemFilter | undefined = {}): Promise<Response> => {
@@ -31,7 +34,29 @@ export const useApiServerItems = () => {
           cache: 'force-cache',
         });
       },
+      download: async (
+        filter: IServerItemFilter | undefined = {},
+        format?: string,
+      ): Promise<Response> => {
+        return await download(
+          `/api/dashboard/server-items/export?${format ? `format=${format}&` : ''}${toQueryString(
+            filter,
+          )}`,
+          { fileName: 'server-items.xlsx', method: 'get' },
+        );
+      },
+      downloadHistory: async (
+        filter: IServerHistoryItemFilter | undefined = {},
+        format?: string,
+      ): Promise<Response> => {
+        return await download(
+          `/api/dashboard/server-items/history/export?${
+            format ? `format=${format}&` : ''
+          }${toQueryString(filter)}`,
+          { fileName: 'server-items.xlsx', method: 'get' },
+        );
+      },
     }),
-    [],
+    [download],
   );
 };

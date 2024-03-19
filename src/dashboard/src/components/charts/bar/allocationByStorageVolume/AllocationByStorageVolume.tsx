@@ -18,6 +18,9 @@ export interface IAllocationByStorageVolumeProps {
   serverItems: IServerItemListModel[];
   loading?: boolean;
   onClick?: (organization: IOrganizationListModel) => void;
+  showExport?: boolean;
+  exportDisabled?: boolean;
+  onExport?: (search: string) => void;
 }
 
 export const AllocationByStorageVolume = ({
@@ -25,6 +28,9 @@ export const AllocationByStorageVolume = ({
   serverItems,
   loading,
   onClick,
+  showExport,
+  exportDisabled,
+  onExport,
 }: IAllocationByStorageVolumeProps) => {
   const [sortOption, setSortOption] = React.useState<number>(0);
   const [search, setSearch] = React.useState('');
@@ -103,9 +109,16 @@ export const AllocationByStorageVolume = ({
         <p>Used</p>
         <p>Unused</p>
       </div>
-      <Button variant="secondary" iconPath="/images/download-icon.png" disabled>
-        Export to Excel
-      </Button>
+      {showExport && (
+        <Button
+          variant="secondary"
+          iconPath="/images/download-icon.png"
+          disabled={exportDisabled}
+          onClick={() => onExport?.(search)}
+        >
+          Export to Excel
+        </Button>
+      )}
     </div>
   );
 };

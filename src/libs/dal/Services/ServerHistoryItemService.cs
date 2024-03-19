@@ -18,9 +18,17 @@ public class ServerHistoryItemService : BaseService<ServerHistoryItem>, IServerH
 
     #region Methods
 
-    public IEnumerable<ServerHistoryItem> Find(ServerHistoryItemFilter filter)
+    public IEnumerable<ServerHistoryItem> Find(ServerHistoryItemFilter filter, bool includeRelated = false)
     {
-        var query = this.Context.ServerHistoryItems
+        var query = this.Context.ServerHistoryItems.AsQueryable();
+
+        if (includeRelated)
+            query = query
+                .Include(shi => shi.Tenant)
+                .Include(shi => shi.Organization)
+                .Include(shi => shi.OperatingSystemItem);
+
+        query = query
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -38,7 +46,7 @@ public class ServerHistoryItemService : BaseService<ServerHistoryItem>, IServerH
             .ToArray();
     }
 
-    public IEnumerable<ServerHistoryItem> FindForUser(int userId, ServerHistoryItemFilter filter)
+    public IEnumerable<ServerHistoryItem> FindForUser(int userId, ServerHistoryItemFilter filter, bool includeRelated = false)
     {
         var userOrganizationQuery = from uo in this.Context.UserOrganizations
                                     join o in this.Context.Organizations on uo.OrganizationId equals o.Id
@@ -51,9 +59,17 @@ public class ServerHistoryItemService : BaseService<ServerHistoryItem>, IServerH
                             && t.IsEnabled
                           select ut.TenantId;
 
-        var query = (from si in this.Context.ServerHistoryItems
-                     where userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
-                     select si)
+        var query = from si in this.Context.ServerHistoryItems
+                    where userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
+                    select si;
+
+        if (includeRelated)
+            query = query
+                .Include(shi => shi.Tenant)
+                .Include(shi => shi.Organization)
+                .Include(shi => shi.OperatingSystemItem);
+
+        query = query
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -71,18 +87,58 @@ public class ServerHistoryItemService : BaseService<ServerHistoryItem>, IServerH
             .ToArray();
     }
 
-    public IEnumerable<ServerHistoryItem> FindHistoryByMonth(DateTime start, DateTime? end, int? tenantId, int? organizationId, int? operatingSystemId, string? serviceKeyNow)
+    public IEnumerable<ServerHistoryItem> FindHistoryByMonth(DateTime start, DateTime? end, int? tenantId, int? organizationId, int? operatingSystemId, string? serviceKeyNow, bool includeRelated = false)
     {
-        return this.Context.FindServerHistoryItemsByMonth(start.ToUniversalTime(), end?.ToUniversalTime(), tenantId, organizationId, operatingSystemId, serviceKeyNow)
+        var items = this.Context.FindServerHistoryItemsByMonth(start.ToUniversalTime(), end?.ToUniversalTime(), tenantId, organizationId, operatingSystemId, serviceKeyNow)
             .AsNoTracking()
             .ToArray();
+
+        if (includeRelated)
+        {
+            var tenantIds = items.Select(i => i.TenantId).Distinct();
+            var organizationIds = items.Select(i => i.OrganizationId).Distinct();
+            var operatingSystemIds = items.Select(i => i.OperatingSystemItemId).Distinct();
+
+            var tenants = this.Context.Tenants.Where(t => tenantIds.Contains(t.Id)).ToDictionary(t => t.Id);
+            var organizations = this.Context.Organizations.Where(o => organizationIds.Contains(o.Id)).ToDictionary(o => o.Id);
+            var operatingSystemItems = this.Context.OperatingSystemItems.Where(os => operatingSystemIds.Contains(os.Id)).ToDictionary(os => os.Id);
+
+            foreach (var item in items)
+            {
+                item.Tenant = item.TenantId.HasValue ? tenants[item.TenantId.Value] : null;
+                item.Organization = organizations[item.OrganizationId];
+                item.OperatingSystemItem = item.OperatingSystemItemId.HasValue ? operatingSystemItems[item.OperatingSystemItemId.Value] : null;
+            }
+        }
+
+        return items;
     }
 
-    public IEnumerable<ServerHistoryItem> FindHistoryByMonthForUser(int userId, DateTime start, DateTime? end, int? tenantId, int? organizationId, int? operatingSystemId, string? serviceKeyNow)
+    public IEnumerable<ServerHistoryItem> FindHistoryByMonthForUser(int userId, DateTime start, DateTime? end, int? tenantId, int? organizationId, int? operatingSystemId, string? serviceKeyNow, bool includeRelated = false)
     {
-        return this.Context.FindServerHistoryItemsByMonthForUser(userId, start.ToUniversalTime(), end?.ToUniversalTime(), tenantId, organizationId, operatingSystemId, serviceKeyNow)
+        var items = this.Context.FindServerHistoryItemsByMonthForUser(userId, start.ToUniversalTime(), end?.ToUniversalTime(), tenantId, organizationId, operatingSystemId, serviceKeyNow)
         .AsNoTracking()
         .ToArray();
+
+        if (includeRelated)
+        {
+            var tenantIds = items.Select(i => i.TenantId).Distinct();
+            var organizationIds = items.Select(i => i.OrganizationId).Distinct();
+            var operatingSystemIds = items.Select(i => i.OperatingSystemItemId).Distinct();
+
+            var tenants = this.Context.Tenants.Where(t => tenantIds.Contains(t.Id)).ToDictionary(t => t.Id);
+            var organizations = this.Context.Organizations.Where(o => organizationIds.Contains(o.Id)).ToDictionary(o => o.Id);
+            var operatingSystemItems = this.Context.OperatingSystemItems.Where(os => operatingSystemIds.Contains(os.Id)).ToDictionary(os => os.Id);
+
+            foreach (var item in items)
+            {
+                item.Tenant = item.TenantId.HasValue ? tenants[item.TenantId.Value] : null;
+                item.Organization = organizations[item.OrganizationId];
+                item.OperatingSystemItem = item.OperatingSystemItemId.HasValue ? operatingSystemItems[item.OperatingSystemItemId.Value] : null;
+            }
+        }
+
+        return items;
     }
     #endregion
 }

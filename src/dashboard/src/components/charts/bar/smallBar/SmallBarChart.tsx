@@ -10,6 +10,7 @@ export interface ISmallBarChartProps<T extends IBarChartRowData<unknown>> {
   title?: string;
   /** Data to be displayed in the bar chart */
   data: IBarChartData<T>;
+  showExport?: boolean;
   /** Whether the export to Excel is disabled */
   exportDisabled?: boolean;
   /** Event fires when the export to Excel is clicked */
@@ -28,9 +29,10 @@ export const SmallBarChart = <T extends IBarChartRowData<unknown>>({
   title,
   data,
   children,
+  loading,
+  showExport,
   exportDisabled,
   onExport,
-  loading,
 }: ISmallBarChartProps<T>) => {
   return (
     <div className={styles.panel}>
@@ -59,12 +61,12 @@ export const SmallBarChart = <T extends IBarChartRowData<unknown>>({
               })}
         </div>
       </div>
-      {onExport && (
+      {showExport && (
         <Button
           variant="secondary"
           iconPath="/images/download-icon.png"
           disabled={exportDisabled}
-          onClick={() => onExport?.()}
+          onClick={onExport}
         >
           Export to Excel
         </Button>

@@ -16,12 +16,18 @@ export interface IAllOrganizationsProps {
   organizations: IOrganizationListModel[];
   serverItems: IServerItemListModel[];
   loading?: boolean;
+  showExport?: boolean;
+  exportDisabled?: boolean;
+  onExport?: () => void;
 }
 
 export const AllOrganizations = ({
   organizations,
   serverItems,
   loading,
+  showExport,
+  exportDisabled,
+  onExport,
 }: IAllOrganizationsProps) => {
   const [data, setData] = React.useState(generateAllOrganizationsDoughnutChart(serverItems));
 
@@ -79,9 +85,16 @@ export const AllOrganizations = ({
           </p>
         </div>
       </div>
-      <Button variant="secondary" iconPath="/images/download-icon.png" disabled>
-        Export to Excel
-      </Button>
+      {showExport && (
+        <Button
+          variant="secondary"
+          iconPath="/images/download-icon.png"
+          onClick={onExport}
+          disabled={exportDisabled}
+        >
+          Export to Excel
+        </Button>
+      )}
     </div>
   );
 };
