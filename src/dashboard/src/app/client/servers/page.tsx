@@ -2,7 +2,7 @@
 
 import { AllocationTable, useDashboardFilter } from '@/components';
 import { LoadingAnimation } from '@/components/loadingAnimation';
-import { useAuth } from '@/hooks';
+import { useApiServerItems, useAuth } from '@/hooks';
 import {
   useOperatingSystemItems,
   useOrganizations,
@@ -11,6 +11,7 @@ import {
 } from '@/hooks/lists';
 import { useFilteredStore } from '@/store';
 import { redirect, useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 export default function Page() {
   const router = useRouter();
@@ -27,6 +28,7 @@ export default function Page() {
   const setFilteredValues = useFilteredStore((state) => state.setValues);
   const setFilteredOrganizations = useFilteredStore((state) => state.setOrganizations);
   const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
+  const { download } = useApiServerItems();
 
   const updateDashboard = useDashboardFilter();
 
@@ -72,6 +74,18 @@ export default function Page() {
             fetchFileSystemItems: false,
           });
           router.push(`/client/dashboard?serverItem=${serverItem?.serviceNowKey}`);
+        }
+      }}
+      showExport
+      onExport={async (search) => {
+        try {
+          await download({
+            search: search ? search : undefined,
+          });
+        } catch (ex) {
+          const error = ex as Error;
+          toast.error('Failed to download data. ' + error.message);
+          console.error(error);
         }
       }}
     />

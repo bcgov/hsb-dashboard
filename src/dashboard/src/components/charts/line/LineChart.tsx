@@ -27,10 +27,12 @@ interface LineChartProps<TData = DefaultDataPoint<'line'>, TLabel = unknown> {
   large?: boolean;
   options?: ChartOptions<'line'>;
   filter?: React.ReactNode;
+  disclaimer?: React.ReactNode;
   data: ChartData<'line', TData, TLabel>;
+  loading?: boolean;
   showExport?: boolean;
   exportDisabled?: boolean;
-  loading?: boolean;
+  onExport?: () => void;
 }
 
 export const LineChart = <
@@ -43,21 +45,28 @@ export const LineChart = <
   data,
   options = defaultChartOptions,
   filter,
+  disclaimer,
+  loading,
   showExport,
   exportDisabled,
-  loading,
+  onExport,
 }: LineChartProps<TData, TLabel>) => {
   return (
     <div className={`${styles.lineChart} ${large ? styles.panelLarge : styles.panel}`}>
       {loading && <LoadingAnimation />}
       {label && <h1>{label}</h1>}
       {filter}
+      {disclaimer}
       <div className={styles.chartContainer}>
-      <p className={styles.disclaimer}>*Data shows totals on last available day of each month.</p>
         <Line data={data} options={{ ...options, maintainAspectRatio: !large }} />
       </div>
       {showExport && (
-        <Button variant="secondary" iconPath="/images/download-icon.png" disabled={exportDisabled}>
+        <Button
+          variant="secondary"
+          iconPath="/images/download-icon.png"
+          disabled={exportDisabled}
+          onClick={onExport}
+        >
           Export to Excel
         </Button>
       )}

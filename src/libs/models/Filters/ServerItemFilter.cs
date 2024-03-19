@@ -7,10 +7,12 @@ using Microsoft.EntityFrameworkCore;
 public class ServerItemFilter : PageFilter
 {
     #region Properties
+    public string? Search { get; set; }
     public string? Name { get; set; }
     public string? ServiceNowKey { get; set; }
     public int? TenantId { get; set; }
     public int? OrganizationId { get; set; }
+    public string? OrganizationName { get; set; }
     public int? OperatingSystemItemId { get; set; }
     public int? InstallStatus { get; set; }
     public int? NotInstallStatus { get; set; }
@@ -33,10 +35,12 @@ public class ServerItemFilter : PageFilter
     {
         var filter = new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>(queryParams, StringComparer.OrdinalIgnoreCase);
 
+        this.Search = filter.GetStringValue(nameof(this.Search));
         this.Name = filter.GetStringValue(nameof(this.Name));
         this.ServiceNowKey = filter.GetStringValue(nameof(this.ServiceNowKey));
         this.TenantId = filter.GetIntNullValue(nameof(this.TenantId));
         this.OrganizationId = filter.GetIntNullValue(nameof(this.OrganizationId));
+        this.OrganizationName = filter.GetStringValue(nameof(this.OrganizationName));
         this.OperatingSystemItemId = filter.GetIntNullValue(nameof(this.OperatingSystemItemId));
         this.StartDate = filter.GetDateTimeNullValue(nameof(this.StartDate));
         this.EndDate = filter.GetDateTimeNullValue(nameof(this.EndDate));
@@ -52,6 +56,8 @@ public class ServerItemFilter : PageFilter
     public ExpressionStarter<Entities.ServerItem> GeneratePredicate()
     {
         var predicate = PredicateBuilder.New<Entities.ServerItem>();
+        if (this.Search != null)
+            predicate = predicate.And((u) => EF.Functions.Like(u.Name, $"%{this.Search}%") || EF.Functions.Like(u.OperatingSystemItem!.Name, $"%{this.Search}%"));
         if (this.Name != null)
             predicate = predicate.And((u) => EF.Functions.Like(u.Name, $"%{this.Name}%"));
         if (this.ServiceNowKey != null)
@@ -60,6 +66,8 @@ public class ServerItemFilter : PageFilter
             predicate = predicate.And((u) => u.TenantId == this.TenantId);
         if (this.OrganizationId != null)
             predicate = predicate.And((u) => u.OrganizationId == this.OrganizationId);
+        if (this.OrganizationName != null)
+            predicate = predicate.And((u) => EF.Functions.Like(u.Organization!.Name.ToLower(), $"%{this.OrganizationName.ToLower()}%"));
         if (this.OperatingSystemItemId != null)
             predicate = predicate.And((u) => u.OperatingSystemItemId == this.OperatingSystemItemId);
         if (this.InstallStatus != null)

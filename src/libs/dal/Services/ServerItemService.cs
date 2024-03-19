@@ -19,10 +19,18 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
     #endregion
 
     #region Methods
-
-    public IEnumerable<ServerItem> Find(ServerItemFilter filter)
+    public IEnumerable<ServerItem> Find(ServerItemFilter filter, bool includeRelated = false)
     {
         var query = this.Context.ServerItems
+            .AsQueryable();
+
+        if (includeRelated)
+            query = query
+                .Include(si => si.Tenant)
+                .Include(si => si.Organization)
+                .Include(si => si.OperatingSystemItem);
+
+        query = query
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -40,7 +48,7 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
             .ToArray();
     }
 
-    public IEnumerable<ServerItem> FindForUser(long userId, ServerItemFilter filter)
+    public IEnumerable<ServerItem> FindForUser(long userId, ServerItemFilter filter, bool includeRelated = false)
     {
         var userOrganizationQuery = from uo in this.Context.UserOrganizations
                                     join o in this.Context.Organizations on uo.OrganizationId equals o.Id
@@ -56,7 +64,15 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
         var query = (from si in this.Context.ServerItems
                      where si.TenantId != null
                         && (userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId))
-                     select si)
+                     select si);
+
+        if (includeRelated)
+            query = query
+                .Include(si => si.Tenant)
+                .Include(si => si.Organization)
+                .Include(si => si.OperatingSystemItem);
+
+        query = query
             .Where(filter.GeneratePredicate())
             .Distinct();
 

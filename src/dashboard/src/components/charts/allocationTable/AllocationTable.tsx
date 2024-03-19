@@ -20,8 +20,11 @@ export interface IAllocationTableProps {
   operatingSystemId?: number;
   serverItems: IServerItemListModel[];
   loading?: boolean;
-  onClick?: (serverItem?: IServerItemListModel) => void;
   margin?: number;
+  showExport?: boolean;
+  exportDisabled?: boolean;
+  onExport?: (search: string) => void;
+  onClick?: (serverItem?: IServerItemListModel) => void;
 }
 
 export const AllocationTable = ({
@@ -29,8 +32,11 @@ export const AllocationTable = ({
   operatingSystemId,
   serverItems,
   loading,
-  onClick,
   margin,
+  showExport,
+  exportDisabled,
+  onExport,
+  onClick,
 }: IAllocationTableProps) => {
   const getServerItems = useAllocationByOS(osClassName, operatingSystemId);
 
@@ -191,9 +197,16 @@ export const AllocationTable = ({
           ))}
         </div>
       </div>
-      <Button variant="secondary" iconPath="/images/download-icon.png" disabled>
-        Export to Excel
-      </Button>
+      {showExport && (
+        <Button
+          variant="secondary"
+          iconPath="/images/download-icon.png"
+          disabled={exportDisabled}
+          onClick={() => onExport?.(filter)}
+        >
+          Export to Excel
+        </Button>
+      )}
     </div>
   );
 };
