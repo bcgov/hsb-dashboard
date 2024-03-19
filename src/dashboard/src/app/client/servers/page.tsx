@@ -78,11 +78,19 @@ export default function Page() {
       }}
       showExport
       onExport={async (search) => {
+        const toastLoading = toast.loading("Generating Excel document...");
+
         try {
           await download({
             search: search ? search : undefined,
           });
+
+          toast.dismiss(toastLoading);
+          toast.success('Excel document has been downloaded successfully.');
+
         } catch (ex) {
+          toast.dismiss(toastLoading);
+
           const error = ex as Error;
           toast.error('Failed to download data. ' + error.message);
           console.error(error);

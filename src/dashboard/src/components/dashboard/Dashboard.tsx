@@ -205,12 +205,19 @@ export const Dashboard = () => {
           }}
           showExport
           onExport={async () => {
+            const toastLoading = toast.loading("Generating Excel document...");
+
             try {
               await download({
                 tenantId: dashboardTenant?.id,
                 organizationId: dashboardOrganization?.id,
               });
+              toast.dismiss(toastLoading);
+              toast.success('Excel document has been downloaded successfully.');
+
             } catch (ex) {
+              toast.dismiss(toastLoading);
+
               const error = ex as Error;
               toast.error('Failed to download data. ' + error.message);
               console.error(error);
@@ -230,11 +237,18 @@ export const Dashboard = () => {
           loading={!isReadyOrganizations || !isReadyServerItems}
           showExport
           onExport={async () => {
+            const toastLoading = toast.loading("Generating Excel document...");
+
             try {
               await download({
                 tenantId: dashboardTenant?.id,
               });
+              toast.dismiss(toastLoading);
+              toast.success('Excel document has been downloaded successfully.');
+
             } catch (ex) {
+              toast.dismiss(toastLoading);
+
               const error = ex as Error;
               toast.error('Failed to download data. ' + error.message);
               console.error(error);
@@ -246,6 +260,8 @@ export const Dashboard = () => {
         large={!!dashboardOrganization || !!dashboardOperatingSystemItem || !!dashboardServerItem}
         showExport
         onExport={async (startDate, endDate) => {
+          const toastLoading = toast.loading("Generating Excel document...");
+
           try {
             await downloadHistory({
               tenantId: dashboardTenant?.id,
@@ -255,7 +271,12 @@ export const Dashboard = () => {
               startDate: startDate,
               endDate: endDate,
             });
+            toast.dismiss(toastLoading);
+            toast.success('Excel document has been downloaded successfully.');
+
           } catch (ex) {
+            toast.dismiss(toastLoading);
+
             const error = ex as Error;
             toast.error('Failed to download data. ' + error.message);
             console.error(error);
@@ -344,12 +365,19 @@ export const Dashboard = () => {
             }
           }}
           onExport={async (search) => {
+            const toastLoading = toast.loading("Generating Excel document...");
+
             try {
               await download({
                 tenantId: dashboardTenant?.id,
                 organizationName: search ? search : undefined,
               });
+              toast.dismiss(toastLoading);
+              toast.success('Excel document has been downloaded successfully.');
+
             } catch (ex) {
+              toast.dismiss(toastLoading);
+
               const error = ex as Error;
               toast.error('Failed to download data. ' + error.message);
               console.error(error);
@@ -375,6 +403,8 @@ export const Dashboard = () => {
           }}
           showExport
           onExport={async (search) => {
+            const toastLoading = toast.loading("Generating Excel document...");
+
             try {
               await download({
                 tenantId: dashboardTenant?.id,
@@ -382,7 +412,12 @@ export const Dashboard = () => {
                 operatingSystemItemId: dashboardOperatingSystemItem?.id,
                 search: search ? search : undefined,
               });
+              toast.dismiss(toastLoading);
+              toast.success('Excel document has been downloaded successfully.');
+
             } catch (ex) {
+              toast.dismiss(toastLoading);
+              
               const error = ex as Error;
               toast.error('Failed to download data. ' + error.message);
               console.error(error);
