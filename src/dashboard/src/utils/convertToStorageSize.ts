@@ -6,7 +6,7 @@
  * @param options Configuration options.
  * @returns A string representing the storage size.
  */
-export const convertToStorageSize = <T extends string | number>(
+export const convertStorageSize = <T extends string | number>(
   value: number,
   input: 'TB' | 'GB' | 'MB' | 'KB' | 'B' | '' = '',
   output: 'TB' | 'GB' | 'MB' | 'KB' | 'B' | '' = '',
@@ -17,7 +17,7 @@ export const convertToStorageSize = <T extends string | number>(
         locales?: Intl.LocalesArgument;
       } & Intl.NumberFormatOptions)
     | undefined,
-): T => {
+): { value: T; type: 'TB' | 'GB' | 'MB' | 'KB' | 'B' | '' } => {
   var result = value;
   if (input === output) result = value;
   else if (input === 'TB') {
@@ -65,13 +65,37 @@ export const convertToStorageSize = <T extends string | number>(
   }
   result = options?.formula?.(result) ?? result;
 
+  return { value: result as T, type: output };
+};
+
+/**
+ * Converts a storage value to a specified size type.
+ * @param value The initial value to convert.
+ * @param input The input size type.
+ * @param output The output size type.
+ * @param options Configuration options.
+ * @returns A string representing the storage size.
+ */
+export const convertToStorageSize = <T extends string | number>(
+  value: number,
+  input: 'TB' | 'GB' | 'MB' | 'KB' | 'B' | '' = '',
+  output: 'TB' | 'GB' | 'MB' | 'KB' | 'B' | '' = '',
+  options?:
+    | ({
+        formula?: (value: number) => number;
+        type?: 'string' | 'number';
+        locales?: Intl.LocalesArgument;
+      } & Intl.NumberFormatOptions)
+    | undefined,
+): T => {
+  const result = convertStorageSize<T>(value, input, output, options);
+
   return (
     options?.type === 'number'
-      ? result
-      : `${result.toLocaleString(
-          options?.locales ?? navigator.language,
-          options,
-        )} ${output}`.trimEnd()
+      ? result.value
+      : `${result.value.toLocaleString(options?.locales ?? navigator.language, options)} ${
+          result.type
+        }`.trimEnd()
   ) as T;
 };
 
