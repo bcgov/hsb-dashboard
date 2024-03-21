@@ -1,6 +1,7 @@
 'use client';
 
 import { DateRangePicker } from '@/components';
+import { IServerItemListModel } from '@/hooks';
 import { useDashboard } from '@/hooks/dashboard';
 import { useStorageTrendsStore } from '@/store';
 import {
@@ -31,8 +32,13 @@ interface LineChartProps {
   loading?: boolean;
   /** Date range selected for the filter. */
   dateRange?: string[];
+  /** An array of server items  */
+  serverItems?: IServerItemListModel[];
+  /** Whether to show the export button. */
   showExport?: boolean;
+  /** Whether the export button is disabled. */
   exportDisabled?: boolean;
+  /** Event fires when export button is clicked. */
   onExport?: (startDate?: string, endDate?: string) => void;
 }
 
@@ -46,6 +52,7 @@ export const StorageTrendsChart: React.FC<LineChartProps> = ({
   loading,
   minColumns,
   dateRange: initDateRange,
+  serverItems = [],
   showExport,
   exportDisabled,
   onExport,
@@ -55,6 +62,8 @@ export const StorageTrendsChart: React.FC<LineChartProps> = ({
   const setDateRange = useStorageTrendsStore((state) => state.setDateRangeServerHistoryItems);
   const { isReady: serverHistoryItemsIsReady, findServerHistoryItems } = useServerHistoryItems();
   const { tenantId, organizationId, operatingSystemItemId, serverItemKey } = useDashboard();
+
+  const [forceFetch, setForceFetch] = React.useState(0);
 
   React.useEffect(() => {
     const values = [
@@ -68,22 +77,29 @@ export const StorageTrendsChart: React.FC<LineChartProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initDateRange?.[0], initDateRange?.[1], setDateRange]);
 
+  const fetch = React.useCallback(
+    (startDate?: string, endDate?: string) => {
+      if (startDate) {
+        // A single server was selected, fetch the history for this server.
+        return findServerHistoryItems({
+          tenantId: tenantId,
+          organizationId: organizationId,
+          operatingSystemItemId: operatingSystemItemId,
+          serviceNowKey: serverItemKey,
+          startDate: startDate,
+          endDate: endDate ? endDate : undefined,
+        }).catch((ex) => {
+          const error = ex as Error;
+          toast.error(error.message);
+          console.error(error);
+        });
+      }
+    },
+    [findServerHistoryItems, operatingSystemItemId, organizationId, serverItemKey, tenantId],
+  );
+
   React.useEffect(() => {
-    if (dateRange[0]) {
-      // A single server was selected, fetch the history for this server.
-      findServerHistoryItems({
-        tenantId: tenantId,
-        organizationId: organizationId,
-        operatingSystemItemId: operatingSystemItemId,
-        serviceNowKey: serverItemKey,
-        startDate: dateRange[0],
-        endDate: dateRange[1] ? dateRange[1] : undefined,
-      }).catch((ex) => {
-        const error = ex as Error;
-        toast.error(error.message);
-        console.error(error);
-      });
-    }
+    fetch(dateRange[0], dateRange[1])?.catch(() => {});
     // Values array will cause infinite loop, we're only interested in when values change.
     // findServerHistoryItems will cause infinite loop.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -97,11 +113,12 @@ export const StorageTrendsChart: React.FC<LineChartProps> = ({
     dateRange[0],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     dateRange[1],
+    forceFetch,
   ]);
 
   return (
     <LineChart
-      data={getStorageTrendsData(minColumns, dateRange)}
+      data={getStorageTrendsData(minColumns, dateRange, serverItems)}
       label="Storage Trends"
       loading={loading || !serverHistoryItemsIsReady}
       large={large}
@@ -115,8 +132,9 @@ export const StorageTrendsChart: React.FC<LineChartProps> = ({
         <div className={styles.date}>
           <DateRangePicker
             values={dateRange}
-            onChange={async (values, e) => {
-              setDateRange(values);
+            onChange={(values, e) => {
+              if (values[0] !== dateRange[0] || values[1] !== dateRange[1]) setDateRange(values);
+              else setForceFetch(Date.now());
             }}
             showButton
           />
