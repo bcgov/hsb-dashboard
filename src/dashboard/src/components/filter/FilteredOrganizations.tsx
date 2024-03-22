@@ -46,7 +46,7 @@ export const FilteredOrganizations = ({}: IFilteredOrganizationsProps) => {
       setValues((values) => ({ ...values, organization: organizations[0] }));
   }, [setFilteredOrganizations, organizations, setValues, filteredOrganizations.length]);
 
-  return (
+  return filteredOrganizationOptions.length > 1 ? (
     <Select
       label="Organization"
       variant="filter"
@@ -123,5 +123,5 @@ export const FilteredOrganizations = ({}: IFilteredOrganizationsProps) => {
         setLoading(false);
       }}
     />
-  );
+  ) : null;
 };

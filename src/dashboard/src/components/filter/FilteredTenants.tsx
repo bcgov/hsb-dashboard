@@ -59,7 +59,7 @@ export const FilteredTenants = ({}: IFilteredTenantsProps) => {
     if (tenants.length === 1) setValues((values) => ({ ...values, tenant: tenants[0] }));
   }, [filteredTenants.length, setFilteredTenants, setValues, tenants]);
 
-  return filteredTenantOptions.length > 0 ? (
+  return filteredTenantOptions.length > 1 ? (
     <Select
       label="Tenant"
       variant="filter"
@@ -128,7 +128,5 @@ export const FilteredTenants = ({}: IFilteredTenantsProps) => {
         setLoading(false);
       }}
     />
-  ) : (
-    <></>
-  );
+  ) : null;
 };
