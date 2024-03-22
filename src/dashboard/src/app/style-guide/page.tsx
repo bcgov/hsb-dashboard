@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/buttons';
 import { Checkbox } from '@/components/forms/checkbox';
-import { Select, FilterDropdown } from '@/components/forms/select';
+import { FilterDropdown, Select } from '@/components/forms/select';
 import { Text } from '@/components/forms/text';
 import { Toggle } from '@/components/forms/toggle';
 import styles from './StyleGuide.module.scss';
@@ -83,7 +83,7 @@ export default function Page() {
           <Select
             variant="filter"
             title="filter dropdown example using select"
-            options={[]}
+            options={mockOptions}
             label="Filter dropdown"
             placeholder="Default option"
           ></Select>
@@ -91,7 +91,7 @@ export default function Page() {
           <Select
             variant="primary"
             title="simple dropdown example"
-            options={[]}
+            options={mockOptions}
             label="Simple dropdown"
             placeholder="Default option"
           ></Select>
