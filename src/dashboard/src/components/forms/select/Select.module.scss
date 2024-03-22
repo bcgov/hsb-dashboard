@@ -51,7 +51,7 @@
   flex-direction: column;
   position: relative;
   width: 100%;
-  max-width: 255px;
+  margin: 0 7px;
 
   @media screen and (max-width: $desktop) {
     margin: 0 5px;
