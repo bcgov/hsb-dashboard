@@ -1,6 +1,6 @@
 'use client';
 
-import { Select } from '@/components';
+import { FilterDropdown } from '@/components';
 import { IOperatingSystemItemListModel, IServerItemListModel, useAuth } from '@/hooks';
 import {
   useFilteredOperatingSystemItems,
@@ -47,9 +47,8 @@ export const FilteredOrganizations = ({}: IFilteredOrganizationsProps) => {
   }, [setFilteredOrganizations, organizations, setValues, filteredOrganizations.length]);
 
   return filteredOrganizationOptions.length > 1 ? (
-    <Select
+    <FilterDropdown
       label="Organization"
-      variant="filter"
       options={filteredOrganizationOptions}
       placeholder="Select organization"
       value={values.organization?.id ?? ''}

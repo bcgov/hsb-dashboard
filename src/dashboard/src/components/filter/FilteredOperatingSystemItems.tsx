@@ -1,6 +1,6 @@
 'use client';
 
-import { Select } from '@/components';
+import { FilterDropdown } from '@/components';
 import { IServerItemListModel } from '@/hooks';
 import { useFilteredOperatingSystemItems, useFilteredServerItems } from '@/hooks/filter';
 import { useOperatingSystemItems, useServerItems } from '@/hooks/lists';
@@ -41,9 +41,8 @@ export const FilteredOperatingSystemItems = ({}: IFilteredOperatingSystemItemsPr
   ]);
 
   return (
-    <Select
+    <FilterDropdown
       label="Operating system"
-      variant="filter"
       options={filteredOperatingSystemItemOptions}
       placeholder="Select OS"
       value={values.operatingSystemItem?.id ?? ''}

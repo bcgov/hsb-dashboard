@@ -1,6 +1,6 @@
 'use client';
 
-import { Select } from '@/components';
+import { FilterDropdown } from '@/components';
 import {
   IOperatingSystemItemListModel,
   IOrganizationListModel,
@@ -60,9 +60,8 @@ export const FilteredTenants = ({}: IFilteredTenantsProps) => {
   }, [filteredTenants.length, setFilteredTenants, setValues, tenants]);
 
   return filteredTenantOptions.length > 1 ? (
-    <Select
+    <FilterDropdown
       label="Tenant"
-      variant="filter"
       options={filteredTenantOptions}
       placeholder="Select tenant"
       value={values.tenant?.id ?? ''}

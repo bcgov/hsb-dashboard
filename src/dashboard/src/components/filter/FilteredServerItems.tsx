@@ -1,6 +1,6 @@
 'use client';
 
-import { Select } from '@/components';
+import { FilterDropdown } from '@/components';
 import { useFilteredServerItems } from '@/hooks/filter';
 import { useServerItems } from '@/hooks/lists';
 import { useFilteredStore } from '@/store';
@@ -26,9 +26,8 @@ export const FilteredServerItems = () => {
   }, [setFilteredServerItems, serverItems, setValues, filteredServerItems.length]);
 
   return (
-    <Select
+    <FilterDropdown
       label="Server"
-      variant="filter"
       options={filteredServerItemOptions}
       placeholder="Select server"
       value={values.serverItem?.serviceNowKey ?? ''}
