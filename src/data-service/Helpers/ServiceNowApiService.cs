@@ -73,6 +73,10 @@ public class ServiceNowApiService : IServiceNowApiService
         try
         {
             var response = await this.SNClient.SendAsync(uri, method);
+
+            // Treat a 404 like a 204 because so many API developers do this...  It's annoying because it results in the same error if the endpoint doesn't exist.
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound) return null;
+
             response.EnsureSuccessStatusCode();
 
             var json = await response.Content.ReadAsStringAsync();
