@@ -173,6 +173,34 @@ export const Dashboard = () => {
     [download],
   );
 
+  const renderStorageTrendsChart = React.useCallback(
+    (isLarge: boolean | undefined) => (
+      <StorageTrendsChart
+        large={isLarge}
+        serverItems={dashboardServerItem ? [dashboardServerItem] : dashboardServerItems}
+        showExport
+        onExport={(startDate, endDate) => {
+          handleExport({
+            tenantId: dashboardTenant?.id,
+            organizationId: dashboardOrganization?.id,
+            operatingSystemItemId: dashboardOperatingSystemItem?.id,
+            serviceNowKey: dashboardServerItem?.serviceNowKey,
+            startDate: startDate,
+            endDate: endDate,
+          });
+        }}
+      />
+    ),
+    [
+      dashboardServerItem,
+      dashboardServerItems,
+      dashboardTenant,
+      dashboardOrganization,
+      dashboardOperatingSystemItem,
+      handleExport,
+    ]
+  );
+
   return (
     <>
       <Breadcrumbs multipleOrganizations={organizations.length > 1} />
@@ -254,31 +282,20 @@ export const Dashboard = () => {
       )}
       {/* Multiple Organizations */}
       {showAllOrganizations && (
-        <AllOrganizations
-          organizations={dashboardOrganizations}
-          serverItems={dashboardServerItems}
-          loading={!isReadyOrganizations || !isReadyServerItems}
-          showExport
-          onExport={() => {
-            handleExport({ tenantId: dashboardTenant?.id });
-          }}
-        />
+        <>
+          <AllOrganizations
+            organizations={dashboardOrganizations}
+            serverItems={dashboardServerItems}
+            loading={!isReadyOrganizations || !isReadyServerItems}
+            showExport
+            onExport={() => {
+              handleExport({ tenantId: dashboardTenant?.id });
+            }}
+          />
+          {renderStorageTrendsChart(false)}
+        </>
       )}
-      <StorageTrendsChart
-        large={!!dashboardOrganization || !!dashboardOperatingSystemItem || !!dashboardServerItem}
-        serverItems={dashboardServerItem ? [dashboardServerItem] : dashboardServerItems}
-        showExport
-        onExport={(startDate, endDate) => {
-          handleExport({
-            tenantId: dashboardTenant?.id,
-            organizationId: dashboardOrganization?.id,
-            operatingSystemItemId: dashboardOperatingSystemItem?.id,
-            serviceNowKey: dashboardServerItem?.serviceNowKey,
-            startDate: startDate,
-            endDate: endDate,
-          });
-        }}
-      />
+      {!showAllOrganizations && renderStorageTrendsChart(true)}
       {showAllocationByStorageVolume && (
         <AllocationByStorageVolume
           organizations={dashboardOrganizations}
