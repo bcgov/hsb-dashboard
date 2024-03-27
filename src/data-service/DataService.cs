@@ -339,8 +339,14 @@ public class DataService : IDataService
             // Need to update with the latest status.
             if (_serverItems.TryGetValue(serviceNowKey, out Hsb.ServerItemModel? serverItemHSB))
             {
-                await this.HsbApi.DeleteServerItemAsync(serverItemHSB);
-                _serverItems.Remove(serverItemHSB.ServiceNowKey);
+                serverItemHSB.InstallStatus = Int32.Parse(serverItemSN.Data.InstallStatus ?? "0");
+                serverItemHSB = await this.HsbApi.UpdateServerItemAsync(serverItemHSB);
+                if (serverItemHSB == null)
+                {
+                    this.Logger.LogError("Server Item was not returned from HSB: {id}", serviceNowKey);
+                    throw new InvalidOperationException($"Server Item was not returned from HSB: {serviceNowKey}");
+                }
+                _serverItems[serverItemHSB.ServiceNowKey] = serverItemHSB;
             }
 
             return null;
@@ -443,8 +449,8 @@ public class DataService : IDataService
             }
             else
             {
-                // Delete the file system as it is no longer installed.
-                await this.HsbApi.DeleteFileSystemItemAsync(fileSystemItem);
+                fileSystemItem.InstallStatus = Int32.Parse(fileSystemItemSN.Data.InstallStatus ?? "0");
+                await this.HsbApi.UpdateFileSystemItemAsync(fileSystemItem);
                 return null;
             }
         }
@@ -458,8 +464,8 @@ public class DataService : IDataService
             }
             else
             {
-                // Delete the file system as it is no longer required.
-                await this.HsbApi.DeleteFileSystemItemAsync(fileSystemItem);
+                fileSystemItem.InstallStatus = 0;
+                await this.HsbApi.UpdateFileSystemItemAsync(fileSystemItem);
                 return null;
             }
         }
@@ -512,8 +518,9 @@ public class DataService : IDataService
             // Service Now has changed the primary key for some reason.
             this.Logger.LogDebug("Replacing File System Item: '{old}:{new}'", fileSystemItem.ServiceNowKey, configurationItemSN.Data.Id);
 
-            // Delete the current one and replace it with the new one.
-            await this.HsbApi.DeleteFileSystemItemAsync(fileSystemItem);
+            // Update the current one and replace it with the new one.
+            fileSystemItem.InstallStatus = 0;
+            await this.HsbApi.UpdateFileSystemItemAsync(fileSystemItem);
             fileSystemItem = await this.HsbApi.AddFileSystemItemAsync(new Hsb.FileSystemItemModel(serverItem.ServiceNowKey, fileSystemItemSN, configurationItemSN));
         }
         else if (fileSystemItem.UpdatedOn.AddHours(this.Options.AllowUpdateAfterXHours).ToUniversalTime() <= DateTime.UtcNow)
@@ -862,7 +869,9 @@ public class DataService : IDataService
                 var serverItemSN = await this.ServiceNowApi.GetTableItemAsync<ServiceNow.BaseItemModel>(serverItem.ClassName, serverItem.ServiceNowKey);
                 if (serverItemSN?.Data == null)
                 {
-                    await this.HsbApi.DeleteServerItemAsync(serverItem);
+                    // Service Now did not return the server, we will change the install status to 0.
+                    serverItem.InstallStatus = 0;
+                    await this.HsbApi.UpdateServerItemAsync(serverItem);
                 }
                 else
                 {
@@ -888,7 +897,8 @@ public class DataService : IDataService
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    await this.HsbApi.DeleteServerItemAsync(serverItem);
+                    serverItem.InstallStatus = 0;
+                    await this.HsbApi.UpdateServerItemAsync(serverItem);
                 }
                 this.Logger.LogError(ex, "Failed to fetch server item: {key} - {data}", serverItem.ServiceNowKey, ex.Data["Body"]);
             }
