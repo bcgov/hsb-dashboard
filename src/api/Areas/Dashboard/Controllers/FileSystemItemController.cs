@@ -129,7 +129,7 @@ public class FileSystemItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<FileSystemHistoryItemModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "File System Item" })]
-    [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 1200)]
+    // [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 1200)]
     public IActionResult FindHistory()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());

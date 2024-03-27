@@ -23,6 +23,7 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
         var query = (from fsi in this.Context.FileSystemItems
                      join si in this.Context.ServerItems on fsi.ServerItemServiceNowKey equals si.ServiceNowKey
                      select fsi)
+            .Where(fsi => fsi.InstallStatus == 1)
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -58,6 +59,7 @@ public class FileSystemItemService : BaseService<FileSystemItem>, IFileSystemIte
                      join si in this.Context.ServerItems on fsi.ServerItemServiceNowKey equals si.ServiceNowKey
                      where userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId)
                      select fsi)
+            .Where(fsi => fsi.InstallStatus == 1)
             .Where(filter.GeneratePredicate())
             .Distinct();
 

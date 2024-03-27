@@ -31,6 +31,7 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
                 .Include(si => si.OperatingSystemItem);
 
         query = query
+            .Where(si => si.InstallStatus == 1)
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -63,6 +64,7 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
 
         var query = (from si in this.Context.ServerItems
                      where si.TenantId != null
+                        && si.InstallStatus == 1
                         && (userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId))
                      select si);
 
@@ -93,6 +95,7 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
     public IEnumerable<ServerItemListModel> FindList(ServerItemFilter filter)
     {
         var query = this.Context.ServerItems
+            .Where(si => si.InstallStatus == 1)
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -126,6 +129,7 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
 
         var query = (from si in this.Context.ServerItems
                      where si.TenantId != null
+                        && si.InstallStatus == 1
                         && (userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId))
                      select si)
             .Where(filter.GeneratePredicate())
@@ -213,7 +217,7 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
         if (updateTotals)
         {
             // Grab all file system items for this server so that space can be calculated.
-            var volumes = this.Context.FileSystemItems.AsNoTracking().Where(fsi => fsi.ServerItemServiceNowKey == entity.ServiceNowKey).ToArray();
+            var volumes = this.Context.FileSystemItems.AsNoTracking().Where(fsi => fsi.ServerItemServiceNowKey == entity.ServiceNowKey && fsi.InstallStatus == 1).ToArray();
             entity.Capacity = volumes.Sum(v => v.SizeBytes);
             entity.AvailableSpace = volumes.Sum(v => v.FreeSpaceBytes);
             this.Context.Entry(entity).State = EntityState.Modified;
@@ -230,7 +234,8 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
 
         // Move original to history if created more than 12 hours ago.
         var original = this.Context.ServerItems.AsNoTracking().FirstOrDefault(si => si.ServiceNowKey == entity.ServiceNowKey);
-        if (original != null && original.CreatedOn.ToUniversalTime().AddHours(12) <= DateTimeOffset.UtcNow.ToUniversalTime())
+        var currentHistory = this.Context.ServerHistoryItems.AsNoTracking().FirstOrDefault(shi => shi.HistoryKey == entity.HistoryKey);
+        if (original != null && (currentHistory == null || original.CreatedOn.ToUniversalTime().AddHours(12) <= DateTimeOffset.UtcNow.ToUniversalTime()))
         {
             // This key provides a way to link the current server item record with the one in history.
             var key = Guid.NewGuid();
