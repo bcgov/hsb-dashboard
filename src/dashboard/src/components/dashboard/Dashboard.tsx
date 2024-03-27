@@ -173,6 +173,26 @@ export const Dashboard = () => {
     [download],
   );
 
+  const renderStorageTrendsChart = (isLarge: boolean) => {
+    return (
+      <StorageTrendsChart
+        large={isLarge}
+        serverItems={dashboardServerItem ? [dashboardServerItem] : dashboardServerItems}
+        showExport
+        onExport={(startDate, endDate) => {
+          handleExport({
+            tenantId: dashboardTenant?.id,
+            organizationId: dashboardOrganization?.id,
+            operatingSystemItemId: dashboardOperatingSystemItem?.id,
+            serviceNowKey: dashboardServerItem?.serviceNowKey,
+            startDate: startDate,
+            endDate: endDate,
+          });
+        }}
+      />
+    );
+  };
+
   return (
     <>
       <Breadcrumbs multipleOrganizations={organizations.length > 1} />
@@ -254,31 +274,20 @@ export const Dashboard = () => {
       )}
       {/* Multiple Organizations */}
       {showAllOrganizations && (
-        <AllOrganizations
-          organizations={dashboardOrganizations}
-          serverItems={dashboardServerItems}
-          loading={!isReadyOrganizations || !isReadyServerItems}
-          showExport
-          onExport={() => {
-            handleExport({ tenantId: dashboardTenant?.id });
-          }}
-        />
+        <>
+          <AllOrganizations
+            organizations={dashboardOrganizations}
+            serverItems={dashboardServerItems}
+            loading={!isReadyOrganizations || !isReadyServerItems}
+            showExport
+            onExport={() => {
+              handleExport({ tenantId: dashboardTenant?.id });
+            }}
+          />
+          {renderStorageTrendsChart(false)}
+        </>
       )}
-      <StorageTrendsChart
-        large={!!dashboardOrganization || !!dashboardOperatingSystemItem || !!dashboardServerItem}
-        serverItems={dashboardServerItem ? [dashboardServerItem] : dashboardServerItems}
-        showExport
-        onExport={(startDate, endDate) => {
-          handleExport({
-            tenantId: dashboardTenant?.id,
-            organizationId: dashboardOrganization?.id,
-            operatingSystemItemId: dashboardOperatingSystemItem?.id,
-            serviceNowKey: dashboardServerItem?.serviceNowKey,
-            startDate: startDate,
-            endDate: endDate,
-          });
-        }}
-      />
+      {!showAllOrganizations && renderStorageTrendsChart(true)}
       {showAllocationByStorageVolume && (
         <AllocationByStorageVolume
           organizations={dashboardOrganizations}
