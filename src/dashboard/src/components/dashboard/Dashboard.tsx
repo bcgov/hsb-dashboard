@@ -174,7 +174,7 @@ export const Dashboard = () => {
   );
 
   const renderStorageTrendsChart = React.useCallback(
-    (isLarge: Boolean) => (
+    (isLarge: boolean | undefined) => (
       <StorageTrendsChart
         large={isLarge}
         serverItems={dashboardServerItem ? [dashboardServerItem] : dashboardServerItems}
