@@ -173,8 +173,8 @@ export const Dashboard = () => {
     [download],
   );
 
-  const renderStorageTrendsChart = (isLarge: boolean) => {
-    return (
+  const renderStorageTrendsChart = React.useCallback(
+    (isLarge: Boolean) => (
       <StorageTrendsChart
         large={isLarge}
         serverItems={dashboardServerItem ? [dashboardServerItem] : dashboardServerItems}
@@ -190,8 +190,16 @@ export const Dashboard = () => {
           });
         }}
       />
-    );
-  };
+    ),
+    [
+      dashboardServerItem,
+      dashboardServerItems,
+      dashboardTenant,
+      dashboardOrganization,
+      dashboardOperatingSystemItem,
+      handleExport,
+    ]
+  );
 
   return (
     <>
