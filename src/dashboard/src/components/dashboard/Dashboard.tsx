@@ -39,7 +39,7 @@ import { useDashboardFilter } from '.';
  * @returns Component
  */
 export const Dashboard = () => {
-  const { download, downloadHistory } = useApiServerItems();
+  const { download } = useApiServerItems();
   const { isReady: isReadyTenants, tenants } = useTenants({ init: true });
   const { isReady: isReadyOrganizations, organizations } = useOrganizations({
     init: true,
@@ -198,7 +198,7 @@ export const Dashboard = () => {
       dashboardOrganization,
       dashboardOperatingSystemItem,
       handleExport,
-    ]
+    ],
   );
 
   return (

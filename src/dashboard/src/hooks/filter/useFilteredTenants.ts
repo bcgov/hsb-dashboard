@@ -10,10 +10,10 @@ export interface IFilteredTenants {
 
 export const useFilteredTenants = ({ includeDisabled }: IFilteredTenants = {}) => {
   const { findList } = useApiTenants();
+  const isLoading = useFilteredStore((state) => state.loadingTenants);
+  const setIsLoading = useFilteredStore((state) => state.setLoadingTenants);
   const tenants = useFilteredStore((state) => state.tenants);
   const setTenants = useFilteredStore((state) => state.setTenants);
-
-  const [isLoading, setIsLoading] = React.useState(false);
 
   const fetch = React.useCallback(
     async (filter: ITenantFilter) => {
@@ -29,7 +29,7 @@ export const useFilteredTenants = ({ includeDisabled }: IFilteredTenants = {}) =
         setIsLoading(false);
       }
     },
-    [findList, setTenants],
+    [findList, setIsLoading, setTenants],
   );
 
   const options = React.useMemo(

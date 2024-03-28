@@ -7,10 +7,10 @@ export interface IFilteredServerItemsProps {}
 
 export const useFilteredServerItems = ({}: IFilteredServerItemsProps) => {
   const { findList } = useApiServerItems();
+  const isLoading = useFilteredStore((state) => state.loadingServerItems);
+  const setIsLoading = useFilteredStore((state) => state.setLoadingServerItems);
   const serverItems = useFilteredStore((state) => state.serverItems);
   const setFilteredServerItems = useFilteredStore((state) => state.setServerItems);
-
-  const [isLoading, setIsLoading] = React.useState(false);
 
   const fetch = React.useCallback(
     async (filter: IServerItemFilter) => {
@@ -26,7 +26,7 @@ export const useFilteredServerItems = ({}: IFilteredServerItemsProps) => {
         setIsLoading(false);
       }
     },
-    [findList, setFilteredServerItems],
+    [findList, setFilteredServerItems, setIsLoading],
   );
 
   const options = React.useMemo(

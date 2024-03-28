@@ -10,10 +10,10 @@ export interface IFilteredOrganizations {
 
 export const useFilteredOrganizations = ({ includeDisabled }: IFilteredOrganizations = {}) => {
   const { findList } = useApiOrganizations();
+  const isLoading = useFilteredStore((state) => state.loadingOrganizations);
+  const setIsLoading = useFilteredStore((state) => state.setLoadingOrganizations);
   const organizations = useFilteredStore((state) => state.organizations);
   const setOrganizations = useFilteredStore((state) => state.setOrganizations);
-
-  const [isLoading, setIsLoading] = React.useState(false);
 
   const fetch = React.useCallback(
     async (filter: IOrganizationFilter) => {
@@ -29,7 +29,7 @@ export const useFilteredOrganizations = ({ includeDisabled }: IFilteredOrganizat
         setIsLoading(false);
       }
     },
-    [findList, setOrganizations],
+    [findList, setIsLoading, setOrganizations],
   );
 
   const options = React.useMemo(
