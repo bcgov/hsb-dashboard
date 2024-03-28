@@ -72,6 +72,11 @@ public class ServiceOptions
     public bool SendFailureEmail { get; set; } = true;
 
     /// <summary>
+    /// get/set - Identify the environment this service is running in.
+    /// </summary>
+    public string Environment { get; set; } = "";
+
+    /// <summary>
     /// get/set - Number of sequential failures that are allowed to occur before service stops (default = 3).
     /// </summary>
     public int RetryLimit { get; set; } = 3;

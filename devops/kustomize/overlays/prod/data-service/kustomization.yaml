@@ -41,3 +41,6 @@ patches:
       - op: replace
         path: /data/TO
         value: jeremy.foster@fosol.ca,michael.tessier@gov.bc.ca
+      - op: replace
+        path: /data/ENVIRONMENT
+        value: PROD
