@@ -9,11 +9,11 @@ import {
 
 export const useFilteredOperatingSystemItems = () => {
   const { findList } = useApiOperatingSystemItems();
+  const isLoading = useFilteredStore((state) => state.loadingOperatingSystemItems);
+  const setIsLoading = useFilteredStore((state) => state.setLoadingOperatingSystemItems);
   const { operatingSystemItem } = useFilteredStore((state) => state.values);
   const operatingSystemItems = useFilteredStore((state) => state.operatingSystemItems);
   const setOperatingSystemItems = useFilteredStore((state) => state.setOperatingSystemItems);
-
-  const [isLoading, setIsLoading] = React.useState(false);
 
   const fetch = React.useCallback(
     async (filter: IOperatingSystemItemFilter) => {
@@ -29,7 +29,7 @@ export const useFilteredOperatingSystemItems = () => {
         setIsLoading(false);
       }
     },
-    [findList, setOperatingSystemItems],
+    [findList, setIsLoading, setOperatingSystemItems],
   );
 
   const options = React.useMemo(

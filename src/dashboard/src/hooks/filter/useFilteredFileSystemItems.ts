@@ -4,10 +4,10 @@ import { IFileSystemItemFilter, IFileSystemItemModel, useApiFileSystemItems } fr
 
 export const useFilteredFileSystemItems = () => {
   const { find } = useApiFileSystemItems();
+  const isLoading = useFilteredStore((state) => state.loadingFileSystemItems);
+  const setIsLoading = useFilteredStore((state) => state.setLoadingFileSystemItems);
   const fileSystemItems = useFilteredStore((state) => state.fileSystemItems);
   const setFileSystemItems = useFilteredStore((state) => state.setFileSystemItems);
-
-  const [isLoading, setIsLoading] = React.useState(false);
 
   const fetch = React.useCallback(
     async (filter: IFileSystemItemFilter) => {
@@ -23,7 +23,7 @@ export const useFilteredFileSystemItems = () => {
         setIsLoading(false);
       }
     },
-    [find, setFileSystemItems],
+    [find, setFileSystemItems, setIsLoading],
   );
 
   return React.useMemo(
