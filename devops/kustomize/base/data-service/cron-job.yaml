@@ -84,6 +84,12 @@ spec:
                       name: data-service
                       key: API_URL
 
+                - name: Service__Environment
+                  valueFrom:
+                    configMapKeyRef:
+                      name: data-service
+                      key: ENVIRONMENT
+
                 - name: ServiceNow__ApiUrl
                   valueFrom:
                     secretKeyRef:

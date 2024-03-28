@@ -166,7 +166,7 @@ public class DataService : IDataService
     /// <returns></returns>
     private async Task SendEmail(string subject, string body)
     {
-        var email = new EmailModel(this.ChesOptions.From, this.ChesOptions.OverrideTo.Split(","), subject, body);
+        var email = new EmailModel(this.ChesOptions.From, this.ChesOptions.OverrideTo.Split(","), $"{(!String.IsNullOrWhiteSpace(this.Options.Environment) ? $"({this.Options.Environment}) - " : "")}{subject}", body);
         await this.ChesService.SendEmailAsync(email);
     }
 

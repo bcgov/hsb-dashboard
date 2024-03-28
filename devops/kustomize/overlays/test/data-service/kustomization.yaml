@@ -37,7 +37,10 @@ patches:
         value: https://ches-test.api.gov.bc.ca/api/v1
       - op: replace
         path: /data/FROM
-        value: (TEST) Hosting Service Dashboard <hsb@gov.bc.ca>
+        value: Hosting Service Dashboard <hsb@gov.bc.ca>
       - op: replace
         path: /data/TO
         value: jeremy.foster@fosol.ca,michael.tessier@gov.bc.ca
+      - op: replace
+        path: /data/ENVIRONMENT
+        value: TEST

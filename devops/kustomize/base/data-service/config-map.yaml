@@ -15,6 +15,7 @@ metadata:
     created-by: jeremy.foster
 data:
   API_URL: http://api:8080
+  ENVIRONMENT: "DEV"
 ---
 kind: ConfigMap
 apiVersion: v1
