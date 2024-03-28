@@ -56,6 +56,15 @@ bash do go
 
 The Dashboard web application is setup for hot-reload within a Docker container.
 
+## Helpful Documentation
+
+- [API Swagger](https://localhost:30005/api-docs)
+- [Docker Compose Cheat Sheet](https://devhints.io/docker-compose)
+- [Docker CLI Cheat Sheet](https://dockerlabs.collabnix.com/docker/cheatsheet/)
+- [Next.js](https://nextjs.org/docs)
+- [Dotnet Cheat Sheets](https://cheatography.com/tag/dotnet/)
+- [Dotnet Entity Framework Tools](https://learn.microsoft.com/en-us/ef/core/cli/dotnet)
+
 ## Database Migrations
 
 Database migrations are built with Entity Framework. Dotnet tooling provides a Code-First approach to database migration, which enables the generation of migrations that apply new versions and perform rollbacks to prior versions. These tools provide a simple repeatable and testable Infrastructure as Code implementation.
