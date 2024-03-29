@@ -31,7 +31,6 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
                 .Include(si => si.OperatingSystemItem);
 
         query = query
-            .Where(si => si.InstallStatus == 1)
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -64,7 +63,6 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
 
         var query = (from si in this.Context.ServerItems
                      where si.TenantId != null
-                        && si.InstallStatus == 1
                         && (userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId))
                      select si);
 
@@ -95,7 +93,6 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
     public IEnumerable<ServerItemListModel> FindList(ServerItemFilter filter)
     {
         var query = this.Context.ServerItems
-            .Where(si => si.InstallStatus == 1)
             .Where(filter.GeneratePredicate())
             .Distinct();
 
@@ -129,7 +126,6 @@ public class ServerItemService : BaseService<ServerItem>, IServerItemService
 
         var query = (from si in this.Context.ServerItems
                      where si.TenantId != null
-                        && si.InstallStatus == 1
                         && (userTenants.Contains(si.TenantId!.Value) || userOrganizationQuery.Contains(si.OrganizationId))
                      select si)
             .Where(filter.GeneratePredicate())
