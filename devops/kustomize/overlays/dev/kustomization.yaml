@@ -59,7 +59,7 @@ patches:
     patch: |-
       - op: replace
         path: /data/NEXTAUTH_URL
-        value: https://dev-hsb.apps.emerald.devops.gov.bc.ca
+        value: https://dev.dashboard.stms.gov.bc.ca
 
   - target:
       kind: Route
@@ -82,13 +82,13 @@ patches:
       - op: replace
         path: /spec/host
         value: dev-hsb.apps.emerald.devops.gov.bc.ca
-  # - target:
-  #     kind: Route
-  #     name: dashboard-tls
-  #   patch: |-
-  #     - op: replace
-  #       path: /spec/host
-  #       value: hsb.gov.bc.ca
+  - target:
+      kind: Route
+      name: dashboard-stms
+    patch: |-
+      - op: replace
+        path: /spec/host
+        value: dev.dashboard.stms.gov.bc.ca
 
   - target:
       kind: DeploymentConfig
