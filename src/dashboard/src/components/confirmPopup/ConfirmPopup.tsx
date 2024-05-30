@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/components/buttons';
 import { useNavigateStore } from '@/store';
 import { useRouter } from 'next/navigation';
