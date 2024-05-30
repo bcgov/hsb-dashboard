@@ -57,6 +57,10 @@ interface Props {
   tokenGrantType: string; // 'authorization_code (Standard Flow)' | 'password (Direct Access Grants)' | 'client_credentials (Client Authentication)' | 'refresh_token'
 }
 
+interface ISignatureToken extends jws.Signature {
+  header: any;
+}
+
 class OIDC {
   private _providerConfigurationUrl: string;
   private _configurationUrl?: string;
@@ -268,7 +272,7 @@ class OIDC {
 
   public async verifyToken(token: string) {
     // 1. Decode the ID token.
-    const { header } = jws.decode(token);
+    const { header } = jws.decode(token) as ISignatureToken;
 
     // 2. Compare the local key ID (kid) to the public kid.
     const { jwks, issuer } = await this.fetchIssuerConfiguration();

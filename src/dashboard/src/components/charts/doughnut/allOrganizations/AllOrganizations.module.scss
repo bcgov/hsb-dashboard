@@ -1,96 +1,96 @@
 @import '@/styles/utils.scss';
 
 .panel {
-    @include panel-style(370px, unset, unset, unset);
-    flex-basis: 49%;
+  @include panel-style(370px, unset, unset, unset);
+  flex-basis: 49%;
 
-    @media (max-width: $tablet) {
-        flex-basis: 100%;
-    }
+  @media (max-width: $tablet) {
+    flex-basis: 100%;
+  }
 
-    button {
-        @include export-btn;
-    }
+  button {
+    @include export-btn;
+  }
 }
 
 .chartContainer {
-    display: flex;
-    width: 97%;
-    width: fill-available;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+  display: flex;
+  width: 97%;
+  width: stretch;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .info {
-    width: 45%;
+  width: 45%;
 
-    h2 {
-        margin: 16px 0;
+  h2 {
+    margin: 16px 0;
+  }
+
+  >div {
+    border-top: 1px solid $medium-gray;
+
+    &:nth-child(3) {
+      p::before {
+        border: 5px solid $bc-blue;
+      }
     }
 
-    >div {
-        border-top: 1px solid $medium-gray;
+    &:last-child {
+      border-bottom: 1px solid $medium-gray;
 
-        &:nth-child(3) {
-            p::before {
-                border: 5px solid $bc-blue;
-            }
-        }
-
-        &:last-child {
-            border-bottom: 1px solid $medium-gray;
-
-            p::before {
-                border: 5px solid $chart-gray;
-            }
-        }
+      p::before {
+        border: 5px solid $chart-gray;
+      }
     }
+  }
 
-    p {
-        padding: 20px 8px;
-        position: relative;
-        display: flex;
-        align-items: center;
+  p {
+    padding: 20px 8px;
+    position: relative;
+    display: flex;
+    align-items: center;
 
-        &::before {
-            content: '';
-            height: 24px;
-            width: 24px;
-            border: 5px solid $medium-yellow;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 14px;
-        }
+    &::before {
+      content: '';
+      height: 24px;
+      width: 24px;
+      border: 5px solid $medium-yellow;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 14px;
     }
+  }
 
-    span {
-        position: absolute;
-        right: 8px;
-    }
+  span {
+    position: absolute;
+    right: 8px;
+  }
 }
 
 .chart {
-    width: 53%;
-    padding: 10px 0 0 45px;
-    position: relative;
+  width: 53%;
+  padding: 10px 0 0 45px;
+  position: relative;
 
-    canvas {
-        position: relative;
-        z-index: 1;
-    }
+  canvas {
+    position: relative;
+    z-index: 1;
+  }
 }
 
 .total {
-    font-size: $font-size-large;
-    text-align: center;
-    position: absolute;
-    top: 51%;
-    left: 54%;
-    transform: translate(-50%, -50%);
+  font-size: $font-size-large;
+  text-align: center;
+  position: absolute;
+  top: 51%;
+  left: 54%;
+  transform: translate(-50%, -50%);
 
-    span {
-        font-size: $font-size-20;
-        display: block;
-    }
+  span {
+    font-size: $font-size-20;
+    display: block;
+  }
 }
