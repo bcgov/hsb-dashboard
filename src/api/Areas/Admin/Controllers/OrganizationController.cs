@@ -8,6 +8,7 @@ using HSB.DAL.Services;
 using HSB.Keycloak;
 using HSB.Core.Exceptions;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace HSB.API.Areas.SystemAdmin.Controllers;
 
@@ -34,7 +35,9 @@ public class OrganizationController : ControllerBase
     /// </summary>
     /// <param name="service"></param>
     /// <param name="logger"></param>
-    public OrganizationController(IOrganizationService service, ILogger<OrganizationController> logger)
+    public OrganizationController(
+        IOrganizationService service,
+        ILogger<OrganizationController> logger)
     {
         _service = service;
         _logger = logger;
@@ -96,6 +99,7 @@ public class OrganizationController : ControllerBase
 
         var result = _service.FindForId(model.Id, true);
         if (result == null) return new BadRequestObjectResult(new ErrorResponseModel("Organization does not exist"));
+
         return CreatedAtAction(nameof(GetForId), new { id = result.Id }, new OrganizationModel(result, true));
     }
 

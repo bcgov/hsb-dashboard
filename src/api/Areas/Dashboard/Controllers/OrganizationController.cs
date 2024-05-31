@@ -31,9 +31,6 @@ public class OrganizationController : ControllerBase
     private readonly ILogger _logger;
     private readonly IOrganizationService _service;
     private readonly IAuthorizationHelper _authorization;
-    private readonly IMemoryCache _memoryCache;
-    private const string HSB_CACHE_KEY = "organizations-hsb";
-    private const string HSB_LIST_CACHE_KEY = "organizationsList-hsb";
     #endregion
 
     #region Constructors
@@ -41,17 +38,14 @@ public class OrganizationController : ControllerBase
     /// Creates a new instance of a OrganizationController.
     /// </summary>
     /// <param name="service"></param>
-    /// <param name="memoryCache"></param>
     /// <param name="authorization"></param>
     /// <param name="logger"></param>
     public OrganizationController(
         IOrganizationService service,
-        IMemoryCache memoryCache,
         IAuthorizationHelper authorization,
         ILogger<OrganizationController> logger)
     {
         _service = service;
-        _memoryCache = memoryCache;
         _authorization = authorization;
         _logger = logger;
     }
@@ -67,7 +61,6 @@ public class OrganizationController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OrganizationModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Organization" })]
-    // [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
     public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -77,17 +70,8 @@ public class OrganizationController : ControllerBase
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
         {
-            if (_memoryCache.TryGetValue(HSB_CACHE_KEY, out IEnumerable<OrganizationModel>? cachedItems))
-            {
-                return new JsonResult(cachedItems);
-            }
             var result = _service.Find(filter);
             var model = result.Select(ci => new OrganizationModel(ci, true));
-            var cacheOptions = new MemoryCacheEntryOptions()
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60)
-            };
-            _memoryCache.Set(HSB_CACHE_KEY, model, cacheOptions);
             return new JsonResult(model);
         }
         else
@@ -110,7 +94,6 @@ public class OrganizationController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OrganizationListModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Organization" })]
-    // [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
     public IActionResult FindList()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -120,16 +103,7 @@ public class OrganizationController : ControllerBase
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
         if (isHSB)
         {
-            if (_memoryCache.TryGetValue(HSB_LIST_CACHE_KEY, out IEnumerable<OrganizationListModel>? cachedItems))
-            {
-                return new JsonResult(cachedItems);
-            }
             var result = _service.FindList(filter);
-            var cacheOptions = new MemoryCacheEntryOptions()
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60)
-            };
-            _memoryCache.Set(HSB_LIST_CACHE_KEY, result, cacheOptions);
             return new JsonResult(result);
         }
         else
