@@ -1,5 +1,5 @@
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0
+FROM mcr.microsoft.com/dotnet/sdk:8.0
 
 ENV DOTNET_CLI_HOME=/tmp
 ENV PATH="$PATH:/tmp/.dotnet/tools"
@@ -8,7 +8,7 @@ ENV MIGRATION=
 
 # Switch to root for package installs
 USER 0
-RUN dotnet tool install --global dotnet-ef --version 7.0.14
+RUN dotnet tool install --global dotnet-ef --version 8.0.0
 
 WORKDIR /src
 COPY . .
