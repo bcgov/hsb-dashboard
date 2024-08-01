@@ -70,6 +70,30 @@ public class ServerHistoryItemModel : AuditableModel
         this.AvailableSpace = entity.AvailableSpace;
     }
 
+    public ServerHistoryItemModel(ServerHistoryItemSmall entity) : base(entity)
+    {
+        this.Id = entity.Id;
+
+        this.TenantId = entity.TenantId;
+        this.OrganizationId = entity.OrganizationId;
+        this.OperatingSystemItemId = entity.OperatingSystemItemId;
+
+        this.ServiceNowKey = entity.ServiceNowKey;
+        this.ClassName = entity.ClassName;
+        this.Name = entity.Name;
+        this.InstallStatus = entity.InstallStatus;
+        this.Category = entity.Category;
+        this.Subcategory = entity.Subcategory;
+        this.DnsDomain = entity.DnsDomain;
+        this.Platform = entity.Platform;
+        this.IPAddress = entity.IPAddress;
+        this.FQDN = entity.FQDN;
+        this.DiskSpace = entity.DiskSpace;
+
+        this.Capacity = entity.Capacity;
+        this.AvailableSpace = entity.AvailableSpace;
+    }
+
     public ServerHistoryItemModel(
         int? tenantId,
         int organizationId,

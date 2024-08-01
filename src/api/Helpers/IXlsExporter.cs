@@ -38,6 +38,6 @@ public interface IXlsExporter
     /// <param name="sheetName"></param>
     /// <param name="items"></param>
     /// <returns></returns>
-    XSSFWorkbook GenerateExcel(string sheetName, IEnumerable<Entities.ServerHistoryItem> items);
+    XSSFWorkbook GenerateExcel(string sheetName, IEnumerable<Entities.ServerHistoryItemSmall> items);
     #endregion
 }

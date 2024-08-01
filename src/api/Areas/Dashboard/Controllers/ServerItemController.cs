@@ -73,8 +73,7 @@ public class ServerItemController : ControllerBase
     [HttpGet(Name = "GetServerItems-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<ServerItemModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Server Item" })]
-    // [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
+    [SwaggerOperation(Tags = ["Server Item"])]
     public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -117,7 +116,6 @@ public class ServerItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<ServerItemListModel>), (int)HttpStatusCode.OK)]
     [SwaggerOperation(Tags = new[] { "Server Item" })]
-    // [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
     public IActionResult FindList()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -189,8 +187,7 @@ public class ServerItemController : ControllerBase
     [HttpGet("history", Name = "GetServerHistoryItems-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<ServerItemModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Server Item" })]
-    // [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 1200)]
+    [SwaggerOperation(Tags = ["Server Item"])]
     public IActionResult FindHistory()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -225,7 +222,7 @@ public class ServerItemController : ControllerBase
     [Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Server Item" })]
+    [SwaggerOperation(Tags = ["Server Item"])]
     public IActionResult Export(string format = "excel", string name = "service-now")
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -270,7 +267,7 @@ public class ServerItemController : ControllerBase
     [Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Server Item" })]
+    [SwaggerOperation(Tags = ["Server Item"])]
     public IActionResult ExportHistory(string format = "excel", string name = "service-now")
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -279,7 +276,7 @@ public class ServerItemController : ControllerBase
 
         if (format == "excel")
         {
-            IEnumerable<Entities.ServerHistoryItem> items;
+            IEnumerable<Entities.ServerHistoryItemSmall> items;
             var isHSB = this.User.HasClientRole(ClientRole.HSB);
             if (isHSB)
             {
