@@ -101,7 +101,7 @@ public class XlsExporter : IXlsExporter
     /// <param name="items"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public XSSFWorkbook GenerateExcel(string sheetName, IEnumerable<Entities.ServerHistoryItem> items)
+    public XSSFWorkbook GenerateExcel(string sheetName, IEnumerable<Entities.ServerHistoryItemSmall> items)
     {
         if (items == null) throw new ArgumentNullException(nameof(items));
 
@@ -159,6 +159,41 @@ public class XlsExporter : IXlsExporter
     }
 
     private static void AddContent(IWorkbook workbook, IRow row, Entities.ServerHistoryItem item)
+    {
+        var numberStyle = workbook.CreateCellStyle();
+        var numberFormat = workbook.CreateDataFormat().GetFormat("#,#0");
+        numberStyle.DataFormat = numberFormat;
+
+        var dateStyle = workbook.CreateCellStyle();
+        var dateFormat = workbook.CreateDataFormat().GetFormat("yyyy/MM/dd");
+        dateStyle.DataFormat = dateFormat;
+
+        var cell0 = row.CreateCell(0);
+        cell0.SetCellValue(item.CreatedOn.Date);
+        cell0.CellStyle = dateStyle;
+        var cell1 = row.CreateCell(1);
+        cell1.SetCellValue(item.Tenant?.Code);
+        var cell2 = row.CreateCell(2);
+        cell2.SetCellValue(item.Organization?.Code);
+        var cell3 = row.CreateCell(3);
+        cell3.SetCellValue(item.Organization?.Name);
+        var cell4 = row.CreateCell(4);
+        cell4.SetCellValue(item.ServiceNowKey);
+        var cell5 = row.CreateCell(5);
+        cell5.SetCellValue(item.Name);
+        var cell6 = row.CreateCell(6);
+        cell6.SetCellValue(item.OperatingSystemItem?.Name);
+        var cell7 = row.CreateCell(7);
+        cell7.SetCellType(CellType.Numeric);
+        cell7.CellStyle = numberStyle;
+        cell7.SetCellValue(item.Capacity ?? 0);
+        var cell8 = row.CreateCell(8);
+        cell8.SetCellType(CellType.Numeric);
+        cell8.CellStyle = numberStyle;
+        cell8.SetCellValue(item.AvailableSpace ?? 0);
+    }
+
+    private static void AddContent(IWorkbook workbook, IRow row, Entities.ServerHistoryItemSmall item)
     {
         var numberStyle = workbook.CreateCellStyle();
         var numberFormat = workbook.CreateDataFormat().GetFormat("#,#0");

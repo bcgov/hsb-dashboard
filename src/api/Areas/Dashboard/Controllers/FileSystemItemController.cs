@@ -66,7 +66,7 @@ public class FileSystemItemController : ControllerBase
     [HttpGet(Name = "GetFileSystemItems-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<FileSystemItemModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "File System Item" })]
+    [SwaggerOperation(Tags = ["File System Item"])]
     public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -99,7 +99,7 @@ public class FileSystemItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(FileSystemItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "File System Item" })]
+    [SwaggerOperation(Tags = ["File System Item"])]
     public IActionResult GetForId(string id)
     {
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
@@ -128,8 +128,7 @@ public class FileSystemItemController : ControllerBase
     [HttpGet("history", Name = "GetFileSystemHistoryItems-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<FileSystemHistoryItemModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "File System Item" })]
-    // [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 1200)]
+    [SwaggerOperation(Tags = ["File System Item"])]
     public IActionResult FindHistory()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -166,7 +165,7 @@ public class FileSystemItemController : ControllerBase
     [Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "File System Item" })]
+    [SwaggerOperation(Tags = ["File System Item"])]
     public IActionResult Export(string format, string name = "service-now")
     {
         if (format == "excel")

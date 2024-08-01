@@ -103,26 +103,48 @@ public class HSBContext : DbContext
         modelBuilder.HasDbFunction(typeof(HSBContext)
             .GetMethod(
                 nameof(FindServerHistoryItemsByMonth),
-                new[] { typeof(DateTime), typeof(DateTime?), typeof(int?), typeof(int?), typeof(int?), typeof(string) })!
-            ).HasName("FindServerHistoryItemsByMonth");
-
+                [typeof(DateTime), typeof(DateTime?), typeof(int?), typeof(int?), typeof(int?), typeof(string)])!
+            ).HasName(nameof(FindServerHistoryItemsByMonth));
         modelBuilder.HasDbFunction(typeof(HSBContext)
             .GetMethod(
                 nameof(FindServerHistoryItemsByMonthForUser),
-                new[] { typeof(int), typeof(DateTime), typeof(DateTime?), typeof(int?), typeof(int?), typeof(int?), typeof(string) })!
-            ).HasName("FindServerHistoryItemsByMonthForUser");
-
+                [typeof(int), typeof(DateTime), typeof(DateTime?), typeof(int?), typeof(int?), typeof(int?), typeof(string)])!
+            ).HasName(nameof(FindServerHistoryItemsByMonthForUser));
         modelBuilder.HasDbFunction(typeof(HSBContext)
             .GetMethod(
                 nameof(FindFileSystemHistoryItemsByMonth),
-                new[] { typeof(DateTime), typeof(DateTime?), typeof(int?), typeof(int?), typeof(int?), typeof(string) })!)
-            .HasName("FindFileSystemHistoryItemsByMonth");
-
+                [typeof(DateTime), typeof(DateTime?), typeof(int?), typeof(int?), typeof(int?), typeof(string)])!
+            ).HasName(nameof(FindFileSystemHistoryItemsByMonth));
         modelBuilder.HasDbFunction(typeof(HSBContext)
             .GetMethod(
                 nameof(FindFileSystemHistoryItemsByMonthForUser),
-                new[] { typeof(int), typeof(DateTime), typeof(DateTime?), typeof(int?), typeof(int?), typeof(int?), typeof(string) })!)
-            .HasName("FindFileSystemHistoryItemsByMonthForUser");
+                [typeof(int), typeof(DateTime), typeof(DateTime?), typeof(int?), typeof(int?), typeof(int?), typeof(string)])!
+            ).HasName(nameof(FindFileSystemHistoryItemsByMonthForUser));
+
+        // modelBuilder.Entity<ServerHistoryItemsByMonth>().ToTable((string?)null);
+        // modelBuilder.Entity<ServerHistoryItemsByMonthForUser>().ToTable((string?)null);
+        // modelBuilder.Entity<FileSystemHistoryItemsByMonth>().ToTable((string?)null);
+        // modelBuilder.Entity<FileSystemHistoryItemsByMonthForUser>().ToTable((string?)null);
+
+        // modelBuilder.Ignore<ServerHistoryItemsByMonth>();
+        // modelBuilder.Ignore<ServerHistoryItemsByMonthForUser>();
+        // modelBuilder.Ignore<FileSystemHistoryItemsByMonth>();
+        // modelBuilder.Ignore<FileSystemHistoryItemsByMonthForUser>();
+
+        // modelBuilder.Entity<ServerHistoryItemSmall>().ToView("vServerHistoryItem").HasKey(m => m.Id);
+        // modelBuilder.Entity<ServerHistoryItemsByMonthForUser>().ToView("vServerHistoryItem").HasKey(m => m.Id);
+        // modelBuilder.Entity<FileSystemHistoryItemsByMonth>().ToView("vFileSystemHistoryItem").HasKey(m => m.Id);
+        // modelBuilder.Entity<FileSystemHistoryItemSmall>().ToView("vFileSystemHistoryItem").HasKey(m => m.Id);
+
+        // modelBuilder.Entity<ServerHistoryItemsByMonth>().HasNoKey().ToSqlQuery("SELECT * FROM public.vServerHistoryItem");
+        // modelBuilder.Entity<ServerHistoryItemsByMonthForUser>().HasNoKey().ToSqlQuery("SELECT * FROM public.vServerHistoryItem");
+        // modelBuilder.Entity<FileSystemHistoryItemsByMonth>().HasNoKey().ToSqlQuery("SELECT * FROM public.vFileSystemHistoryItem");
+        // modelBuilder.Entity<FileSystemHistoryItemsByMonthForUser>().HasNoKey().ToSqlQuery("SELECT * FROM public.vFileSystemHistoryItem");
+
+        // modelBuilder.Entity<ServerHistoryItemsByMonth>().ToFunction(nameof(FindServerHistoryItemsByMonth));
+        // modelBuilder.Entity<ServerHistoryItemsByMonthForUser>().ToFunction(nameof(FindServerHistoryItemsByMonthForUser));
+        // modelBuilder.Entity<FileSystemHistoryItemsByMonth>().ToFunction(nameof(FindFileSystemHistoryItemsByMonth));
+        // modelBuilder.Entity<FileSystemHistoryItemsByMonthForUser>().ToFunction(nameof(FindFileSystemHistoryItemsByMonthForUser));
     }
 
     /// <summary>

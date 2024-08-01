@@ -48,7 +48,7 @@ public static class ModelBuilderExtensions
                 var entityConfig = includeContext ? Activator.CreateInstance(config, context) : Activator.CreateInstance(config);
                 var entityType = config.GetInterfaces().First().GetGenericArguments()[0];
                 var applyConfigurationMethod = method.MakeGenericMethod(entityType);
-                applyConfigurationMethod.Invoke(modelBuilder, new[] { entityConfig });
+                applyConfigurationMethod.Invoke(modelBuilder, [entityConfig]);
             }
         }
 

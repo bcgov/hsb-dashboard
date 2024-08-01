@@ -62,6 +62,31 @@ public class FileSystemHistoryItemModel : AuditableModel
         this.FreeSpaceBytes = entity.FreeSpaceBytes;
     }
 
+    public FileSystemHistoryItemModel(FileSystemHistoryItemSmall entity) : base(entity)
+    {
+        this.Id = entity.Id;
+
+        this.ServiceNowKey = entity.ServiceNowKey;
+        this.ServerItemServiceNowKey = entity.ServerItemServiceNowKey;
+        this.ClassName = entity.ClassName;
+        this.Name = entity.Name;
+        this.InstallStatus = entity.InstallStatus;
+        this.Label = entity.Label;
+        this.Category = entity.Category;
+        this.Subcategory = entity.Subcategory;
+        this.StorageType = entity.StorageType;
+        this.MediaType = entity.MediaType;
+        this.VolumeId = entity.VolumeId;
+        this.Capacity = entity.Capacity;
+        this.DiskSpace = entity.DiskSpace;
+        this.Size = entity.Size;
+        this.SizeBytes = entity.SizeBytes;
+        this.UsedSizeBytes = entity.UsedSizeBytes;
+        this.AvailableSpace = entity.AvailableSpace;
+        this.FreeSpace = entity.FreeSpace;
+        this.FreeSpaceBytes = entity.FreeSpaceBytes;
+    }
+
     public FileSystemHistoryItemModel(
         string ServerItemServiceNowKey,
         ServiceNow.ResultModel<ServiceNow.FileSystemModel> fileSystemItemModel,

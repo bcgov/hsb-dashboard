@@ -10,7 +10,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/src/api/bin/Debug/net7.0/HSB.API.dll",
+      "program": "${workspaceFolder}/src/api/bin/Debug/net8.0/HSB.API.dll",
       "args": [],
       "cwd": "${workspaceFolder}/src/api",
       "stopAtEntry": false,
@@ -35,7 +35,7 @@
       "request": "launch",
       "preLaunchTask": "build-api",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/src/api/bin/Debug/net7.0/HSB.API.dll",
+      "program": "${workspaceFolder}/src/api/bin/Debug/net8.0/HSB.API.dll",
       "args": [],
       "cwd": "${workspaceFolder}/src/api",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
@@ -52,7 +52,7 @@
       "request": "launch",
       "preLaunchTask": "build-api-css",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/src/api-css/bin/Debug/net7.0/HSB.CSS.API.dll",
+      "program": "${workspaceFolder}/src/api-css/bin/Debug/net8.0/HSB.CSS.API.dll",
       "args": [],
       "cwd": "${workspaceFolder}/src/api-css",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
@@ -69,7 +69,7 @@
       "request": "launch",
       "preLaunchTask": "build-data-service",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/src/data-service/bin/Debug/net7.0/HSB.DataService.dll",
+      "program": "${workspaceFolder}/src/data-service/bin/Debug/net8.0/HSB.DataService.dll",
       "args": [],
       "cwd": "${workspaceFolder}/src/data-service",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
