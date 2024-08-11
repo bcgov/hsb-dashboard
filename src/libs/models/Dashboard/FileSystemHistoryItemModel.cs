@@ -1,13 +1,18 @@
-﻿using HSB.Entities;
+﻿using System.Text.Json;
+using HSB.Entities;
 
-namespace HSB.Models.Lists;
-public class FileSystemItemListModel : AuditableModel
+namespace HSB.Models.Dashboard;
+
+public class FileSystemHistoryItemModel : AuditableModel
 {
     #region Properties
-    public string ServiceNowKey { get; set; } = "";
-    public string ServerItemServiceNowKey { get; set; } = "";
+    public long Id { get; set; }
 
     #region ServiceNow Properties
+    public JsonDocument RawData { get; set; } = JsonDocument.Parse("{}");
+    public JsonDocument RawDataCI { get; set; } = JsonDocument.Parse("{}");
+    public string ServiceNowKey { get; set; } = "";
+    public string ServerItemServiceNowKey { get; set; } = "";
     public string ClassName { get; set; } = "";
     public string Name { get; set; } = "";
     public int InstallStatus { get; set; }
@@ -29,13 +34,14 @@ public class FileSystemItemListModel : AuditableModel
     #endregion
 
     #region Constructors
-    public FileSystemItemListModel() { }
+    public FileSystemHistoryItemModel() { }
 
-    public FileSystemItemListModel(FileSystemItem entity) : base(entity)
+    public FileSystemHistoryItemModel(FileSystemHistoryItem entity) : base(entity)
     {
+        this.Id = entity.Id;
+
         this.ServiceNowKey = entity.ServiceNowKey;
         this.ServerItemServiceNowKey = entity.ServerItemServiceNowKey;
-
         this.ClassName = entity.ClassName;
         this.Name = entity.Name;
         this.InstallStatus = entity.InstallStatus;
@@ -55,15 +61,41 @@ public class FileSystemItemListModel : AuditableModel
         this.FreeSpaceBytes = entity.FreeSpaceBytes;
     }
 
-    public FileSystemItemListModel(string serverItemServiceNowKey
-    , ServiceNow.ResultModel<ServiceNow.FileSystemModel> fileSystemItemModel
-    , ServiceNow.ResultModel<ServiceNow.ConfigurationItemModel> configurationItemModel)
+    public FileSystemHistoryItemModel(FileSystemHistoryItemSmall entity) : base(entity)
+    {
+        this.Id = entity.Id;
+
+        this.ServiceNowKey = entity.ServiceNowKey;
+        this.ServerItemServiceNowKey = entity.ServerItemServiceNowKey;
+        this.ClassName = entity.ClassName;
+        this.Name = entity.Name;
+        this.InstallStatus = entity.InstallStatus;
+        this.Label = entity.Label;
+        this.Category = entity.Category;
+        this.Subcategory = entity.Subcategory;
+        this.StorageType = entity.StorageType;
+        this.MediaType = entity.MediaType;
+        this.VolumeId = entity.VolumeId;
+        this.Capacity = entity.Capacity;
+        this.DiskSpace = entity.DiskSpace;
+        this.Size = entity.Size;
+        this.SizeBytes = entity.SizeBytes;
+        this.UsedSizeBytes = entity.UsedSizeBytes;
+        this.AvailableSpace = entity.AvailableSpace;
+        this.FreeSpace = entity.FreeSpace;
+        this.FreeSpaceBytes = entity.FreeSpaceBytes;
+    }
+
+    public FileSystemHistoryItemModel(
+        string ServerItemServiceNowKey,
+        ServiceNow.ResultModel<ServiceNow.FileSystemModel> fileSystemItemModel,
+        ServiceNow.ResultModel<ServiceNow.ConfigurationItemModel> configurationItemModel)
     {
         if (fileSystemItemModel.Data == null) throw new InvalidOperationException("File System Item data cannot be null");
         if (configurationItemModel.Data == null) throw new InvalidOperationException("Configuration item data cannot be null");
 
         this.ServiceNowKey = fileSystemItemModel.Data.Id;
-        this.ServerItemServiceNowKey = serverItemServiceNowKey;
+        this.ServerItemServiceNowKey = ServerItemServiceNowKey;
 
         this.ClassName = fileSystemItemModel.Data.ClassName ?? "";
         this.Name = fileSystemItemModel.Data.Name ?? "";
@@ -82,6 +114,46 @@ public class FileSystemItemListModel : AuditableModel
         this.AvailableSpace = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.AvailableSpace) ? Int32.Parse(fileSystemItemModel.Data.AvailableSpace) : 0;
         this.FreeSpace = fileSystemItemModel.Data.FreeSpace ?? "";
         this.FreeSpaceBytes = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.FreeSpaceBytes) ? long.Parse(fileSystemItemModel.Data.FreeSpaceBytes) : 0;
+    }
+    #endregion
+
+    #region Methods
+    public FileSystemHistoryItem ToEntity()
+    {
+        return (FileSystemHistoryItem)this;
+    }
+
+    public static explicit operator FileSystemHistoryItem(FileSystemHistoryItemModel model)
+    {
+        if (model.RawData == null) throw new InvalidOperationException("Property 'RawData' is required.");
+
+        return new FileSystemHistoryItem(model.ServerItemServiceNowKey, model.RawData, model.RawDataCI)
+        {
+            Id = model.Id,
+            ServiceNowKey = model.ServiceNowKey,
+            ClassName = model.ClassName,
+            Name = model.Name,
+            InstallStatus = model.InstallStatus,
+            Label = model.Label,
+            Category = model.Category,
+            Subcategory = model.Subcategory,
+            StorageType = model.StorageType,
+            MediaType = model.MediaType,
+            VolumeId = model.VolumeId,
+            Capacity = model.Capacity,
+            DiskSpace = model.DiskSpace,
+            Size = model.Size,
+            SizeBytes = model.SizeBytes,
+            UsedSizeBytes = model.UsedSizeBytes,
+            AvailableSpace = model.AvailableSpace,
+            FreeSpace = model.FreeSpace,
+            FreeSpaceBytes = model.FreeSpaceBytes,
+            CreatedOn = model.CreatedOn,
+            CreatedBy = model.CreatedBy,
+            UpdatedOn = model.UpdatedOn,
+            UpdatedBy = model.UpdatedBy,
+            Version = model.Version,
+        };
     }
     #endregion
 }

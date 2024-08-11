@@ -54,7 +54,7 @@ public class FileSystemItemController : ControllerBase
     [HttpGet(Name = "FindFileSystemItems-Services")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<FileSystemItemModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "File System Item" })]
+    [SwaggerOperation(Tags = ["File System Item"])]
     public IActionResult Find()
     {
         var fileSystemItems = _fileSystemItemService.Find(o => true);
@@ -70,7 +70,7 @@ public class FileSystemItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(FileSystemItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "File System Item" })]
+    [SwaggerOperation(Tags = ["File System Item"])]
     public IActionResult GetForId(string id)
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -97,7 +97,7 @@ public class FileSystemItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(FileSystemItemModel), (int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "File System Item" })]
+    [SwaggerOperation(Tags = ["File System Item"])]
     public IActionResult Add(FileSystemItemModel model)
     {
         var entity = model.ToEntity();
@@ -115,7 +115,7 @@ public class FileSystemItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(FileSystemItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "File System Item" })]
+    [SwaggerOperation(Tags = ["File System Item"])]
     public IActionResult Update(FileSystemItemModel model)
     {
         var entity = model.ToEntity();
@@ -133,7 +133,7 @@ public class FileSystemItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(FileSystemItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "File System Item" })]
+    [SwaggerOperation(Tags = ["File System Item"])]
     public IActionResult Delete(FileSystemItemModel model)
     {
         var entity = model.ToEntity();
@@ -151,7 +151,7 @@ public class FileSystemItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(FileSystemHistoryItemModel), (int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "File System Item" })]
+    [SwaggerOperation(Tags = ["File System Item"])]
     public IActionResult Add(FileSystemHistoryItemModel model)
     {
         var entity = model.ToEntity();

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 
 using HSB.Entities;
 using HSB.DAL.Extensions;
+using HSB.Models.Lists;
 
 namespace HSB.DAL.Services;
 
@@ -90,7 +91,7 @@ public class OrganizationService : BaseService<Organization>, IOrganizationServi
             .AsSplitQuery()
             .ToArray();
     }
-    public IEnumerable<Models.OrganizationListModel> FindList(Models.Filters.OrganizationFilter filter)
+    public IEnumerable<OrganizationListModel> FindList(Models.Filters.OrganizationFilter filter)
     {
         var query = from org in this.Context.Organizations
                     select org;
@@ -112,11 +113,11 @@ public class OrganizationService : BaseService<Organization>, IOrganizationServi
         return query
             .AsNoTracking()
             .AsSingleQuery()
-            .Select(o => new Models.OrganizationListModel(o, true, false))
+            .Select(o => new OrganizationListModel(o, true, false))
             .ToArray();
     }
 
-    public IEnumerable<Models.OrganizationListModel> FindListForUser(
+    public IEnumerable<OrganizationListModel> FindListForUser(
         long userId,
         Models.Filters.OrganizationFilter filter)
     {
@@ -150,7 +151,7 @@ public class OrganizationService : BaseService<Organization>, IOrganizationServi
         return query
             .AsNoTracking()
             .AsSplitQuery()
-            .Select(o => new Models.OrganizationListModel(o, true, false))
+            .Select(o => new OrganizationListModel(o, true, false))
             .ToArray();
     }
 

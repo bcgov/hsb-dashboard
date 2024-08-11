@@ -1,8 +1,8 @@
 using System.Security.Claims;
 using HSB.DAL.Extensions;
 using HSB.Entities;
-using HSB.Models;
 using HSB.Models.Filters;
+using HSB.Models.Lists;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;

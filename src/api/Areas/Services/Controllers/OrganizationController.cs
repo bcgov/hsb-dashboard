@@ -41,7 +41,7 @@ public class OrganizationController : ControllerBase
 
     #region Endpoints
     /// <summary>
-    ///
+    /// Get all organizations.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "FindOrganizations-Services")]
@@ -55,7 +55,7 @@ public class OrganizationController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Get organization for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -63,7 +63,7 @@ public class OrganizationController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(OrganizationModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "Organization" })]
+    [SwaggerOperation(Tags = ["Organization"])]
     public IActionResult GetForId(int id)
     {
         var entity = _service.FindForId(id);
@@ -74,7 +74,7 @@ public class OrganizationController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Add or update the provided organization.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -83,7 +83,7 @@ public class OrganizationController : ControllerBase
     [ProducesResponseType(typeof(OrganizationModel), (int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(OrganizationModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Organization" })]
+    [SwaggerOperation(Tags = ["Organization"])]
     public IActionResult AddOrUpdate(OrganizationModel model)
     {
         var entity = model.ToEntity();
@@ -104,7 +104,7 @@ public class OrganizationController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Update the provided organization.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -112,7 +112,7 @@ public class OrganizationController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(OrganizationModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Organization" })]
+    [SwaggerOperation(Tags = ["Organization"])]
     public IActionResult Update(OrganizationModel model)
     {
         var entity = model.ToEntity();
@@ -129,7 +129,7 @@ public class OrganizationController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OrganizationModel>), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Organization" })]
+    [SwaggerOperation(Tags = ["Organization"])]
     public IActionResult Cleanup()
     {
         var organizations = _service.Cleanup();

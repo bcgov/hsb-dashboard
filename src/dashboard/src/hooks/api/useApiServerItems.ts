@@ -31,7 +31,7 @@ export const useApiServerItems = () => {
       },
       history: async (filter: IServerHistoryItemFilter | undefined = {}): Promise<Response> => {
         return await dispatch(`/api/dashboard/server-items/history?${toQueryString(filter)}`, {
-          cache: 'force-cache',
+          cache: 'no-store',
         });
       },
       download: async (

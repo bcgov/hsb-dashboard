@@ -1,5 +1,5 @@
 using HSB.Entities;
-using HSB.Models;
+using HSB.Models.Lists;
 
 namespace HSB.DAL.Services;
 

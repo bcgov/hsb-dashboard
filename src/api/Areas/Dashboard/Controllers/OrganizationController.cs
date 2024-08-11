@@ -8,12 +8,12 @@ using HSB.Core.Models;
 using HSB.DAL.Services;
 using HSB.Keycloak;
 using HSB.Keycloak.Extensions;
-using HSB.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
-using Microsoft.Extensions.Caching.Memory;
+using HSB.Models.Dashboard;
+using HSB.Models.Lists;
 
-namespace HSB.API.Areas.Hsb.Controllers;
+namespace HSB.API.Areas.Dashboard.Controllers;
 
 /// <summary>
 /// OrganizationController class, provides endpoints for organizations.
@@ -28,7 +28,6 @@ namespace HSB.API.Areas.Hsb.Controllers;
 public class OrganizationController : ControllerBase
 {
     #region Variables
-    private readonly ILogger _logger;
     private readonly IOrganizationService _service;
     private readonly IAuthorizationHelper _authorization;
     #endregion
@@ -39,15 +38,12 @@ public class OrganizationController : ControllerBase
     /// </summary>
     /// <param name="service"></param>
     /// <param name="authorization"></param>
-    /// <param name="logger"></param>
     public OrganizationController(
         IOrganizationService service,
-        IAuthorizationHelper authorization,
-        ILogger<OrganizationController> logger)
+        IAuthorizationHelper authorization)
     {
         _service = service;
         _authorization = authorization;
-        _logger = logger;
     }
     #endregion
 
@@ -60,7 +56,7 @@ public class OrganizationController : ControllerBase
     [HttpGet(Name = "GetOrganizations-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OrganizationModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Organization" })]
+    [SwaggerOperation(Tags = ["Organization"])]
     public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -93,7 +89,7 @@ public class OrganizationController : ControllerBase
     [HttpGet("list", Name = "GetOrganizationLists-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OrganizationListModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Organization" })]
+    [SwaggerOperation(Tags = ["Organization"])]
     public IActionResult FindList()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -126,7 +122,7 @@ public class OrganizationController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(OrganizationModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "Organization" })]
+    [SwaggerOperation(Tags = ["Organization"])]
     public IActionResult GetForId(int id)
     {
         var isHSB = this.User.HasClientRole(ClientRole.HSB);

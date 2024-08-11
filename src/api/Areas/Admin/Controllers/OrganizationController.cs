@@ -62,7 +62,7 @@ public class OrganizationController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Get the organization for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -81,7 +81,7 @@ public class OrganizationController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Add a new organization to the database.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -103,7 +103,7 @@ public class OrganizationController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Update the organization specified.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -126,7 +126,7 @@ public class OrganizationController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Delete the organization specified.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>

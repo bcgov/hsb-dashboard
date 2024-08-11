@@ -48,13 +48,13 @@ public class ServerItemController : ControllerBase
 
     #region Endpoints
     /// <summary>
-    ///
+    /// Get all the server items for the specified query filter.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "FindServerItems-Services")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<ServerItemModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Server Item" })]
+    [SwaggerOperation(Tags = ["Server Item"])]
     public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -66,7 +66,7 @@ public class ServerItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Get the server item for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -74,7 +74,7 @@ public class ServerItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(ServerItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "Server Item" })]
+    [SwaggerOperation(Tags = ["Server Item"])]
     public IActionResult GetForId(string id)
     {
         var entity = _serverItemService.FindForId(id);
@@ -85,7 +85,7 @@ public class ServerItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Add a new server item to the database.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -93,7 +93,7 @@ public class ServerItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(ServerItemModel), (int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Server Item" })]
+    [SwaggerOperation(Tags = ["Server Item"])]
     public IActionResult Add(ServerItemModel model)
     {
         var entity = model.ToEntity();
@@ -103,7 +103,7 @@ public class ServerItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Update the provided server item.
     /// </summary>
     /// <param name="model"></param>
     /// <param name="updateTotals"></param>
@@ -112,7 +112,7 @@ public class ServerItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(ServerItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Server Item" })]
+    [SwaggerOperation(Tags = ["Server Item"])]
     public IActionResult Update(ServerItemModel model, bool updateTotals = false)
     {
         var entity = model.ToEntity();
@@ -122,7 +122,7 @@ public class ServerItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Delete the specified server item.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -130,7 +130,7 @@ public class ServerItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(ServerItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Server Item" })]
+    [SwaggerOperation(Tags = ["Server Item"])]
     public IActionResult Delete(ServerItemModel model)
     {
         _serverItemService.Remove(model.ToEntity());
@@ -139,7 +139,7 @@ public class ServerItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Add the provided server item to the database.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -147,7 +147,7 @@ public class ServerItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(ServerHistoryItemModel), (int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Server Item" })]
+    [SwaggerOperation(Tags = ["Server Item"])]
     public IActionResult Add(ServerHistoryItemModel model)
     {
         var entity = model.ToEntity();

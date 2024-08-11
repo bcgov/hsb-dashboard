@@ -8,12 +8,13 @@ using HSB.Core.Models;
 using HSB.DAL.Services;
 using HSB.Keycloak;
 using HSB.Keycloak.Extensions;
-using HSB.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.Extensions.Caching.Memory;
+using HSB.Models.Dashboard;
+using HSB.Models.Lists;
 
-namespace HSB.API.Areas.Hsb.Controllers;
+namespace HSB.API.Areas.Dashboard.Controllers;
 
 /// <summary>
 /// OperatingSystemItemController class, provides endpoints for operating system items.
@@ -28,7 +29,6 @@ namespace HSB.API.Areas.Hsb.Controllers;
 public class OperatingSystemItemController : ControllerBase
 {
     #region Variables
-    private readonly ILogger _logger;
     private readonly IOperatingSystemItemService _service;
     private readonly IAuthorizationHelper _authorization;
     private readonly IXlsExporter _exporter;
@@ -45,19 +45,16 @@ public class OperatingSystemItemController : ControllerBase
     /// <param name="memoryCache"></param>
     /// <param name="authorization"></param>
     /// <param name="exporter"></param>
-    /// <param name="logger"></param>
     public OperatingSystemItemController(
         IOperatingSystemItemService service,
         IMemoryCache memoryCache,
         IAuthorizationHelper authorization,
-        IXlsExporter exporter,
-        ILogger<OperatingSystemItemController> logger)
+        IXlsExporter exporter)
     {
         _service = service;
         _memoryCache = memoryCache;
         _authorization = authorization;
         _exporter = exporter;
-        _logger = logger;
     }
     #endregion
 
@@ -69,7 +66,7 @@ public class OperatingSystemItemController : ControllerBase
     [HttpGet(Name = "GetOperatingSystemItems-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OperatingSystemItemModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Operating System Item" })]
+    [SwaggerOperation(Tags = ["Operating System Item"])]
     // [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
     public IActionResult Find()
     {
@@ -112,7 +109,7 @@ public class OperatingSystemItemController : ControllerBase
     [HttpGet("list", Name = "GetOperatingSystemItemLists-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OperatingSystemItemListModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Operating System Item" })]
+    [SwaggerOperation(Tags = ["Operating System Item"])]
     // [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
     public IActionResult FindList()
     {
@@ -155,7 +152,7 @@ public class OperatingSystemItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(OperatingSystemItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "Operating System Item" })]
+    [SwaggerOperation(Tags = ["Operating System Item"])]
     public IActionResult GetForId(int id)
     {
         var isHSB = this.User.HasClientRole(ClientRole.HSB);
@@ -190,7 +187,7 @@ public class OperatingSystemItemController : ControllerBase
     [Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")]
     [ProducesResponseType((int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Operating System Item" })]
+    [SwaggerOperation(Tags = ["Operating System Item"])]
     public IActionResult Export(string format, string name = "service-now")
     {
         if (format == "excel")

@@ -1,13 +1,17 @@
-﻿using HSB.Entities;
+﻿using System.Text.Json;
+using HSB.Entities;
 
-namespace HSB.Models.Lists;
-public class FileSystemItemListModel : AuditableModel
+namespace HSB.Models.Dashboard;
+
+public class FileSystemItemModel : AuditableModel
 {
     #region Properties
     public string ServiceNowKey { get; set; } = "";
     public string ServerItemServiceNowKey { get; set; } = "";
 
     #region ServiceNow Properties
+    public JsonDocument RawData { get; set; } = JsonDocument.Parse("{}");
+    public JsonDocument RawDataCI { get; set; } = JsonDocument.Parse("{}");
     public string ClassName { get; set; } = "";
     public string Name { get; set; } = "";
     public int InstallStatus { get; set; }
@@ -29,9 +33,9 @@ public class FileSystemItemListModel : AuditableModel
     #endregion
 
     #region Constructors
-    public FileSystemItemListModel() { }
+    public FileSystemItemModel() { }
 
-    public FileSystemItemListModel(FileSystemItem entity) : base(entity)
+    public FileSystemItemModel(FileSystemItem entity) : base(entity)
     {
         this.ServiceNowKey = entity.ServiceNowKey;
         this.ServerItemServiceNowKey = entity.ServerItemServiceNowKey;
@@ -55,7 +59,7 @@ public class FileSystemItemListModel : AuditableModel
         this.FreeSpaceBytes = entity.FreeSpaceBytes;
     }
 
-    public FileSystemItemListModel(string serverItemServiceNowKey
+    public FileSystemItemModel(string serverItemServiceNowKey
     , ServiceNow.ResultModel<ServiceNow.FileSystemModel> fileSystemItemModel
     , ServiceNow.ResultModel<ServiceNow.ConfigurationItemModel> configurationItemModel)
     {
@@ -82,6 +86,45 @@ public class FileSystemItemListModel : AuditableModel
         this.AvailableSpace = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.AvailableSpace) ? Int32.Parse(fileSystemItemModel.Data.AvailableSpace) : 0;
         this.FreeSpace = fileSystemItemModel.Data.FreeSpace ?? "";
         this.FreeSpaceBytes = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.FreeSpaceBytes) ? long.Parse(fileSystemItemModel.Data.FreeSpaceBytes) : 0;
+    }
+    #endregion
+
+    #region Methods
+    public FileSystemItem ToEntity()
+    {
+        return (FileSystemItem)this;
+    }
+
+    public static explicit operator FileSystemItem(FileSystemItemModel model)
+    {
+        if (model.RawData == null) throw new InvalidOperationException("Property 'RawData' is required.");
+
+        return new FileSystemItem(model.ServerItemServiceNowKey, model.RawData, model.RawDataCI)
+        {
+            ServiceNowKey = model.ServiceNowKey,
+            ClassName = model.ClassName,
+            Name = model.Name,
+            InstallStatus = model.InstallStatus,
+            Label = model.Label,
+            Category = model.Category,
+            Subcategory = model.Subcategory,
+            StorageType = model.StorageType,
+            MediaType = model.MediaType,
+            VolumeId = model.VolumeId,
+            Capacity = model.Capacity,
+            DiskSpace = model.DiskSpace,
+            Size = model.Size,
+            SizeBytes = model.SizeBytes,
+            UsedSizeBytes = model.UsedSizeBytes,
+            AvailableSpace = model.AvailableSpace,
+            FreeSpace = model.FreeSpace,
+            FreeSpaceBytes = model.FreeSpaceBytes,
+            CreatedOn = model.CreatedOn,
+            CreatedBy = model.CreatedBy,
+            UpdatedOn = model.UpdatedOn,
+            UpdatedBy = model.UpdatedBy,
+            Version = model.Version,
+        };
     }
     #endregion
 }
