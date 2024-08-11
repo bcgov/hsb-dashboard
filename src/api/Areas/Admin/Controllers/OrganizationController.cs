@@ -1,5 +1,4 @@
 using System.Net.Mime;
-using HSB.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using HSB.Core.Models;
@@ -8,9 +7,9 @@ using HSB.DAL.Services;
 using HSB.Keycloak;
 using HSB.Core.Exceptions;
 using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.Extensions.Caching.Memory;
+using HSB.Models.Admin;
 
-namespace HSB.API.Areas.SystemAdmin.Controllers;
+namespace HSB.API.Areas.Admin.Controllers;
 
 /// <summary>
 /// OrganizationController class, provides endpoints for organizations.
@@ -52,7 +51,7 @@ public class OrganizationController : ControllerBase
     [HttpGet(Name = "GetOrganizations-SystemAdmin")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OrganizationModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Organization" })]
+    [SwaggerOperation(Tags = ["Organization"])]
     public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -71,7 +70,7 @@ public class OrganizationController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(OrganizationModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "Organization" })]
+    [SwaggerOperation(Tags = ["Organization"])]
     public IActionResult GetForId(int id)
     {
         var organization = _service.FindForId(id);
@@ -90,7 +89,7 @@ public class OrganizationController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(OrganizationModel), (int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Organization" })]
+    [SwaggerOperation(Tags = ["Organization"])]
     public IActionResult Add(OrganizationModel model)
     {
         var entity = model.ToEntity();
@@ -112,10 +111,12 @@ public class OrganizationController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(OrganizationModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Organization" })]
+    [SwaggerOperation(Tags = ["Organization"])]
     public IActionResult Update(OrganizationModel model)
     {
+        var original = _service.FindForIdAsNoTracking(model.Id) ?? throw new NoContentException();
         var entity = model.ToEntity();
+        entity.RawData = original.RawData;
         _service.Update(entity);
         _service.CommitTransaction();
 
@@ -133,7 +134,7 @@ public class OrganizationController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(OrganizationModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Organization" })]
+    [SwaggerOperation(Tags = ["Organization"])]
     public IActionResult Remove(OrganizationModel model)
     {
         var entity = model.ToEntity() ?? throw new NoContentException();

@@ -1,5 +1,4 @@
 using System.Net.Mime;
-using HSB.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using HSB.Core.Models;
@@ -8,8 +7,9 @@ using HSB.DAL.Services;
 using HSB.Keycloak;
 using HSB.Core.Exceptions;
 using Microsoft.AspNetCore.Http.Extensions;
+using HSB.Models.Admin;
 
-namespace HSB.API.Areas.SystemAdmin.Controllers;
+namespace HSB.API.Areas.Admin.Controllers;
 
 /// <summary>
 /// TenantController class, provides endpoints for tenants.
@@ -49,7 +49,7 @@ public class TenantController : ControllerBase
     [HttpGet(Name = "GetTenants-SystemAdmin")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<TenantModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Tenant" })]
+    [SwaggerOperation(Tags = ["Tenant"])]
     public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -68,7 +68,7 @@ public class TenantController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(TenantModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "Tenant" })]
+    [SwaggerOperation(Tags = ["Tenant"])]
     public IActionResult GetForId(int id)
     {
         var tenant = _service.FindForId(id);
@@ -87,7 +87,7 @@ public class TenantController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(TenantModel), (int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Tenant" })]
+    [SwaggerOperation(Tags = ["Tenant"])]
     public IActionResult Add(TenantModel model)
     {
         var entity = model.ToEntity();
@@ -108,10 +108,12 @@ public class TenantController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(TenantModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Tenant" })]
+    [SwaggerOperation(Tags = ["Tenant"])]
     public IActionResult Update(TenantModel model)
     {
+        var original = _service.FindForIdAsNoTracking(model.Id) ?? throw new NoContentException();
         var entity = model.ToEntity();
+        entity.RawData = original.RawData;
         _service.Update(entity);
         _service.CommitTransaction();
 
@@ -129,7 +131,7 @@ public class TenantController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(TenantModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Tenant" })]
+    [SwaggerOperation(Tags = ["Tenant"])]
     public IActionResult Remove(TenantModel model)
     {
         var entity = model.ToEntity() ?? throw new NoContentException();

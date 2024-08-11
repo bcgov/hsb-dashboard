@@ -9,7 +9,7 @@ using HSB.DAL.Services;
 using HSB.Models;
 using HSB.Keycloak;
 
-namespace HSB.API.Areas.SystemAdmin.Controllers;
+namespace HSB.API.Areas.Admin.Controllers;
 
 /// <summary>
 /// RoleController class, provides endpoints for roles.
@@ -49,7 +49,7 @@ public class RoleController : ControllerBase
     [HttpGet(Name = "GetRoles-SystemAdmin")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<RoleModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Role" })]
+    [SwaggerOperation(Tags = ["Role"])]
     public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -68,7 +68,7 @@ public class RoleController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(RoleModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "Role" })]
+    [SwaggerOperation(Tags = ["Role"])]
     public IActionResult GetForId(int id)
     {
         var role = _service.FindForId(id);
@@ -87,7 +87,7 @@ public class RoleController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(RoleModel), (int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Role" })]
+    [SwaggerOperation(Tags = ["Role"])]
     public IActionResult Add(RoleModel model)
     {
         var entity = model.ToEntity();
@@ -105,7 +105,7 @@ public class RoleController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(RoleModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Role" })]
+    [SwaggerOperation(Tags = ["Role"])]
     public IActionResult Update(RoleModel model)
     {
         var entity = model.ToEntity();
@@ -123,7 +123,7 @@ public class RoleController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(RoleModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Role" })]
+    [SwaggerOperation(Tags = ["Role"])]
     public IActionResult Remove(RoleModel model)
     {
         var entity = model.ToEntity() ?? throw new NoContentException();

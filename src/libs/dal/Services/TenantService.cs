@@ -8,9 +8,19 @@ using HSB.DAL.Extensions;
 
 namespace HSB.DAL.Services;
 
+/// <summary>
+///
+/// </summary>
 public class TenantService : BaseService<Tenant>, ITenantService
 {
     #region Constructors
+    /// <summary>
+    ///
+    /// </summary>
+    /// <param name="dbContext"></param>
+    /// <param name="principal"></param>
+    /// <param name="serviceProvider"></param>
+    /// <param name="logger"></param>
     public TenantService(HSBContext dbContext, ClaimsPrincipal principal, IServiceProvider serviceProvider, ILogger<TenantService> logger)
         : base(dbContext, principal, serviceProvider, logger)
     {
@@ -18,6 +28,17 @@ public class TenantService : BaseService<Tenant>, ITenantService
     #endregion
 
     #region Methods
+    /// <summary>
+    /// Find the entity for the specified `keyValues`.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public Tenant? FindForIdAsNoTracking(int id)
+    {
+        return this.Context.Tenants.AsNoTracking()
+            .FirstOrDefault(t => t.Id == id);
+    }
+
     public IEnumerable<Tenant> Find(
         Models.Filters.TenantFilter filter)
     {
