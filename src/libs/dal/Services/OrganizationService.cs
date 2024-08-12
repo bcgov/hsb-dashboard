@@ -18,6 +18,17 @@ public class OrganizationService : BaseService<Organization>, IOrganizationServi
     #endregion
 
     #region Methods
+    /// <summary>
+    /// Find the entity for the specified `keyValues`.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    public Organization? FindForIdAsNoTracking(int id)
+    {
+        return this.Context.Organizations.AsNoTracking()
+            .FirstOrDefault(t => t.Id == id);
+    }
+
     public IEnumerable<Organization> Find(Models.Filters.OrganizationFilter filter)
     {
         var query = from org in this.Context.Organizations

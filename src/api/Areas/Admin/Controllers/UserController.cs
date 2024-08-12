@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace HSB.API.Areas.SystemAdmin.Controllers;
+namespace HSB.API.Areas.Admin.Controllers;
 
 /// <summary>
 /// UserController class, provides User endpoints for the admin api.

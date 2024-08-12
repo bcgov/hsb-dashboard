@@ -9,7 +9,7 @@ using HSB.Keycloak;
 using HSB.Core.Exceptions;
 using Microsoft.AspNetCore.Http.Extensions;
 
-namespace HSB.API.Areas.SystemAdmin.Controllers;
+namespace HSB.API.Areas.Admin.Controllers;
 
 /// <summary>
 /// GroupController class, provides endpoints for groups.
@@ -49,7 +49,7 @@ public class GroupController : ControllerBase
     [HttpGet(Name = "GetGroups-SystemAdmin")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<GroupModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Group" })]
+    [SwaggerOperation(Tags = ["Group"])]
     public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -60,7 +60,7 @@ public class GroupController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Get the group for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -68,7 +68,7 @@ public class GroupController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(GroupModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "Group" })]
+    [SwaggerOperation(Tags = ["Group"])]
     public IActionResult GetForId(int id)
     {
         var group = _service.FindForId(id);
@@ -79,7 +79,7 @@ public class GroupController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Add a new group to the database.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -87,7 +87,7 @@ public class GroupController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(GroupModel), (int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Group" })]
+    [SwaggerOperation(Tags = ["Group"])]
     public IActionResult Add(GroupModel model)
     {
         var entity = model.ToEntity();
@@ -97,7 +97,7 @@ public class GroupController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Update the group for the specified 'id'.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -105,7 +105,7 @@ public class GroupController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(GroupModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Group" })]
+    [SwaggerOperation(Tags = ["Group"])]
     public IActionResult Update(GroupModel model)
     {
         var entity = model.ToEntity();
@@ -115,7 +115,7 @@ public class GroupController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Delete the group from the database.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -123,7 +123,7 @@ public class GroupController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(GroupModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Group" })]
+    [SwaggerOperation(Tags = ["Group"])]
     public IActionResult Remove(GroupModel model)
     {
         var entity = model.ToEntity() ?? throw new NoContentException();
