@@ -8,11 +8,11 @@ using HSB.Core.Models;
 using HSB.DAL.Services;
 using HSB.Keycloak;
 using HSB.Keycloak.Extensions;
-using HSB.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
+using HSB.Models.Dashboard;
 
-namespace HSB.API.Areas.Hsb.Controllers;
+namespace HSB.API.Areas.Dashboard.Controllers;
 
 /// <summary>
 /// FileSystemItemController class, provides endpoints for file system items.
@@ -27,7 +27,6 @@ namespace HSB.API.Areas.Hsb.Controllers;
 public class FileSystemItemController : ControllerBase
 {
     #region Variables
-    private readonly ILogger _logger;
     private readonly IFileSystemItemService _fileSystemItemService;
     private readonly IFileSystemHistoryItemService _fileSystemHistoryItemService;
     private readonly IAuthorizationHelper _authorization;
@@ -42,19 +41,16 @@ public class FileSystemItemController : ControllerBase
     /// <param name="fileSystemHistoryItemService"></param>
     /// <param name="authorization"></param>
     /// <param name="exporter"></param>
-    /// <param name="logger"></param>
     public FileSystemItemController(
         IFileSystemItemService fileSystemItemService,
         IFileSystemHistoryItemService fileSystemHistoryItemService,
         IAuthorizationHelper authorization,
-        IXlsExporter exporter,
-        ILogger<FileSystemItemController> logger)
+        IXlsExporter exporter)
     {
         _fileSystemItemService = fileSystemItemService;
         _fileSystemHistoryItemService = fileSystemHistoryItemService;
         _authorization = authorization;
         _exporter = exporter;
-        _logger = logger;
     }
     #endregion
 

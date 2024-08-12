@@ -1,7 +1,7 @@
 ﻿using HSB.Entities;
 using HSB.Core.Extensions;
 
-namespace HSB.Models;
+namespace HSB.Models.Lists;
 public class OperatingSystemItemListModel : AuditableModel
 {
     #region Properties

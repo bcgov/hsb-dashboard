@@ -22,7 +22,6 @@ namespace HSB.API.Areas.Services.Controllers;
 public class DataSyncController : ControllerBase
 {
     #region Variables
-    private readonly ILogger _logger;
     private readonly IDataSyncService _service;
     #endregion
 
@@ -31,23 +30,21 @@ public class DataSyncController : ControllerBase
     /// Creates a new instance of a DataSyncController.
     /// </summary>
     /// <param name="service"></param>
-    /// <param name="logger"></param>
-    public DataSyncController(IDataSyncService service, ILogger<DataSyncController> logger)
+    public DataSyncController(IDataSyncService service)
     {
         _service = service;
-        _logger = logger;
     }
     #endregion
 
     #region Endpoints
     /// <summary>
-    ///
+    /// Find all the data sync items.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "FindDataSync-Services")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<DataSyncModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "DataSync" })]
+    [SwaggerOperation(Tags = ["DataSync"])]
     public IActionResult Find()
     {
         var entities = _service.Find(o => true);
@@ -55,7 +52,7 @@ public class DataSyncController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Get the data sync for the specified 'name'.
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
@@ -63,7 +60,7 @@ public class DataSyncController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(DataSyncModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "DataSync" })]
+    [SwaggerOperation(Tags = ["DataSync"])]
     public IActionResult GetForName(string name)
     {
         var entity = _service.Find((ds) => ds.Name == name).FirstOrDefault();
@@ -74,7 +71,7 @@ public class DataSyncController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Update the data sync item.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -82,7 +79,7 @@ public class DataSyncController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(DataSyncModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "DataSync" })]
+    [SwaggerOperation(Tags = ["DataSync"])]
     public IActionResult Update(DataSyncModel model)
     {
         var entity = model.ToEntity();

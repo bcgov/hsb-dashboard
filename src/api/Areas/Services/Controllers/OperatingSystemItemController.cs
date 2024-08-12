@@ -41,13 +41,13 @@ public class OperatingSystemItemController : ControllerBase
 
     #region Endpoints
     /// <summary>
-    ///
+    /// Find all operating system items.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "FindOperatingSystemItems-Services")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<OperatingSystemItemModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Operating System Item" })]
+    [SwaggerOperation(Tags = ["Operating System Item"])]
     public IActionResult Find()
     {
         var operatingSystemItems = _service.Find(o => true);
@@ -55,7 +55,7 @@ public class OperatingSystemItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Get the operating system item for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -63,7 +63,7 @@ public class OperatingSystemItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(OperatingSystemItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "Operating System Item" })]
+    [SwaggerOperation(Tags = ["Operating System Item"])]
     public IActionResult GetForId(int id)
     {
         var entity = _service.FindForId(id);
@@ -74,7 +74,7 @@ public class OperatingSystemItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Add or update the provided operating system item.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -83,7 +83,7 @@ public class OperatingSystemItemController : ControllerBase
     [ProducesResponseType(typeof(OperatingSystemItemModel), (int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(OperatingSystemItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Operating System Item" })]
+    [SwaggerOperation(Tags = ["Operating System Item"])]
     public IActionResult AddOrUpdate(OperatingSystemItemModel model)
     {
         var entity = model.ToEntity();
@@ -104,7 +104,7 @@ public class OperatingSystemItemController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Update the operating system item.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -112,7 +112,7 @@ public class OperatingSystemItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(OperatingSystemItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Operating System Item" })]
+    [SwaggerOperation(Tags = ["Operating System Item"])]
     public IActionResult Update(OperatingSystemItemModel model)
     {
         var entity = model.ToEntity();

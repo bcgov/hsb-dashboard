@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using HSB.DAL.Extensions;
+using HSB.Models.Lists;
 
 namespace HSB.DAL.Services;
 
@@ -102,7 +103,7 @@ public class TenantService : BaseService<Tenant>, ITenantService
             .ToArray();
     }
 
-    public IEnumerable<Models.TenantListModel> FindList(
+    public IEnumerable<TenantListModel> FindList(
         Models.Filters.TenantFilter filter)
     {
         var query = from tenant in this.Context.Tenants
@@ -125,11 +126,11 @@ public class TenantService : BaseService<Tenant>, ITenantService
         return query
             .AsNoTracking()
             .AsSingleQuery()
-            .Select(t => new Models.TenantListModel(t, true))
+            .Select(t => new TenantListModel(t, true))
             .ToArray();
     }
 
-    public IEnumerable<Models.TenantListModel> FindListForUser(
+    public IEnumerable<TenantListModel> FindListForUser(
         long userId,
         Models.Filters.TenantFilter filter)
     {
@@ -163,7 +164,7 @@ public class TenantService : BaseService<Tenant>, ITenantService
         return query
             .AsNoTracking()
             .AsSplitQuery()
-            .Select(t => new Models.TenantListModel(t, true))
+            .Select(t => new TenantListModel(t, true))
             .ToArray();
     }
 

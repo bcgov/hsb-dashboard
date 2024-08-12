@@ -8,12 +8,13 @@ using HSB.Core.Models;
 using HSB.DAL.Services;
 using HSB.Keycloak;
 using HSB.Keycloak.Extensions;
-using HSB.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.Extensions.Caching.Memory;
+using HSB.Models.Dashboard;
+using HSB.Models.Lists;
 
-namespace HSB.API.Areas.Hsb.Controllers;
+namespace HSB.API.Areas.Dashboard.Controllers;
 
 /// <summary>
 /// ServerItemController class, provides endpoints for server items.
@@ -28,7 +29,6 @@ namespace HSB.API.Areas.Hsb.Controllers;
 public class ServerItemController : ControllerBase
 {
     #region Variables
-    private readonly ILogger _logger;
     private readonly IServerItemService _serverItemService;
     private readonly IServerHistoryItemService _serverHistoryItemService;
     private readonly IAuthorizationHelper _authorization;
@@ -47,21 +47,18 @@ public class ServerItemController : ControllerBase
     /// <param name="memoryCache"></param>
     /// <param name="authorization"></param>
     /// <param name="exporter"></param>
-    /// <param name="logger"></param>
     public ServerItemController(
         IServerItemService serverItemService,
         IServerHistoryItemService serverHistoryItemService,
         IMemoryCache memoryCache,
         IAuthorizationHelper authorization,
-        IXlsExporter exporter,
-        ILogger<ServerItemController> logger)
+        IXlsExporter exporter)
     {
         _serverItemService = serverItemService;
         _serverHistoryItemService = serverHistoryItemService;
         _memoryCache = memoryCache;
         _authorization = authorization;
         _exporter = exporter;
-        _logger = logger;
     }
     #endregion
 
@@ -115,7 +112,7 @@ public class ServerItemController : ControllerBase
     [HttpGet("list", Name = "GetServerItemLists-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<ServerItemListModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Server Item" })]
+    [SwaggerOperation(Tags = ["Server Item"])]
     public IActionResult FindList()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -158,7 +155,7 @@ public class ServerItemController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(ServerItemModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "Server Item" })]
+    [SwaggerOperation(Tags = ["Server Item"])]
     public IActionResult GetForId(string serviceNowKey, bool includeFileSystemItems = false)
     {
         var isHSB = this.User.HasClientRole(ClientRole.HSB);

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using HSB.DAL.Extensions;
 using HSB.Entities;
+using HSB.Models.Lists;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -77,7 +78,7 @@ public class OperatingSystemItemService : BaseService<OperatingSystemItem>, IOpe
             .ToArray();
     }
 
-    public IEnumerable<Models.OperatingSystemItemListModel> FindList(
+    public IEnumerable<OperatingSystemItemListModel> FindList(
         Models.Filters.OperatingSystemItemFilter filter)
     {
         var query = from osi in this.Context.OperatingSystemItems
@@ -97,11 +98,11 @@ public class OperatingSystemItemService : BaseService<OperatingSystemItem>, IOpe
         return query
             .AsNoTracking()
             .AsSingleQuery()
-            .Select(t => new Models.OperatingSystemItemListModel(t))
+            .Select(t => new OperatingSystemItemListModel(t))
             .ToArray();
     }
 
-    public IEnumerable<Models.OperatingSystemItemListModel> FindListForUser(
+    public IEnumerable<OperatingSystemItemListModel> FindListForUser(
         long userId,
         Models.Filters.OperatingSystemItemFilter filter)
     {
@@ -136,7 +137,7 @@ public class OperatingSystemItemService : BaseService<OperatingSystemItem>, IOpe
         return query
             .AsNoTracking()
             .AsSplitQuery()
-            .Select(t => new Models.OperatingSystemItemListModel(t))
+            .Select(t => new OperatingSystemItemListModel(t))
             .ToArray();
     }
     #endregion

@@ -1,6 +1,6 @@
 using HSB.Entities;
-using HSB.Models;
 using HSB.Models.Filters;
+using HSB.Models.Lists;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace HSB.DAL.Services;

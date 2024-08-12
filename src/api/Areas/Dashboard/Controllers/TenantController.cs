@@ -8,12 +8,13 @@ using HSB.Core.Models;
 using HSB.DAL.Services;
 using HSB.Keycloak;
 using HSB.Keycloak.Extensions;
-using HSB.Models;
 
 using Swashbuckle.AspNetCore.Annotations;
 using Microsoft.Extensions.Caching.Memory;
+using HSB.Models.Dashboard;
+using HSB.Models.Lists;
 
-namespace HSB.API.Areas.Hsb.Controllers;
+namespace HSB.API.Areas.Dashboard.Controllers;
 
 /// <summary>
 /// TenantController class, provides endpoints for tenants.
@@ -28,7 +29,6 @@ namespace HSB.API.Areas.Hsb.Controllers;
 public class TenantController : ControllerBase
 {
     #region Variables
-    private readonly ILogger _logger;
     private readonly ITenantService _tenantService;
     private readonly IAuthorizationHelper _authorization;
     private readonly IMemoryCache _memoryCache;
@@ -43,17 +43,14 @@ public class TenantController : ControllerBase
     /// <param name="tenantService"></param>
     /// <param name="memoryCache"></param>
     /// <param name="authorization"></param>
-    /// <param name="logger"></param>
     public TenantController(
         ITenantService tenantService,
         IMemoryCache memoryCache,
-        IAuthorizationHelper authorization,
-        ILogger<TenantController> logger)
+        IAuthorizationHelper authorization)
     {
         _tenantService = tenantService;
         _memoryCache = memoryCache;
         _authorization = authorization;
-        _logger = logger;
     }
     #endregion
 
@@ -65,8 +62,7 @@ public class TenantController : ControllerBase
     [HttpGet(Name = "GetTenants-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<TenantModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Tenant" })]
-    // [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
+    [SwaggerOperation(Tags = ["Tenant"])]
     public IActionResult Find()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -108,8 +104,7 @@ public class TenantController : ControllerBase
     [HttpGet("list", Name = "GetTenantLists-Dashboard")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<TenantListModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Tenant" })]
-    // [ResponseCache(VaryByQueryKeys = new[] { "*" }, Location = ResponseCacheLocation.Client, Duration = 60)]
+    [SwaggerOperation(Tags = ["Tenant"])]
     public IActionResult FindList()
     {
         var uri = new Uri(this.Request.GetDisplayUrl());
@@ -151,7 +146,7 @@ public class TenantController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(TenantModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "Tenant" })]
+    [SwaggerOperation(Tags = ["Tenant"])]
     public IActionResult GetForId(int id)
     {
         var isHSB = this.User.HasClientRole(ClientRole.HSB);

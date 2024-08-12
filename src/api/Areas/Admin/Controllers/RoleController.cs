@@ -60,7 +60,7 @@ public class RoleController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Get the role for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -79,7 +79,7 @@ public class RoleController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Add a new role to the database.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -97,7 +97,7 @@ public class RoleController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Update the role specified.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -115,7 +115,7 @@ public class RoleController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Delete the role specified.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>

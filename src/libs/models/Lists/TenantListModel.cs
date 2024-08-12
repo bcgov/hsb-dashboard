@@ -1,6 +1,6 @@
 ﻿using HSB.Entities;
 
-namespace HSB.Models;
+namespace HSB.Models.Lists;
 public class TenantListModel : SortableCodeAuditableModel<int>
 {
     #region Properties

@@ -60,7 +60,7 @@ public class TenantController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Get the tenant for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -79,7 +79,7 @@ public class TenantController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Add a new tenant to the database.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -100,7 +100,7 @@ public class TenantController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Update the tenant specified.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -123,7 +123,7 @@ public class TenantController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Delete the tenant specified.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>

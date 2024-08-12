@@ -41,13 +41,13 @@ public class TenantController : ControllerBase
 
     #region Endpoints
     /// <summary>
-    ///
+    /// Get all tenants.
     /// </summary>
     /// <returns></returns>
     [HttpGet(Name = "FindTenants-Services")]
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(IEnumerable<TenantModel>), (int)HttpStatusCode.OK)]
-    [SwaggerOperation(Tags = new[] { "Tenant" })]
+    [SwaggerOperation(Tags = ["Tenant"])]
     public IActionResult Find()
     {
         var tenants = _service.Find(o => true);
@@ -55,7 +55,7 @@ public class TenantController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Get the tenant for the specified 'id'.
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -63,7 +63,7 @@ public class TenantController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(TenantModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.NoContent)]
-    [SwaggerOperation(Tags = new[] { "Tenant" })]
+    [SwaggerOperation(Tags = ["Tenant"])]
     public IActionResult GetForId(int id)
     {
         var tenant = _service.FindForId(id);
@@ -74,7 +74,7 @@ public class TenantController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Add the provided tenant to the database.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -82,7 +82,7 @@ public class TenantController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(TenantModel), (int)HttpStatusCode.Created)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Tenant" })]
+    [SwaggerOperation(Tags = ["Tenant"])]
     public IActionResult Add(TenantModel model)
     {
         var entity = model.ToEntity();
@@ -92,7 +92,7 @@ public class TenantController : ControllerBase
     }
 
     /// <summary>
-    ///
+    /// Update the provided tenant in the database.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -100,7 +100,7 @@ public class TenantController : ControllerBase
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(typeof(TenantModel), (int)HttpStatusCode.OK)]
     [ProducesResponseType(typeof(ErrorResponseModel), (int)HttpStatusCode.BadRequest)]
-    [SwaggerOperation(Tags = new[] { "Tenant" })]
+    [SwaggerOperation(Tags = ["Tenant"])]
     public IActionResult Update(TenantModel model)
     {
         var entity = model.ToEntity();
