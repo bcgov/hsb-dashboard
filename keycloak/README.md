@@ -35,6 +35,8 @@ docker exec -it {ContainerID} bash
 
 ```bash
 $ docker exec -it hsb-keycloak bash
+
+# Old jboss image
 $ /opt/jboss/keycloak/bin/standalone.sh \
   -Dkeycloak.migration.action=export \
   -Dkeycloak.migration.provider=singleFile \
@@ -45,6 +47,10 @@ $ /opt/jboss/keycloak/bin/standalone.sh \
   -Djboss.http.port=8888 \
   -Djboss.https.port=9999 \
   -Djboss.management.http.port=7777
+
+  # New Keycloak image
+/opt/keycloak/bin/kc.sh \
+  export --file /opt/keycloak/data/import/realm-export.json --realm hsb
 ```
 
 ## Import Realm
@@ -54,6 +60,8 @@ To import a previously exported realm configuration execute the following comman
 
 ```bash
 $ docker exec -it hsb-keycloak bash
+
+# Old jboss image
 $ /opt/jboss/keycloak/bin/standalone.sh \
   -Djboss.socket.binding.port-offset=100 \
   -Dkeycloak.migration.action=import \
@@ -61,11 +69,16 @@ $ /opt/jboss/keycloak/bin/standalone.sh \
   -Dkeycloak.profile.feature.upload_scripts=enabled \
   -Dkeycloak.migration.provider=singleFile \
   -Dkeycloak.migration.file=/tmp/realm-export.json
+
+# New Keycloak image
+/opt/keycloak/bin/kc.sh \
+  import --file /opt/keycloak/data/import/realm-export.json
 ```
 
 or
 
 ```bash
+# Old jboss image
 $ docker run -e KEYCLOAK_USER=<USERNAME> -e KEYCLOAK_PASSWORD=<PASSWORD> \
     -e KEYCLOAK_IMPORT=/tmp/example-realm.json -v /tmp/example-realm.json:/tmp/example-realm.json jboss/keycloak
 ```
