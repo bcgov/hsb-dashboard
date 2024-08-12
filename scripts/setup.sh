@@ -103,19 +103,16 @@ gen_keycloak_env () {
   else
     echo \
 "PROXY_ADDRESS_FORWARDING=true
-KEYCLOAK_USER=$keycloakUser
-KEYCLOAK_PASSWORD=$keycloakPassword
-KEYCLOAK_IMPORT='/tmp/realm-export.json -Dkeycloak.profile.feature.scripts=enabled -Dkeycloak.profile.feature.upload_scripts=enabled'
 KEYCLOAK_LOGLEVEL=WARN
 ROOT_LOGLEVEL=WARN
 
-DB_VENDOR=POSTGRES
-DB_ADDR=database
-DB_PORT=5432
-DB_SCHEMA=public
-DB_DATABASE=keycloak
-DB_USER=$dbUser
-DB_PASSWORD=$dbPassword" >> ./keycloak/.env
+KC_DB=postgres
+KC_DB_URL=jdbc:postgresql://database/keycloak
+KC_DB_USERNAME=$dbUser
+KC_DB_PASSWORD=$dbPassword
+KC_HOSTNAME=localhost
+KEYCLOAK_ADMIN=$keycloakUser
+KEYCLOAK_ADMIN_PASSWORD=$keycloakPassword" >> ./keycloak/.env
     echo "./keycloak/.env created"
   fi
 }
@@ -153,7 +150,7 @@ DB_PASSWORD=$dbPassword
 
 # Authentication
 Keycloak__RequireHttpsMetadata=false
-Keycloak__Authority=http://$dockerHost:$portKeycloakHttp/auth/realms/hsb
+Keycloak__Authority=http://$dockerHost:$portKeycloakHttp/realms/hsb
 Keycloak__Audience=hsb-app,hsb-service-account
 Keycloak__Issuer=hsb-app,hsb-service-account
 Keycloak__Secret={GET FROM KEYCLOAK}
@@ -166,7 +163,7 @@ CSS__Secret={GET FROM CSS}
 ###################################
 # Common Single Sign-On
 ###################################
-# Keycloak__Authority=https://dev.loginproxy.gov.bc.ca/auth/realms/standard
+# Keycloak__Authority=https://dev.loginproxy.gov.bc.ca/realms/standard
 # Keycloak__Audience={GET FROM CSS}
 # Keycloak__Issuer={GET FROM CSS}
 # Keycloak__Secret={GET FROM CSS}
@@ -199,7 +196,7 @@ gen_app_env () {
 "KEYCLOAK_DEBUG=true
 KEYCLOAK_CLIENT_ID=hsb-app
 KEYCLOAK_SECRET={GET FROM KEYCLOAK}
-KEYCLOAK_ISSUER=http://host.docker.internal:$portKeycloakHttp/auth/realms/hsb
+KEYCLOAK_ISSUER=http://host.docker.internal:$portKeycloakHttp/realms/hsb
 KEYCLOAK_END_SESSION_PATH=/protocol/openid-connect/logout
 KEYCLOAK_TOKEN_URL=/protocol/openid-connect/token
 
@@ -247,7 +244,7 @@ ServiceNow__Password={GET FROM SERVICE NOW}
 Service__ApiUrl=http://host.docker.internal:$portApiHttp
 
 Keycloak__RequireHttpsMetadata=false
-Keycloak__Authority=http://host.docker.internal:$portKeycloakHttp/auth/realms/hsb
+Keycloak__Authority=http://host.docker.internal:$portKeycloakHttp/realms/hsb
 Keycloak__Audience=hsb-app
 Keycloak__Issuer=hsb-app
 Keycloak__Secret={GET FROM KEYCLOAK}

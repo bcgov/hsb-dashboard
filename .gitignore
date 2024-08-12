@@ -6,8 +6,8 @@ bash.exe.stackdump
 *.param
 .scannerwork/
 .sonarqube/
-auth/keycloak/config/hsperfdata_jboss/
-auth/keycloak/config/*.log
+keycloak/config/hsperfdata_jboss/
+keycloak/config/*.log
 ~
 
 
