@@ -38,6 +38,10 @@ If it installed correctly you can run `node -v` and it will display the correct 
 Execute the following command to initialize your local environment and start the required Docker containers.
 
 > If you run into errors with a Mac it is most likely a script needs execute permission.
+>
+> You will also need to install coreutils and gnu-getopt using [Homebrew](https://brew.sh):
+>
+> brew install coreutils gnu-getopt
 
 ```bash
 # Generate .env files.
