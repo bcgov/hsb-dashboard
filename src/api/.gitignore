@@ -27,7 +27,6 @@ TestResults/
 *.user
 *.userosscache
 *.sln.docstates
-api.sln
 
 # Build results
 **/[Dd]ebug/
