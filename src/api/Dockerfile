@@ -1,5 +1,5 @@
 ARG ASPNETCORE_ENVIRONMENT=Release
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-bookworm-slim-amd64 AS base
 
 RUN apt-get update && apt-get -y upgrade
 RUN apt-get -y install curl libc6-dev libgdiplus
@@ -17,7 +17,7 @@ WORKDIR /src/api
 COPY src/api/ .
 COPY src/libs/ /src/libs/
 
-RUN dotnet restore
+RUN dotnet restore "HSB.API.csproj"
 RUN dotnet publish "HSB.API.csproj" -c "$ASPNETCORE_ENVIRONMENT" -o /app/publish
 
 # Runtime image

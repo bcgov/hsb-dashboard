@@ -2,7 +2,15 @@
 
 . ./scripts/os.sh
 
-export dockerHost=host.docker.internal
+# On Mac, use localhost instead of host.docker.internal
+
+if [ "$(uname)" == "Darwin" ]; then
+    export dockerHost=localhost
+else
+    export dockerHost=host.docker.internal
+fi
+
+
 
 #######################################################
 # Database Variables
