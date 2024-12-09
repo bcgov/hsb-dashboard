@@ -15,7 +15,7 @@ metadata:
     created-by: jeremy.foster
 data:
   API_URL: http://api:8080
-  ENVIRONMENT: "DEV"
+  ENVIRONMENT: 'DEV'
 ---
 kind: ConfigMap
 apiVersion: v1
@@ -35,6 +35,6 @@ data:
   AUTH_URL: https://loginproxy.gov.bc.ca/auth/realms/comsvcauth/protocol/openid-connect/token
   HOST_URI: https://ches.api.gov.bc.ca/api/v1
   FROM: Hosting Service Dashboard <hsb@gov.bc.ca>
-  TO: jeremy.foster@fosol.ca,michael.tessier@gov.bc.ca
-  EMAIL_ENABLED: "true"
-  EMAIL_AUTHORIZED: "true"
+  TO: frank@plotandscatter.com,michael.tessier@gov.bc.ca
+  EMAIL_ENABLED: 'true'
+  EMAIL_AUTHORIZED: 'true'

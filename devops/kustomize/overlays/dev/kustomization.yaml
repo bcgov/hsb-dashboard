@@ -52,7 +52,7 @@ patches:
         value: (DEV) Hosting Service Dashboard <hsb@gov.bc.ca>
       - op: replace
         path: /data/TO
-        value: jeremy.foster@fosol.ca
+        value: frank@plotandscatter.com
   - target:
       kind: ConfigMap
       name: dashboard
