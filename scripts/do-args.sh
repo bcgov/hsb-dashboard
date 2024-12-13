@@ -4,6 +4,14 @@
 # PIPESTATUS with a simple $?, but I don’t do that.
 set -o errexit -o pipefail -o noclobber -o nounset
 
+# Check for Mac OS first, and use gnu-getopt if so. The built-in getopt is not
+# the same as the GNU version, and it does not support long options.
+if [ "$(uname)" == "Darwin" ]; then
+    echo 'Note: Mac OS X detected. Using gnu-getopt. If you do not have this' \
+      'installed, run `brew install gnu-getopt`.'
+    export PATH="$(brew --prefix gnu-getopt)/bin:$PATH"
+fi
+
 # -allow a command to fail with !’s side effect on errexit
 # -use return value from ${PIPESTATUS[0]}, because ! hosed $?
 ! getopt --test > /dev/null

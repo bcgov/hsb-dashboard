@@ -40,7 +40,7 @@ patches:
         value: Hosting Service Dashboard <hsb@gov.bc.ca>
       - op: replace
         path: /data/TO
-        value: jeremy.foster@fosol.ca,michael.tessier@gov.bc.ca
+        value: frank@plotandscatter.com,michael.tessier@gov.bc.ca
       - op: replace
         path: /data/ENVIRONMENT
         value: TEST

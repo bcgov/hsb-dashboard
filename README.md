@@ -19,7 +19,9 @@ bash do help
 
 ## Get Started Developing
 
-Currently you'll need to install the following.
+### Prerequisites
+
+You'll need to install the following.
 
 | Dependency                                                                | Link                                                               |
 | ------------------------------------------------------------------------- | ------------------------------------------------------------------ |
@@ -35,19 +37,92 @@ Run `nvm install 20.8.1` to install the version of Node required for this projec
 Once it is installed run `nvm use 20.8.w1`.
 If it installed correctly you can run `node -v` and it will display the correct version.
 
-Execute the following command to initialize your local environment and start the required Docker containers.
+#### Mac requirements
 
-> If you run into errors with a Mac it is most likely a script needs execute permission.
+You will need to install `coreutils`, `gnu-getopt`, and `gsed` using [Homebrew](https://brew.sh):
+
+> brew install coreutils gnu-getopt gsed
+
+If you run into other errors during the steps below, it is most likely a script needs execute permission.
+
+### Container initialization
+
+Execute the following command to initialize your local environment.
 
 ```bash
+# Generate a local Keycloak admin username and password.
 # Generate .env files.
 # Start the database and run the migration.
 # Spin up all other required containers.
-# This process will ask you to input usernames and passwords.
+#
 bash do init
 ```
 
-The default configuration will initialize the database and run the web application.
+The script will initialize the database and various Docker containers.
+
+### Update .env files and restart environment
+
+For the app to be fully functional, we will need to update the values of some `.env` file secrets.
+
+#### Obtain the local Keycloak Client Secret
+
+1. With the application running (check in Docker), navigate to the local Keycloak admin interface: [http://localhost:30001](http://localhost:30001).
+2. Enter the username and password you created for the local Keycloak admin in the previous step.
+3. From the dropdown (select) menu in the upper-right (currently showing "Keycloak"), choose "Host Services Branch Dashboard".
+4. From the sidebar on the left, click Clients.
+5. In the table, click `hsb-app`.
+6. Click the Credentials tab.
+7. In the Client Secret section of the page, click the clipboard icon to copy the Client Secret to your clipboard. This is the **Client Secret**. Take note of it, because it will be entered in several places below. (In the examples below, we will use the pretend key `Abc123`.)
+
+#### Update API env file
+
+In `/src/api/.env`:
+
+Update the line `Keycloak__Secret={GET FROM KEYCLOAK}` with the **Client Secret**, e.g.
+
+```bash
+Keycloak__Secret=Abc123
+```
+
+#### Update API-CSS env file
+
+In `/src/api-css/.env`, update two lines with `hsb-app` and the **Client Secret** respectively:
+
+```bash
+Keycloak__ClientId=hsb-app
+Keycloak__Secret=Abc123
+```
+
+#### Update Dashboard env file
+
+In `/src/dashboard/.env`:
+
+Update the line `KEYCLOAK_SECRET={GET FROM KEYCLOAK}` with the **Client Secret**, e.g.:
+
+```bash
+KEYCLOAK_SECRET=Abc123
+```
+
+Note that you can also **uncomment** the following lines to skip Keycloak authentication altogether:
+
+```bash
+# NEXT_PUBLIC_AUTH_STATUS=authenticated
+# NEXT_PUBLIC_AUTH_ROLES=hsb
+```
+
+This should only be done for development purposes when testing authentication is not necessary.
+
+#### Restart environment
+
+The following command will rebuild the Docker containers to pick up all the `.env` file changes you've made above:
+
+```bash
+bash do up
+```
+
+### Run the web application
+
+Now we can start the web application:
 
 ```bash
 # Open the web application in your default browser
@@ -55,6 +130,16 @@ bash do go
 ```
 
 The Dashboard web application is setup for hot-reload within a Docker container.
+
+## Tips
+
+### Find all .env files
+
+When recreating the environment, .env files are left behind by default. But this can cause issues when attempting a fresh install. To find .env files:
+
+```bash
+find . -name '*.env'
+```
 
 ## Helpful Documentation
 
@@ -86,6 +171,13 @@ There are a few other helpful database migration commands that can help with dev
 | db-drop      | Drops the database                                          |
 | db-refresh   | Drops the database and runs all the migrations              |
 | db-redo      | Rollback and reapply the migration                          |
+
+If you get an error on a Mac with an M chip, try running:
+
+```bash
+dotnet tool uninstall dotnet-ef --global
+dotnet tool install dotnet-ef --global -a arm64
+```
 
 ### CI/CD Pipelines
 

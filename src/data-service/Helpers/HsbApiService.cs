@@ -74,6 +74,8 @@ public class HsbApiService : IHsbApiService
     {
         try
         {
+            this.Logger.LogError("HsbSendAsync {uri} {method}", uri, method);
+
             var response = await this.ApiClient.SendAsync(uri, method, content);
             response.EnsureSuccessStatusCode();
 

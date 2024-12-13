@@ -155,6 +155,8 @@ public class CssHelper : ICssHelper
             }
 
             // Fetch the roles for the user
+            _logger.LogDebug("User activation: Fetching roles for user: {key}", key);
+
             var userRoles = await _cssService.GetRolesForUserAsync(key.ToString());
             if (userRoles.Users.Length > 1) throw new NotAuthorizedException($"Keycloak has multiple users with the same username '{key}'");
             if (user == null)

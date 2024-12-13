@@ -16,6 +16,8 @@ nuke:                                                                 Teardown w
 ssh:            {service}                                             SSH into docker container
 go:                                                                   Open a browser and view app
 
+data-service:                                                         Run the data service
+
 npm-install:                                                          Install latest npm packages locally.
 
 tool-update:                                                          Updates the dotnet tool (default ef)
