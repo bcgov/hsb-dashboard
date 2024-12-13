@@ -292,10 +292,6 @@ oc-run () {
                     }
                   }
                 },
-                # {
-                #   \"name\":\"Service__Actions__0\",
-                #   \"value\": \"clean-organizations\"
-                # },
                 {
                   \"name\":\"Service__SendSuccessEmail\",
                   \"value\": \"true\"

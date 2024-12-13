@@ -26,7 +26,7 @@ gen_env () {
   if [[ -z "$dbPassword" ]]
   then
       # Generate a random password that satisfies password requirements.
-      echo 'A password is randomly being generated.'
+      echo 'A random database password is being generated.'
       dbPassword=$(date +%s | sha256sum | base64 | head -c 29)A8!
       echo "Your generated password is: $dbPassword"
       export dbPassword
@@ -34,14 +34,14 @@ gen_env () {
 
   if [[ -z "$keycloakUser" ]]
   then
-      echo 'Enter a username for keycloak.'
+      echo 'Enter an admin username for your local Keycloak installation:'
       read -p 'Username: ' keycloakUser
       export keycloakUser
   fi
 
   if [[ -z "$keycloakPassword" ]]
   then
-      echo 'Enter a password for the keycloak user $keycloakUser.'
+      echo "Enter a password for the local Keycloak user \"$keycloakUser\":"
       read -p 'Password: ' keycloakPassword
       export keycloakPassword
   fi

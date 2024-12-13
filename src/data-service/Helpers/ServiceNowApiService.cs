@@ -54,6 +54,9 @@ public class ServiceNowApiService : IServiceNowApiService
         this.Logger = logger;
 
         var authenticationString = $"{this.Options.Username}:{this.Options.Password}";
+
+        this.Logger.LogDebug("**** Service Now - Authenticating with {username}", this.Options.Username);
+
         var base64EncodedAuthenticationString = Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(authenticationString));
         this.SNClient.Client.BaseAddress = new Uri($"{this.Options.ApiUrl.Replace("{instance}", this.Options.Instance)}");
         this.SNClient.Client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", base64EncodedAuthenticationString);
@@ -72,6 +75,8 @@ public class ServiceNowApiService : IServiceNowApiService
     {
         try
         {
+            this.Logger.LogError("ServiceNowSendAsync {uri} {method}", uri, method);
+
             var response = await this.SNClient.SendAsync(uri, method);
 
             // Treat a 404 like a 204 because so many API developers do this...  It's annoying because it results in the same error if the endpoint doesn't exist.
@@ -104,6 +109,8 @@ public class ServiceNowApiService : IServiceNowApiService
     {
         try
         {
+            this.Logger.LogError("ServiceNowArraySendAsync {uri} {method}", uri, method);
+
             var response = await this.SNClient.SendAsync(uri, method);
             response.EnsureSuccessStatusCode();
 
