@@ -75,7 +75,7 @@ public class ServiceNowApiService : IServiceNowApiService
     {
         try
         {
-            this.Logger.LogError("ServiceNowSendAsync {uri} {method}", uri, method);
+            this.Logger.LogDebug("ServiceNowSendAsync {uri} {method}", uri, method);
 
             var response = await this.SNClient.SendAsync(uri, method);
 
@@ -109,7 +109,7 @@ public class ServiceNowApiService : IServiceNowApiService
     {
         try
         {
-            this.Logger.LogError("ServiceNowArraySendAsync {uri} {method}", uri, method);
+            this.Logger.LogDebug("ServiceNowArraySendAsync {uri} {method}", uri, method);
 
             var response = await this.SNClient.SendAsync(uri, method);
             response.EnsureSuccessStatusCode();
