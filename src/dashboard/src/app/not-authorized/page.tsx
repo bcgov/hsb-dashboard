@@ -7,7 +7,10 @@ export default function Page() {
     <div className={`dashboardContainer ${styles.container}`}>
       <div className={styles.welcome}>
         <h1>Not Authorized</h1>
-        <p>Your account is not authorized to access the Storage Dashboard.</p>
+        <p>
+          Your account is not authorized to access the Storage Dashboard, or your roles are not
+          correctly set up.
+        </p>
       </div>
       <div className={styles.login}>
         <div>
