@@ -48,8 +48,8 @@ elif [ "$action" = "tool-update" ]; then
   tool-update $s
 elif [ "$action" = "db-migration" ]; then
   db-migration $s
-elif [ "$action" = "db-migrations" ]; then
-  db-migrations $s
+elif [ "$action" = "db-list" ]; then
+  db-list $s
 elif [ "$action" = "db-add" ]; then
   db-add $s
 elif [ "$action" = "db-update" ]; then

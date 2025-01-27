@@ -29,7 +29,7 @@ db-migration () {
   cd ../../
 }
 
-db-migrations () {
+db-list () {
   change-dir
   dotnet ef migrations list
   change-dir
