@@ -138,20 +138,22 @@ export default function Page() {
 
   return (
     <Sheet>
-      <UserDialog
-        ref={dialogRef}
-        user={dialog?.user}
-        variant={dialog?.variant}
-        onChange={(data) =>
-          setFormUsers((formUsers) =>
-            formUsers.map((u) => (u.id === data.id ? { ...data, isDirty: true } : u)),
-          )
-        }
-        onSave={async () => {
-          dialogRef.current?.close();
-          await handleUpdate();
-        }}
-      />
+      {dialog && (
+        <UserDialog
+          ref={dialogRef}
+          user={dialog.user}
+          variant={dialog.variant}
+          onChange={(data) =>
+            setFormUsers((formUsers) =>
+              formUsers.map((u) => (u.id === data.id ? { ...data, isDirty: true } : u)),
+            )
+          }
+          onSave={async () => {
+            dialogRef.current?.close();
+            await handleUpdate();
+          }}
+        />
+      )}
       <div className={styles.container}>
         {loading && <LoadingAnimation />}
         <div className={styles.section}>

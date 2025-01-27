@@ -128,21 +128,23 @@ export default function Page() {
 
   return (
     <Sheet>
-      <UserDialog
-        ref={dialogRef}
-        user={dialog?.user}
-        variant={dialog?.variant}
-        cancelLabel="Close"
-        onChange={(data) =>
-          setFormUsers((formUsers) =>
-            formUsers.map((u) => (u.key === data.key ? { ...data, isDirty: true } : u)),
-          )
-        }
-        onSave={async () => {
-          dialogRef.current?.close();
-          await handleUpdate();
-        }}
-      />
+      {dialog && (
+        <UserDialog
+          ref={dialogRef}
+          user={dialog.user}
+          variant={dialog.variant}
+          cancelLabel="Close"
+          onChange={(data) =>
+            setFormUsers((formUsers) =>
+              formUsers.map((u) => (u.key === data.key ? { ...data, isDirty: true } : u)),
+            )
+          }
+          onSave={async () => {
+            dialogRef.current?.close();
+            await handleUpdate();
+          }}
+        />
+      )}
       <div className={styles.container}>
         {loading && <LoadingAnimation />}
         <div className={styles.section}>
@@ -178,6 +180,7 @@ export default function Page() {
               }))}
             header={
               <>
+                <div></div>
                 <div>Username</div>
                 <div>Email</div>
                 <div>Name</div>
@@ -214,14 +217,14 @@ export default function Page() {
                   <EditUserRow
                     index={index}
                     values={data}
+                    errors={errors[data.key]}
+                    setErrors={setErrors}
                     onChange={(values) => {
                       setFormUsers((users) =>
                         users.map((u, i) => (u.id === values.id ? values : u)),
                       );
                     }}
-                    onEditGroups={(values) => handleEditClick(values, 'group')}
-                    onEditOrganizations={(values) => handleEditClick(values, 'organization')}
-                    onEditTenants={(values) => handleEditClick(values, 'tenant')}
+                    handleEditClick={handleEditClick}
                   />
                 );
               }
