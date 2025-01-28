@@ -30,9 +30,12 @@ export const useApiServerItems = () => {
         );
       },
       history: async (filter: IServerHistoryItemFilter | undefined = {}): Promise<Response> => {
-        return await dispatch(`/api/dashboard/server-items/history?${toQueryString(filter)}`, {
-          cache: 'no-store',
-        });
+        return await dispatch(
+          `/api/dashboard/server-items/history-compact?${toQueryString(filter)}`,
+          {
+            cache: 'no-store', // TODO: Investigate this. Why not cache?
+          },
+        );
       },
       download: async (
         filter: IServerItemFilter | undefined = {},
