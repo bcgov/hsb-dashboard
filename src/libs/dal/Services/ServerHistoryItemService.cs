@@ -114,6 +114,28 @@ public class ServerHistoryItemService : BaseService<ServerHistoryItem>, IServerH
         return items;
     }
 
+    public IEnumerable<CompactServerHistoryItem> FindCompactHistoryByMonth(DateTime start, DateTime? end, int? tenantId, int? organizationId, int? operatingSystemId, string? serviceKeyNow)
+    {
+        var items = this.Context.FindServerHistoryItemsByMonth(start.ToUniversalTime(), end?.ToUniversalTime(), tenantId, organizationId, operatingSystemId, serviceKeyNow)
+            .Select(shi => new CompactServerHistoryItem
+            {
+                Id = shi.Id,
+                Name = shi.Name,
+                ServiceNowKey = shi.ServiceNowKey,
+                TenantId = shi.TenantId,
+                OrganizationId = shi.OrganizationId,
+                Capacity = shi.Capacity,
+                AvailableSpace = shi.AvailableSpace,
+                OperatingSystemItemId = shi.OperatingSystemItemId,
+                CreatedOn = shi.CreatedOn,
+                UpdatedOn = shi.UpdatedOn
+            })
+            .AsNoTracking()
+            .ToArray();
+
+        return items;
+    }
+
     public IEnumerable<ServerHistoryItem> FindHistoryByMonthForUser(int userId, DateTime start, DateTime? end, int? tenantId, int? organizationId, int? operatingSystemId, string? serviceKeyNow, bool includeRelated = false)
     {
         var items = this.Context.FindServerHistoryItemsByMonthForUser(userId, start.ToUniversalTime(), end?.ToUniversalTime(), tenantId, organizationId, operatingSystemId, serviceKeyNow)

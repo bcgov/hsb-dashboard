@@ -209,6 +209,38 @@ public class ServerItemController : ControllerBase
     }
 
     /// <summary>
+    /// Find all compacthistory for the specified query string parameter filter.
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet("history-compact", Name = "GetCompactServerHistoryItems-Dashboard")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(typeof(IEnumerable<CompactServerHistoryItemModel>), (int)HttpStatusCode.OK)]
+    [SwaggerOperation(Tags = ["Server Item"])]
+    public IActionResult FindCompactHistory()
+    {
+        var uri = new Uri(this.Request.GetDisplayUrl());
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        var filter = new HSB.Models.Filters.ServerHistoryItemFilter(query);
+
+        var isHSB = this.User.HasClientRole(ClientRole.HSB);
+        if (isHSB)
+        {
+            var result = _serverHistoryItemService.FindCompactHistoryByMonth(filter.StartDate ?? DateTime.UtcNow.AddYears(-1), filter.EndDate, filter.TenantId, filter.OrganizationId, filter.OperatingSystemItemId, filter.ServiceNowKey);
+            return new JsonResult(result.Select(si => new CompactServerHistoryItemModel(si)));
+        }
+        else
+        {
+            // Only return server items this user has access to.
+            var user = _authorization.GetUser();
+            if (user == null) return Forbid();
+
+            // TODO: Return compact history here too?
+            var result = _serverHistoryItemService.FindHistoryByMonthForUser(user.Id, filter.StartDate ?? DateTime.UtcNow.AddYears(-1), filter.EndDate, filter.TenantId, filter.OrganizationId, filter.OperatingSystemItemId, filter.ServiceNowKey);
+            return new JsonResult(result.Select(si => new ServerHistoryItemModel(si)));
+        }
+    }
+
+    /// <summary>
     /// Export the server items to Excel.
     /// </summary>
     /// <param name="format"></param>
