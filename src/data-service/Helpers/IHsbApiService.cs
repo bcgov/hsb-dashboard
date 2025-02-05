@@ -175,5 +175,13 @@ public interface IHsbApiService
     /// <param name="model"></param>
     /// <returns></returns>
     Task<FileSystemItemModel?> DeleteFileSystemItemAsync(FileSystemItemModel model);
+
+    #region Refresh Materialized Views
+    /// <summary>
+    /// Refreshes materialized views in HSB.
+    /// </summary>
+    /// <returns></returns>
+    Task RefreshMaterializedViewsAsync();
+    #endregion
     #endregion
 }

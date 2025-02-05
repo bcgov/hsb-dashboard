@@ -471,5 +471,21 @@ public class HsbApiService : IHsbApiService
         return results;
     }
     #endregion
+
+    #region Refresh Materialized Views
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public async Task RefreshMaterializedViewsAsync()
+    {
+        this.Logger.LogDebug("HSB - Refresh materialized views");
+        var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
+        {
+            Path = this.Options.Endpoints.RefreshMaterializedViews
+        };
+        await HsbSendAsync<object>(HttpMethod.Post, builder.Uri);
+    }
+    #endregion
     #endregion
 }

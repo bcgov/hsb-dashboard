@@ -50,5 +50,10 @@ public class HsbApiEndpointOptions
     /// get/set -
     /// </summary>
     public string FileSystemHistoryItems { get; set; } = "/v1/services/file-system-items/history";
+
+    /// <summary>
+    /// get/set -
+    /// </summary>
+    public string RefreshMaterializedViews { get; set; } = "/v1/services/refresh-materialized-views";
     #endregion
 }
