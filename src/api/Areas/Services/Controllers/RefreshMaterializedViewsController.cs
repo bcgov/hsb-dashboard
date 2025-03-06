@@ -12,7 +12,7 @@ using HSB.API.Models.Health;
 namespace HSB.API.Areas.Services.Controllers;
 
 /// <summary>
-/// ServerItemController class, provides endpoints for server-items.
+/// RefreshMaterializedViewsController class, provides endpoints for refreshing materialized views.
 /// </summary>
 [ClientRoleAuthorize(ClientRole.ServiceNow)]
 [ApiController]
@@ -45,7 +45,7 @@ public class RefreshMaterializedViewsController : ControllerBase
 
     #region Endpoints
     /// <summary>
-    /// Get all the server items for the specified query filter.
+    /// Refresh all materialized views.
     /// </summary>
     /// <returns></returns>
     [HttpPost(Name = "RefreshAllMaterializedViews-Services")]
