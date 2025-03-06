@@ -11,5 +11,7 @@ public interface IServerHistoryItemService : IBaseService<ServerHistoryItem>
 
     IEnumerable<ServerHistoryItem> FindHistoryByMonth(DateTime start, DateTime? end, int? tenantId, int? organizationId, int? operatingSystemId, string? serviceKeyNow, bool includeRelated = false);
 
+    IEnumerable<CompactServerHistoryItem> FindCompactHistoryByMonth(DateTime start, DateTime? end, int? tenantId, int? organizationId, int? operatingSystemId, string? serviceKeyNow);
+
     IEnumerable<ServerHistoryItem> FindHistoryByMonthForUser(int userId, DateTime start, DateTime? end, int? tenantId, int? organizationId, int? operatingSystemId, string? serviceKeyNow, bool includeRelated = false);
 }

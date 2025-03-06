@@ -4,10 +4,10 @@ MNAME=$1;
 FILE1=./Migrations/$(basename ./Migrations/*_$MNAME.cs);
 echo "Updating migration '$FILE1'";
 
-# Check for Mac OS first, and use gsed if so. The built-in getopt is not
+# Check for macOS first, and use gsed if so. The built-in getopt is not
 # the same as the GNU version, and it does not support long options.
 if [ "$(uname)" == "Darwin" ]; then
-    echo 'Note: Mac OS X detected. Using gsed. If you do not have this' \
+    echo 'Note: macOS detected. Using gsed. If you do not have this' \
       'installed, run `brew install gsed`.'
     SED_CMD=gsed
 else

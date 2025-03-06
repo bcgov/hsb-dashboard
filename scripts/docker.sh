@@ -17,7 +17,8 @@ docker_build () {
   docker-compose\
     -f docker-compose.yaml\
     --profile $profile\
-    build --no-cache --force-rm $s
+    build --force-rm $s
+    # Original: build --no-cache --force-rm $s
 }
 
 # Stop the specified docker service, or all of them.

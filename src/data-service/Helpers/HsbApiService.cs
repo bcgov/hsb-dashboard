@@ -74,7 +74,7 @@ public class HsbApiService : IHsbApiService
     {
         try
         {
-            this.Logger.LogError("HsbSendAsync {uri} {method}", uri, method);
+            this.Logger.LogDebug("HsbSendAsync {uri} {method}", uri, method);
 
             var response = await this.ApiClient.SendAsync(uri, method, content);
             response.EnsureSuccessStatusCode();
@@ -469,6 +469,22 @@ public class HsbApiService : IHsbApiService
         };
         var results = await HsbSendAsync<FileSystemItemModel>(HttpMethod.Delete, builder.Uri, JsonContent.Create(model));
         return results;
+    }
+    #endregion
+
+    #region Refresh Materialized Views
+    /// <summary>
+    ///
+    /// </summary>
+    /// <returns></returns>
+    public async Task RefreshMaterializedViewsAsync()
+    {
+        this.Logger.LogDebug("HSB - Refresh materialized views");
+        var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
+        {
+            Path = this.Options.Endpoints.RefreshMaterializedViews
+        };
+        await HsbSendAsync<object>(HttpMethod.Post, builder.Uri);
     }
     #endregion
     #endregion

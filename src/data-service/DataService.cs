@@ -145,6 +145,11 @@ public class DataService : IDataService
                 await OrganizationCleanupProcessAsync();
             }
 
+            if (this.Options.Actions.Length == 0 || this.Options.Actions.Contains("refresh-materialized-views"))
+            {
+              await RefreshMaterializedViews();
+            }
+
             this.Logger.LogInformation("Data Sync Service Completed");
 
             if (this.Options.SendSuccessEmail)
@@ -156,6 +161,15 @@ public class DataService : IDataService
             if (this.Options.SendFailureEmail)
                 await SendEmail("HSD Data Service - Failure", $"<div><h1>Error</h1><p>The Data Service failed to run.</p><p>{ex.Message}</p></div>");
         }
+    }
+
+    /// <summary>
+    /// Refreshes materialized views in HSB.
+    /// </summary>
+    /// <returns></returns>
+    private async Task RefreshMaterializedViews()
+    {
+        await this.HsbApi.RefreshMaterializedViewsAsync();
     }
 
     /// <summary>
@@ -921,4 +935,3 @@ public class DataService : IDataService
     }
     #endregion
 }
-
