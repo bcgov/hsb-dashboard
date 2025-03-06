@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION "FindServerHistoryItemsByMonthForUser"(
   , "operatingSystemItemId" INT DEFAULT NULL
   , "serviceNowKey" VARCHAR(200) DEFAULT NULL
 )
-RETURNS SETOF public."mvServerHistoryItemsByMonth"
+RETURNS SETOF public."ServerHistoryItem"
 LANGUAGE plpgsql
 AS $$
 DECLARE
