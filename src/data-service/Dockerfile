@@ -1,6 +1,6 @@
 ARG ASPNETCORE_ENVIRONMENT=Release
-# FROM mcr.microsoft.com/dotnet/aspnet:8.0-bookworm-slim-amd64 AS base
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-bookworm-slim-amd64 AS base
+# FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 
 RUN apt-get update && apt-get -y upgrade
 RUN apt -y install curl libc6-dev libgdiplus
