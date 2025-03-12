@@ -76,6 +76,17 @@ public class ServerItem : Auditable
     /// get - All server item history.
     /// </summary>
     public List<ServerHistoryItem> History { get; } = new List<ServerHistoryItem>();
+
+    /// <summary>
+    /// get - Indicates if this server is a virtual server. True if virtual, false if physical,
+    /// null if unknown.
+    /// </summary>
+    public bool? IsVirtual
+    {
+        get {
+          return this.RawData.GetElementValue<bool>(".virtual");
+        }
+    }
     #endregion
 
     #region Constructors
@@ -85,7 +96,7 @@ public class ServerItem : Auditable
         : this(tenant?.Id ?? 0, organization.Id, operatingSystemItem?.Id, serverData, configurationData)
     {
         this.Tenant = tenant;
-        this.Tenant = tenant;
+        this.Organization = organization;
         this.OperatingSystemItem = operatingSystemItem;
     }
 
@@ -111,4 +122,6 @@ public class ServerItem : Auditable
         this.DiskSpace = serverData.GetElementValue<float?>(".disk_space");
     }
     #endregion
+
+
 }

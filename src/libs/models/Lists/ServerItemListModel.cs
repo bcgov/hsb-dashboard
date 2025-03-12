@@ -34,6 +34,11 @@ public class ServerItemListModel
     public float? Capacity { get; set; }
     public float? AvailableSpace { get; set; }
     #endregion
+
+    #region ServiceNow RawData-based Properties
+    public bool? IsVirtual { get; set; }
+    #endregion
+
     #endregion
 
     #region Constructors
@@ -59,6 +64,8 @@ public class ServerItemListModel
 
         this.Capacity = entity.Capacity;
         this.AvailableSpace = entity.AvailableSpace;
+
+        this.IsVirtual = entity.IsVirtual;
     }
 
     public ServerItemListModel(
