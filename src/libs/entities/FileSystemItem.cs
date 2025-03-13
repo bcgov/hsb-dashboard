@@ -58,17 +58,19 @@ public class FileSystemItem : Auditable
                 if (this.StorageType != "") {
                     if (isVirtual) {
                         // a. If virtual, StorageType of logical → SAN, otherwise it’s Non-SAN
-                        return this.StorageType == "network";
+                        return this.StorageType == "logical";
                     } else {
                         // b. If physical, StorageType of network → SAN, otherwise it's Non-SAN
-                        return this.StorageType == "logical";
+                        return this.StorageType == "network";
                     }
                 }
             }
             // Otherwise, we will do a best guess using the VolumeId. If the VolumeId containing
             // “C:” (or similar) OR containing “*root*” → Non-SAN, otherwise it’s SAN
-            // TODO: Widen this a bit. e.g. make it case-insensitive.
-            return this.VolumeId.Contains("C:") || this.VolumeId.Contains("root");
+            return !(
+              this.VolumeId.StartsWith("C", StringComparison.OrdinalIgnoreCase) ||
+              this.VolumeId.Contains("root", StringComparison.OrdinalIgnoreCase)
+            );
         }
     }
     #endregion
