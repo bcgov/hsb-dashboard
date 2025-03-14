@@ -4,11 +4,7 @@ import { usePathname } from 'next/navigation';
 export const Message = () => {
   const path = usePathname();
   const userInfo = useAppStore((state) => state.userinfo);
-  const {
-    organization,
-    operatingSystemItem,
-    serverItem,
-  } = useDashboardStore((state) => ({
+  const { organization, operatingSystemItem, serverItem } = useDashboardStore((state) => ({
     organization: state.organization,
     operatingSystemItem: state.operatingSystemItem,
     serverItem: state.serverItem,
@@ -31,13 +27,22 @@ export const Message = () => {
     }
 
     if (serverItem) {
-      var os = operatingSystemItems.find(
-        (os) => os.id === serverItem?.operatingSystemItemId,
-      );
+      var os = operatingSystemItems.find((os) => os.id === serverItem?.operatingSystemItemId);
       return (
         <p>
           Showing results for: {serverItem.name}
           {os ? `: ${os.name}` : ''}
+          {/* TODO: Move this elsewhere. And add an icon. */}
+          <span
+            style={{
+              marginLeft: '10px',
+              border: '1px solid #ccc',
+              padding: '2px 5px',
+              borderRadius: '4px',
+            }}
+          >
+            {serverItem.isVirtual ? 'Virtual' : 'Physical'}
+          </span>
         </p>
       );
     }
@@ -45,8 +50,7 @@ export const Message = () => {
     if (!!organization && !!operatingSystemItem)
       return (
         <p>
-          Showing results for: {organization.name}, all {operatingSystemItem.name}{' '}
-          servers. <br />
+          Showing results for: {organization.name}, all {operatingSystemItem.name} servers. <br />
           Use the filters to see further breakdowns of storage data.
         </p>
       );
