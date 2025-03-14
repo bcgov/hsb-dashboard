@@ -65,11 +65,13 @@ public class FileSystemItem : Auditable
                     }
                 }
             }
-            // Otherwise, we will do a best guess using the VolumeId. If the VolumeId containing
-            // “C:” (or similar) OR containing “*root*” → Non-SAN, otherwise it’s SAN
+            // Otherwise, we will do a best guess using the Name. If the Name contains
+            // “C:” (or similar) OR contains “*root*” → Non-SAN, otherwise it’s SAN.
+            // Note that sometimes VolumeId and Name will be the same, but sometimes they won't.
+            // For instance, the Name might be "C" but the VolumeId is "29f412b8-...".
             return !(
-              this.VolumeId.StartsWith("C", StringComparison.OrdinalIgnoreCase) ||
-              this.VolumeId.Contains("root", StringComparison.OrdinalIgnoreCase)
+              this.Name.StartsWith("C", StringComparison.OrdinalIgnoreCase) ||
+              this.Name.Contains("root", StringComparison.OrdinalIgnoreCase)
             );
         }
     }

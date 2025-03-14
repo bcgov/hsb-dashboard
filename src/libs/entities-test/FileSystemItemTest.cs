@@ -31,11 +31,11 @@ namespace HSB.Entities.Tests
       };
     }
 
-    private FileSystemItem GetFileSystemItemWithVolumeId(string volumeId)
+    private FileSystemItem GetFileSystemItemWithName(string name)
     {
       return new FileSystemItem("abc", JsonDocument.Parse("{}"), JsonDocument.Parse("{}"))
       {
-        VolumeId = volumeId
+        Name = name
       };
     }
 
@@ -88,7 +88,27 @@ namespace HSB.Entities.Tests
     public void IsSAN_ShouldReturnFalse_WhenVolumeIdStartsWithCapitalC()
     {
       // Arrange
-      var fileSystemItem = GetFileSystemItemWithVolumeId("C:\\");
+      var fileSystemItem = GetFileSystemItemWithName("C:\\");
+
+      // Assert
+      Assert.False(fileSystemItem.IsSAN);
+    }
+
+    [Fact]
+    public void IsSAN_ShouldReturnFalse_WhenVolumeIdIsCapitalC()
+    {
+      // Arrange
+      var fileSystemItem = GetFileSystemItemWithName("C");
+
+      // Assert
+      Assert.False(fileSystemItem.IsSAN);
+    }
+
+    [Fact]
+    public void IsSAN_ShouldReturnFalse_WhenVolumeIdIsSmallC()
+    {
+      // Arrange
+      var fileSystemItem = GetFileSystemItemWithName("c");
 
       // Assert
       Assert.False(fileSystemItem.IsSAN);
@@ -98,7 +118,7 @@ namespace HSB.Entities.Tests
     public void IsSAN_ShouldReturnFalse_WhenVolumeIdContainsRoot()
     {
       // Arrange
-      var fileSystemItem = GetFileSystemItemWithVolumeId("root");
+      var fileSystemItem = GetFileSystemItemWithName("root");
 
       // Assert
       Assert.False(fileSystemItem.IsSAN);
@@ -108,7 +128,7 @@ namespace HSB.Entities.Tests
     public void IsSAN_ShouldReturnTrue_WhenVolumeIdDoesNotStartWithCOrContainRoot()
     {
       // Arrange
-      var fileSystemItem = GetFileSystemItemWithVolumeId("D:\\");
+      var fileSystemItem = GetFileSystemItemWithName("D:\\");
 
       // Assert
       Assert.True(fileSystemItem.IsSAN);
