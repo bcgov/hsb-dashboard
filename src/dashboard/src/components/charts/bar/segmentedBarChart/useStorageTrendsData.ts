@@ -72,7 +72,7 @@ export const useStorageTrendsData = (): ((
       // Extract the history for each mapped volume / drive.
       const volumeHistory = groupBy<IFileSystemHistoryItemModel, IVolumeData>(
         history,
-        (item) => item.serviceNowKey,
+        (item) => item.name,
         (item) => ({
           serviceNowKey: item.serviceNowKey,
           name: item.name,
@@ -81,10 +81,13 @@ export const useStorageTrendsData = (): ((
           createdOn: item.createdOn,
         }),
       );
+      console.log('volumeHistory', volumeHistory);
+
       // Take the last item in each sub-array, it should be the most recent entry.
       const volumes = Object.values(volumeHistory)
         .map((item) => item[item.length - 1])
         .sort((a, b) => (a.capacity < b.capacity ? 1 : a.capacity > b.capacity ? -1 : 0));
+      console.log('volumes', volumes);
 
       // If there is more than the max, we actually only show one less than the max.
       // We do this because we need space to provide a placeholder informing the user of additional volumes.
@@ -115,7 +118,7 @@ export const useStorageTrendsData = (): ((
             // There should only ever be one record per volume for each month.
             // We use the last record in the array for each month.
             const groupData = groups.map((group) => {
-              const items = group.items.filter((i) => i.serviceNowKey === volume.serviceNowKey);
+              const items = group.items.filter((i) => i.name === volume.name);
               const capacity = convertToStorageSize<number>(
                 items.length ? items[items.length - 1].capacity : 0,
                 'B',

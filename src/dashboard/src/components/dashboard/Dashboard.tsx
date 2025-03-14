@@ -32,6 +32,8 @@ import { useDashboardStore, useFilteredStore } from '@/store';
 import React from 'react';
 import { toast } from 'react-toastify';
 import { useDashboardFilter } from '.';
+import { VolumeHistorySmallMultiplesBar } from '../charts/bar/segmentedBarChart/VolumeHistorySmallMultiplesBar';
+import { VolumeHistoryLine } from '../charts/bar/segmentedBarChart/VolumeHistoryLine';
 
 /**
  * Dashboard component displays different charts depending on what data has been stored in the dashboard state.
@@ -278,7 +280,11 @@ export const Dashboard = () => {
       )}
       {/* One Server Selected */}
       {showAllocationByVolume && (
-        <AllocationByVolume fileSystemItems={fileSystemItems} loading={fileSystemItemsIsLoading} />
+        <AllocationByVolume
+          dashboardServerItem={dashboardServerItem}
+          fileSystemItems={fileSystemItems}
+          loading={fileSystemItemsIsLoading}
+        />
       )}
       {/* Multiple Organizations */}
       {showAllOrganizations && (
@@ -413,7 +419,13 @@ export const Dashboard = () => {
         />
       )}
       {showSegmentedBarChart && (
-        <SegmentedBarChart serverItem={dashboardServerItem} loading={!isReadyServerItems} />
+        <>
+          <VolumeHistoryLine serverItem={dashboardServerItem} loading={!isReadyServerItems} />
+          {/* <VolumeHistorySmallMultiplesBar
+            serverItem={dashboardServerItem}
+            loading={!isReadyServerItems}
+          /> */}
+        </>
       )}
     </>
   );

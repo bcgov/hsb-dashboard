@@ -1,12 +1,21 @@
 'use client';
 
-import { Button, DateRangePicker } from '@/components';
-import { Bar } from 'react-chartjs-2';
-import styles from './SegmentedBarChart.module.scss';
+import { Button, DateRangePicker, LineChart } from '@/components';
+import { Line } from 'react-chartjs-2';
+import styles from './VolumeHistorySmallMultiples.module.scss';
 
 import { IServerItemListModel } from '@/hooks';
 import { useStorageTrendsStore } from '@/store';
-import { BarElement, CategoryScale, Chart as ChartJS, Legend, Title, Tooltip } from 'chart.js';
+import {
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  LineElement,
+  Title,
+  Tooltip,
+} from 'chart.js';
 import moment from 'moment';
 import React from 'react';
 import { toast } from 'react-toastify';
@@ -17,9 +26,9 @@ import { useStorageTrendsData } from './useStorageTrendsData';
 import { extractVolumeName } from './utils';
 import { join } from 'path';
 
-ChartJS.register(CategoryScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend);
 
-export interface ISegmentedBarChart {
+export interface IVolumeHistoryLine {
   serverItem?: IServerItemListModel;
   maxVolumes?: number;
   loading?: boolean;
@@ -30,16 +39,16 @@ export interface ISegmentedBarChart {
   onExport?: () => void;
 }
 
-export const SegmentedBarChart = ({
+export const VolumeHistoryLine = ({
   serverItem,
-  maxVolumes = 10,
+  maxVolumes = 100,
   loading,
   dateRange: initDateRange,
-  minColumns = 12,
+  minColumns = 10,
   showExport,
   exportDisabled,
   onExport,
-}: ISegmentedBarChart) => {
+}: IVolumeHistoryLine) => {
   const getStorageTrends = useStorageTrendsData();
   const dateRange = useStorageTrendsStore((state) => state.dateRangeFileSystemHistoryItems);
   const setDateRange = useStorageTrendsStore((state) => state.setDateRangeFileSystemHistoryItems);
@@ -64,6 +73,36 @@ export const SegmentedBarChart = ({
 
   const data = getStorageTrends(1, maxVolumes, dateRange);
 
+  data.datasets = data.datasets.filter((d) => !d.label?.startsWith('Unused'));
+
+  const colors = [
+    ['#4D7194', '#86BAEF'],
+    ['#E9B84E', '#FFD57B'],
+    ['#A9A9A9', '#D7D7D7'],
+  ].flat();
+  // .flatMap((c) => c[1]);
+
+  const borderDash = [
+    [0, 0],
+    [5, 5],
+    [10, 10],
+    [15, 15],
+    [20, 20],
+  ];
+
+  data.datasets = data.datasets
+    .sort((a, b) => (a.label || '').localeCompare(b.label || ''))
+    .map((d, i) => ({
+      ...d,
+      borderColor: colors[i % colors.length],
+      backgroundColor: colors[i % colors.length],
+      fill: false,
+      borderWidth: 3,
+      borderDash: borderDash[Math.floor(i / colors.length) % borderDash.length],
+    }));
+
+  // Get unique datasets by name
+
   console.log('data', data);
 
   React.useEffect(() => {
@@ -82,35 +121,6 @@ export const SegmentedBarChart = ({
     // Values array will cause infinite loop, we're only interested in the values.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [findFileSystemHistoryItems, serverItem, values[0], values[1]]);
-
-  const CustomLegend = React.useMemo(
-    () => (
-      <div className={styles.customLegend}>
-        {data.datasets
-          .filter((_, i) => i % 2 === 0)
-          .map((dataset, index) => (
-            <div key={index} className={styles.legend}>
-              <div className={styles.legendColors}>
-                <span style={{ backgroundColor: `${dataset.backgroundColor}` }} />
-                <span
-                  style={{ backgroundColor: `${data.datasets[index * 2 + 1].backgroundColor}` }}
-                />
-              </div>
-              <div className={styles.legendLabel}>
-                <p>{extractVolumeName((dataset as any).name)}</p>
-                <p>{(dataset as any).capacity}</p>
-              </div>
-            </div>
-          ))}
-        {data.volumes.length * 2 > data.datasets.length && (
-          <div>
-            <div className={styles.legendColors}>{data.volumes.length} volumes</div>
-          </div>
-        )}
-      </div>
-    ),
-    [data.datasets, data.volumes.length],
-  );
 
   return (
     <div className={styles.panel}>
@@ -136,9 +146,8 @@ export const SegmentedBarChart = ({
           }}
         />
       </div>
-      {CustomLegend}
-      <div className={styles.chartContainer}>
-        <Bar data={data} options={defaultOptions} />
+      <div>
+        <LineChart data={data as any} large />
       </div>
       {showExport && (
         <Button
