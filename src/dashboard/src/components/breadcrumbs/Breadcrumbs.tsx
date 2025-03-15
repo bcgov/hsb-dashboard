@@ -43,7 +43,6 @@ export const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ multipleOrganizations 
           </div>
         )}
       </div>
-      <div style={{ width: '60px', marginBottom: '20px' }}>Toggle switch</div>
     </div>
   );
 };
