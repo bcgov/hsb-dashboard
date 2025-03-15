@@ -1,13 +1,11 @@
 'use client';
 
 import { Button, DateRangePicker, LineChart } from '@/components';
-import { Line } from 'react-chartjs-2';
 import styles from './VolumeHistorySmallMultiples.module.scss';
 
 import { IServerItemListModel } from '@/hooks';
 import { useStorageTrendsStore } from '@/store';
 import {
-  BarElement,
   CategoryScale,
   Chart as ChartJS,
   Legend,
@@ -20,11 +18,8 @@ import moment from 'moment';
 import React from 'react';
 import { toast } from 'react-toastify';
 import { LoadingAnimation } from '../../../loadingAnimation';
-import { defaultOptions } from './defaultOptions';
 import { useFileSystemHistoryItems } from './hooks';
 import { useStorageTrendsData } from './useStorageTrendsData';
-import { extractVolumeName } from './utils';
-import { join } from 'path';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
 
@@ -104,8 +99,6 @@ export const VolumeHistoryLine = ({
 
   // Get unique datasets by name
 
-  console.log('data', data);
-
   React.useEffect(() => {
     if (serverItem) {
       // A single server was selected, fetch the history for this server.
@@ -148,6 +141,7 @@ export const VolumeHistoryLine = ({
         />
       </div>
       <div>
+        {/* TODO: Make this chart taller. */}
         <LineChart data={data as any} large>
           <div
             style={{ marginTop: '16px', fontSize: '14px', color: '#595959', textAlign: 'center' }}
