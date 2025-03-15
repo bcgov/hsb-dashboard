@@ -25,6 +25,8 @@ import { useFileSystemHistoryItems } from './hooks';
 import { useStorageTrendsData } from './useStorageTrendsData';
 import { extractVolumeName } from './utils';
 import { join } from 'path';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
 
 ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend);
 
@@ -80,7 +82,6 @@ export const VolumeHistoryLine = ({
     ['#E9B84E', '#FFD57B'],
     ['#A9A9A9', '#D7D7D7'],
   ].flat();
-  // .flatMap((c) => c[1]);
 
   const borderDash = [
     [0, 0],
@@ -147,7 +148,14 @@ export const VolumeHistoryLine = ({
         />
       </div>
       <div>
-        <LineChart data={data as any} large />
+        <LineChart data={data as any} large>
+          <div
+            style={{ marginTop: '16px', fontSize: '14px', color: '#595959', textAlign: 'center' }}
+          >
+            <FontAwesomeIcon icon={faLightbulb} style={{ color: '#FCBA19', marginRight: '4px' }} />{' '}
+            Tip: You can click the drive name to hide / show that drive in the chart.
+          </div>
+        </LineChart>
       </div>
       {showExport && (
         <Button
