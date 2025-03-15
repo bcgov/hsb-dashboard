@@ -1,5 +1,6 @@
 import { useAppStore, useDashboardStore } from '@/store';
 import { usePathname } from 'next/navigation';
+import ServerTypeBadge from '../badges/serverType/ServerTypeBadge';
 
 export const Message = () => {
   const path = usePathname();
@@ -22,6 +23,7 @@ export const Message = () => {
       return (
         <p>
           Showing results for: {organization.name}, {serverItem.name}
+          <ServerTypeBadge {...serverItem} />
         </p>
       );
     }
@@ -32,17 +34,7 @@ export const Message = () => {
         <p>
           Showing results for: {serverItem.name}
           {os ? `: ${os.name}` : ''}
-          {/* TODO: Move this elsewhere. And add an icon. */}
-          <span
-            style={{
-              marginLeft: '10px',
-              border: '1px solid #ccc',
-              padding: '2px 5px',
-              borderRadius: '4px',
-            }}
-          >
-            {serverItem.isVirtual ? 'Virtual' : 'Physical'}
-          </span>
+          <ServerTypeBadge {...serverItem} />
         </p>
       );
     }
