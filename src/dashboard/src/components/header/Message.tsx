@@ -1,14 +1,11 @@
 import { useAppStore, useDashboardStore } from '@/store';
 import { usePathname } from 'next/navigation';
+import ServerTypeBadge from '../badges/serverType/ServerTypeBadge';
 
 export const Message = () => {
   const path = usePathname();
   const userInfo = useAppStore((state) => state.userinfo);
-  const {
-    organization,
-    operatingSystemItem,
-    serverItem,
-  } = useDashboardStore((state) => ({
+  const { organization, operatingSystemItem, serverItem } = useDashboardStore((state) => ({
     organization: state.organization,
     operatingSystemItem: state.operatingSystemItem,
     serverItem: state.serverItem,
@@ -26,18 +23,18 @@ export const Message = () => {
       return (
         <p>
           Showing results for: {organization.name}, {serverItem.name}
+          <ServerTypeBadge {...serverItem} />
         </p>
       );
     }
 
     if (serverItem) {
-      var os = operatingSystemItems.find(
-        (os) => os.id === serverItem?.operatingSystemItemId,
-      );
+      var os = operatingSystemItems.find((os) => os.id === serverItem?.operatingSystemItemId);
       return (
         <p>
           Showing results for: {serverItem.name}
           {os ? `: ${os.name}` : ''}
+          <ServerTypeBadge {...serverItem} />
         </p>
       );
     }
@@ -45,8 +42,7 @@ export const Message = () => {
     if (!!organization && !!operatingSystemItem)
       return (
         <p>
-          Showing results for: {organization.name}, all {operatingSystemItem.name}{' '}
-          servers. <br />
+          Showing results for: {organization.name}, all {operatingSystemItem.name} servers. <br />
           Use the filters to see further breakdowns of storage data.
         </p>
       );
