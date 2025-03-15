@@ -3,6 +3,7 @@ import { convertToStorageSize } from './../../../../utils/convertToStorageSize';
 import { IBarChartRowData } from './IBarChartRowData';
 import styles from './SmallBarChart.module.scss';
 import { IFileSystemItemModel, IServerItemModel } from '@/hooks';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface IBarRowProps extends Omit<IBarChartRowData<unknown>, 'label'> {
   label: React.ReactNode;
@@ -14,7 +15,7 @@ interface IBarRowProps extends Omit<IBarChartRowData<unknown>, 'label'> {
  * @returns Component
  */
 export const BarRow: React.FC<IBarRowProps> = (props) => {
-  const { label, capacity, available } = props;
+  const { label, capacity, available, data } = props;
 
   const used = capacity - available;
   const percentageUsed = capacity ? Math.round((used / capacity) * 100) : 0;
@@ -22,42 +23,81 @@ export const BarRow: React.FC<IBarRowProps> = (props) => {
   const usedValue = convertToStorageSize(used, 'B', 'TB');
   const availableValue = convertToStorageSize(available, 'B', 'TB');
 
-  const showDiskType = (props.data as IFileSystemItemModel)?.isSAN !== undefined;
+  const showDiskType = (data as IFileSystemItemModel)?.isSAN !== undefined;
 
-  const diskType = showDiskType
-    ? (props.data as IFileSystemItemModel)?.isSAN
-      ? 'SAN'
-      : 'Non-SAN'
-    : '';
+  const diskType = showDiskType ? ((data as IFileSystemItemModel)?.isSAN ? 'SAN' : 'Non-SAN') : '';
+
+  console.log('data', data);
 
   return (
     <div className={styles.row}>
-      <div className={styles.info}>
-        <p style={{ display: 'flex', alignItems: 'center' }}>
+      <div
+        className={styles.info}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingRight: '20px',
+          flexGrow: 1,
+          width: '65%',
+          minWidth: '65%',
+        }}
+      >
+        <p
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            fontSize: '14px !important',
+            flexGrow: 1,
+            maxWidth: '300px',
+            minWidth: '100px',
+          }}
+        >
           {showDiskType && (
-            <span className={diskType === 'SAN' ? styles.badgeYellow : styles.badge}>
+            <span
+              style={{ minWidth: '50px', textAlign: 'center' }}
+              className={diskType === 'SAN' ? styles.badgeYellow : styles.badge}
+            >
               {diskType}
             </span>
           )}
-          {label}{' '}
-          <div
-            style={{
-              fontSize: '12px',
-              marginLeft: '10px',
-              border: 'solid 1px #999',
-              borderRadius: '4px',
-              padding: '1px 3px',
-              color: '#999',
-            }}
-          >
-            {props.data?.storageType}
-          </div>
+          {label}
         </p>
-        <p>{capacityValue}</p>
-        <p>{usedValue}</p>
-        <p>{availableValue}</p>
+        <p
+          style={{
+            fontSize: '14px',
+            whiteSpace: 'nowrap',
+            minWidth: '80px',
+            textAlign: 'right',
+            flexShrink: 0,
+          }}
+        >
+          {capacityValue}
+        </p>
+        <p
+          style={{
+            fontSize: '14px',
+            whiteSpace: 'nowrap',
+            minWidth: '80px',
+            textAlign: 'right',
+            flexShrink: 0,
+          }}
+        >
+          {usedValue}
+        </p>
+        <p
+          style={{
+            fontSize: '14px',
+            whiteSpace: 'nowrap',
+            minWidth: '80px',
+            textAlign: 'right',
+            flexShrink: 0,
+          }}
+        >
+          {availableValue}
+        </p>
       </div>
-      <div className={styles.barChart}>
+      <div className={styles.barChart} style={{ width: '35%', minWidth: '35%', flexShrink: 0 }}>
         <div className={styles.bar}>
           {/* Applying width as an inline style */}
           <div className={styles.percentage} style={{ width: `${percentageUsed}%` }} />

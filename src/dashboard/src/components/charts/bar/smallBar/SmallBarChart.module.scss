@@ -86,22 +86,21 @@
 }
 
 .info {
-  width: 65%;
-  max-width: 65%;
+  // width: 65%;
 
-  p {
-    width: 21%;
-    display: flex;
+  // p {
+  //   width: 21%;
+  //   display: flex;
 
-    &:first-child {
-      width: 50%;
-      margin-left: 10px;
-    }
+  //   &:first-child {
+  //     width: 50%;
+  //     margin-left: 10px;
+  //   }
 
-    &:last-child {
-      width: unset;
-    }
-  }
+  //   &:last-child {
+  //     width: unset;
+  //   }
+  // }
 
   a {
     width: 38%;
@@ -117,8 +116,7 @@
 }
 
 .barChart {
-  width: 35%;
-  max-width: 35%;
+  // flex-grow: 1;
 }
 
 .bar {
@@ -162,6 +160,7 @@
   line-height: 1.8;
   flex-grow: 0;
   max-height: fit-content;
+  white-space: nowrap;
 }
 
 .badgeYellow {
@@ -174,4 +173,5 @@
   line-height: 1.8;
   flex-grow: 0;
   max-height: fit-content;
+  white-space: nowrap;
 }
