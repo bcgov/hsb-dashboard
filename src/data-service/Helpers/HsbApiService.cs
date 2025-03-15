@@ -479,7 +479,7 @@ public class HsbApiService : IHsbApiService
     /// <returns></returns>
     public async Task RefreshMaterializedViewsAsync()
     {
-        this.Logger.LogDebug("HSB - Refresh materialized views");
+        this.Logger.LogInformation("HSB - Refresh materialized views");
         var builder = new UriBuilder($"{this.ApiClient.Client.BaseAddress}")
         {
             Path = this.Options.Endpoints.RefreshMaterializedViews
