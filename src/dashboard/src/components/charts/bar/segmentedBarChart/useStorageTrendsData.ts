@@ -68,6 +68,7 @@ export const useStorageTrendsData = (): ((
         const values: IFileSystemHistoryItemModel[] = (items as any)[group.key] ?? [];
         group.items = values;
       });
+      console.log('groups', groups);
 
       // Extract the history for each mapped volume / drive.
       const volumeHistory = groupBy<IFileSystemHistoryItemModel, IVolumeData>(
@@ -82,6 +83,32 @@ export const useStorageTrendsData = (): ((
         }),
       );
       console.log('volumeHistory', volumeHistory);
+
+      // TODO: Look into the aptly-named 'abnormality' server... the server history vs. the
+      // file system item graphs are very different.
+
+      // In some cases, drives have had their key change, even if they're the same drive (judged by
+      // their name). This might give us two entries for the same month. We need to find the most
+      // recent of these entries, and discard the other.
+      Object.keys(volumeHistory).forEach((key) => {
+        const items = volumeHistory[key];
+
+        // First, sort the items by createdOn date.
+        if (items.length > 1) {
+          const sorted = items.sort((a, b) => (a.createdOn > b.createdOn ? 1 : -1));
+          volumeHistory[key] = sorted;
+        }
+
+        // Next, remove any duplicates based on the year-month of the createdOn date. First, we
+        // map by year-month, then we take the last item in each sub-array.
+        const mapped = groupBy<IVolumeData, IVolumeData>(
+          items,
+          (item) => moment(item.createdOn).format('YYYY-MM'),
+          (item) => item,
+        );
+        volumeHistory[key] = Object.values(mapped).map((item) => item[item.length - 1]);
+      });
+      console.log('sortedVolumeHistory', volumeHistory);
 
       // Take the last item in each sub-array, it should be the most recent entry.
       const volumes = Object.values(volumeHistory)
@@ -144,9 +171,14 @@ export const useStorageTrendsData = (): ((
             // The second dataset is an array of unused space grouped by month.
             return [
               {
-                label: `Used ${volume.name} (${convertToStorageSize(volume.capacity, 'B', 'GB', {
-                  formula: (value) => Number(value.toFixed(1)),
-                })})`,
+                label: `Used ${volume.name} (Capacity: ${convertToStorageSize(
+                  volume.capacity,
+                  'B',
+                  'GB',
+                  {
+                    formula: (value) => Number(value.toFixed(1)),
+                  },
+                )})`,
                 name: volume.name,
                 capacity: convertToStorageSize(volume.capacity, 'B', 'GB', {
                   formula: (value) => Number(value.toFixed(1)),
