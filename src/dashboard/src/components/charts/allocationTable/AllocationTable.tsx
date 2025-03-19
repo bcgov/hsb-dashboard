@@ -14,6 +14,8 @@ import { ITableRowData } from './ITableRowData';
 import { TableRow } from './TableRow';
 import { useAllocationByOS } from './hooks';
 import { getColumns, getLabel } from './utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSquare, faUpLong } from '@fortawesome/free-solid-svg-icons';
 export interface IAllocationTableProps {
   /** Filter servers by their OS */
   osClassName?: string;
@@ -147,19 +149,41 @@ export const AllocationTable = ({
           variant={'secondary'}
           onClick={() => {
             setShowAbsolute(false);
-            setSort('available:asc');
+            setSort('available:desc');
           }}
+          style={{ display: 'flex', alignItems: 'center' }}
         >
-          Show most-used servers
+          <div
+            style={{
+              marginRight: '10px',
+              width: '20px',
+              height: '10px',
+              border: 'solid black 1px',
+              borderLeft: 'solid black 3px',
+              borderRadius: '3px',
+            }}
+          ></div>{' '}
+          Show least-used servers
         </Button>
         <Button
           variant={'secondary'}
           onClick={() => {
             setShowAbsolute(false);
-            setSort('available:desc');
+            setSort('available:asc');
           }}
+          style={{ display: 'flex', alignItems: 'center' }}
         >
-          Show least-used servers
+          <div
+            style={{
+              marginRight: '10px',
+              width: '20px',
+              height: '10px',
+              border: 'solid black 1px',
+              borderLeft: 'solid black 15px',
+              borderRadius: '3px',
+            }}
+          ></div>{' '}
+          Show most-used servers
         </Button>
       </div>
       <h2>
@@ -193,8 +217,8 @@ export const AllocationTable = ({
             Apply
           </Button>
         </div>
-        <Button onClick={() => setShowAbsolute(!showAbsolute)}>
-          Show {showAbsolute ? 'Proportional' : 'Absolute'} Usage
+        <Button variant="secondary" onClick={() => setShowAbsolute(!showAbsolute)}>
+          {showAbsolute ? 'Show Proportional Usage' : 'Show Absolute Usage'}
         </Button>
       </div>
       <div className={classNames(styles.tableContainer, { [styles.hasTenant]: showTenants })}>
