@@ -39,6 +39,10 @@ export interface IDashboardStoreState {
   setFileSystemItemsReady: (value?: boolean) => void;
   fileSystemItems: IFileSystemItemModel[];
   setFileSystemItems: (values: IFileSystemItemModel[]) => void;
+
+  // System Settings (e.g. only showing SAN storage)
+  onlyShowSAN: boolean;
+  setOnlyShowSAN: (value: boolean) => void;
 }
 
 export const useDashboardStore = create<IDashboardStoreState>((set) => ({
@@ -69,4 +73,8 @@ export const useDashboardStore = create<IDashboardStoreState>((set) => ({
   setFileSystemItemsReady: (value) => set((state) => ({ fileSystemItemsReady: value })),
   fileSystemItems: [],
   setFileSystemItems: (values) => set((state) => ({ fileSystemItems: values })),
+
+  // System Settings
+  onlyShowSAN: false,
+  setOnlyShowSAN: (value) => set((state) => ({ onlyShowSAN: value })),
 }));

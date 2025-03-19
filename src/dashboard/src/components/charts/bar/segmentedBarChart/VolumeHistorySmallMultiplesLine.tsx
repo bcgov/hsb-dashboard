@@ -2,7 +2,7 @@
 
 import { Button, DateRangePicker } from '@/components';
 import { Bar } from 'react-chartjs-2';
-import styles from './SegmentedBarChart.module.scss';
+import styles from './VolumeHistorySmallMultiples.module.scss';
 
 import { IServerItemListModel } from '@/hooks';
 import { useStorageTrendsStore } from '@/store';
@@ -19,7 +19,7 @@ import { join } from 'path';
 
 ChartJS.register(CategoryScale, BarElement, Title, Tooltip, Legend);
 
-export interface ISegmentedBarChart {
+export interface IVolumeHistorySmallMultiples {
   serverItem?: IServerItemListModel;
   maxVolumes?: number;
   loading?: boolean;
@@ -30,7 +30,7 @@ export interface ISegmentedBarChart {
   onExport?: () => void;
 }
 
-export const SegmentedBarChart = ({
+export const VolumeHistorySmallMultiples = ({
   serverItem,
   maxVolumes = 10,
   loading,
@@ -39,7 +39,7 @@ export const SegmentedBarChart = ({
   showExport,
   exportDisabled,
   onExport,
-}: ISegmentedBarChart) => {
+}: IVolumeHistorySmallMultiples) => {
   const getStorageTrends = useStorageTrendsData();
   const dateRange = useStorageTrendsStore((state) => state.dateRangeFileSystemHistoryItems);
   const setDateRange = useStorageTrendsStore((state) => state.setDateRangeFileSystemHistoryItems);
@@ -83,35 +83,6 @@ export const SegmentedBarChart = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [findFileSystemHistoryItems, serverItem, values[0], values[1]]);
 
-  const CustomLegend = React.useMemo(
-    () => (
-      <div className={styles.customLegend}>
-        {data.datasets
-          .filter((_, i) => i % 2 === 0)
-          .map((dataset, index) => (
-            <div key={index} className={styles.legend}>
-              <div className={styles.legendColors}>
-                <span style={{ backgroundColor: `${dataset.backgroundColor}` }} />
-                <span
-                  style={{ backgroundColor: `${data.datasets[index * 2 + 1].backgroundColor}` }}
-                />
-              </div>
-              <div className={styles.legendLabel}>
-                <p>{extractVolumeName((dataset as any).name)}</p>
-                <p>{(dataset as any).capacity}</p>
-              </div>
-            </div>
-          ))}
-        {data.volumes.length * 2 > data.datasets.length && (
-          <div>
-            <div className={styles.legendColors}>{data.volumes.length} volumes</div>
-          </div>
-        )}
-      </div>
-    ),
-    [data.datasets, data.volumes.length],
-  );
-
   return (
     <div className={styles.panel}>
       {(loading || !fileSystemHistoryItemsIsReady) && <LoadingAnimation />}
@@ -136,9 +107,54 @@ export const SegmentedBarChart = ({
           }}
         />
       </div>
-      {CustomLegend}
       <div className={styles.chartContainer}>
-        <Bar data={data} options={defaultOptions} />
+        {data.volumes.sort().map((volume) => {
+          const dataToShow = (data.datasets as any[]).filter(
+            (dataset) => dataset.name === volume.name,
+          );
+          return (
+            <div
+              key={volume.serviceNowKey}
+              style={{
+                marginTop: '10px',
+                width: '100%',
+                borderLeft: '5px solid #eee',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <div style={{ width: '300px' }}>
+                <span style={{ fontWeight: 'bold' }}>{volume.name}</span>
+                <br />
+                {volume.capacity}
+              </div>
+              {/* <pre>{JSON.stringify(dataToShow, null, 2)}</pre> */}
+              <div style={{ display: 'flex', padding: '5px' }}>
+                {data.labels?.map((label, index) => {
+                  const usedAmount = dataToShow[index]?.usedAmount ?? 0;
+                  return (
+                    <div style={{ fontWeight: '600', borderRight: 'solid 1px white' }} key={label}>
+                      <div style={{ padding: '5px' }}>
+                        <span style={{ fontWeight: 'bold' }}>{label}</span>
+                        <br />
+                      </div>
+                      <div
+                        style={{
+                          height: `${100}px`,
+                          backgroundColor: '#003366',
+                        }}
+                      >
+                        <div
+                          style={{ height: `${Math.random() * 100}%`, backgroundColor: '#eee' }}
+                        ></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
       </div>
       {showExport && (
         <Button

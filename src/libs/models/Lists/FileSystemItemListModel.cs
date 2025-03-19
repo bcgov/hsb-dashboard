@@ -25,6 +25,7 @@ public class FileSystemItemListModel : AuditableModel
     public int AvailableSpace { get; set; }
     public string FreeSpace { get; set; } = "";
     public long FreeSpaceBytes { get; set; }
+    public bool? IsSAN { get; set; } = null;
     #endregion
     #endregion
 
@@ -53,6 +54,7 @@ public class FileSystemItemListModel : AuditableModel
         this.AvailableSpace = entity.AvailableSpace;
         this.FreeSpace = entity.FreeSpace;
         this.FreeSpaceBytes = entity.FreeSpaceBytes;
+        this.IsSAN = entity.IsSAN;
     }
 
     public FileSystemItemListModel(string serverItemServiceNowKey

@@ -29,4 +29,7 @@ export interface IFileSystemItemModel extends IAuditableModel {
 
   // Collections
   history?: IFileSystemHistoryItemModel[];
+
+  // Calculated data
+  isSAN: boolean | null;
 }

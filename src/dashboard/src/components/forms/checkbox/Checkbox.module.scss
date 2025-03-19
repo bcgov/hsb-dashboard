@@ -2,16 +2,17 @@
 
 /* The container */
 .container {
-  display: inline-block;
+  display: flex;
+  align-items: center;
   position: relative;
   padding-left: 35px;
-  margin-bottom: 12px;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
   font-family: $bc-sans;
+  height: 25px;
 
   input {
     position: absolute;
@@ -21,7 +22,7 @@
     width: 0;
   }
 
-  &:hover input~.checkmark {
+  &:hover input ~ .checkmark {
     background-color: $light-gray;
   }
 }
@@ -39,19 +40,19 @@
 }
 
 /* When the checkbox is checked, add a blue background */
-.container input:checked~.checkmark {
+.container input:checked ~ .checkmark {
   background-color: $bc-blue;
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
 .checkmark:after {
-  content: "";
+  content: '';
   position: absolute;
   display: none;
 }
 
 /* Show the checkmark when checked */
-.container input:checked~.checkmark:after {
+.container input:checked ~ .checkmark:after {
   display: block;
 }
 
