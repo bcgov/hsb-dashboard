@@ -41,6 +41,11 @@ public class ServerItemModel : AuditableModel
     public float? Capacity { get; set; }
     public float? AvailableSpace { get; set; }
     #endregion
+
+    #region ServiceNow RawData-based Properties
+    public bool? IsVirtual { get; set; }
+    #endregion
+
     #endregion
 
     #region Constructors
@@ -71,6 +76,8 @@ public class ServerItemModel : AuditableModel
 
         this.Capacity = entity.Capacity;
         this.AvailableSpace = entity.AvailableSpace;
+
+        this.IsVirtual = entity.IsVirtual;
 
         this.FileSystemItems = entity.FileSystemItems.Select(fsi => new FileSystemItemModel(fsi)).ToArray();
     }

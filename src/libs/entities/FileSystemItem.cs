@@ -43,6 +43,40 @@ public class FileSystemItem : Auditable
     public long FreeSpaceBytes { get; set; }
     #endregion
 
+    #region Calculated Properties
+    /// <summary>
+    /// get - Indicates if this is SAN storage or not. This will sometimes involve some guesswork,
+    /// based on whether the ServerItem is virtual or physical, the StorageType, and the VolumeId.
+    /// </summary>
+    public bool IsSAN {
+        get {
+            // 1. Determine if the server is a physical or virtual server.
+            if (this.ServerItem != null && this.ServerItem.IsVirtual.HasValue) {
+                bool isVirtual = this.ServerItem.IsVirtual.Value;
+
+                // 2. If the StorageType is set:
+                if (this.StorageType != "") {
+                    if (isVirtual) {
+                        // a. If virtual, StorageType of logical → SAN, otherwise it’s Non-SAN
+                        return this.StorageType == "logical";
+                    } else {
+                        // b. If physical, StorageType of network → SAN, otherwise it's Non-SAN
+                        return this.StorageType == "network";
+                    }
+                }
+            }
+            // Otherwise, we will do a best guess using the Name. If the Name contains
+            // “C:” (or similar) OR contains “*root*” → Non-SAN, otherwise it’s SAN.
+            // Note that sometimes VolumeId and Name will be the same, but sometimes they won't.
+            // For instance, the Name might be "C" but the VolumeId is "29f412b8-...".
+            return !(
+              this.Name.StartsWith("C", StringComparison.OrdinalIgnoreCase) ||
+              this.Name.Contains("root", StringComparison.OrdinalIgnoreCase)
+            );
+        }
+    }
+    #endregion
+
     /// <summary>
     /// get - All file system item history.
     /// </summary>
