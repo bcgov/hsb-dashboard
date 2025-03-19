@@ -82,19 +82,26 @@ export const Dashboard = () => {
   // Total storage is for a single organization
   const showTotalStorage =
     !!dashboardServerItem || (!!dashboardOrganization && !dashboardOperatingSystemItem);
+
   // All organizations is for multiple organizations
   const showAllOrganizations =
     !dashboardOrganization && !dashboardServerItem && !dashboardOperatingSystemItem;
+
   // For multiple OS
   const showAllocationByOS =
     !!dashboardOrganization && !dashboardOperatingSystemItem && !dashboardServerItem;
+
   // A single server
   const showAllocationByVolume = !!dashboardServerItem;
+
   // All servers within available organizations
   const showAllocationByStorageVolume =
     !dashboardOrganization && !dashboardOperatingSystemItem && !dashboardServerItem;
-  // All servers with OS
-  const showAllocationTable = !!dashboardOperatingSystemItem && !dashboardServerItem;
+
+  // All servers
+  // const showAllocationTable = !!dashboardOperatingSystemItem && !dashboardServerItem;
+  const showAllocationTable = !dashboardServerItem;
+
   // Show each drive over time for server
   const showSegmentedBarChart = !!dashboardServerItem;
 
