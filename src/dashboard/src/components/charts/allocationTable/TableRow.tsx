@@ -1,6 +1,8 @@
 import React from 'react';
 import { convertToStorageSize } from './../../../utils/convertToStorageSize';
 import styles from './AllocationTable.module.scss';
+import { calcPercentageUsed, calcPercentageUnused } from '@/utils/calcPercentageUsed';
+import { calcColorByUsage } from '@/utils/calcColorByUsage';
 
 interface TableRowProps {
   server: string;
@@ -21,19 +23,19 @@ export const TableRow: React.FC<TableRowProps> = ({
   showTenant,
   onClick,
 }) => {
-  const percentageUsed = capacity ? Math.round(((capacity - available) / capacity) * 100) : 0;
+  const percentageUsed = calcPercentageUsed(available, capacity);
   const capacityValue = convertToStorageSize<string>(capacity, 'B', 'TB');
   const availableValue = convertToStorageSize<string>(available, 'B', 'TB');
 
   const handleClick = (e: React.MouseEvent<HTMLLabelElement, MouseEvent>) => {
-    if(onClick) {
+    if (onClick) {
       onClick(e);
     }
 
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
   };
 
@@ -59,7 +61,13 @@ export const TableRow: React.FC<TableRowProps> = ({
         </p>
         <div className={styles.bar}>
           {/* Applying width as an inline style */}
-          <div className={styles.percentage} style={{ width: `${percentageUsed}%` }} />
+          <div
+            className={styles.percentage}
+            style={{
+              width: `${percentageUsed}%`,
+              backgroundColor: calcColorByUsage(percentageUsed),
+            }}
+          />
         </div>
       </div>
       <p className={styles.used}>

@@ -18,6 +18,8 @@ export interface ISmallBarChartProps<T extends IBarChartRowData<unknown>> {
   /** Children bar char row output */
   children?: React.ReactNode | ((data: IBarChartData<T>) => React.ReactNode);
   loading?: boolean;
+  /** Flexible content in the upper-right: for instance, a toggle button */
+  topRightContent?: React.ReactNode;
 }
 
 /**
@@ -32,12 +34,16 @@ export const SmallBarChart = <T extends IBarChartRowData<unknown>>({
   loading,
   showExport,
   exportDisabled,
+  topRightContent,
   onExport,
 }: ISmallBarChartProps<T>) => {
   return (
     <div className={styles.panel}>
       {loading && <LoadingAnimation />}
-      {title && <h1>{title}</h1>}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        {title && <h1>{title}</h1>}
+        {topRightContent && <div>{topRightContent}</div>}
+      </div>
       <div className={styles.chartContainer}>
         <div className={styles.headings}>
           {data.labels.map((label) => (

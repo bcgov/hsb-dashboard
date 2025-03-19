@@ -32,6 +32,14 @@ export const getColumns = (showTenant: boolean) => {
         { label: 'Largest', value: 'desc' },
       ],
     },
+    {
+      label: 'Total',
+      sort: 'total',
+      options: [
+        { label: 'Most space used', value: 'asc' },
+        { label: 'Last space used', value: 'desc' },
+      ],
+    },
   ];
 
   if (showTenant) {

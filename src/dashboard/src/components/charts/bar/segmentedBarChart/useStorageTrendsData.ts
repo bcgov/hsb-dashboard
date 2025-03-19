@@ -68,11 +68,12 @@ export const useStorageTrendsData = (): ((
         const values: IFileSystemHistoryItemModel[] = (items as any)[group.key] ?? [];
         group.items = values;
       });
+      console.log('groups', groups);
 
       // Extract the history for each mapped volume / drive.
       const volumeHistory = groupBy<IFileSystemHistoryItemModel, IVolumeData>(
         history,
-        (item) => item.serviceNowKey,
+        (item) => item.name,
         (item) => ({
           serviceNowKey: item.serviceNowKey,
           name: item.name,
@@ -81,10 +82,39 @@ export const useStorageTrendsData = (): ((
           createdOn: item.createdOn,
         }),
       );
+      console.log('volumeHistory', volumeHistory);
+
+      // TODO: Look into the aptly-named 'abnormality' server... the server history vs. the
+      // file system item graphs are very different.
+
+      // In some cases, drives have had their key change, even if they're the same drive (judged by
+      // their name). This might give us two entries for the same month. We need to find the most
+      // recent of these entries, and discard the other.
+      Object.keys(volumeHistory).forEach((key) => {
+        const items = volumeHistory[key];
+
+        // First, sort the items by createdOn date.
+        if (items.length > 1) {
+          const sorted = items.sort((a, b) => (a.createdOn > b.createdOn ? 1 : -1));
+          volumeHistory[key] = sorted;
+        }
+
+        // Next, remove any duplicates based on the year-month of the createdOn date. First, we
+        // map by year-month, then we take the last item in each sub-array.
+        const mapped = groupBy<IVolumeData, IVolumeData>(
+          items,
+          (item) => moment(item.createdOn).format('YYYY-MM'),
+          (item) => item,
+        );
+        volumeHistory[key] = Object.values(mapped).map((item) => item[item.length - 1]);
+      });
+      console.log('sortedVolumeHistory', volumeHistory);
+
       // Take the last item in each sub-array, it should be the most recent entry.
       const volumes = Object.values(volumeHistory)
         .map((item) => item[item.length - 1])
         .sort((a, b) => (a.capacity < b.capacity ? 1 : a.capacity > b.capacity ? -1 : 0));
+      console.log('volumes', volumes);
 
       // If there is more than the max, we actually only show one less than the max.
       // We do this because we need space to provide a placeholder informing the user of additional volumes.
@@ -115,7 +145,7 @@ export const useStorageTrendsData = (): ((
             // There should only ever be one record per volume for each month.
             // We use the last record in the array for each month.
             const groupData = groups.map((group) => {
-              const items = group.items.filter((i) => i.serviceNowKey === volume.serviceNowKey);
+              const items = group.items.filter((i) => i.name === volume.name);
               const capacity = convertToStorageSize<number>(
                 items.length ? items[items.length - 1].capacity : 0,
                 'B',
@@ -141,9 +171,14 @@ export const useStorageTrendsData = (): ((
             // The second dataset is an array of unused space grouped by month.
             return [
               {
-                label: `Used ${volume.name} (${convertToStorageSize(volume.capacity, 'B', 'GB', {
-                  formula: (value) => Number(value.toFixed(1)),
-                })})`,
+                label: `Used ${volume.name} (Capacity: ${convertToStorageSize(
+                  volume.capacity,
+                  'B',
+                  'GB',
+                  {
+                    formula: (value) => Number(value.toFixed(1)),
+                  },
+                )})`,
                 name: volume.name,
                 capacity: convertToStorageSize(volume.capacity, 'B', 'GB', {
                   formula: (value) => Number(value.toFixed(1)),

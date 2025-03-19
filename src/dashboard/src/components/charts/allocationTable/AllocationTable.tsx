@@ -14,6 +14,8 @@ import { ITableRowData } from './ITableRowData';
 import { TableRow } from './TableRow';
 import { useAllocationByOS } from './hooks';
 import { getColumns, getLabel } from './utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSquare, faUpLong } from '@fortawesome/free-solid-svg-icons';
 export interface IAllocationTableProps {
   /** Filter servers by their OS */
   osClassName?: string;
@@ -131,44 +133,89 @@ export const AllocationTable = ({
   return (
     <div className={styles.panel} style={margin ? { marginTop: margin } : {}}>
       {loading && <LoadingAnimation />}
-      <h1>
-        {osClassName
-          ? `Allocation by Storage Volume - All ${serverItems.length.toLocaleString()} ${getLabel(
-              osClassName,
-            )}`
-          : `${serverItems.length.toLocaleString()} Servers ${
-              commonOSName ? `using OS: "${commonOSName}"` : ''
-            }`}
-      </h1>
+      <div className={styles.tableHeader}>
+        <h1>
+          {osClassName
+            ? `Allocation by Storage Volume - All ${serverItems.length.toLocaleString()} ${getLabel(
+                osClassName,
+              )}`
+            : `${serverItems.length.toLocaleString()} Servers ${
+                commonOSName ? `using OS: "${commonOSName}"` : ''
+              }`}
+        </h1>
+        <Button
+          variant={'secondary'}
+          onClick={() => {
+            setSort('total:desc');
+          }}
+          style={{ display: 'flex', alignItems: 'center' }}
+        >
+          <div
+            style={{
+              marginRight: '10px',
+              width: '20px',
+              height: '10px',
+              border: 'solid black 1px',
+              borderLeft: 'solid black 3px',
+              borderRadius: '3px',
+            }}
+          ></div>{' '}
+          Show least-used servers
+        </Button>
+        <Button
+          variant={'secondary'}
+          onClick={() => {
+            setSort('total:asc');
+          }}
+          style={{ display: 'flex', alignItems: 'center' }}
+        >
+          <div
+            style={{
+              marginRight: '10px',
+              width: '20px',
+              height: '10px',
+              border: 'solid black 1px',
+              borderLeft: 'solid black 15px',
+              borderRadius: '3px',
+            }}
+          ></div>{' '}
+          Show most-used servers
+        </Button>
+      </div>
       <h2>
         Total Allocated: {capacityValue} <span></span> Used: {usedValue} <span></span> Unused:{' '}
         {unusedValue}
       </h2>
       <div className={styles.filter} ref={wrapperRef}>
-        <Text
-          placeholder="Filter by server name, OS version"
-          iconType={'filter'}
-          value={keyword}
-          onChange={handleFilterChange}
-          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-            if (e.code === 'Enter') {
-              setFilter(keyword);
-              setShowDropdown(false);
-            }
-          }}
-        />
-        {showDropdown && (
-          <div className={styles.filteredDropdown}>
-            {filteredServerItems.map((item, index) => (
-              <div key={index} onClick={() => selectFromDropdown(item)}>
-                {item.name}
-              </div>
-            ))}
-          </div>
-        )}
-        <Button variant="secondary" onClick={() => setFilter(keyword)}>
-          Apply
-        </Button>
+        <div>
+          <Text
+            placeholder="Filter by server name, OS version"
+            iconType={'filter'}
+            value={keyword}
+            onChange={handleFilterChange}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              if (e.code === 'Enter') {
+                setFilter(keyword);
+                setShowDropdown(false);
+              }
+            }}
+          />
+          {showDropdown && (
+            <div className={styles.filteredDropdown}>
+              {filteredServerItems.map((item, index) => (
+                <div key={index} onClick={() => selectFromDropdown(item)}>
+                  {item.name}
+                </div>
+              ))}
+            </div>
+          )}
+          <Button variant="secondary" onClick={() => setFilter(keyword)}>
+            Apply
+          </Button>
+        </div>
+        {/* <Button variant="secondary" onClick={() => setShowAbsolute(!showAbsolute)}>
+          {showAbsolute ? 'Show Proportional Usage' : 'Show Absolute Usage'}
+        </Button> */}
       </div>
       <div className={classNames(styles.tableContainer, { [styles.hasTenant]: showTenants })}>
         <div className={styles.header}>
@@ -180,7 +227,7 @@ export const AllocationTable = ({
               onChange={(option) => setSort(`${dropdown.sort}:${option.value}`)}
             />
           ))}
-          <p>Total</p>
+          {/* <p>Total</p> */}
         </div>
         <div className={styles.chart}>
           {rows.map((row, index) => (
