@@ -1,6 +1,7 @@
 import React from 'react';
 import { convertToStorageSize } from './../../../utils/convertToStorageSize';
 import styles from './AllocationTable.module.scss';
+import { calcPercentageUsed, calcPercentageUnused } from '@/utils/calcPercentageUsed';
 
 interface TableRowProps {
   server: string;
@@ -9,6 +10,7 @@ interface TableRowProps {
   capacity: number;
   available: number;
   showTenant?: boolean;
+  showAbsolute?: boolean;
   onClick?: (e: React.MouseEvent<HTMLLabelElement, MouseEvent>) => void;
 }
 
@@ -19,21 +21,23 @@ export const TableRow: React.FC<TableRowProps> = ({
   capacity,
   available,
   showTenant,
+  showAbsolute,
   onClick,
 }) => {
-  const percentageUsed = capacity ? Math.round(((capacity - available) / capacity) * 100) : 0;
+  const percentageUsed = calcPercentageUsed(available, capacity);
+  const percentageUnused = calcPercentageUnused(available, capacity);
   const capacityValue = convertToStorageSize<string>(capacity, 'B', 'TB');
   const availableValue = convertToStorageSize<string>(available, 'B', 'TB');
 
   const handleClick = (e: React.MouseEvent<HTMLLabelElement, MouseEvent>) => {
-    if(onClick) {
+    if (onClick) {
       onClick(e);
     }
 
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
   };
 
@@ -55,7 +59,7 @@ export const TableRow: React.FC<TableRowProps> = ({
           {capacityValue}
         </p>
         <p className={styles.centered} title={availableValue}>
-          {availableValue}
+          {showAbsolute ? availableValue : percentageUnused + '%'}
         </p>
         <div className={styles.bar}>
           {/* Applying width as an inline style */}

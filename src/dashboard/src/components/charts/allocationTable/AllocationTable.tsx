@@ -47,6 +47,7 @@ export const AllocationTable = ({
   const [filteredServerItems, setFilteredServerItems] = React.useState<IServerItemListModel[]>([]);
   const [showDropdown, setShowDropdown] = React.useState(false);
   const wrapperRef = React.useRef<HTMLDivElement>(null);
+  const [showAbsolute, setShowAbsolute] = React.useState(true);
 
   React.useEffect(() => {
     const sorting = sort.split(':');
@@ -61,9 +62,10 @@ export const AllocationTable = ({
           si.operatingSystemItem.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())),
       sorting[0] as keyof ITableRowData<IServerItemListModel>,
       sorting[1] as any,
+      showAbsolute,
     );
     setRows(rows);
-  }, [serverItems, filter, getServerItems, sort]);
+  }, [serverItems, filter, getServerItems, sort, showAbsolute]);
 
   const totalCapacity = rows.reduce((acc, row) => acc + (row.capacity || 0), 0);
   const capacityValue = convertToStorageSize<string>(totalCapacity, 'B', 'TB');
@@ -145,29 +147,34 @@ export const AllocationTable = ({
         {unusedValue}
       </h2>
       <div className={styles.filter} ref={wrapperRef}>
-        <Text
-          placeholder="Filter by server name, OS version"
-          iconType={'filter'}
-          value={keyword}
-          onChange={handleFilterChange}
-          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-            if (e.code === 'Enter') {
-              setFilter(keyword);
-              setShowDropdown(false);
-            }
-          }}
-        />
-        {showDropdown && (
-          <div className={styles.filteredDropdown}>
-            {filteredServerItems.map((item, index) => (
-              <div key={index} onClick={() => selectFromDropdown(item)}>
-                {item.name}
-              </div>
-            ))}
-          </div>
-        )}
-        <Button variant="secondary" onClick={() => setFilter(keyword)}>
-          Apply
+        <div>
+          <Text
+            placeholder="Filter by server name, OS version"
+            iconType={'filter'}
+            value={keyword}
+            onChange={handleFilterChange}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              if (e.code === 'Enter') {
+                setFilter(keyword);
+                setShowDropdown(false);
+              }
+            }}
+          />
+          {showDropdown && (
+            <div className={styles.filteredDropdown}>
+              {filteredServerItems.map((item, index) => (
+                <div key={index} onClick={() => selectFromDropdown(item)}>
+                  {item.name}
+                </div>
+              ))}
+            </div>
+          )}
+          <Button variant="secondary" onClick={() => setFilter(keyword)}>
+            Apply
+          </Button>
+        </div>
+        <Button onClick={() => setShowAbsolute(!showAbsolute)}>
+          Show {showAbsolute ? 'Proportional' : 'Absolute'} Usage
         </Button>
       </div>
       <div className={classNames(styles.tableContainer, { [styles.hasTenant]: showTenants })}>
@@ -193,6 +200,7 @@ export const AllocationTable = ({
               available={row.available}
               showTenant={showTenants}
               onClick={() => onClick?.(row.data)}
+              showAbsolute={showAbsolute}
             />
           ))}
         </div>

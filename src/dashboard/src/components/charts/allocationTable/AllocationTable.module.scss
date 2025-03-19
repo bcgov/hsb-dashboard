@@ -1,236 +1,241 @@
 @import '@/styles/utils.scss';
 
 .panel {
-    @include panel-style(unset, unset, 1080px, 1310px);
-    padding-bottom: 34px;
+  @include panel-style(unset, unset, 1080px, 1310px);
+  padding-bottom: 34px;
 
-    >button {
-        @include export-btn;
+  > button {
+    @include export-btn;
+  }
+
+  h2 {
+    margin: 12px 0 16px;
+
+    span {
+      margin: 0 10px;
+      width: 1px;
+      height: 20px;
+      background-color: $bc-black;
+      display: inline-block;
+      position: relative;
+      top: 5px;
     }
-
-    h2 {
-        margin: 12px 0 16px;
-
-        span {
-            margin: 0 10px;
-            width: 1px;
-            height: 20px;
-            background-color: $bc-black;
-            display: inline-block;
-            position: relative;
-            top: 5px;
-        }
-    }
+  }
 }
 
 .filter {
-    margin: 15px 0;
+  margin: 15px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-    input {
-        min-width: 344px;
-    }
+  input {
+    min-width: 344px;
+  }
 }
 
 .header {
-    height: 35px;
-    background-color: $light-gray;
-    font-weight: bold;
-    color: $info-gray;
-    padding: 6px 14px;
-    display: flex;
+  height: 35px;
+  background-color: $light-gray;
+  font-weight: bold;
+  color: $info-gray;
+  padding: 6px 14px;
+  display: flex;
 }
 
 .sortDropdown {
+  width: fit-content;
+  cursor: pointer;
+
+  &:first-child {
+    width: 18%;
+  }
+
+  &:nth-child(2) {
+    width: 25%;
+  }
+
+  p {
+    position: relative;
     width: fit-content;
-    cursor: pointer;
 
-    &:first-child {
-        width: 18%;
+    &::after {
+      content: '';
+      height: 6px;
+      width: 6px;
+      border-right: 1px solid $bc-black;
+      border-bottom: 1px solid $bc-black;
+      display: block;
+      position: absolute;
+      right: -16px;
+      bottom: 9px;
+      transform: rotate(45deg);
+      pointer-events: none;
     }
-
-    &:nth-child(2) {
-        width: 25%;
-    }
-
-    p {
-        position: relative;
-        width: fit-content;
-
-        &::after {
-            content: "";
-            height: 6px;
-            width: 6px;
-            border-right: 1px solid $bc-black;
-            border-bottom: 1px solid $bc-black;
-            display: block;
-            position: absolute;
-            right: -16px;
-            bottom: 9px;
-            transform: rotate(45deg);
-            pointer-events: none;
-        }
-    }
+  }
 }
 
 .dropdown {
-    font-weight: normal;
-    background-color: $white;
-    padding: 0 15px;
-    width: 180px;
-    @include dropshadow;
-    position: relative;
-    top: 2px;
-    z-index: 2;
-    height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: opacity, .3s;
+  font-weight: normal;
+  background-color: $white;
+  padding: 0 15px;
+  width: 180px;
+  @include dropshadow;
+  position: relative;
+  top: 2px;
+  z-index: 2;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity, 0.3s;
 
-    &.visible {
-        height: auto;
-        opacity: 1;
-        visibility: visible;
+  &.visible {
+    height: auto;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+
+    li {
+      height: 39px;
+      display: flex;
+      align-items: center;
+
+      &:hover {
+        font-weight: bold;
+      }
     }
-
-    ul {
-        padding: 0;
-        margin: 0;
-        list-style: none;
-
-        li {
-            height: 39px;
-            display: flex;
-            align-items: center;
-
-            &:hover {
-                font-weight: bold;
-            }
-        }
-    }
+  }
 }
 
 .visible {
-    .dropdown {
-        height: auto;
-        opacity: 1;
-        visibility: visible;
-    }
+  .dropdown {
+    height: auto;
+    opacity: 1;
+    visibility: visible;
+  }
 
-    p::after {
-        transform: rotate(225deg);
-        bottom: 5px;
-    }
+  p::after {
+    transform: rotate(225deg);
+    bottom: 5px;
+  }
 }
 
 .chart {
-    max-height: 470px;
-    overflow-y: scroll;
-    padding-right: 10px;
+  max-height: 470px;
+  overflow-y: scroll;
+  padding-right: 10px;
 
-    @include scrollBar;
+  @include scrollBar;
 }
 
 .row {
-    display: flex;
-    padding: 13px 0;
-    position: relative;
-    border-bottom: 1px solid $medium-gray;
+  display: flex;
+  padding: 13px 0;
+  position: relative;
+  border-bottom: 1px solid $medium-gray;
 
-    &:hover {
-        background-color: $light-gray;
-    }
+  &:hover {
+    background-color: $light-gray;
+  }
 }
 
 .info,
 .barChart {
-    display: flex;
+  display: flex;
 }
 
 .info {
-    width: 100%;
+  width: 100%;
 
-    a {
-        width: 24%;
-        margin-left: 10px;
-        text-decoration: underline;
-        font-weight: bold;
-        color: $bc-black;
-        @include ellipsis;
+  a {
+    width: 24%;
+    margin-left: 10px;
+    text-decoration: underline;
+    font-weight: bold;
+    color: $bc-black;
+    @include ellipsis;
 
-        &:hover {
-            opacity: 0.8;
-        }
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  p {
+    width: 25%;
+    min-width: 180px;
+    @include ellipsis;
+
+    &:first-of-type {
+      width: 18%;
+      margin-left: 10px;
     }
 
-    p {
-        width: 25%;
-        min-width: 180px;
-        @include ellipsis;
-
-        &:first-of-type {
-            width: 18%;
-            margin-left: 10px;
-        }
-
-        &:nth-child(3), &:nth-child(4) {
-            width: unset;
-        }
+    &:nth-child(3),
+    &:nth-child(4) {
+      width: unset;
     }
+  }
 }
 
 .bar {
+  height: 13px;
+  width: 28%;
+  border-radius: 10px;
+  margin-top: 12px;
+  background-color: $medium-gray;
+  overflow: hidden;
+
+  @media (max-width: $desktop) {
+    width: 21%;
+  }
+
+  .percentage {
     height: 13px;
-    width: 28%;
-    border-radius: 10px;
-    margin-top: 12px;
-    background-color: $medium-gray;
-    overflow: hidden;
-
-    @media (max-width: $desktop) {
-        width: 21%;
-    }
-
-    .percentage {
-        height: 13px;
-        width: 60%;
-        border-radius: 10px 0 0 10px;
-        background-color: $chart-blue;
-    }
+    width: 60%;
+    border-radius: 10px 0 0 10px;
+    background-color: $chart-blue;
+  }
 }
 
 .used {
-    position: absolute;
-    right: 0;
-    top: 5px;
-    font-size: $font-size-12;
-    color: $info-gray;
+  position: absolute;
+  right: 0;
+  top: 5px;
+  font-size: $font-size-12;
+  color: $info-gray;
 }
 
 .hasTenant {
-    .sortDropdown {
-        width: 15%;
+  .sortDropdown {
+    width: 15%;
 
-        &:nth-child(4), &:last-of-type {
-            p {
-               margin: 0 auto; 
-            }
-        }
+    &:nth-child(4),
+    &:last-of-type {
+      p {
+        margin: 0 auto;
+      }
     }
+  }
 
-    .info {
-        p {
-            width: 15%;
-            min-width: unset;
+  .info {
+    p {
+      width: 15%;
+      min-width: unset;
 
-            &.centered {
-                text-align: center;
-            }
-        }
+      &.centered {
+        text-align: center;
+      }
     }
+  }
 
-    .bar {
-        width: 25%;
-    }
+  .bar {
+    width: 25%;
+  }
 }
 
 .link {
@@ -238,23 +243,23 @@
 }
 
 .filteredDropdown {
-    @include dropshadow;
-    @include scrollBar;
-    max-height: 200px;
-    width: 100%;
-    max-width: 40%;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    position: absolute;
-    background: $white;
-    z-index: 1;
+  @include dropshadow;
+  @include scrollBar;
+  max-height: 200px;
+  width: 100%;
+  max-width: 40%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  position: absolute;
+  background: $white;
+  z-index: 1;
 
-    div {
-        padding: 5px;
-        cursor: pointer;
+  div {
+    padding: 5px;
+    cursor: pointer;
 
-        &:hover {
-            background-color: $light-gray;
-        }
+    &:hover {
+      background-color: $light-gray;
     }
+  }
 }
