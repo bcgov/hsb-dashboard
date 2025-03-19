@@ -23,6 +23,16 @@
   }
 }
 
+.tableHeader {
+  display: flex;
+  align-items: center;
+
+  button {
+    margin-left: 15px;
+    font-size: $font-size-small;
+  }
+}
+
 .filter {
   margin: 15px 0;
   display: flex;
@@ -31,6 +41,10 @@
 
   input {
     min-width: 344px;
+  }
+
+  button {
+    font-size: $font-size-small;
   }
 }
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { convertToStorageSize } from './../../../utils/convertToStorageSize';
 import styles from './AllocationTable.module.scss';
 import { calcPercentageUsed, calcPercentageUnused } from '@/utils/calcPercentageUsed';
+import { calcColorByUsage } from '@/utils/calcColorByUsage';
 
 interface TableRowProps {
   server: string;
@@ -63,7 +64,13 @@ export const TableRow: React.FC<TableRowProps> = ({
         </p>
         <div className={styles.bar}>
           {/* Applying width as an inline style */}
-          <div className={styles.percentage} style={{ width: `${percentageUsed}%` }} />
+          <div
+            className={styles.percentage}
+            style={{
+              width: `${percentageUsed}%`,
+              backgroundColor: calcColorByUsage(percentageUsed),
+            }}
+          />
         </div>
       </div>
       <p className={styles.used}>

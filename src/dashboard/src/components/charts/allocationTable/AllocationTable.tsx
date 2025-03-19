@@ -133,15 +133,35 @@ export const AllocationTable = ({
   return (
     <div className={styles.panel} style={margin ? { marginTop: margin } : {}}>
       {loading && <LoadingAnimation />}
-      <h1>
-        {osClassName
-          ? `Allocation by Storage Volume - All ${serverItems.length.toLocaleString()} ${getLabel(
-              osClassName,
-            )}`
-          : `${serverItems.length.toLocaleString()} Servers ${
-              commonOSName ? `using OS: "${commonOSName}"` : ''
-            }`}
-      </h1>
+      <div className={styles.tableHeader}>
+        <h1>
+          {osClassName
+            ? `Allocation by Storage Volume - All ${serverItems.length.toLocaleString()} ${getLabel(
+                osClassName,
+              )}`
+            : `${serverItems.length.toLocaleString()} Servers ${
+                commonOSName ? `using OS: "${commonOSName}"` : ''
+              }`}
+        </h1>
+        <Button
+          variant={'secondary'}
+          onClick={() => {
+            setShowAbsolute(false);
+            setSort('available:asc');
+          }}
+        >
+          Show most-used servers
+        </Button>
+        <Button
+          variant={'secondary'}
+          onClick={() => {
+            setShowAbsolute(false);
+            setSort('available:desc');
+          }}
+        >
+          Show least-used servers
+        </Button>
+      </div>
       <h2>
         Total Allocated: {capacityValue} <span></span> Used: {usedValue} <span></span> Unused:{' '}
         {unusedValue}
