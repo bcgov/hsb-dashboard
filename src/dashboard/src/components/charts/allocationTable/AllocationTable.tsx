@@ -49,7 +49,6 @@ export const AllocationTable = ({
   const [filteredServerItems, setFilteredServerItems] = React.useState<IServerItemListModel[]>([]);
   const [showDropdown, setShowDropdown] = React.useState(false);
   const wrapperRef = React.useRef<HTMLDivElement>(null);
-  const [showAbsolute, setShowAbsolute] = React.useState(true);
 
   React.useEffect(() => {
     const sorting = sort.split(':');
@@ -64,10 +63,9 @@ export const AllocationTable = ({
           si.operatingSystemItem.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())),
       sorting[0] as keyof ITableRowData<IServerItemListModel>,
       sorting[1] as any,
-      showAbsolute,
     );
     setRows(rows);
-  }, [serverItems, filter, getServerItems, sort, showAbsolute]);
+  }, [serverItems, filter, getServerItems, sort]);
 
   const totalCapacity = rows.reduce((acc, row) => acc + (row.capacity || 0), 0);
   const capacityValue = convertToStorageSize<string>(totalCapacity, 'B', 'TB');
@@ -148,8 +146,7 @@ export const AllocationTable = ({
         <Button
           variant={'secondary'}
           onClick={() => {
-            setShowAbsolute(false);
-            setSort('available:desc');
+            setSort('total:desc');
           }}
           style={{ display: 'flex', alignItems: 'center' }}
         >
@@ -168,8 +165,7 @@ export const AllocationTable = ({
         <Button
           variant={'secondary'}
           onClick={() => {
-            setShowAbsolute(false);
-            setSort('available:asc');
+            setSort('total:asc');
           }}
           style={{ display: 'flex', alignItems: 'center' }}
         >
@@ -217,9 +213,9 @@ export const AllocationTable = ({
             Apply
           </Button>
         </div>
-        <Button variant="secondary" onClick={() => setShowAbsolute(!showAbsolute)}>
+        {/* <Button variant="secondary" onClick={() => setShowAbsolute(!showAbsolute)}>
           {showAbsolute ? 'Show Proportional Usage' : 'Show Absolute Usage'}
-        </Button>
+        </Button> */}
       </div>
       <div className={classNames(styles.tableContainer, { [styles.hasTenant]: showTenants })}>
         <div className={styles.header}>
@@ -231,7 +227,7 @@ export const AllocationTable = ({
               onChange={(option) => setSort(`${dropdown.sort}:${option.value}`)}
             />
           ))}
-          <p>Total</p>
+          {/* <p>Total</p> */}
         </div>
         <div className={styles.chart}>
           {rows.map((row, index) => (
@@ -244,7 +240,6 @@ export const AllocationTable = ({
               available={row.available}
               showTenant={showTenants}
               onClick={() => onClick?.(row.data)}
-              showAbsolute={showAbsolute}
             />
           ))}
         </div>

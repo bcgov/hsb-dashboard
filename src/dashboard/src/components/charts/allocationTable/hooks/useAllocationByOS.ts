@@ -18,9 +18,8 @@ export const useAllocationByOS = (osClassName?: string, operatingSystemId?: numb
     (
       serverItems: IServerItemListModel[],
       filter: (serverItem: IServerItemListModel) => boolean = () => true,
-      sort: keyof ITableRowData<IServerItemListModel> = 'server',
+      sort: keyof ITableRowData<IServerItemListModel> | 'total' = 'server',
       direction: 'asc' | 'desc' = 'asc',
-      showAbsolute = true,
     ) => {
       const data = serverItems
         .map((si) => ({
@@ -59,13 +58,11 @@ export const useAllocationByOS = (osClassName?: string, operatingSystemId?: numb
           } else if (sort === 'capacity') {
             return (a.capacity < b.capacity ? -1 : a.capacity > b.capacity ? 1 : 0) * order;
           } else if (sort === 'available') {
-            if (showAbsolute) {
-              return (a.available < b.available ? -1 : a.available > b.available ? 1 : 0) * order;
-            } else {
-              const pcUnusedA = calcPercentageUnused(a.available, a.capacity);
-              const pcUnusedB = calcPercentageUnused(b.available, b.capacity);
-              return (pcUnusedA < pcUnusedB ? -1 : pcUnusedA > pcUnusedB ? 1 : 0) * order;
-            }
+            return (a.available < b.available ? -1 : a.available > b.available ? 1 : 0) * order;
+          } else if (sort === 'total') {
+            const pcUnusedA = calcPercentageUnused(a.available, a.capacity);
+            const pcUnusedB = calcPercentageUnused(b.available, b.capacity);
+            return (pcUnusedA < pcUnusedB ? -1 : pcUnusedA > pcUnusedB ? 1 : 0) * order;
           }
           return a.server < b.server ? -1 : a.server > b.server ? 1 : 0 * order;
         });

@@ -11,7 +11,6 @@ interface TableRowProps {
   capacity: number;
   available: number;
   showTenant?: boolean;
-  showAbsolute?: boolean;
   onClick?: (e: React.MouseEvent<HTMLLabelElement, MouseEvent>) => void;
 }
 
@@ -22,11 +21,9 @@ export const TableRow: React.FC<TableRowProps> = ({
   capacity,
   available,
   showTenant,
-  showAbsolute,
   onClick,
 }) => {
   const percentageUsed = calcPercentageUsed(available, capacity);
-  const percentageUnused = calcPercentageUnused(available, capacity);
   const capacityValue = convertToStorageSize<string>(capacity, 'B', 'TB');
   const availableValue = convertToStorageSize<string>(available, 'B', 'TB');
 
@@ -60,7 +57,7 @@ export const TableRow: React.FC<TableRowProps> = ({
           {capacityValue}
         </p>
         <p className={styles.centered} title={availableValue}>
-          {showAbsolute ? availableValue : percentageUnused + '%'}
+          {availableValue}
         </p>
         <div className={styles.bar}>
           {/* Applying width as an inline style */}
