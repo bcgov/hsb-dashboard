@@ -26,6 +26,7 @@ export const generateStorageHistoryForDateRange = <T>(
   const end = dateRange[1] ? moment(dateRange[1]) : moment(Date.now());
 
   const numberOfMonths = calcMonthsBetween(start.toDate(), end.toDate());
+
   const minPoints = numberOfMonths > minColumns ? numberOfMonths : minColumns;
 
   const endSafeDate = moment(new Date(end.year(), end.month(), 1));

@@ -27,7 +27,6 @@ ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend
 
 export interface IVolumeHistoryLine {
   serverItem?: IServerItemListModel;
-  maxVolumes?: number;
   loading?: boolean;
   dateRange?: string[];
   minColumns?: number;
@@ -38,10 +37,9 @@ export interface IVolumeHistoryLine {
 
 export const VolumeHistoryLine = ({
   serverItem,
-  maxVolumes = 100,
   loading,
   dateRange: initDateRange,
-  minColumns = 10,
+  minColumns = 12,
   showExport,
   exportDisabled,
   onExport,
@@ -68,37 +66,11 @@ export const VolumeHistoryLine = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values[0], values[1], setDateRange]);
 
-  const data = getStorageTrends(1, maxVolumes, dateRange);
+  const data = getStorageTrends(1, dateRange);
 
   data.datasets = data.datasets.filter((d) => !d.label?.startsWith('Unused'));
 
-  const colors = [
-    ['#4D7194', '#86BAEF'],
-    ['#E9B84E', '#FFD57B'],
-    ['#A9A9A9', '#D7D7D7'],
-  ].flat();
-
-  const borderDash = [
-    [0, 0],
-    [5, 5],
-    [10, 10],
-    [15, 15],
-    [20, 20],
-  ];
-
-  data.datasets = data.datasets
-    .sort((a, b) => (a.label || '').localeCompare(b.label || ''))
-    .map((d, i) => ({
-      ...d,
-      borderColor: colors[i % colors.length],
-      backgroundColor: colors[i % colors.length],
-      fill: false,
-      borderWidth: 3,
-      borderDash: borderDash[Math.floor(i / colors.length) % borderDash.length],
-    }));
-
   // Get unique datasets by name
-
   React.useEffect(() => {
     if (serverItem) {
       // A single server was selected, fetch the history for this server.

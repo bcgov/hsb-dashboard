@@ -14,6 +14,14 @@ const colorPairs = [
   ['#A9A9A9', '#D7D7D7'],
 ];
 
+const borderDash = [
+  [0, 0],
+  [5, 5],
+  [10, 10],
+  [15, 15],
+  [20, 20],
+];
+
 interface IStorageTrendsData extends ChartData<'bar', number[], string> {
   volumes: IVolumeData[];
 }
@@ -24,7 +32,6 @@ interface IStorageTrendsData extends ChartData<'bar', number[], string> {
  */
 export const useStorageTrendsData = (): ((
   minColumns?: number,
-  maxVolumes?: number,
   dateRange?: string[],
 ) => IStorageTrendsData) => {
   const fileSystemHistoryItems = useStorageTrendsStore((state) => state.fileSystemHistoryItems);
@@ -32,11 +39,10 @@ export const useStorageTrendsData = (): ((
   /**
    *
    * @param minColumns Minimum number of columns in the line chard (default = 1).
-   * @param maxVolumes Maximum number of mapped volumes that can be displayed (default = 5).
    * @param dateRange Array containing start and end dates.
    */
   return React.useCallback(
-    (minColumns: number = 1, maxVolumes: number = 4, dateRange: string[] = []) => {
+    (minColumns: number = 1, dateRange: string[] = []) => {
       const groups = generateStorageHistoryForDateRange<IFileSystemHistoryItemModel>(
         minColumns,
         dateRange,
@@ -68,21 +74,21 @@ export const useStorageTrendsData = (): ((
         const values: IFileSystemHistoryItemModel[] = (items as any)[group.key] ?? [];
         group.items = values;
       });
-      console.log('groups', groups);
 
       // Extract the history for each mapped volume / drive.
       const volumeHistory = groupBy<IFileSystemHistoryItemModel, IVolumeData>(
         history,
         (item) => item.name,
-        (item) => ({
-          serviceNowKey: item.serviceNowKey,
-          name: item.name,
-          capacity: item.sizeBytes,
-          availableSpace: item.freeSpaceBytes,
-          createdOn: item.createdOn,
-        }),
+        (item) => {
+          return {
+            serviceNowKey: item.serviceNowKey,
+            name: item.name,
+            capacity: item.sizeBytes,
+            availableSpace: item.freeSpaceBytes,
+            createdOn: item.createdOn,
+          };
+        },
       );
-      console.log('volumeHistory', volumeHistory);
 
       // TODO: Look into the aptly-named 'abnormality' server... the server history vs. the
       // file system item graphs are very different.
@@ -108,55 +114,44 @@ export const useStorageTrendsData = (): ((
         );
         volumeHistory[key] = Object.values(mapped).map((item) => item[item.length - 1]);
       });
-      console.log('sortedVolumeHistory', volumeHistory);
 
       // Take the last item in each sub-array, it should be the most recent entry.
       const volumes = Object.values(volumeHistory)
-        .map((item) => item[item.length - 1])
+        .map((volumeData) => volumeData[volumeData.length - 1])
         .sort((a, b) => (a.capacity < b.capacity ? 1 : a.capacity > b.capacity ? -1 : 0));
       console.log('volumes', volumes);
 
-      // If there is more than the max, we actually only show one less than the max.
-      // We do this because we need space to provide a placeholder informing the user of additional volumes.
-      const actualMaxVolumes = maxVolumes < volumes.length ? maxVolumes - 1 : maxVolumes;
-
-      return {
+      const dataResult = {
         labels: groups.map((i) => i.label),
         volumes: volumes,
         datasets: volumes
-          .slice(0, actualMaxVolumes)
           .map((volume, index) => {
             // Get color pair based on the current drive
-            const cIndex =
-              index === 0
-                ? 0
-                : index === 1
-                ? 1
-                : index === 2
-                ? 2
-                : index % 3 === 0
-                ? 0
-                : index % 2 === 0
-                ? 1
-                : 2;
-            const colors = colorPairs[cIndex];
+            const colors = colorPairs[index % colorPairs.length];
+
+            const data = volumeHistory[volume.name];
+
+            // The volumes data array has one extra datapoint at the beginning, because the actual
+            // dates returned above as part of the call to generateStorageHistoryForDateRange()
+            // start with the first full month AFTER the initial date range. (This is consistent
+            // behaviour throughout the app, so we don't want to change it.) So, we remove the first
+            // item in the data array.
+            data.shift();
 
             // Merge the data for each volume into each group.
             // There should only ever be one record per volume for each month.
             // We use the last record in the array for each month.
-            const groupData = groups.map((group) => {
-              const items = group.items.filter((i) => i.name === volume.name);
-              const capacity = convertToStorageSize<number>(
-                items.length ? items[items.length - 1].capacity : 0,
-                'B',
-                'GB',
-                { type: 'number' },
-              );
+            const groupData = data.map((monthData) => {
+              const capacity = convertToStorageSize<number>(monthData.capacity || 0, 'B', 'GB', {
+                type: 'number',
+              });
               const available = convertToStorageSize<number>(
-                items.length ? items[items.length - 1].availableSpace : 0,
+                monthData.availableSpace || 0,
                 'B',
                 'GB',
-                { type: 'number' },
+                {
+                  type: 'number',
+                },
               );
               const used = capacity - available;
               return {
@@ -166,9 +161,6 @@ export const useStorageTrendsData = (): ((
               };
             });
 
-            // This results in an array of mapped volumes, which contains an array of two datasets.
-            // One dataset is an array of used space grouped by month.
-            // The second dataset is an array of unused space grouped by month.
             return [
               {
                 label: `Used ${volume.name} (Capacity: ${convertToStorageSize(
@@ -185,6 +177,9 @@ export const useStorageTrendsData = (): ((
                 }),
                 data: groupData.map((group) => group.used), // Record of the volume data for each group (month).
                 backgroundColor: colors[0],
+                borderColor: colors[0],
+                borderWidth: 3,
+                borderDash: borderDash[Math.floor(index / colorPairs.length) % borderDash.length],
                 stack: `Stack ${index - 1}`,
               },
               {
@@ -197,6 +192,9 @@ export const useStorageTrendsData = (): ((
                 }),
                 data: groupData.map((group) => group.available), // Record of the volume data for each group (month).
                 backgroundColor: colors[1],
+                borderColor: colors[1],
+                borderWidth: 3,
+                borderDash: borderDash[Math.floor(index / colorPairs.length) % borderDash.length],
                 stack: `Stack ${index - 1}`,
               },
             ];
@@ -208,6 +206,8 @@ export const useStorageTrendsData = (): ((
             return result;
           }, []),
       };
+
+      return dataResult;
     },
     [fileSystemHistoryItems],
   );
