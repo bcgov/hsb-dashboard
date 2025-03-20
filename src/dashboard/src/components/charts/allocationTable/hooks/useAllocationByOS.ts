@@ -2,6 +2,7 @@ import { IServerItemListModel } from '@/hooks';
 import { useOperatingSystemItems, useTenants } from '@/hooks/lists';
 import React from 'react';
 import { ITableRowData } from '../ITableRowData';
+import { calcPercentageUnused } from '@/utils/calcPercentageUsed';
 
 /**
  * Provides a function to filter server items.
@@ -17,7 +18,7 @@ export const useAllocationByOS = (osClassName?: string, operatingSystemId?: numb
     (
       serverItems: IServerItemListModel[],
       filter: (serverItem: IServerItemListModel) => boolean = () => true,
-      sort: keyof ITableRowData<IServerItemListModel> = 'server',
+      sort: keyof ITableRowData<IServerItemListModel> | 'total' = 'server',
       direction: 'asc' | 'desc' = 'asc',
     ) => {
       const data = serverItems
@@ -58,6 +59,10 @@ export const useAllocationByOS = (osClassName?: string, operatingSystemId?: numb
             return (a.capacity < b.capacity ? -1 : a.capacity > b.capacity ? 1 : 0) * order;
           } else if (sort === 'available') {
             return (a.available < b.available ? -1 : a.available > b.available ? 1 : 0) * order;
+          } else if (sort === 'total') {
+            const pcUnusedA = calcPercentageUnused(a.available, a.capacity);
+            const pcUnusedB = calcPercentageUnused(b.available, b.capacity);
+            return (pcUnusedA < pcUnusedB ? -1 : pcUnusedA > pcUnusedB ? 1 : 0) * order;
           }
           return a.server < b.server ? -1 : a.server > b.server ? 1 : 0 * order;
         });
