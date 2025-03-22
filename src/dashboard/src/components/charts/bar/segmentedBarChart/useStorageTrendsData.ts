@@ -50,6 +50,11 @@ export const useStorageTrendsData = (): ((
 
       const history = fileSystemHistoryItems.filter((item) => item.mediaType === 'fixed');
 
+      console.log(
+        'history',
+        history.map((h) => ({ name: h.name, createdOn: h.createdOn })),
+      );
+
       // server history is returned for each server, however some servers may lack history.
       // This process needs to group each month.
       const items = history
@@ -70,10 +75,14 @@ export const useStorageTrendsData = (): ((
           return result;
         }, {});
 
+      console.log('items', items);
+
       groups.forEach((group) => {
         const values: IFileSystemHistoryItemModel[] = (items as any)[group.key] ?? [];
         group.items = values;
       });
+
+      console.log('groups', groups);
 
       // Extract the history for each mapped volume / drive.
       const volumeHistory = groupBy<IFileSystemHistoryItemModel, IVolumeData>(
@@ -86,12 +95,10 @@ export const useStorageTrendsData = (): ((
             capacity: item.sizeBytes,
             availableSpace: item.freeSpaceBytes,
             createdOn: item.createdOn,
+            createdYYMM: moment(item.createdOn).format('YYYY-MM'),
           };
         },
       );
-
-      // TODO: Look into the aptly-named 'abnormality' server... the server history vs. the
-      // file system item graphs are very different.
 
       // In some cases, drives have had their key change, even if they're the same drive (judged by
       // their name). This might give us two entries for the same month. We need to find the most
@@ -109,11 +116,13 @@ export const useStorageTrendsData = (): ((
         // map by year-month, then we take the last item in each sub-array.
         const mapped = groupBy<IVolumeData, IVolumeData>(
           items,
-          (item) => moment(item.createdOn).format('YYYY-MM'),
+          (item) => item.createdYYMM,
           (item) => item,
         );
         volumeHistory[key] = Object.values(mapped).map((item) => item[item.length - 1]);
       });
+
+      console.log('volumeHistory', volumeHistory);
 
       // Take the last item in each sub-array, it should be the most recent entry.
       const volumes = Object.values(volumeHistory)
@@ -129,14 +138,10 @@ export const useStorageTrendsData = (): ((
             // Get color pair based on the current drive
             const colors = colorPairs[index % colorPairs.length];
 
-            const data = volumeHistory[volume.name];
-
-            // The volumes data array has one extra datapoint at the beginning, because the actual
-            // dates returned above as part of the call to generateStorageHistoryForDateRange()
-            // start with the first full month AFTER the initial date range. (This is consistent
-            // behaviour throughout the app, so we don't want to change it.) So, we remove the first
-            // item in the data array.
-            data.shift();
+            const data = groups.map((group) => {
+              const item = volumeHistory[volume.name].find((v) => v.createdYYMM === group.key);
+              return item ?? { capacity: 0, availableSpace: 0 };
+            });
 
             // Merge the data for each volume into each group.
             // There should only ever be one record per volume for each month.
@@ -206,6 +211,8 @@ export const useStorageTrendsData = (): ((
             return result;
           }, []),
       };
+
+      console.log('dataResult', dataResult);
 
       return dataResult;
     },

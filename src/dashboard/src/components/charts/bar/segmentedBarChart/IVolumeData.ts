@@ -4,4 +4,5 @@ export interface IVolumeData {
   capacity: number;
   availableSpace: number;
   createdOn: string;
+  createdYYMM: string;
 }
