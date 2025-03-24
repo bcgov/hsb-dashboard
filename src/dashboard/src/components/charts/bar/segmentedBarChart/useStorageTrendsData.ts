@@ -188,14 +188,19 @@ export const useStorageTrendsData = (): ((
                 stack: `Stack ${index - 1}`,
               },
               {
-                label: `Unused ${volume.name} (${convertToStorageSize(volume.capacity, 'B', 'GB', {
+                label: `% Used ${volume.name} (${convertToStorageSize(volume.capacity, 'B', 'GB', {
                   formula: (value) => Number(value.toFixed(1)),
                 })})`,
                 name: volume.name,
                 capacity: convertToStorageSize(volume.capacity, 'B', 'GB', {
                   formula: (value) => Number(value.toFixed(1)),
                 }),
-                data: groupData.map((group) => group.available), // Record of the volume data for each group (month).
+                data: groupData.map((group) => {
+                  if (!group.capacity) {
+                    return 0;
+                  }
+                  return ((100 * group.used) / group.capacity).toFixed(1);
+                }), // Proportionate usage.
                 backgroundColor: colors[1],
                 borderColor: colors[1],
                 borderWidth: 3,
