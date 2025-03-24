@@ -50,6 +50,8 @@ export const VolumeHistoryLine = ({
   const { isReady: fileSystemHistoryItemsIsReady, findFileSystemHistoryItems } =
     useFileSystemHistoryItems();
 
+  const [showAbsolute, setShowAbsolute] = React.useState(true);
+
   const now = moment();
   const values = [
     initDateRange?.length && initDateRange[0]
@@ -68,7 +70,12 @@ export const VolumeHistoryLine = ({
 
   const data = getStorageTrends(1, dateRange);
 
-  data.datasets = data.datasets.filter((d) => !d.label?.startsWith('Unused'));
+  // If absolute, we want to show the raw storage amount used. If proportional, show the percentage.
+  if (showAbsolute) {
+    data.datasets = data.datasets.filter((d) => d.label?.startsWith('Used'));
+  } else {
+    data.datasets = data.datasets.filter((d) => d.label?.startsWith('% Used'));
+  }
 
   // Get unique datasets by name
   React.useEffect(() => {
@@ -91,7 +98,15 @@ export const VolumeHistoryLine = ({
   return (
     <div className={styles.panel}>
       {(loading || !fileSystemHistoryItemsIsReady) && <LoadingAnimation />}
-      <h1>Storage Trends - {serverItem?.name ?? 'Drive'} Storage</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1>
+          Storage Trends - {serverItem?.name ?? 'Drive'} Storage (
+          {showAbsolute ? 'Absolute Usage' : 'Proportional Usage'})
+        </h1>
+        <Button onClick={() => setShowAbsolute(!showAbsolute)}>
+          {showAbsolute ? 'Show Proportional Usage' : 'Show Absolute Usage'}
+        </Button>
+      </div>
       <div className={styles.date}>
         <DateRangePicker
           showButton
