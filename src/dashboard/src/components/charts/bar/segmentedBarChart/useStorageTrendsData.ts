@@ -199,7 +199,7 @@ export const useStorageTrendsData = (): ((
                   if (!group.capacity) {
                     return 0;
                   }
-                  return ((100 * group.used) / group.capacity).toFixed(1);
+                  return Number(((100 * group.used) / group.capacity).toFixed(1));
                 }), // Proportionate usage.
                 backgroundColor: colors[1],
                 borderColor: colors[1],
