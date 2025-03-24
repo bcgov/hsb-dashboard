@@ -1,6 +1,8 @@
 # OCIO HSB Dashboard
 
-## Ministry of Citizens' Services
+The OCIO HSB Dashboard is a web application that provides a visualization of storage allocation and consumption for the Office of the Chief Information Officer (OCIO) Hosting Services Branch (HSB).
+
+## Project Background
 
 The Office of the Chief Information Officer’s Enterprise Services Division enables Government to deliver services to citizens by providing high quality, secure and cost-effective information management, and technology services. In Enterprise Services Division, Hosting Services enables B.C. government and broader public sector (BPS) to access sustainable hosting infrastructure and services to support the evolving needs of government clients and citizens.
 
@@ -8,18 +10,57 @@ The OCIO’s storage infrastructure offers redundancy, configuration flexibility
 
 This dashboard aims to allow users to visualize their storage allocation and consumption through different views and perspectives to help them understand their current consumption. It will provide dynamic access to server storage consumption and allocation data for client use and HSB use. The goal is to allow users to make data-backed decisions on how to best reduce or optimize their storage utilization.
 
-## Script Help
+## High-Level Architecture
 
-There are several scripts and commands to help local development and the CI/CD pipeline.
+### Components
+
+The project consists of several components. The main components are:
+
+- An **API** (`api`) that provides the backend services for both the HSB front-end and the Data Service.
+- The **HSB dashboard front-end** (variously called the `app` or `dashboard`), which is a Next.js project.
+- A **Data Service** (`data-service`) that syncs data with Service Now. It is a C# project which is set up to run once a day and get all the information the project needs from Service Now. It downloads all the data and reconciles it with the HSB database
+- The **database** (`db`) that stores the application data, including user and organzation information, information on current and historical Server Items and File System Items.
+
+The `/src` folder in the project root has most of the project code that a developer would typically edit:
+
+- `/src/api` contains the C# project for the API.
+- `/src/api-css` connects to the Common Hosted Single Sign-On (CSS) — see below for more detail.
+- `/src/dashboard` contains the front end dashboard.
+- `/src/data-service` contains the C# project for the Data Service.
+- `/src/libs` contains library files that are reused throughout the C# code. These files generally do not need to be edited.
+
+The `api`, `api-css`, `dashboard`, and `data-service` components are Dockerized and will each run in their own Docker container locally and remotely on OpenShift.
+
+### Deployments
+
+The application has 3 deployments on OpenShift, in the BC Government's EMERALD Cluster: `dev`, `test`, and `prod`.
+
+This guide assumes a basic familiarity with OpenShift concepts.
+
+### User Authentication & Authorization
+
+The application uses a Keycloak integration for user authentication and authorization.
+
+Though the application's database keeps track of user, group, and role data locally, the single source of truth of this data is Keycloak. If a user has a permission in the HSB app database but not on Keycloak, they will not be able to access that application feature.
+
+The application has an entry on the [Common Hosted Single Sign-on (CSS) console](https://bcgov.github.io/sso-requests) through which you can obtain and validate Keycloak settings.
+
+There are 3 CSS environments corresponding to the 3 deployment levels: `dev`, `test`, and `prod`.
+
+## Local Development
+
+### Bash Script
+
+The project contains a useful bash script, `bash do`, which will help with a number of development tasks and will be referred to throughout the following docs.
 
 ```bash
 # Show all the help commands
 bash do help
 ```
 
-## Get Started Developing
+### Get Started Developing
 
-### Prerequisites
+#### Prerequisites
 
 You'll need to install the following.
 
@@ -37,7 +78,7 @@ Run `nvm install 20.8.1` to install the version of Node required for this projec
 Once it is installed run `nvm use 20.8.w1`.
 If it installed correctly you can run `node -v` and it will display the correct version.
 
-#### Mac requirements
+##### Mac Requirements
 
 You will need to install `coreutils`, `gnu-getopt`, and `gsed` using [Homebrew](https://brew.sh):
 
@@ -45,7 +86,7 @@ You will need to install `coreutils`, `gnu-getopt`, and `gsed` using [Homebrew](
 
 If you run into other errors during the steps below, it is most likely a script needs execute permission.
 
-### Container initialization
+#### Container Initialization
 
 Execute the following command to initialize your local environment.
 
@@ -60,47 +101,49 @@ bash do init
 
 The script will initialize the database and various Docker containers.
 
-### Update .env files and restart environment
+#### Update .env Files
 
 For the app to be fully functional, we will need to update the values of some `.env` file secrets.
 
-#### Obtain the local Keycloak Client Secret
+##### Obtain the Keycloak Client Information
 
-1. With the application running (check in Docker), navigate to the local Keycloak admin interface: [http://localhost:30001](http://localhost:30001).
-2. Enter the username and password you created for the local Keycloak admin in the previous step.
-3. From the dropdown (select) menu in the upper-right (currently showing "Keycloak"), choose "Host Services Branch Dashboard".
-4. From the sidebar on the left, click Clients.
-5. In the table, click `hsb-app`.
-6. Click the Credentials tab.
-7. In the Client Secret section of the page, click the clipboard icon to copy the Client Secret to your clipboard. This is the **Client Secret**. Take note of it, because it will be entered in several places below. (In the examples below, we will use the pretend key `Abc123`.)
+Although the setup script will set you up with a local Keycloak deployment, it is recommended to connect directly to the dev SSO environment even for local development. The appropriate settings below can be obtained by investigating the `keycloak` and `css` secrets and configmaps from the Emerald `dev` deployment on OpenShift.
 
-#### Update API env file
+##### Update API env File
 
 In `/src/api/.env`:
 
-Update the line `Keycloak__Secret={GET FROM KEYCLOAK}` with the **Client Secret**, e.g.
+Update these lines the appropriate secrets:
 
 ```bash
-Keycloak__Secret=Abc123
+Keycloak__Authority=https://dev.loginproxy.gov.bc.ca/auth/realms/standard
+Keycloak__Audience=[obtain from dev configmap / secrets: starts with `hsb-`]
+Keycloak__Issuer=[obtain from dev configmap / secrets: starts with `hsb-`]
+Keycloak__Secret=[obtain from dev configmap / secrets: alphanumeric secret]
+CSS__Environment=dev
+CSS__ApiUrl=https://api.loginproxy.gov.bc.ca
+CSS__Authority=https://loginproxy.gov.bc.ca
+CSS__ClientId=[obtain from dev configmap / secrets: starts with `service-account-`]
+CSS__Secret=[obtain from dev configmap / secrets: alphanumeric secret]
 ```
 
-#### Update API-CSS env file
+#### Update API-CSS env File
 
-In `/src/api-css/.env`, update two lines with `hsb-app` and the **Client Secret** respectively:
+In `/src/api-css/.env`, update two lines with `hsb-app` and the appropriate client secret, respectively:
 
 ```bash
 Keycloak__ClientId=hsb-app
-Keycloak__Secret=Abc123
+Keycloak__Secret=[obtain from dev configmap / secrets: alphanumeric secret]
 ```
 
-#### Update Dashboard env file
+#### Update Dashboard env File
 
 In `/src/dashboard/.env`:
 
-Update the line `KEYCLOAK_SECRET={GET FROM KEYCLOAK}` with the **Client Secret**, e.g.:
+Update the line `KEYCLOAK_SECRET={GET FROM KEYCLOAK}` with the appropriate secret:
 
 ```bash
-KEYCLOAK_SECRET=Abc123
+KEYCLOAK_SECRET=[obtain from dev configmap / secrets: alphanumeric secret]
 ```
 
 Note that you can also **uncomment** the following lines to skip Keycloak authentication altogether:
@@ -112,7 +155,7 @@ Note that you can also **uncomment** the following lines to skip Keycloak authen
 
 This should only be done for development purposes when testing authentication is not necessary.
 
-#### Restart environment
+#### Restart Environment
 
 The following command will rebuild the Docker containers to pick up all the `.env` file changes you've made above:
 
@@ -120,7 +163,7 @@ The following command will rebuild the Docker containers to pick up all the `.en
 bash do up
 ```
 
-### Run the web application
+#### Run the web application
 
 Now we can start the web application:
 
@@ -130,25 +173,6 @@ bash do go
 ```
 
 The Dashboard web application is setup for hot-reload within a Docker container.
-
-## Tips
-
-### Find all .env files
-
-When recreating the environment, .env files are left behind by default. But this can cause issues when attempting a fresh install. To find .env files:
-
-```bash
-find . -name '*.env'
-```
-
-## Helpful Documentation
-
-- [API Swagger](https://localhost:30005/api-docs)
-- [Docker Compose Cheat Sheet](https://devhints.io/docker-compose)
-- [Docker CLI Cheat Sheet](https://dockerlabs.collabnix.com/docker/cheatsheet/)
-- [Next.js](https://nextjs.org/docs)
-- [Dotnet Cheat Sheets](https://cheatography.com/tag/dotnet/)
-- [Dotnet Entity Framework Tools](https://learn.microsoft.com/en-us/ef/core/cli/dotnet)
 
 ## Database Migrations
 
@@ -226,3 +250,12 @@ Run the database migration.
 Run the Data Service.
 
 `bash do oc-run data-service {env=dev}`
+
+## Other Helpful Documentation
+
+- [API Swagger](https://localhost:30005/api-docs)
+- [Docker Compose Cheat Sheet](https://devhints.io/docker-compose)
+- [Docker CLI Cheat Sheet](https://dockerlabs.collabnix.com/docker/cheatsheet/)
+- [Next.js](https://nextjs.org/docs)
+- [Dotnet Cheat Sheets](https://cheatography.com/tag/dotnet/)
+- [Dotnet Entity Framework Tools](https://learn.microsoft.com/en-us/ef/core/cli/dotnet)
