@@ -1,0 +1,8 @@
+# Ignore downloads folder and all contents
+downloads/
+
+# __pycache__ folder
+__pycache__/
+
+# Ignore .env file
+.env
