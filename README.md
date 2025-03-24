@@ -18,7 +18,7 @@ The project consists of several components. The main components are:
 
 - An **API** (`api`) that provides the backend services for both the HSB front-end and the Data Service.
 - The **HSB dashboard front-end** (variously called the `app` or `dashboard`), which is a Next.js project.
-- A **Data Service** (`data-service`) that syncs data with Service Now. It is a C# project which is set up to run once a day and get all the information the project needs from Service Now. It downloads all the data and reconciles it with the HSB database
+- A **Data Service** (`data-service`) that syncs data with Service Now (which itself an application that keeps track of server and file system usage). It is a C# project which is set up to run once a day and get all the information the project needs from Service Now. It downloads all the data and reconciles it with the HSB database
 - The **database** (`db`) that stores the application data, including user and organzation information, information on current and historical Server Items and File System Items.
 
 The `/src` folder in the project root has most of the project code that a developer would typically edit:
@@ -163,7 +163,7 @@ The following command will rebuild the Docker containers to pick up all the `.en
 bash do up
 ```
 
-#### Run the web application
+#### Run the Web Application
 
 Now we can start the web application:
 
@@ -174,7 +174,40 @@ bash do go
 
 The Dashboard web application is setup for hot-reload within a Docker container.
 
-## Database Migrations
+### Development Workflow
+
+#### Quick Data Model Overview
+
+The main entities in the database are the `ServerItem`, which tracks servers ("computers" in Service Now), and the `FileSystemItem`, which tracks storage on servers. One ServerItem can (and will) have multiple FileSystemItems.
+
+There are also `ServerHistoryItem` and `FileSystemHistoryItem` entities that track historical data for the ServerItem and FileSystemItem entities (i.e. snapshots of usage data at different points in time).
+
+#### Frontend Changes
+
+Make required changes to the frontend code in `/src/dashboard`. You do not typically need to restart your Docker container to see changes in the frontend; it is set up to "hot reload" in your browser.
+
+#### API Changes
+
+Make required changes to the API code in `/src/api`. Note that there are different controllers, models, etc. in the API project based on the consumer of the API, e.g. one `FileSystemItemController` for the dashboard, and another for the data service.
+
+Because C# must be compiled, if you make changes to the API, you will need to rebuild and restart the Docker container:
+
+```bash
+bash do build api
+bash do up
+```
+
+#### Data Service Changes
+
+Make required changes to the Data Service code in `/src/data-service`. To run the Data Service:
+
+```bash
+bash do run data-service
+```
+
+Running the data service will automatically rebuild it first, so you don't need a separate build step.
+
+#### Database Migrations
 
 Database migrations are built with Entity Framework. Dotnet tooling provides a Code-First approach to database migration, which enables the generation of migrations that apply new versions and perform rollbacks to prior versions. These tools provide a simple repeatable and testable Infrastructure as Code implementation.
 
@@ -203,17 +236,17 @@ dotnet tool uninstall dotnet-ef --global
 dotnet tool install dotnet-ef --global -a arm64
 ```
 
-### CI/CD Pipelines
+#### Deploying Project Components
 
-When a Pull Request is created Github Actions will build and test the images to provide feedback on issues.
+The various `bash do oc-` commands can help with building, pushing, and deploying images to the 3 OpenShift environments.
 
-When a Pull Request is merged into the `main` branch Github Actions will build and publish the images to the default Github Packages image registry. There are four packages built for this project.
+**Make sure you are logged in to Openshift before running these commands!** You can do this by getting the correct `oc login` command from the OpenShift console.
 
-Artifactory which is hosted by the Exchange Lab will pull in these packages every 15 minutes. All of these images are tagged with `latest` (all attempts to also tag them with other values have not been successful for some reason).
+Note that you'll need to separately build, push, and deploy the various application components (including the frontend).
 
-There are Tekton pipelines created to assist in deployments of the `db-migration` and `data-service`. Note that the `data-service` takes more than an hour to run, as such you will need to create a PipelineRun object (example is in source) to configure a longer run time. These pipelines provide a simple parameter based way to run theses containers in the appropriate environment.
+##### Options
 
-#### Options
+These are the options to the various `bash do oc-` commands referenced below:
 
 | Argument  | Values                  | Required | Default |
 | --------- | ----------------------- | -------- | ------- |
@@ -221,25 +254,37 @@ There are Tekton pipelines created to assist in deployments of the `db-migration
 | tag       |                         |          | latest  |
 | env       | dev, test, prod         |          | dev     |
 
-### Build Images
+##### Build Images Locally
 
-If you would like to build an image locally and push it to Openshift you can use the following commands. Replace the curly brackets with an appropriate value.
+If you would like to build an image locally for pushing to Openshift — the recommended way to deploy to `dev` and `test` — you can use the following commands. Replace the curly brackets with an appropriate value from the table above.
 
 `bash do oc-build {component} {tag=latest}`
 
-### Push Images
+For instance, to build an API image and tag it with the tag `dev`:
 
-To push a local image to Openshift registry use the following command.
+`bash do oc-build api dev`
+
+##### Push Images
+
+To push the built image to the Openshift registry use the following command.
 
 `bash do oc-push {component}`
 
-### Deploy Images
+For instance:
 
-To deploy an image to an environment in Openshift use the following command. This makes the images available to those environments and they will be automatically deployed.
+`bash do oc-push api dev`
+
+##### Deploy Images
+
+To deploy an image to an environment in Openshift use the following command. This makes the images available to those environments, and they will be automatically deployed.
 
 `bash do oc-deploy {component} {tag=latest} {env=dev}`
 
-### Run a Container Remotely
+For instance, to deploy the API image tagged `dev` to the `dev` environment:
+
+`bash do oc-deploy api dev dev`
+
+##### Run a Container Remotely
 
 There are two components that are run as part of backend services, or deployments. The first is the `db-migration` which applies database migrations. The second is the `data-service` which syncs data with Service Now.
 
@@ -250,6 +295,22 @@ Run the database migration.
 Run the Data Service.
 
 `bash do oc-run data-service {env=dev}`
+
+##### Production Deployments: CI/CD Pipelines
+
+When a Pull Request is created, Github Actions will build and test the images to provide feedback on issues.
+
+When a Pull Request is merged into the `main` branch Github Actions will build and publish the images to the default Github Packages image registry. There are four packages built for this project.
+
+Artifactory which is hosted by the Exchange Lab will pull in these packages every 15 minutes. All of these images are tagged with `latest` (all attempts to also tag them with other values have not been successful for some reason).
+
+**However, you must still use the oc-deploy command to actually deploy the pushed image!**
+
+For instance, to deploy the API image that was pushed by the build pipeline (which will be tagged `latest`) to the `prod` environment:
+
+`bash do oc-deploy api latest prod`
+
+There are Tekton pipelines created to assist in deployments of the `db-migration` and `data-service`. Note that the `data-service` takes more than an hour to run, as such you will need to create a PipelineRun object (example is in source) to configure a longer run time. These pipelines provide a simple parameter based way to run theses containers in the appropriate environment.
 
 ## Other Helpful Documentation
 
