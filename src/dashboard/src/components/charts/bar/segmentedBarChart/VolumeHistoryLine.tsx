@@ -1,26 +1,32 @@
 'use client';
 
-import { Button, DateRangePicker } from '@/components';
-import { Bar } from 'react-chartjs-2';
-import styles from './SegmentedBarChart.module.scss';
+import { Button, DateRangePicker, LineChart } from '@/components';
+import styles from './VolumeHistorySmallMultiples.module.scss';
 
 import { IServerItemListModel } from '@/hooks';
 import { useStorageTrendsStore } from '@/store';
-import { BarElement, CategoryScale, Chart as ChartJS, Legend, Title, Tooltip } from 'chart.js';
+import {
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  LineElement,
+  Title,
+  Tooltip,
+} from 'chart.js';
 import moment from 'moment';
 import React from 'react';
 import { toast } from 'react-toastify';
 import { LoadingAnimation } from '../../../loadingAnimation';
-import { defaultOptions } from './defaultOptions';
 import { useFileSystemHistoryItems } from './hooks';
 import { useStorageTrendsData } from './useStorageTrendsData';
-import { extractVolumeName } from './utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLightbulb } from '@fortawesome/free-solid-svg-icons';
 
-ChartJS.register(CategoryScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, LineElement, Title, Tooltip, Legend);
 
-export interface ISegmentedBarChart {
+export interface IVolumeHistoryLine {
   serverItem?: IServerItemListModel;
-  maxVolumes?: number;
   loading?: boolean;
   dateRange?: string[];
   minColumns?: number;
@@ -29,21 +35,22 @@ export interface ISegmentedBarChart {
   onExport?: () => void;
 }
 
-export const SegmentedBarChart = ({
+export const VolumeHistoryLine = ({
   serverItem,
-  maxVolumes = 4,
   loading,
   dateRange: initDateRange,
   minColumns = 12,
   showExport,
   exportDisabled,
   onExport,
-}: ISegmentedBarChart) => {
+}: IVolumeHistoryLine) => {
   const getStorageTrends = useStorageTrendsData();
   const dateRange = useStorageTrendsStore((state) => state.dateRangeFileSystemHistoryItems);
   const setDateRange = useStorageTrendsStore((state) => state.setDateRangeFileSystemHistoryItems);
   const { isReady: fileSystemHistoryItemsIsReady, findFileSystemHistoryItems } =
     useFileSystemHistoryItems();
+
+  const [showAbsolute, setShowAbsolute] = React.useState(true);
 
   const now = moment();
   const values = [
@@ -61,8 +68,16 @@ export const SegmentedBarChart = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values[0], values[1], setDateRange]);
 
-  const data = getStorageTrends(1, maxVolumes, dateRange);
+  const data = getStorageTrends(1, dateRange);
 
+  // If absolute, we want to show the raw storage amount used. If proportional, show the percentage.
+  if (showAbsolute) {
+    data.datasets = data.datasets.filter((d) => d.label?.startsWith('Used'));
+  } else {
+    data.datasets = data.datasets.filter((d) => d.label?.startsWith('% Used'));
+  }
+
+  // Get unique datasets by name
   React.useEffect(() => {
     if (serverItem) {
       // A single server was selected, fetch the history for this server.
@@ -80,39 +95,18 @@ export const SegmentedBarChart = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [findFileSystemHistoryItems, serverItem, values[0], values[1]]);
 
-  const CustomLegend = React.useMemo(
-    () => (
-      <div className={styles.customLegend}>
-        {data.datasets
-          .filter((_, i) => i % 2 === 0)
-          .map((dataset, index) => (
-            <div key={index} className={styles.legend}>
-              <div className={styles.legendColors}>
-                <span style={{ backgroundColor: `${dataset.backgroundColor}` }} />
-                <span
-                  style={{ backgroundColor: `${data.datasets[index * 2 + 1].backgroundColor}` }}
-                />
-              </div>
-              <div className={styles.legendLabel}>
-                <p>{extractVolumeName((dataset as any).name)}</p>
-                <p>{(dataset as any).capacity}</p>
-              </div>
-            </div>
-          ))}
-        {data.volumes.length * 2 > data.datasets.length && (
-          <div>
-            <div className={styles.legendColors}>{data.volumes.length} volumes</div>
-          </div>
-        )}
-      </div>
-    ),
-    [data.datasets, data.volumes.length],
-  );
-
   return (
     <div className={styles.panel}>
       {(loading || !fileSystemHistoryItemsIsReady) && <LoadingAnimation />}
-      <h1>Storage Trends - {serverItem?.name ?? 'Drive'} Storage</h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1>
+          Storage Trends - {serverItem?.name ?? 'Drive'} Storage (
+          {showAbsolute ? 'Absolute Usage' : 'Proportional Usage'})
+        </h1>
+        <Button onClick={() => setShowAbsolute(!showAbsolute)}>
+          {showAbsolute ? 'Show Proportional Usage' : 'Show Absolute Usage'}
+        </Button>
+      </div>
       <div className={styles.date}>
         <DateRangePicker
           showButton
@@ -133,9 +127,16 @@ export const SegmentedBarChart = ({
           }}
         />
       </div>
-      {CustomLegend}
-      <div className={styles.chartContainer}>
-        <Bar data={data} options={defaultOptions} />
+      <div>
+        {/* TODO: Make this chart taller. */}
+        <LineChart data={data as any} large>
+          <div
+            style={{ marginTop: '16px', fontSize: '14px', color: '#595959', textAlign: 'center' }}
+          >
+            <FontAwesomeIcon icon={faLightbulb} style={{ color: '#FCBA19', marginRight: '4px' }} />{' '}
+            Tip: You can click the drive name to hide / show that drive in the chart.
+          </div>
+        </LineChart>
       </div>
       {showExport && (
         <Button

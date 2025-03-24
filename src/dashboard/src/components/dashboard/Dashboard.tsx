@@ -7,7 +7,6 @@ import {
   AllocationByStorageVolume,
   AllocationByVolume,
   AllocationTable,
-  SegmentedBarChart,
   StorageTrendsChart,
   TotalStorage,
 } from '@/components/charts';
@@ -32,6 +31,7 @@ import { useDashboardStore, useFilteredStore } from '@/store';
 import React from 'react';
 import { toast } from 'react-toastify';
 import { useDashboardFilter } from '.';
+import { VolumeHistoryLine } from '../charts/bar/segmentedBarChart/VolumeHistoryLine';
 
 /**
  * Dashboard component displays different charts depending on what data has been stored in the dashboard state.
@@ -96,7 +96,7 @@ export const Dashboard = () => {
   // All servers with OS
   const showAllocationTable = !!dashboardOperatingSystemItem && !dashboardServerItem;
   // Show each drive over time for server
-  const showSegmentedBarChart = !!dashboardServerItem;
+  const showDriveHistoryChart = !!dashboardServerItem;
 
   React.useEffect(() => {
     // When no filter is selected use all values available.
@@ -278,7 +278,11 @@ export const Dashboard = () => {
       )}
       {/* One Server Selected */}
       {showAllocationByVolume && (
-        <AllocationByVolume fileSystemItems={fileSystemItems} loading={fileSystemItemsIsLoading} />
+        <AllocationByVolume
+          dashboardServerItem={dashboardServerItem}
+          fileSystemItems={fileSystemItems}
+          loading={fileSystemItemsIsLoading}
+        />
       )}
       {/* Multiple Organizations */}
       {showAllOrganizations && (
@@ -412,8 +416,10 @@ export const Dashboard = () => {
           }}
         />
       )}
-      {showSegmentedBarChart && (
-        <SegmentedBarChart serverItem={dashboardServerItem} loading={!isReadyServerItems} />
+      {showDriveHistoryChart && (
+        <>
+          <VolumeHistoryLine serverItem={dashboardServerItem} loading={!isReadyServerItems} />
+        </>
       )}
     </>
   );

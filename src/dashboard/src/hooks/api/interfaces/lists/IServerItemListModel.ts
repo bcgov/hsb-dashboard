@@ -22,6 +22,7 @@ export interface IServerItemListModel extends IAuditableModel {
   ipAddress: string;
   fqdn: string;
   diskSpace?: string;
+  isVirtual?: boolean;
 
   capacity?: number;
   availableSpace?: number;

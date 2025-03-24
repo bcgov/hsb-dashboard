@@ -33,6 +33,7 @@ interface LineChartProps<TData = DefaultDataPoint<'line'>, TLabel = unknown> {
   showExport?: boolean;
   exportDisabled?: boolean;
   onExport?: () => void;
+  children?: React.ReactNode;
 }
 
 export const LineChart = <
@@ -49,6 +50,7 @@ export const LineChart = <
   loading,
   showExport,
   exportDisabled,
+  children,
   onExport,
 }: LineChartProps<TData, TLabel>) => {
   return (
@@ -60,6 +62,7 @@ export const LineChart = <
       <div className={styles.chartContainer}>
         <Line data={data} options={{ ...options, maintainAspectRatio: !large }} />
       </div>
+      {children}
       {showExport && (
         <Button
           variant="secondary"

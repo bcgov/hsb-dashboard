@@ -29,6 +29,7 @@ public class FileSystemItemModel : AuditableModel
     public int AvailableSpace { get; set; }
     public string FreeSpace { get; set; } = "";
     public long FreeSpaceBytes { get; set; }
+    public bool? IsSAN { get; set; } = null;
     #endregion
     #endregion
 
@@ -57,6 +58,7 @@ public class FileSystemItemModel : AuditableModel
         this.AvailableSpace = entity.AvailableSpace;
         this.FreeSpace = entity.FreeSpace;
         this.FreeSpaceBytes = entity.FreeSpaceBytes;
+        this.IsSAN = entity.IsSAN;
     }
 
     public FileSystemItemModel(string serverItemServiceNowKey
@@ -86,6 +88,7 @@ public class FileSystemItemModel : AuditableModel
         this.AvailableSpace = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.AvailableSpace) ? Int32.Parse(fileSystemItemModel.Data.AvailableSpace) : 0;
         this.FreeSpace = fileSystemItemModel.Data.FreeSpace ?? "";
         this.FreeSpaceBytes = !String.IsNullOrWhiteSpace(fileSystemItemModel.Data.FreeSpaceBytes) ? long.Parse(fileSystemItemModel.Data.FreeSpaceBytes) : 0;
+        // Intentionally not setting IsSAN. We don't have a ServerItem to determine this.
     }
     #endregion
 
@@ -124,6 +127,7 @@ public class FileSystemItemModel : AuditableModel
             UpdatedOn = model.UpdatedOn,
             UpdatedBy = model.UpdatedBy,
             Version = model.Version,
+            // Intentionally not setting IsSAN. We don't have a ServerItem to determine this.
         };
     }
     #endregion
